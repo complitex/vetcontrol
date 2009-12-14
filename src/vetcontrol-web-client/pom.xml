@@ -75,7 +75,7 @@
             <artifactId>wicket-contrib-javaee</artifactId>
             <scope>system</scope>
             <version>1.1</version>
-            <systemPath>${project.basedir}/src/main/webapp/lib/wicket-contrib-javaee-1.1.jar</systemPath>
+            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/wicket-contrib-javaee-1.1.jar</systemPath>
         </dependency>
 
         <dependency>
