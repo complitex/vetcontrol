@@ -1,0 +1,40 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.vetcontrol</groupId>
+    <artifactId>vetcontrol</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>Veterinary control</name>
+
+    <modules>
+        <module>vetcontrol-commons</module>
+        <module>vetcontrol-user</module>
+        <module>vetcontrol-information</module>
+        <module>vetcontrol-document</module>
+        <module>vetcontrol-report</module>
+        <module>vetcontrol-logging</module>
+        <module>vetcontrol-sync-client</module>
+        <module>vetcontrol-sync-server</module>
+        <module>vetcontrol-web-server</module>
+        <module>vetcontrol-web-client</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.0.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+        </plugins>        
+    </build>
+</project>
