@@ -11,6 +11,7 @@
 
     <artifactId>vetcontrol-web-client</artifactId>
     <packaging>war</packaging>
+    <name>vetcontrol web client</name>
 
     <repositories>
         <repository>

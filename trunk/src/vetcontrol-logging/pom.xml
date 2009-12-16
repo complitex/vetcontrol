@@ -11,6 +11,8 @@
 
     <artifactId>vetcontrol-logging</artifactId>
     <packaging>jar</packaging>
+    <name>vetcontrol logging</name>
+
 
     <dependencies>
         <dependency>
