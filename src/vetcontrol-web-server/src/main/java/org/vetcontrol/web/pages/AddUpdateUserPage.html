@@ -1,0 +1,73 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <center>
+            <h1>Edit user <span wicket:id="userNameLabel"></span></h1>
+            <div wicket:id="messages"></div>
+            <form wicket:id="form">
+                <table>
+                    <tr>
+                        <td>
+                            Name :
+                        </td>
+                        <td>
+                            <input wicket:id="name" type="text"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Password :
+                        </td>
+                        <td>
+                            <input wicket:id="password" type="password"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Blocked Status :
+                        </td>
+                        <td>
+                            <input wicket:id="blocked" type="checkbox"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <input type="button" wicket:id="addRole" value="Add role"/>
+                            <table>
+                                <tr wicket:id="roles">
+                                    <td>
+                                        Role :
+                                    </td>
+                                    <td>
+                                        <span wicket:id="roleOut"></span>
+                                        <input wicket:id="roleIn" type="text"/>
+                                    </td>
+                                    <td>
+                                        <input type="button" wicket:id="removeRole" value="Remove role"/>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </td>
+
+                    </tr>
+
+                </table>
+                <br/>
+                <input type="button" wicket:id="cancel" value="Cancel"/>
+                <input type="button" wicket:id="saveOrUpdate" value="Save/Update"/>
+            </form>
+             <wicket:link>
+                <a href="ApplicationSignOutPage.html">Sign Out</a>
+            </wicket:link>
+        </center>
+    </body>
+</html>
