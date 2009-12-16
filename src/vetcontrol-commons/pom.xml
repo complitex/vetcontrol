@@ -11,5 +11,6 @@
 
   <artifactId>vetcontrol-commons</artifactId>
   <packaging>jar</packaging>
+  <name>vetcontrol commons</name>
 
 </project>
