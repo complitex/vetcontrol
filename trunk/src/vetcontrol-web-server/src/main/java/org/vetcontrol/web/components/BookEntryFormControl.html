@@ -1,0 +1,21 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<wicket:panel>
+    <table>
+        <tr wicket:id="bookFields">
+            <td>
+                <span wicket:id="bookFieldDesc"></span>
+            </td>
+            <td>
+                <input wicket:id="bookFieldValue" type="text" maxlength="20"/>
+                <textarea wicket:id="bookFieldBigValue" cols="20" rows="3"></textarea>
+            </td>
+        </tr>
+    </table>
+    <input type="button" value="Save/Update" wicket:id="saveOrUpdateBook"/>
+    <input type="button" value="Cancel" wicket:id="cancel"/>
+
+</wicket:panel>
