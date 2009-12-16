@@ -11,6 +11,7 @@
 
     <artifactId>vetcontrol-user</artifactId>
     <packaging>jar</packaging>
+    <name>vetcontrol user</name>
 
     <dependencies>
         <dependency>

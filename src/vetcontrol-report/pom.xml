@@ -11,6 +11,7 @@
 
     <artifactId>vetcontrol-report</artifactId>
     <packaging>jar</packaging>
+    <name>vetcontrol report</name>
 
     <dependencies>
         <dependency>

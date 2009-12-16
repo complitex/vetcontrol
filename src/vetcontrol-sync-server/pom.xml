@@ -11,7 +11,7 @@
 
     <artifactId>vetcontrol-sync-server</artifactId>
     <packaging>jar</packaging>
-
+    <name>vetcontrol sync server</name>
     <dependencies>
         <dependency>
             <groupId>org.vetcontrol</groupId>
