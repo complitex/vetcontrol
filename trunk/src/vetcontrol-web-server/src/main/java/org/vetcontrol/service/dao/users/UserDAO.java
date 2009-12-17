@@ -20,6 +20,7 @@ import org.vetcontrol.service.dao.AbstractGenericDAO;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class UserDAO extends AbstractGenericDAO<User, String> implements IUserDAO {
 
+    @Override
     public void prepare(User user) throws SuchRoleDoesNotExistException {
         for (Role role : user.getRoles()) {
             if (getEntityManager().find(Roles.class, role.getId().getRole()) == null) {
@@ -28,6 +29,7 @@ public class UserDAO extends AbstractGenericDAO<User, String> implements IUserDA
         }
     }
 
+    @Override
     public User findByName(String name) {
         return findById(name);
     }

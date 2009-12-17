@@ -10,6 +10,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import org.vetcontrol.model.beans.User;
 import org.vetcontrol.service.dao.users.IUserDAO;
+import org.vetcontrol.service.dao.users.SuchRoleDoesNotExistException;
 
 /**
  *
@@ -26,7 +27,7 @@ public class AddUpdateUserPageFasade extends AbstractFasade {
         return userDAO.findByName(name);
     }
 
-    public void saveOrUpdate(final User user) {
+    public void saveOrUpdate(final User user) throws SuchRoleDoesNotExistException {
         userDAO.prepare(user);
         userDAO.saveOrUpdate(user);
     }

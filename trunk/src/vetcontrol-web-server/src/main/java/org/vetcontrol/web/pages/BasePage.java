@@ -4,8 +4,6 @@
  */
 package org.vetcontrol.web.pages;
 
-import org.vetcontrol.service.factory.fasade.FasadeFactory;
-import org.vetcontrol.service.fasade.pages.AbstractFasade;
 import org.apache.wicket.markup.html.WebPage;
 
 /**
