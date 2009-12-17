@@ -20,6 +20,19 @@
             <version>${parent.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.wicket</groupId>
+            <artifactId>wicket</artifactId>
+            <version>1.4.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.wicket</groupId>
+            <artifactId>wicket-auth-roles</artifactId>
+            <version>1.4.4</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 
