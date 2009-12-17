@@ -36,7 +36,7 @@ import org.apache.wicket.model.PropertyModel;
 @AuthorizeInstantiation(AllRoles.ADMIN)
 public class AddUpdateUserPage extends BasePage {
 
-    @EJB(name="AddUpdateUserPageFasade")
+    @EJB(name = "AddUpdateUserPageFasade")
     private AddUpdateUserPageFasade fasade;
 
     public AddUpdateUserPage() {
@@ -63,17 +63,21 @@ public class AddUpdateUserPage extends BasePage {
 
         IDataProvider provider = new IDataProvider() {
 
+            @Override
             public Iterator iterator(int first, int count) {
                 return user.getRoles().iterator();
             }
 
+            @Override
             public int size() {
                 return user.getRoles().size();
             }
 
+            @Override
             public void detach() {
             }
 
+            @Override
             public IModel model(Object o) {
                 return new Model((Serializable) o);
             }

@@ -5,11 +5,14 @@
 
 package org.vetcontrol.service.dao;
 
+import javax.ejb.ApplicationException;
+
 /**
  *
  * @author Artem
  */
-public class UserException extends RuntimeException {
+@ApplicationException(rollback=true)
+public class UserException extends Exception {
 
     public UserException(String message) {
 	super(message);
