@@ -45,21 +45,21 @@ public class CountryBookTest {
     @Test
     public void saveTest() throws SQLException{
 
-        EntityManagerFactory managerFactory = Persistence.createEntityManagerFactory("applicationPersistenceUnitTest");
-
-        EntityManager entityManager = managerFactory.createEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
-            CountryBook countryBook = new CountryBook("ru");
-            CultureString cs = new CultureString(new CultureStringId("en"), "russia");
-            entityManager.merge(cs);
-            countryBook.addName(cs);
-//            countryBook.addName(new CultureString(new CultureStringId("ru"), "russia2"));
-
-            entityManager.merge(countryBook);
-        transaction.rollback();
-        entityManager.close();
-        managerFactory.close();
+//        EntityManagerFactory managerFactory = Persistence.createEntityManagerFactory("applicationPersistenceUnitTest");
+//
+//        EntityManager entityManager = managerFactory.createEntityManager();
+//        EntityTransaction transaction = entityManager.getTransaction();
+//        transaction.begin();
+//            CountryBook countryBook = new CountryBook("ru");
+//            CultureString cs = new CultureString(new CultureStringId("en"), "russia");
+//            entityManager.merge(cs);
+//            countryBook.addName(cs);
+////            countryBook.addName(new CultureString(new CultureStringId("ru"), "russia2"));
+//
+//            entityManager.merge(countryBook);
+//        transaction.rollback();
+//        entityManager.close();
+//        managerFactory.close();
     }
 
 }
