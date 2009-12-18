@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemadesigner version="6.5">
+<source>
+<database charset="utf8" collation="utf8_general_ci">project1</database>
+</source>
+<canvas zoom="100">
+<tables>
+<table name="book1" view="colnames">
+<left>17</left>
+<top>89</top>
+<width>219</width>
+<height>158</height>
+<sql_create_table>CREATE TABLE `book1` (
+  `key1` int(11) NOT NULL auto_increment,
+  `value1` varchar(20) default NULL,
+  `value2` varchar(20) default NULL,
+  `value3` varchar(100) default NULL,
+  `dateValue` date default NULL,
+  PRIMARY KEY  (`key1`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="book2" view="colnames">
+<left>228</left>
+<top>274</top>
+<width>188</width>
+<height>158</height>
+<sql_create_table>CREATE TABLE `book2` (
+  `key1` int(11) NOT NULL auto_increment,
+  `val1` varchar(20) default NULL,
+  `val2` varchar(50) default NULL,
+  `val3` varchar(50) default NULL,
+  `val4` varchar(100) default NULL,
+  PRIMARY KEY  (`key1`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="node" view="colnames">
+<left>464</left>
+<top>444</top>
+<width>107</width>
+<height>107</height>
+<sql_create_table>CREATE TABLE `node` (
+  `nodeId` int(10) unsigned NOT NULL auto_increment,
+  `nodeName` varchar(45) NOT NULL,
+  PRIMARY KEY  (`nodeId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="role" view="colnames">
+<left>491</left>
+<top>9</top>
+<width>104</width>
+<height>107</height>
+<sql_create_table>CREATE TABLE `role` (
+  `role` varchar(45) NOT NULL,
+  `userName` varchar(45) NOT NULL,
+  PRIMARY KEY  (`role`,`userName`),
+  KEY `roleToUser` (`userName`),
+  CONSTRAINT `roleToRoles` FOREIGN KEY (`role`) REFERENCES `roles` (`name`),
+  CONSTRAINT `roleToUser` FOREIGN KEY (`userName`) REFERENCES `user` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="roles" view="colnames">
+<left>278</left>
+<top>11</top>
+<width>78</width>
+<height>90</height>
+<sql_create_table>CREATE TABLE `roles` (
+  `name` varchar(45) NOT NULL,
+  PRIMARY KEY  (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="user" view="colnames">
+<left>743</left>
+<top>101</top>
+<width>124</width>
+<height>158</height>
+<sql_create_table>CREATE TABLE `user` (
+  `name` varchar(45) NOT NULL,
+  `login` varchar(45) default NULL,
+  `password` varchar(45) NOT NULL,
+  `parentNodeId` int(10) unsigned default NULL,
+  `blocked` tinyint(1) NOT NULL default '0',
+  PRIMARY KEY  (`name`),
+  KEY `userToParentNode` (`parentNodeId`),
+  CONSTRAINT `userToParentNode` FOREIGN KEY (`parentNodeId`) REFERENCES `node` (`nodeId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="CultureString" view="colnames">
+<left>887</left>
+<top>183</top>
+<width>184</width>
+<height>169</height>
+<sql_create_table>CREATE TABLE `culturestring` (
+  `id` int(11) NOT NULL auto_increment,
+  `locale` varchar(2) NOT NULL,
+  `value` varchar(1024) default NULL,
+  PRIMARY KEY  (`id`,`locale`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="CountryBook" view="colnames">
+<left>674</left>
+<top>375</top>
+<width>197</width>
+<height>171</height>
+<sql_create_table>CREATE TABLE `countrybook` (
+  `id` int(11) NOT NULL auto_increment,
+  `code` varchar(2) NOT NULL,
+  `name` int(11) default NULL,
+  PRIMARY KEY  (`id`),
+  KEY `FK_CountryBook_name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC</sql_create_table>
+</table>
+</tables>
+</canvas>
+</schemadesigner>
