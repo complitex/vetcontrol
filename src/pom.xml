@@ -14,7 +14,7 @@
     <modules>
         <module>vetcontrol-commons</module>
         <module>vetcontrol-user</module>
-        <!--<module>vetcontrol-information</module>-->
+        <module>vetcontrol-information</module>
         <module>vetcontrol-document</module>
         <module>vetcontrol-report</module>
         <module>vetcontrol-logging</module>
