@@ -89,6 +89,44 @@ CREATE TABLE `user` (
   CONSTRAINT `userToParentNode` FOREIGN KEY (`parentNodeId`) REFERENCES `node` (`nodeId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+ -- books --
+
+DROP TABLE IF EXISTS `generator`;
+
+create table `generator`(
+   `generatorName` varchar(20) NOT NULL ,
+   `generatorValue` bigint UNSIGNED NOT NULL DEFAULT '0' ,
+   PRIMARY KEY (`generatorName`)
+ )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+/*Table structure for table `countrybook` */
+
+DROP TABLE IF EXISTS `country-book`;
+
+CREATE TABLE `country-book` (
+  `id` int(11) NOT NULL auto_increment,
+  `code` varchar(2) NOT NULL,
+  `name` int(11) default NULL,
+  PRIMARY KEY  (`id`),
+  KEY `FK_CountryBook_name` (`name`),
+  CONSTRAINT `FK_CountryBook_name` FOREIGN KEY (`name`) REFERENCES `string-culture` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Table structure for table `string-culture` */
+
+DROP TABLE IF EXISTS `string-culture`;
+
+CREATE TABLE `string-culture` (
+  `id` int(11) NOT NULL,
+  `locale` varchar(2) NOT NULL,
+  `value` varchar(1024) default NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
