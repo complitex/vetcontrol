@@ -66,7 +66,7 @@
         </dependency>
 
         <!-- wicket -->
-        <!--<dependency>
+        <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket</artifactId>
             <version>1.4.4</version>
@@ -91,7 +91,7 @@
                     <artifactId>cglib-nodep</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>-->
+        </dependency>
         <dependency>
             <groupId>org.wicketstuff</groupId>
             <artifactId>wicket-contrib-javaee</artifactId>
@@ -108,7 +108,7 @@
         </dependency>
 
         <!-- slf4j logging -->
-        <!--<dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.5.10</version>
@@ -132,7 +132,7 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>0.9.18</version>
-        </dependency>-->
+        </dependency>
 
         <!-- Java EE API -->
 
@@ -146,10 +146,8 @@
 
 
 
-
-
         <!-- hibernate -->
-        <!--<dependency>
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
             <version>3.5.0-Beta-2</version>
@@ -167,7 +165,7 @@
                     <artifactId>jta</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>-->
+        </dependency>
         <dependency>
             <groupId>org.hibernate.java-persistence</groupId>
             <artifactId>jpa-api</artifactId>

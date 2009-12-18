@@ -7,6 +7,6 @@ import org.apache.wicket.markup.html.WebPage;
  * User: Anatoly A. Ivanov java@inheaven.ru
  * Date: 16.12.2009 21:32:14
  */
-@AuthorizeInstantiation("ADMIN")
+@AuthorizeInstantiation("USER")
 public class UserHomePage extends WebPage{
 }
