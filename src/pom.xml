@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.vetcontrol</groupId>
@@ -52,6 +52,10 @@
                     <exclude>**/*.java</exclude>
                 </excludes>
             </testResource>
+            <testResource>
+                <filtering>false</filtering>
+                <directory>src/test/resources</directory>
+            </testResource>
         </testResources>
 
         <plugins>
@@ -64,17 +68,34 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
-	    <plugin>
-	        <groupId>org.apache.maven.plugins</groupId>
-	        <artifactId>maven-resources-plugin</artifactId>
-	        <configuration>
-	          <encoding>UTF-8</encoding>
-	        </configuration>
-           </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
 
         </plugins>
     </build>
     <properties>
         <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>glassfish-repository</id>
+            <name>Java.net Repository for Glassfish</name>
+            <url>http://download.java.net/maven/glassfish</url>
+        </repository>
+        <repository>
+            <id>java.net</id>
+            <url>http://download.java.net/maven/2</url>
+        </repository>
+        <repository>
+            <id>jboss</id>
+            <url>http://repository.jboss.com/maven2</url>
+        </repository>
+        
+    </repositories>
 </project>
