@@ -46,3 +46,5 @@ INSERT INTO project1.`role`
 	('DONT_EDIT_ADMIN',
 	'DONT_EDIT_ADMIN'
 	);
+
+INSERT INTO `generator`(`generatorName`, `generatorValue`) VALUES ('books', 0);
