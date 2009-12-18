@@ -19,6 +19,20 @@
             <groupId>org.vetcontrol</groupId>
             <artifactId>vetcontrol-commons</artifactId>
             <version>${parent.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.ejb3</groupId>
+                    <artifactId>jboss-ejb3-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.hibernate.java-persistence</groupId>
+                    <artifactId>jpa-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.vetcontrol</groupId>
@@ -121,7 +135,7 @@
         </dependency>-->
 
         <!-- Java EE API -->
-        
+
 
         <dependency>
             <groupId>org.jboss.ejb3</groupId>
@@ -132,7 +146,7 @@
 
 
 
-        
+
 
         <!-- hibernate -->
         <!--<dependency>
@@ -160,7 +174,7 @@
             <version>2.0-cr-1</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
