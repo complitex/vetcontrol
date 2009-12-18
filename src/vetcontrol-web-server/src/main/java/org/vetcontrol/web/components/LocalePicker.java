@@ -25,14 +25,17 @@ public class LocalePicker extends Panel {
         }
         add(new DropDownChoice("localeDropDown", new IModel<Locale>() {
 
+            @Override
             public Locale getObject() {
                 return getSession().getLocale();
             }
 
+            @Override
             public void setObject(Locale locale) {
                 getSession().setLocale(locale);
             }
 
+            @Override
             public void detach() {
             }
         }, supportedLocales, new ChoiceRenderer<Locale>() {
