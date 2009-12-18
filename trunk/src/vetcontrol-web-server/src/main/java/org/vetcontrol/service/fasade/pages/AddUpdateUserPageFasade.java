@@ -11,6 +11,7 @@ import javax.ejb.TransactionAttributeType;
 import org.vetcontrol.model.beans.User;
 import org.vetcontrol.service.dao.users.IUserDAO;
 import org.vetcontrol.service.dao.users.SuchRoleDoesNotExistException;
+import org.vetcontrol.service.fasade.AbstractFasade;
 
 /**
  *
