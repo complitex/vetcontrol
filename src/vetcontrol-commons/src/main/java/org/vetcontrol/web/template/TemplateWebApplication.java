@@ -12,9 +12,6 @@ import org.vetcontrol.web.security.ServeltAuthWebApplication;
  */
 public abstract class TemplateWebApplication extends ServeltAuthWebApplication {
 
-    protected TemplateWebApplication() {
-    }
-
     public abstract List<Component> getTemplateComponents();
 
     /**

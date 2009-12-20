@@ -1,0 +1,82 @@
+body{
+    background:#EBEBED none repeat scroll 0 0;
+    color:#333333;
+    font-family:Verdana,Tahoma,"BitStream vera Sans",Arial,Helvetica,sans-serif;
+    font-size:12px;
+}
+.fixed {
+    clear:both;
+}
+
+
+#wrap {
+    margin:0 auto;
+    text-align:left;
+    width:960px;
+}
+
+#container{
+    background:#D6D6D6 none repeat scroll 0 0;
+    padding:0 3px 3px;
+}
+
+#logo{
+    float:left;
+    margin:0 15px !important;
+}
+
+#userdetails{
+    padding:7px 10px;
+    float:right;
+}
+
+#exit{
+    padding:7px 10px;
+    float:right;
+}
+
+#sidebar {
+    background:#FFFFFF none repeat scroll 0 0;
+    float:left;
+    margin:10px 0 0;
+    overflow:hidden;
+    width:250px;
+}
+
+#main{
+    background:#FFFFFF none repeat scroll 0 0;
+    float:right;
+    margin:10px 0 0;
+    overflow:hidden;
+    width:690px;                                  
+}
+
+.menu{
+    padding:0 10px 5px;
+}
+
+.menu ul{
+    padding:0 0 0 10px;
+}
+
+.menu h3{
+    background: #cccccc none repeat scroll 0 0;
+    border-bottom:1px solid #999999;    
+    padding:5px 10px;
+}
+
+.menu li{
+    border-bottom:1px solid #E1E7E9;
+    line-height:18px;
+    list-style: none outside none;
+    padding:3px 5px;
+    margin:0 -10px;
+}
+
+#footer{
+    padding:20px;
+    text-align:center;
+}
+
+
+

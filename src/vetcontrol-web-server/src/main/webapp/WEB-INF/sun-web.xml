@@ -4,17 +4,19 @@
     <context-root>/vetcontrol</context-root>
 
     <security-role-mapping>
-        <role-name>admin</role-name>
-        <group-name>admin</group-name>        
+        <role-name>AUTHORIZED</role-name>
+        <group-name>ADMINISTRATORS</group-name>
+        <group-name>DEPARTMENT_OFFICERS</group-name>
+        <group-name>LOCAL_OFFICERS</group-name>
     </security-role-mapping>
-    
-    <class-loader delegate="true"/>
 
-    <jsp-config>
-        <property name="keepgenerated" value="true">
-            <description>Keep a copy of the generated servlet class' java code.</description>
-        </property>
-    </jsp-config>
+    <security-role-mapping>
+        <role-name>USER_EDIT</role-name>
+        <group-name>ADMINISTRATORS</group-name>
+    </security-role-mapping>
 
-
+    <security-role-mapping>
+        <role-name>INFORMATION_EDIT</role-name>
+        <group-name>ADMINISTRATORS</group-name>
+    </security-role-mapping>
 </sun-web-app>

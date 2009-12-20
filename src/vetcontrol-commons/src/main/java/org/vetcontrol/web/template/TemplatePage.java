@@ -7,6 +7,7 @@ import org.apache.wicket.markup.DefaultMarkupResourceStreamProvider;
 import org.apache.wicket.markup.IMarkupResourceStreamProvider;
 import org.apache.wicket.markup.MarkupResourceStream;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.util.resource.IResourceStream;
 
 import java.util.List;
@@ -16,7 +17,6 @@ import java.util.List;
  * Date: 18.12.2009 19:14:31
  */
 public abstract class TemplatePage extends WebPage implements IMarkupResourceStreamProvider{
-    private final DefaultMarkupResourceStreamProvider defaultMarkupResourceStreamProvider;
 
     public TemplatePage() {
         List<Component> components = ((TemplateWebApplication)getApplication()).getTemplateComponents();
@@ -26,7 +26,6 @@ public abstract class TemplatePage extends WebPage implements IMarkupResourceStr
                 add(component);
             }
         }
-        defaultMarkupResourceStreamProvider = new DefaultMarkupResourceStreamProvider();
     }
 
     @Override
@@ -37,6 +36,6 @@ public abstract class TemplatePage extends WebPage implements IMarkupResourceStr
                 return new MarkupResourceStream(templateMarkup, new ContainerInfo(container), containerClass);
             }                                                                                                                            
         }
-        return defaultMarkupResourceStreamProvider.getMarkupResourceStream(container, containerClass);
+        return new DefaultMarkupResourceStreamProvider().getMarkupResourceStream(container, containerClass);
     }
 }
