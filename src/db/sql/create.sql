@@ -100,21 +100,6 @@ create table `generator`(
    PRIMARY KEY (`generatorName`)
  )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
-
-/*Table structure for table `countrybook` */
-
-DROP TABLE IF EXISTS `countrybook`;
-
-CREATE TABLE `countrybook` (
-  `id` int(11) NOT NULL auto_increment,
-  `code` varchar(2) NOT NULL,
-  `name` int(11) default NULL,
-  PRIMARY KEY  (`id`),
-  KEY `FK_CountryBook_name` (`name`),
-  CONSTRAINT `FK_CountryBook_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 /*Table structure for table `string-culture` */
 
 DROP TABLE IF EXISTS `stringculture`;
@@ -126,6 +111,37 @@ CREATE TABLE `stringculture` (
   PRIMARY KEY  (`id`, `locale`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/*Table structure for table `countrybook` */
+
+DROP TABLE IF EXISTS `countrybook`;
+
+CREATE TABLE `countrybook` (
+  `id` int(11) NOT NULL auto_increment,
+  `code` varchar(2) NOT NULL,
+  `name` int(11) NOT NULL,
+  PRIMARY KEY  (`id`),
+  KEY `FK_countrybook_name` (`name`),
+  CONSTRAINT `FK_countrybook_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Table structure for table `registeredproducts` */
+
+DROP TABLE IF EXISTS `registeredproducts`;
+
+CREATE TABLE `registeredproducts` (
+  `id` int(11) NOT NULL auto_increment,
+  `name` int(11) NOT NULL,
+  `classificator` int(11) NOT NULL,
+  `vendor` varchar(50) NOT NULL,
+  `country` varchar(2) NOT NULL,
+  `regnumber` varchar(50) NOT NULL,
+  `date` date NOT NULL,
+  PRIMARY KEY  (`id`),
+  KEY `FK_registeredproducts_name` (`name`),
+  CONSTRAINT `FK_registeredproducts_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+  KEY `FK_registeredproducts_classificator` (`classificator`),
+  CONSTRAINT `FK_registeredproducts_classificator` FOREIGN KEY (`classificator`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
