@@ -93,7 +93,7 @@
   `id` int(11) NOT NULL,
   `locale` varchar(2) NOT NULL,
   `value` varchar(1024) default NULL,
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`,`locale`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
 </table>
 <table name="country-book" view="colnames">

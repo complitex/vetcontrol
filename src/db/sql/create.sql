@@ -104,26 +104,26 @@ create table `generator`(
 
 /*Table structure for table `countrybook` */
 
-DROP TABLE IF EXISTS `country-book`;
+DROP TABLE IF EXISTS `countrybook`;
 
-CREATE TABLE `country-book` (
+CREATE TABLE `countrybook` (
   `id` int(11) NOT NULL auto_increment,
   `code` varchar(2) NOT NULL,
   `name` int(11) default NULL,
   PRIMARY KEY  (`id`),
   KEY `FK_CountryBook_name` (`name`),
-  CONSTRAINT `FK_CountryBook_name` FOREIGN KEY (`name`) REFERENCES `string-culture` (`id`)
+  CONSTRAINT `FK_CountryBook_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `string-culture` */
 
-DROP TABLE IF EXISTS `string-culture`;
+DROP TABLE IF EXISTS `stringculture`;
 
-CREATE TABLE `string-culture` (
+CREATE TABLE `stringculture` (
   `id` int(11) NOT NULL,
   `locale` varchar(2) NOT NULL,
   `value` varchar(1024) default NULL,
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`, `locale`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
