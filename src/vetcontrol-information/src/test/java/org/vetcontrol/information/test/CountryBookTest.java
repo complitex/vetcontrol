@@ -5,6 +5,7 @@ package org.vetcontrol.information.test;
  * and open the template in the editor.
  */
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -13,6 +14,7 @@ import javax.persistence.Persistence;
 import org.junit.Assert;
 import org.junit.Test;
 import org.vetcontrol.information.model.CountryBook;
+import org.vetcontrol.information.model.Registeredproducts;
 import org.vetcontrol.information.model.StringCulture;
 import org.vetcontrol.information.model.StringCultureId;
 import org.vetcontrol.information.service.dao.BookDAO;
@@ -75,11 +77,19 @@ public class CountryBookTest {
         bookDAO.setSequence(s);
         bookDAO.setEntityManager(entityManager);
 
+        //1 countries
         CountryBook book = new CountryBook("en");
         book.addName(new StringCulture(new StringCultureId("en"), "england"));
         book.addName(new StringCulture(new StringCultureId("ru"), "england2"));
 
+        //2 registered products
+        Registeredproducts r = new Registeredproducts("Vendor", "uk", "abc123", new Date());
+        r.addName(new StringCulture(new StringCultureId("en"), "milk"));
+        r.addName(new StringCulture(new StringCultureId("uk"), "milk2"));
+        r.addClassificator(new StringCulture(new StringCultureId("en"), "class #1"));
+
         bookDAO.saveBook(book);
+        bookDAO.saveBook(r);
 
         transaction.commit();
         entityManager.close();
@@ -140,12 +150,9 @@ public class CountryBookTest {
         bookDAO.setSequence(s);
         bookDAO.setEntityManager(entityManager);
 
-        CountryBook book = bookDAO.getBookContent(CountryBook.class).get(0);
-        entityManager.remove(book);
-
-        for (StringCulture culture : book.getNames()) {
-            entityManager.remove(culture);
-        }
+        entityManager.createNativeQuery("DELETE FROM countrybook").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM registeredproducts").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM stringculture").executeUpdate();
 
         transaction.commit();
         entityManager.close();
@@ -153,9 +160,10 @@ public class CountryBookTest {
 
     @Test
     public void allTest() {
+        cleanUp();
         saveTest();
         getBookContentTest();
         updateTest();
-        cleanUp();
+        
     }
 }

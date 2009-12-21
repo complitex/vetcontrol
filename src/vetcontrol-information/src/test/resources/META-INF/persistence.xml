@@ -5,6 +5,7 @@
 
         <class>org.vetcontrol.information.model.Generator</class>
         <class>org.vetcontrol.information.model.CountryBook</class>
+         <class>org.vetcontrol.information.model.Registeredproducts</class>
         <class>org.vetcontrol.information.model.StringCulture</class>
 
         <properties>
