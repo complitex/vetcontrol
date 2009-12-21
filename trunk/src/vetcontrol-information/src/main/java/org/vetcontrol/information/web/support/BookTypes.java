@@ -5,9 +5,12 @@
 package org.vetcontrol.information.web.support;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.vetcontrol.information.model.Book1;
 import org.vetcontrol.information.model.Book2;
+import org.vetcontrol.information.model.CountryBook;
+import org.vetcontrol.information.model.Registeredproducts;
 
 /**
  *
@@ -15,11 +18,12 @@ import org.vetcontrol.information.model.Book2;
  */
 public class BookTypes {
 
-    private static final List<Class<?>> BOOK_TYPES = Arrays.asList(new Class<?>[]{
-        Book1.class,
-        Book2.class,
-    });
-    
+    public static final List<Class<?>> BOOK_TYPES = Collections.unmodifiableList(Arrays.asList(new Class<?>[]{
+        CountryBook.class,
+        Registeredproducts.class,
+    }));
+
+    @Deprecated
     public static List<Class<?>> getBookTypes() {
        return BOOK_TYPES;
     }
