@@ -11,7 +11,7 @@ import javax.ejb.EJB;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
-import org.vetcontrol.information.web.components.BookEntryFormControl;
+import org.vetcontrol.information.web.component.BookEntryFormControl;
 import org.vetcontrol.web.pages.BasePage;
 
 /**

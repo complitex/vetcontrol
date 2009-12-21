@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.vetcontrol.information.web.components;
+package org.vetcontrol.information.web.component;
 
 import java.beans.IntrospectionException;
 import java.io.Serializable;
