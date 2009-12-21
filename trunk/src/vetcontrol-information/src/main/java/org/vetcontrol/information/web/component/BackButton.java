@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.vetcontrol.information.web.components;
+package org.vetcontrol.information.web.component;
 
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.SubmitLink;

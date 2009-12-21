@@ -17,7 +17,7 @@ import org.apache.wicket.markup.html.form.SubmitLink;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.vetcontrol.information.service.fasade.pages.BookPageFasade;
-import org.vetcontrol.information.web.components.BookContentControl;
+import org.vetcontrol.information.web.component.BookContentControl;
 import org.vetcontrol.web.pages.BasePage;
 import org.vetcontrol.information.web.support.BookTypes;
 
