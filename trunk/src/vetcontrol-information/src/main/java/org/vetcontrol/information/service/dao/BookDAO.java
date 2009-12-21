@@ -87,13 +87,9 @@ public class BookDAO extends AbstractGenericDAO<Serializable, Serializable> impl
                     }
                 }
             }
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-
-
         return results;
     }
 
@@ -119,7 +115,6 @@ public class BookDAO extends AbstractGenericDAO<Serializable, Serializable> impl
                 }
             }
 
-
             for (PropertyDescriptor prop : mappedProperties.keySet()) {
                 PropertyDescriptor mappedProperty = mappedProperties.get(prop);
                 Method getter = prop.getReadMethod();
@@ -138,9 +133,8 @@ public class BookDAO extends AbstractGenericDAO<Serializable, Serializable> impl
                 for (StringCulture stringCulture : localizableStrings) {
                     getEntityManager().merge(stringCulture);
                 }
-                getEntityManager().merge(book);
-
             }
+            getEntityManager().merge(book);
 
         } catch (Exception e) {
             throw new RuntimeException(e);
