@@ -6,12 +6,18 @@ package org.vetcontrol.information.web.component;
 
 import java.io.Serializable;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.ResourceModel;
+import org.odlabs.wiquery.core.events.Event;
+import org.odlabs.wiquery.core.events.MouseEvent;
+import org.odlabs.wiquery.core.events.WiQueryEventBehavior;
+import org.odlabs.wiquery.core.javascript.JsQuery;
+import org.odlabs.wiquery.core.javascript.JsScope;
 import org.vetcontrol.information.web.support.BookTypes;
 
 /**
@@ -29,7 +35,21 @@ public final class BooksPanel extends Panel {
 
     private void init() {
 
-        add(new ListView<Class>("Books", BookTypes.BOOK_TYPES) {
+       WebMarkupContainer expand = new WebMarkupContainer("Expand");
+       final WebMarkupContainer content = new WebMarkupContainer("Content");
+
+       expand.add(new WiQueryEventBehavior(new Event(MouseEvent.CLICK) {
+
+            @Override
+            public JsScope callback() {
+                return JsScope.quickScope(new JsQuery(content).$().chain("toggle", "'slow'").render());
+            }
+        }));
+        add(expand);
+
+
+        add(content);
+        content.add(new ListView<Class>("Books", BookTypes.BOOK_TYPES) {
 
             @Override
             protected void populateItem(ListItem<Class> item) {

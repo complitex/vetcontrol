@@ -10,7 +10,9 @@ import org.vetcontrol.server.web.template.Template;
 import org.vetcontrol.web.template.TemplateWebApplication;
 
 import java.util.List;
+import org.odlabs.wiquery.core.commons.WiQueryInstantiationListener;
 import org.vetcontrol.server.web.component.AvailableBooksPanel;
+import org.wicketstuff.javaee.injection.JavaEEComponentInjector;
 
 /**
  * User: Anatoly A. Ivanov java@inheaven.ru
@@ -18,18 +20,22 @@ import org.vetcontrol.server.web.component.AvailableBooksPanel;
  */
 public class VetcontrolWebApplication extends TemplateWebApplication{
 
-    private List<Component> templateComponents = new ArrayList<Component>();
+    private List<Component> templateComponents;
 
     @Override
     protected void init() {
+        addComponentInstantiationListener(new WiQueryInstantiationListener());
+        addComponentInstantiationListener(new JavaEEComponentInjector(this));
         super.init();
 
-        addBooksPanelComponent();
         // TODO: add locale support, menu visible by role, header info
     }
 
     @Override
     public List<Component> getTemplateComponents() {        
+        templateComponents = new ArrayList<Component>();
+        templateComponents.add(new AvailableBooksPanel("BooksPanel"));
+
         return templateComponents;
     }
 
@@ -43,7 +49,4 @@ public class VetcontrolWebApplication extends TemplateWebApplication{
         return HomePage.class;
     }
 
-    private void addBooksPanelComponent() {
-        templateComponents.add(new AvailableBooksPanel("BooksPanel"));
-    }
 }

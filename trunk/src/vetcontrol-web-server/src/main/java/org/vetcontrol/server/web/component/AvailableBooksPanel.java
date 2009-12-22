@@ -37,6 +37,7 @@ public final class AvailableBooksPanel extends Panel {
             Class c = Thread.currentThread().getContextClassLoader().loadClass(BOOK_PANEL_CLASS_NAME);
             Constructor constr = c.getConstructor(String.class);
             Object o = constr.newInstance("BooksPanel");
+            return (Panel)o;
         } catch (Exception e) {
         }
         return new EmptyPanel("BooksPanel");
