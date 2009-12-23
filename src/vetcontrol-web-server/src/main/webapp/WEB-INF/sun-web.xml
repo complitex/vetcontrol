@@ -8,6 +8,7 @@
         <group-name>ADMINISTRATORS</group-name>
         <group-name>DEPARTMENT_OFFICERS</group-name>
         <group-name>LOCAL_OFFICERS</group-name>
+        <group-name>MOBILE_OFFICERS</group-name>
     </security-role-mapping>
 
     <security-role-mapping>
