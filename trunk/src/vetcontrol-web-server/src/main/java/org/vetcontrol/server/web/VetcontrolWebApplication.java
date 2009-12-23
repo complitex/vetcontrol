@@ -3,7 +3,6 @@ package org.vetcontrol.server.web;
 import org.apache.wicket.Page;
 import org.odlabs.wiquery.core.commons.WiQueryInstantiationListener;
 import org.vetcontrol.server.web.pages.HomePage;
-import org.vetcontrol.user.web.pages.UserList;
 import org.vetcontrol.web.template.TemplateWebApplication;
 import org.wicketstuff.javaee.injection.JavaEEComponentInjector;
 
@@ -22,6 +21,6 @@ public class VetcontrolWebApplication extends TemplateWebApplication {
 
     @Override
     public Class<? extends Page> getHomePage() {
-        return UserList.class;
+        return HomePage.class;
     }
 }
