@@ -7,20 +7,18 @@ package org.vetcontrol.information.web.component;
 import java.beans.IntrospectionException;
 import java.util.Date;
 import java.util.List;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.FormComponentPanel;
 import org.apache.wicket.markup.html.form.SubmitLink;
-import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
-import org.odlabs.wiquery.ui.datepicker.DatePicker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vetcontrol.information.util.web.BeanPropertiesFilter;
+import org.vetcontrol.information.util.web.BeanPropertiesUtil;
 import org.vetcontrol.information.util.web.Property;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 
@@ -31,120 +29,78 @@ import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 public abstract class BookEntryFormControl extends FormComponentPanel {
 
     private static final Logger log = LoggerFactory.getLogger(BookEntryFormControl.class);
-    private static final int TEXT_LENGTH_LIMIT = 30;
 
     public BookEntryFormControl(String id, final IModel model) throws IntrospectionException {
         super(id, model);
 
-        try {
-            List<Property> filtered = BeanPropertiesFilter.filter(model.getObject().getClass());
+        List<Property> filtered = BeanPropertiesUtil.filter(model.getObject().getClass());
 
-            add(new ListView<Property>("bookFields", filtered) {
+        add(new ListView<Property>("bookFields", filtered) {
 
-                @Override
-                protected void populateItem(ListItem<Property> item) {
-                    Property prop = item.getModelObject();
+            @Override
+            protected void populateItem(ListItem<Property> item) {
+                Property prop = item.getModelObject();
 
-                    item.add(new Label("bookFieldDesc", new DisplayPropertyLocalizableModel(model.getObject().getClass(), prop.getName())));
+                item.add(new Label("bookFieldDesc", new DisplayPropertyLocalizableModel(model.getObject().getClass(), prop.getName())));
 
-                    boolean writable = true;
-                    boolean readable = false;
-                    boolean isTextField = false;
-                    boolean isTextArea = false;
-                    boolean isDateField = false;
+                boolean isSimpleText = false;
+                boolean isDate = false;
+                boolean isLocalizableText = false;
 
-
-
-                    if (prop.isReadable()) {
-                        readable = true;
-                        if (!prop.isWritable()) {
-                            writable = false;
-                        } else {
-                            if (prop.getType().equals(String.class)) {
-                                if (prop.getLength() > TEXT_LENGTH_LIMIT) {
-                                    //it is text area
-                                    isTextArea = true;
-                                } else {
-                                    //it is text field
-                                    isTextField = true;
-                                }
-                            } else if (prop.getType().equals(int.class) || prop.getType().equals(Integer.class) || prop.getType().equals(long.class) || prop.getType().equals(Long.class)) {
-                                //it is text field
-                                isTextField = true;
-                            } else if (Date.class.isAssignableFrom(prop.getType())) {
-                                //it is date field
-                                isDateField = true;
-                            }
-                        }
-                    }
-
-                    TextField textField = new TextField("bookFieldValue");
-                    TextArea textArea = new TextArea("bookFieldBigValue");
-                    DatePicker<Date> dateField = new DatePicker<Date>("bookFieldValue");
-
-                    if (readable) {
-                        textField.setModel(new PropertyModel(model, prop.getName()));
-                        textArea.setModel(new PropertyModel(model, prop.getName()));
-                        dateField.setModel(new PropertyModel(model, prop.getName()));
-                    }
-
-                    textField.setEnabled(writable);
-                    textArea.setEnabled(writable);
-                    dateField.setEnabled(writable);
-
-                    textField.setRequired(!prop.isNullable());
-                    textArea.setRequired(!prop.isNullable());
-                    dateField.setRequired(!prop.isNullable());
-
-                    //choose what to add text field or date field?
-                    if (isDateField) {
-                        dateField.setButtonImage("images/calendar.gif");
-                        dateField.setButtonImageOnly(true);
-                        dateField.setShowOn(DatePicker.ShowOnEnum.BOTH);
-
-                        item.add(dateField);
-                    } else {
-                        if (prop.getLength() != 0) {
-                            textField.add(new SimpleAttributeModifier("maxlength", String.valueOf(prop.getLength())));
-                        }
-
-                        item.add(textField);
-                    }
-                    item.add(textArea);
-
-                    //choose what field is not visible:
-                    if (isTextField || isDateField) {
-                        textArea.setVisible(false);
-                    } else {
-                        textField.setVisible(false);
-                        dateField.setVisible(false);
-                    }
-
+                if (prop.getType().equals(String.class) || prop.getType().equals(int.class) || prop.getType().equals(Integer.class)
+                        || prop.getType().equals(long.class) || prop.getType().equals(Long.class)) {
+                    isSimpleText = true;
+                } else if (Date.class.isAssignableFrom(prop.getType())) {
+                    isDate = true;
+                } else if (prop.isLocalizable()) {
+                    isLocalizableText = true;
                 }
-            });
 
-            add(
-                    new SubmitLink("saveOrUpdateBook") {
+                IModel m = new PropertyModel(model, prop.getName());
 
-                        @Override
-                        public void onSubmit() {
-                            saveOrUpdate();
-                        }
-                    });
+                Panel datePanel = null;
+                Panel textPanel = null;
+                Panel localizableTextPanel = null;
+                //choose what panel is editable:
+                if (isSimpleText) {
+                    textPanel = new TextPanel("textPanel", m, prop);
+                    datePanel = new EmptyPanel("datePanel");
+                    localizableTextPanel = new EmptyPanel("localizableTextPanel");
+                } else if (isLocalizableText) {
+                    textPanel = new EmptyPanel("textPanel");
+                    datePanel = new EmptyPanel("datePanel");
+                    localizableTextPanel = new LocalizableTextPanel("localizableTextPanel", m, prop);
+                } else if (isDate) {
+                    textPanel = new EmptyPanel("textPanel");
+                    datePanel = new DatePanel("datePanel", m, prop);
+                    localizableTextPanel = new EmptyPanel("localizableTextPanel");
+                }
 
-            add(
-                    new SubmitLink("cancel") {
+                item.add(datePanel);
+                item.add(textPanel);
+                item.add(localizableTextPanel);
 
-                        @Override
-                        public void onSubmit() {
-                            cancel();
-                        }
-                    }.setDefaultFormProcessing(
-                    false));
-        } catch (IntrospectionException e) {
-            log.error("", e);
-            throw e;
-        }
+            }
+        });
+
+        add(
+                new SubmitLink("saveOrUpdateBook") {
+
+                    @Override
+                    public void onSubmit() {
+                        saveOrUpdate();
+                    }
+                });
+
+        add(
+                new SubmitLink("cancel") {
+
+                    @Override
+                    public void onSubmit() {
+                        cancel();
+                    }
+                }.setDefaultFormProcessing(
+                false));
     }
 
     public abstract void saveOrUpdate();

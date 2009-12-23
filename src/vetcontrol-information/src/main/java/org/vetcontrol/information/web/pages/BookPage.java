@@ -6,18 +6,25 @@ package org.vetcontrol.information.web.pages;
 
 import java.beans.IntrospectionException;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import javax.ejb.EJB;
 import org.apache.wicket.MetaDataKey;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilterStateLocator;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.SubmitLink;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.vetcontrol.information.service.fasade.pages.BookPageFasade;
 import org.vetcontrol.information.web.component.BookContentControl;
+import org.vetcontrol.information.web.component.LocalePicker;
 import org.vetcontrol.web.pages.BasePage;
 import org.vetcontrol.information.web.support.BookTypes;
 
@@ -27,44 +34,88 @@ import org.vetcontrol.information.web.support.BookTypes;
  */
 public class BookPage extends BasePage {
 
-    @EJB(name="BookPageFasade")
-    private BookPageFasade fasade;
+    public class DataProvider implements IDataProvider<Serializable>, IFilterStateLocator {
 
+        private Serializable filterBean;
+        private int size;
+
+        public DataProvider() throws InstantiationException, IllegalAccessException {
+            filterBean = bookType.newInstance();
+        }
+
+        @Override
+        public Iterator<Serializable> iterator(int first, int count) {
+            return fasade.getBookContent(bookType, first, count).iterator();
+        }
+
+        @Override
+        public int size() {
+            return size;
+        }
+
+        @Override
+        public IModel model(Serializable object) {
+            return new Model(object);
+        }
+
+        @Override
+        public void detach() {
+        }
+
+        @Override
+        public Object getFilterState() {
+            return filterBean;
+        }
+
+        @Override
+        public void setFilterState(Object state) {
+            this.filterBean = (Serializable) state;
+        }
+
+        public void init() {
+            Long localSize = fasade.size(bookType);
+            size = localSize == null ? 0 : localSize.intValue();
+        }
+    }
+    @EJB(name = "BookPageFasade")
+    private BookPageFasade fasade;
     public static final MetaDataKey SELECTED_BOOK_ENTRY = new MetaDataKey() {
     };
-    private static final MetaDataKey<Class<?>> SELECTED_BOOK_TYPE = new MetaDataKey<Class<?>>() {
+    private static final MetaDataKey<Class> SELECTED_BOOK_TYPE = new MetaDataKey<Class>() {
     };
-    private Class<?> bookType;
-    private List<Serializable> list;
+    private Class<Serializable> bookType;
+    private DataProvider dataProvider;
 
-    public BookPage() throws IntrospectionException {
+    public BookPage() throws IntrospectionException, InstantiationException, IllegalAccessException {
 
-        List<Class<?>> bookTypies = BookTypes.getBookTypes();
+        List<Class> bookTypies = BookTypes.BOOK_TYPES;
         if (getSession().getMetaData(SELECTED_BOOK_TYPE) == null) {
             bookType = bookTypies.get(0);
         } else {
             bookType = getSession().getMetaData(SELECTED_BOOK_TYPE);
         }
 
+        add(new LocalePicker("localePicker", Arrays.asList(new Locale[]{Locale.ENGLISH, new Locale("ru")})));
+
         final Form form = new Form("form");
         add(form);
 
-
+        dataProvider = new DataProvider();
 
         initBookContentList();
         addBookContent(form);
 
-        final DropDownChoice types = new DropDownChoice<Class<?>>("type", new PropertyModel<Class<?>>(this, "bookType"), bookTypies,
-                new ChoiceRenderer<Class<?>>("simpleName", "name")) {
+        final DropDownChoice types = new DropDownChoice<Class>("type", new PropertyModel<Class>(this, "bookType"), bookTypies,
+                new ChoiceRenderer<Class>("simpleName", "name")) {
 
             @Override
-            protected void onSelectionChanged(Class<?> newSelection) {
+            protected void onSelectionChanged(Class newSelection) {
                 form.remove("bookContent");
                 initBookContentList();
                 try {
                     addBookContent(form);
                     getSession().setMetaData(SELECTED_BOOK_TYPE, bookType);
-                } catch (IntrospectionException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -93,9 +144,8 @@ public class BookPage extends BasePage {
     }
 
     private void addBookContent(final Form form) throws IntrospectionException {
-        if (list != null && !list.isEmpty()) {
-            final IModel<List<Serializable>> model = new PropertyModel<List<Serializable>>(this, "list");
-            final BookContentControl bookContent = new BookContentControl("bookContent", model, bookType.getSimpleName()) {
+        if (dataProvider.size() != 0) {
+            final BookContentControl bookContent = new BookContentControl("bookContent", dataProvider, bookType.getSimpleName()) {
 
                 @Override
                 public void selected(Serializable obj) {
@@ -103,13 +153,13 @@ public class BookPage extends BasePage {
                 }
             };
             form.add(bookContent);
-        }else{
+        } else {
             form.add(new Label("bookContent", "This book is empty."));
         }
     }
 
     private void initBookContentList() {
-        list = fasade.getBookContent(bookType);
+        dataProvider.init();
     }
 
     private void goToEditPage(Serializable entry) {

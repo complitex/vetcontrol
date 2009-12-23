@@ -13,16 +13,21 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColu
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.HeadersToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.NavigationToolbar;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterForm;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterToolbar;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.TextFilteredPropertyColumn;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.vetcontrol.information.util.web.BeanPropertiesFilter;
+import org.vetcontrol.information.util.web.BeanPropertiesUtil;
+import org.vetcontrol.information.util.web.Constants;
 import org.vetcontrol.information.util.web.Property;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
+import org.vetcontrol.information.web.pages.BookPage.DataProvider;
 
 /**
  *
@@ -45,22 +50,19 @@ public abstract class BookContentControl extends Panel {
         }
     }
 
-    public BookContentControl(String id, final IModel<List<Serializable>> content, String bookName) throws IntrospectionException {
+    
+
+    public BookContentControl(String id, final DataProvider dataProvider, String bookName) throws IntrospectionException {
         super(id);
 
         add(new Label("bookName", bookName));
-
-        if (content == null || content.getObject() == null) {
-            throw new IllegalArgumentException("model must be not null.");
-        }
-
-        List<Serializable> list = content.getObject();
-
+        
+        Iterator it = dataProvider.iterator(0, 1);
         List<IColumn<Serializable>> columns = new ArrayList<IColumn<Serializable>>();
-        if (!list.isEmpty()) {
-            Object first = list.get(0);
-            for (Property prop : BeanPropertiesFilter.filter(first.getClass())) {
-                columns.add(new TitledPropertyColumn<Serializable>(new DisplayPropertyLocalizableModel(first.getClass(), prop.getName()), prop.getName()));
+        if (it.hasNext()) {
+            Object first = it.next();
+            for (Property prop : BeanPropertiesUtil.filter(first.getClass())) {
+                columns.add(new TitledPropertyColumn<Serializable>(new DisplayPropertyLocalizableModel(first.getClass(), prop.getName()), prop));
             }
             columns.add(new AbstractColumn(new Model("Edit")) {
 
@@ -69,26 +71,16 @@ public abstract class BookContentControl extends Panel {
                     cellItem.add(new EditPanel(componentId, rowModel));
                 }
             });
+            columns.add(new TextFilteredPropertyColumn(new Model("ID"), "id"));
         }
-        DataTable table = new DataTable("table", columns.toArray(new IColumn[columns.size()]), new IDataProvider<Serializable>() {
-
-            public Iterator<Serializable> iterator(int first, int count) {
-                return content.getObject().listIterator(first);
-            }
-
-            public int size() {
-                return content.getObject().size();
-            }
-
-            public IModel model(Serializable object) {
-                return new Model(object);
-            }
-
-            public void detach() {
-            }
-        }, 10);
+        DataTable table = new DataTable("table", columns.toArray(new IColumn[columns.size()]), dataProvider, Constants.ROWS_PER_PAGE);
         table.addTopToolbar(new HeadersToolbar(table, null));
-        add(table);
+        final FilterForm filterForm = new FilterForm("filterForm", dataProvider);
+        table.addTopToolbar(new FilterToolbar(table, filterForm, dataProvider));
+        filterForm.add(table);
+        table.addBottomToolbar(new NavigationToolbar(table));
+//        add(table);
+        add(filterForm);
     }
 
     public abstract void selected(Serializable obj);

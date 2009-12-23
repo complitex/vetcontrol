@@ -18,18 +18,19 @@ import org.vetcontrol.information.model.Registeredproducts;
 import org.vetcontrol.information.model.StringCulture;
 import org.vetcontrol.information.model.StringCultureId;
 import org.vetcontrol.information.service.dao.BookDAO;
+import org.vetcontrol.information.service.fasade.pages.BookPageFasade;
 import org.vetcontrol.information.service.generator.Sequence;
 
 /**
  *
  * @author Artem
  */
-public class CountryBookTest {
+public class BooksTest {
 
     private static final String PERSISTENCE_UNIT_NAME = "applicationPersistenceUnitTest";
     private EntityManagerFactory managerFactory;
 
-    public CountryBookTest() {
+    public BooksTest() {
     }
 
     @org.junit.BeforeClass
@@ -88,8 +89,8 @@ public class CountryBookTest {
         r.addName(new StringCulture(new StringCultureId("uk"), "milk2"));
         r.addClassificator(new StringCulture(new StringCultureId("en"), "class #1"));
 
-        bookDAO.saveBook(book);
-        bookDAO.saveBook(r);
+        bookDAO.saveOrUpdate(book);
+        bookDAO.saveOrUpdate(r);
 
         transaction.commit();
         entityManager.close();
@@ -108,7 +109,7 @@ public class CountryBookTest {
         bookDAO.setSequence(s);
         bookDAO.setEntityManager(entityManager);
 
-        List<CountryBook> books = bookDAO.getBookContent(CountryBook.class);
+        List<CountryBook> books = bookDAO.getBookContent(CountryBook.class, 0, 2);
 
         Assert.assertEquals(1, books.size());
         CountryBook book = books.get(0);
@@ -130,10 +131,10 @@ public class CountryBookTest {
         bookDAO.setSequence(s);
         bookDAO.setEntityManager(entityManager);
 
-        CountryBook book = bookDAO.getBookContent(CountryBook.class).get(0);
+        CountryBook book = bookDAO.getBookContent(CountryBook.class, 0, 2).get(0);
         StringCulture culture = book.getNames().get(0);
         culture.setValue("england_new");
-        bookDAO.saveBook(book);
+        bookDAO.saveOrUpdate(book);
 
         transaction.commit();
         entityManager.close();
@@ -164,6 +165,5 @@ public class CountryBookTest {
         saveTest();
         getBookContentTest();
         updateTest();
-        
     }
 }

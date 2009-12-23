@@ -19,14 +19,24 @@ import org.vetcontrol.service.fasade.AbstractFasade;
  * @author Artem
  */
 @Stateless(name="BookPageFasade")
-@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+
 public class BookPageFasade extends AbstractFasade{
 
-    @EJB
     private IBookDAO bookDAO;
 
-    public List<Serializable> getBookContent(final Class bookType) {
-        return bookDAO.getBookContent(bookType);
+    @EJB
+    public void setBookDAO(IBookDAO bookDAO) {
+        this.bookDAO = bookDAO;
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public <T> List<T> getBookContent(Class<T> bookType, int first, int count) {
+        return bookDAO.getBookContent(bookType, first, count);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public Long size(Class bookType){
+        return bookDAO.size(bookType);
     }
 
 }
