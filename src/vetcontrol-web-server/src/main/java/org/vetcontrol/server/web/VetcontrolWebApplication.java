@@ -3,7 +3,9 @@ package org.vetcontrol.server.web;
 import org.apache.wicket.Page;
 import org.odlabs.wiquery.core.commons.WiQueryInstantiationListener;
 import org.vetcontrol.server.web.pages.HomePage;
+import org.vetcontrol.user.web.pages.UserList;
 import org.vetcontrol.web.template.TemplateWebApplication;
+import org.wicketstuff.javaee.injection.JavaEEComponentInjector;
 
 /**
  * User: Anatoly A. Ivanov java@inheaven.ru
@@ -15,10 +17,11 @@ public class VetcontrolWebApplication extends TemplateWebApplication {
     protected void init() {
         super.init();
         addComponentInstantiationListener(new WiQueryInstantiationListener());
+        addComponentInstantiationListener(new JavaEEComponentInjector(this));
     }
 
     @Override
     public Class<? extends Page> getHomePage() {
-        return HomePage.class;
+        return UserList.class;
     }
 }
