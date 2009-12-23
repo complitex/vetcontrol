@@ -1,23 +1,29 @@
 package org.vetcontrol.web.template;
 
-import java.util.List;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.util.resource.IResourceStream;
 import org.vetcontrol.web.security.ServeltAuthWebApplication;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * User: Anatoly A. Ivanov java@inheaven.ru
- * Date: 18.12.2009 19:15:05
+ * Date: 22.12.2009 21:18:32
  */
-public abstract class TemplateWebApplication extends ServeltAuthWebApplication {
+public abstract class TemplateWebApplication extends ServeltAuthWebApplication{
+    private final static String templatePath = "/WEB-INF/vetcontrol-template.xml";
+    private TemplateLoader templateLoader;
 
-    public abstract List<Component> getTemplateComponents();
+    @Override
+    protected void init() {
+        super.init();
 
-    /**
-     * Example: return UrlResourceStream(MyPage.class.getResource("template.html"));
-     * @return Template markup resource stream
-     */
-    public abstract IResourceStream getTemplateMarkup();
-    
+        InputStream inputStream = getServletContext().getResourceAsStream(templatePath);
+        if (inputStream != null){
+            templateLoader = new TemplateLoader(inputStream);
+        }
+    }
+
+    public TemplateLoader getTemplateLoader() {
+        return templateLoader;
+    }
 }
