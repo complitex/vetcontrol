@@ -11,8 +11,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
-import org.hibernate.ejb.EntityManagerImpl;
 import org.vetcontrol.information.model.Generator;
+import org.vetcontrol.information.util.service.dao.HibernateSessionTransformer;
 
 /**
  *
@@ -32,7 +32,7 @@ public class Sequence {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public long next() {
 
-        Session session = ((EntityManagerImpl)em).getSession();
+        Session session = HibernateSessionTransformer.getSession(em);
 
         Generator g = (Generator)session.get(Generator.class, BOOK_GENERATOR, LockMode.UPGRADE);
         g.setGeneratorValue(g.getGeneratorValue() + 1);

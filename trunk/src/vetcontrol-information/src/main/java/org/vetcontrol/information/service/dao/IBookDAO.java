@@ -8,20 +8,24 @@ package org.vetcontrol.information.service.dao;
 import java.io.Serializable;
 import java.util.List;
 import javax.ejb.Local;
+import javax.persistence.EntityManager;
 import org.vetcontrol.information.service.generator.Sequence;
-import org.vetcontrol.service.dao.GenericDAO;
 
 /**
  *
  * @author Artem
  */
 @Local
-public interface IBookDAO extends GenericDAO<Serializable, Serializable> {
+public interface IBookDAO {
 
     void setSequence(Sequence sequence);
 
-    <T> List<T> getBookContent(Class<T> bookType);
+    <T> List<T> getBookContent(Class<T> bookType, int first, int count);
 
-    void saveBook(Serializable book);
+    Long size(Class bookType);
+
+    void saveOrUpdate(Serializable book);
+
+    void setEntityManager(EntityManager em);
 
 }

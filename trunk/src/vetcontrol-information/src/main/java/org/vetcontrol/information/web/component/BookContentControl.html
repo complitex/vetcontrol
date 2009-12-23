@@ -11,11 +11,15 @@ and open the template in the editor.
     <body>
     <wicket:panel>
         <h3><span>Content of <span wicket:id="bookName"></span> book</span></h3>
-        <table border="1" wicket:id="table">
-            <tr>
-                <td>Test</td>
-            </tr>
-        </table>
+        <form wicket:id="filterForm">
+            <table border="1" wicket:id="table">
+                <tr>
+                    <td>Test</td>
+                </tr>
+            </table>\
+            <input wicket:id="focus-tracker" type="hidden"/>
+            <div wicket:id="focus-restore"></div>
+        </form>
     </wicket:panel>
 </body>
 </html>
