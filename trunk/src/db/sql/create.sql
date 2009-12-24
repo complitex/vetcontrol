@@ -52,44 +52,49 @@ CREATE TABLE `node` (
   PRIMARY KEY  (`nodeId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `role` */
 
-DROP TABLE IF EXISTS `role`;
-
-CREATE TABLE `role` (
-  `role` varchar(45) NOT NULL,
-  `userName` varchar(45) NOT NULL,
-  PRIMARY KEY  (`role`,`userName`),
-  KEY `roleToUser` (`userName`),
-  CONSTRAINT `roleToRoles` FOREIGN KEY (`role`) REFERENCES `roles` (`name`),
-  CONSTRAINT `roleToUser` FOREIGN KEY (`userName`) REFERENCES `user` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-/*Table structure for table `roles` */
-
-DROP TABLE IF EXISTS `roles`;
-
-CREATE TABLE `roles` (
-  `name` varchar(45) NOT NULL,
-  PRIMARY KEY  (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `user` */
 
-DROP TABLE IF EXISTS `user`;
-
-CREATE TABLE `user` (
+DROP TABLE IF EXISTS `department`;
+CREATE TABLE  `department` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL,
-  `login` varchar(45) default NULL,
-  `password` varchar(45) NOT NULL,
-  `parentNodeId` int(10) unsigned default NULL,
-  `blocked` tinyint(1) NOT NULL default '0',
-  PRIMARY KEY  (`name`),
-  KEY `userToParentNode` (`parentNodeId`),
-  CONSTRAINT `userToParentNode` FOREIGN KEY (`parentNodeId`) REFERENCES `node` (`nodeId`)
+  `parent_id` int(10) unsigned DEFAULT NULL,
+  `level` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_department_parent` (`parent_id`),
+  CONSTRAINT `fk_department_parent` FOREIGN KEY (`parent_id`) REFERENCES `department` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE  `user` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `login` varchar(32) NOT NULL,
+  `_password` varchar(32) DEFAULT NULL,
+  `first_name` varchar(45) DEFAULT NULL,
+  `middle_name` varchar(45) DEFAULT NULL,
+  `last_name` varchar(45) DEFAULT NULL,
+  `department_id` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_login` (`login`),
+  KEY `fk_user_department` (`department_id`),
+  CONSTRAINT `fk_user_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `usergroup`;
+CREATE TABLE  `usergroup` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `login` varchar(32) NOT NULL,
+  `usergroup` varchar(32) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `login_usergroup` (`login`,`usergroup`),
+  CONSTRAINT `fk_user_login` FOREIGN KEY (`login`) REFERENCES `user` (`login`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+
+ -- books --
 
 
 -- auxiliary tables --
@@ -123,8 +128,6 @@ CREATE TABLE `stringculture` (
   `value` varchar(1024) default NULL,
   PRIMARY KEY  (`id`, `locale`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
- -- books --
 
 /*Table structure for table `countrybook` */
 

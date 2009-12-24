@@ -15,22 +15,29 @@
 
     <dependencies>
         <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.4</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.vetcontrol</groupId>
-            <artifactId>vetcontrol-commons</artifactId>
-            <version>${parent.version}</version>
-            <scope>provided</scope>
+            <artifactId>vetcontrol-commons</artifactId>                        
         </dependency>
 
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket</artifactId>
-            <version>1.4.4</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.wicket</groupId>
-            <artifactId>wicket-auth-roles</artifactId>
-            <version>1.4.4</version>
+            <artifactId>wicket-auth-roles</artifactId>            
+        </dependency>
+
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-web-api</artifactId>
+            <version>6.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

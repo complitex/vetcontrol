@@ -17,7 +17,7 @@
 
             </div>
             <div id="exit">
-                <form action="">
+                <form wicket:id="exit" action="">
                     <input type="submit" value="Выход"/>
                 </form>
             </div>
@@ -63,20 +63,7 @@
                         <li>Производители</li>
                         <li>Типы транспортных средств</li>
                     </ul>
-                </div>
-                <div class="menu">
-                    <h3>Пользователи</h3>
-                    <wicket:link>
-                        <ul>
-                            <li>
-                                <a href="/org/vetcontrol/user/UserHomePage.html">Список пользователей</a>
-                            </li>
-                            <li>
-                                <a href="/org/vetcontrol/user/UserHomePage.html">Добавить пользователя</a>
-                            </li>
-                        </ul>
-                    </wicket:link>
-                </div>
+                </div>                     
             </div>
             <div id="main">
                 <wicket:child/>

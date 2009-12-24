@@ -6,6 +6,9 @@ import org.apache.wicket.authorization.strategies.role.Roles;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.SubmitLink;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -22,10 +25,17 @@ import java.util.List;
 public abstract class TemplatePage extends WebPage{
     public TemplatePage() {            
         add(new ListView<ITemplateMenu>("sidebar", newTemplateMenus()){
-
             @Override
             protected void populateItem(ListItem<ITemplateMenu> item) {
                 item.add(new TemplateMenu("menu_placeholder", "menu", this, item.getModelObject()));
+            }
+        });
+
+        add(new Form("exit"){
+            @Override
+            public void onSubmit() {
+                getSession().invalidateNow();
+                setResponsePage(getApplication().getHomePage());
             }
         });
     }
