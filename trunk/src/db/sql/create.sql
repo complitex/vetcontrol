@@ -99,9 +99,9 @@ CREATE TABLE `user` (
 DROP TABLE IF EXISTS `locales`;
 
 CREATE TABLE `locales` (
-  `locale` varchar(2) NOT NULL,
+  `language` varchar(2) NOT NULL,
   `isSystem` tinyint(1) NOT NULL default '0',
-  PRIMARY KEY  (`locale`)
+  PRIMARY KEY  (`language`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
