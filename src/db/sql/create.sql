@@ -90,7 +90,20 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
- -- books --
+
+
+-- auxiliary tables --
+
+/*Table structure for table `locales` */
+
+DROP TABLE IF EXISTS `locales`;
+
+CREATE TABLE `locales` (
+  `locale` varchar(2) NOT NULL,
+  `isSystem` tinyint(1) NOT NULL default '0',
+  PRIMARY KEY  (`locale`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 DROP TABLE IF EXISTS `generator`;
 
@@ -100,7 +113,7 @@ create table `generator`(
    PRIMARY KEY (`generatorName`)
  )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `string-culture` */
+/*Table structure for table `stringculture` */
 
 DROP TABLE IF EXISTS `stringculture`;
 
@@ -110,6 +123,8 @@ CREATE TABLE `stringculture` (
   `value` varchar(1024) default NULL,
   PRIMARY KEY  (`id`, `locale`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ -- books --
 
 /*Table structure for table `countrybook` */
 

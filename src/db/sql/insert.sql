@@ -48,3 +48,6 @@ INSERT INTO project1.`role`
 	);
 
 INSERT INTO `generator`(`generatorName`, `generatorValue`) VALUES ('books', 0);
+
+INSERT INTO `locales`(`locale`, `isSystem`) VALUES ('en', '1');
+INSERT INTO `locales`(`locale`) VALUES ('ru');
