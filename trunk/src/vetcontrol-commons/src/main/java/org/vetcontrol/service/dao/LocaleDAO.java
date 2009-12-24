@@ -41,7 +41,7 @@ public class LocaleDAO implements ILocaleDAO {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<org.vetcontrol.entity.Locale> cq = cb.createQuery(org.vetcontrol.entity.Locale.class);
         Root<org.vetcontrol.entity.Locale> root = cq.from(org.vetcontrol.entity.Locale.class);
-        cq.where(cb.equal(root.get("isSystem"), true));
+        cq.where(cb.equal(root.get("system"), true));
         cq.select(root);
         return convertLocale(em.createQuery(cq).getSingleResult());
     }
