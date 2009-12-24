@@ -22,7 +22,9 @@ public interface IBookDAO {
 
     <T> List<T> getBookContent(Class<T> bookType, int first, int count);
 
-    Long size(Class bookType);
+    <T> List<T> getContent(T example, int first, int count);
+
+    <T> Long size(T example);
 
     void saveOrUpdate(Serializable book);
 

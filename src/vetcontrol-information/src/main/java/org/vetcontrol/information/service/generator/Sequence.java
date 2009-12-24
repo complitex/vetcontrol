@@ -31,9 +31,7 @@ public class Sequence {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public long next() {
-
         Session session = HibernateSessionTransformer.getSession(em);
-
         Generator g = (Generator)session.get(Generator.class, BOOK_GENERATOR, LockMode.UPGRADE);
         g.setGeneratorValue(g.getGeneratorValue() + 1);
         g = (Generator)session.merge(g);

@@ -18,7 +18,6 @@ import org.vetcontrol.information.model.Registeredproducts;
 import org.vetcontrol.information.model.StringCulture;
 import org.vetcontrol.information.model.StringCultureId;
 import org.vetcontrol.information.service.dao.BookDAO;
-import org.vetcontrol.information.service.fasade.pages.BookPageFasade;
 import org.vetcontrol.information.service.generator.Sequence;
 
 /**
@@ -165,5 +164,40 @@ public class BooksTest {
         saveTest();
         getBookContentTest();
         updateTest();
+        getBookContentTest();
+    }
+
+//    @Test
+    public void getContentTest() {
+        EntityManager entityManager = managerFactory.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+
+        Sequence s = new Sequence();
+        s.setEntityManager(entityManager);
+        BookDAO bookDAO = new BookDAO();
+        bookDAO.setSequence(s);
+        bookDAO.setEntityManager(entityManager);
+
+        CountryBook example;
+        List books;
+        //test 1
+        example = new CountryBook();
+        books = bookDAO.getContent(example, 0, 2);
+        Assert.assertEquals(2, books.size());
+
+        //test 2
+        example = new CountryBook("us");
+        books = bookDAO.getContent(example, 0, 2);
+        Assert.assertEquals(0, books.size());
+
+        //test 3
+        Registeredproducts propduct = new Registeredproducts();
+        propduct.addName(new StringCulture(new StringCultureId(), "m"));
+        books = bookDAO.getContent(propduct, 0, 2);
+        Assert.assertEquals(1, books.size());
+
+        transaction.commit();
+        entityManager.close();
     }
 }

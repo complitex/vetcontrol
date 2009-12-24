@@ -18,7 +18,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vetcontrol.information.util.web.BeanPropertiesUtil;
+import org.vetcontrol.information.util.web.BeanPropertyUtil;
 import org.vetcontrol.information.util.web.Property;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 
@@ -33,7 +33,7 @@ public abstract class BookEntryFormControl extends FormComponentPanel {
     public BookEntryFormControl(String id, final IModel model) throws IntrospectionException {
         super(id, model);
 
-        List<Property> filtered = BeanPropertiesUtil.filter(model.getObject().getClass());
+        List<Property> filtered = BeanPropertyUtil.filter(model.getObject().getClass());
 
         add(new ListView<Property>("bookFields", filtered) {
 

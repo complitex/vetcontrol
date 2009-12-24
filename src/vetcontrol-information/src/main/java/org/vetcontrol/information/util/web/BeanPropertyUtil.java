@@ -13,6 +13,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import javax.persistence.Column;
@@ -25,16 +27,13 @@ import org.vetcontrol.information.util.model.annotation.MappedProperty;
  *
  * @author Artem
  */
-public class BeanPropertiesUtil {
+public class BeanPropertyUtil {
 
     public static List<Property> filter(Class<?> beanClass) throws IntrospectionException {
         BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
         PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
         List<Property> filtered = new ArrayList<Property>();
-
         List<String> excludes = new ArrayList<String>();
-
-
         for (PropertyDescriptor prop : props) {
 
             boolean validProperty = true;
@@ -102,6 +101,22 @@ public class BeanPropertiesUtil {
                 result.add(prop);
             }
         }
+
+        Collections.sort(result, new Comparator<Property>() {
+
+            @Override
+            public int compare(Property o1, Property o2) {
+                if (o1.isLocalizable()) {
+                    if (o2.isLocalizable()) {
+                        return 0;
+                    } else {
+                        return 1;
+                    }
+                } else {
+                    return -1;
+                }
+            }
+        });
 
         return result;
     }

@@ -4,6 +4,7 @@
  */
 package org.vetcontrol.information.web.component;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
@@ -11,23 +12,22 @@ import java.util.Locale;
 import org.apache.wicket.Session;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterForm;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.TextFilteredPropertyColumn;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.lang.PropertyResolver;
 import org.vetcontrol.information.model.StringCulture;
+import org.vetcontrol.information.util.web.Constants;
 import org.vetcontrol.information.util.web.Property;
+import org.vetcontrol.information.web.model.StringCultureModel;
 
 /**
  *
  * @author Artem
  */
-public class TitledPropertyColumn<T> extends PropertyColumn<T> {
-
-    private static final int TEXT_LIMIT = 15;
-    private static final int TITLE_LIMIT = 30;
-    private static final String CONTINUE = "...";
+public class TitledPropertyColumn<T> extends TextFilteredPropertyColumn<T, Serializable> {
 
     private Property property;
 
@@ -67,14 +67,14 @@ public class TitledPropertyColumn<T> extends PropertyColumn<T> {
 
         String value = asString;
         String title = null;
-        if (value.length() > TEXT_LIMIT) {
+        if (value.length() > Constants.TEXT_LIMIT) {
             title = value;
-            if (title.length() > TITLE_LIMIT) {
-                title = title.substring(0, TITLE_LIMIT);
-                title += CONTINUE;
+            if (title.length() > Constants.TITLE_LIMIT) {
+                title = title.substring(0, Constants.TITLE_LIMIT);
+                title += Constants.CONTINUE;
             }
-            value = value.substring(0, TEXT_LIMIT);
-            value += CONTINUE;
+            value = value.substring(0, Constants.TEXT_LIMIT);
+            value += Constants.CONTINUE;
         }
 
         Label label = new Label(componentId, value);
@@ -83,5 +83,14 @@ public class TitledPropertyColumn<T> extends PropertyColumn<T> {
         }
 
         item.add(label);
+    }
+
+    @Override
+    protected IModel<Serializable> getFilterModel(FilterForm form) {
+        if (property.isLocalizable()) {
+            return new StringCultureModel(super.getFilterModel(form));
+        } else {
+            return super.getFilterModel(form);
+        }
     }
 }

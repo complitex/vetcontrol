@@ -39,17 +39,19 @@ public class BookPage extends BasePage {
         private Serializable filterBean;
         private int size;
 
-        public DataProvider() throws InstantiationException, IllegalAccessException {
-            filterBean = bookType.newInstance();
+        public DataProvider(){
         }
 
         @Override
         public Iterator<Serializable> iterator(int first, int count) {
-            return fasade.getBookContent(bookType, first, count).iterator();
+            return fasade.getContent(filterBean, first, count).iterator();
+
+//            return fasade.getBookContent(bookType, first, count).iterator();
         }
 
         @Override
         public int size() {
+//            return fasade.size(filterBean).intValue();
             return size;
         }
 
@@ -72,9 +74,13 @@ public class BookPage extends BasePage {
             this.filterBean = (Serializable) state;
         }
 
-        public void init() {
-            Long localSize = fasade.size(bookType);
+        public void init(){
+            Long localSize = fasade.size(filterBean);
             size = localSize == null ? 0 : localSize.intValue();
+        }
+
+        public void init(Class bookType) throws InstantiationException, IllegalAccessException{
+            filterBean = (Serializable) bookType.newInstance();
         }
     }
     @EJB(name = "BookPageFasade")
@@ -111,8 +117,8 @@ public class BookPage extends BasePage {
             @Override
             protected void onSelectionChanged(Class newSelection) {
                 form.remove("bookContent");
-                initBookContentList();
                 try {
+                    initBookContentList();
                     addBookContent(form);
                     getSession().setMetaData(SELECTED_BOOK_TYPE, bookType);
                 } catch (Exception e) {
@@ -158,7 +164,8 @@ public class BookPage extends BasePage {
         }
     }
 
-    private void initBookContentList() {
+    private void initBookContentList() throws InstantiationException, IllegalAccessException {
+        dataProvider.init(bookType);
         dataProvider.init();
     }
 
