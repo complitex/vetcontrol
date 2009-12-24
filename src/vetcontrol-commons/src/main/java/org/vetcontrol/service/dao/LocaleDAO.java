@@ -4,7 +4,9 @@
  */
 package org.vetcontrol.service.dao;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -13,7 +15,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import org.vetcontrol.entity.Locale;
 
 /**
  *
@@ -29,19 +30,31 @@ public class LocaleDAO implements ILocaleDAO {
     @Override
     public List<Locale> all() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Locale> cq = cb.createQuery(Locale.class);
-        Root<Locale> root = cq.from(Locale.class);
+        CriteriaQuery<org.vetcontrol.entity.Locale> cq = cb.createQuery(org.vetcontrol.entity.Locale.class);
+        Root<org.vetcontrol.entity.Locale> root = cq.from(org.vetcontrol.entity.Locale.class);
         cq.select(root);
-        return em.createQuery(cq).getResultList();
+        return convertAll(em.createQuery(cq).getResultList());
     }
 
     @Override
     public Locale systemLocale() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Locale> cq = cb.createQuery(Locale.class);
-        Root<Locale> root = cq.from(Locale.class);
+        CriteriaQuery<org.vetcontrol.entity.Locale> cq = cb.createQuery(org.vetcontrol.entity.Locale.class);
+        Root<org.vetcontrol.entity.Locale> root = cq.from(org.vetcontrol.entity.Locale.class);
         cq.where(cb.equal(root.get("isSystem"), true));
         cq.select(root);
-        return em.createQuery(cq).getSingleResult();
+        return convertLocale(em.createQuery(cq).getSingleResult());
+    }
+
+    private Locale convertLocale(org.vetcontrol.entity.Locale l){
+        return new Locale(l.getLanguage());
+    }
+
+    private List<Locale> convertAll(List<org.vetcontrol.entity.Locale> locales){
+        List<Locale> result = new ArrayList<Locale>();
+        for (org.vetcontrol.entity.Locale locale : locales) {
+            result.add(convertLocale(locale));
+        }
+        return result;
     }
 }

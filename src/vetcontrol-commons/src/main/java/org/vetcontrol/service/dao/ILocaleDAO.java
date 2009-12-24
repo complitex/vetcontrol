@@ -6,8 +6,8 @@
 package org.vetcontrol.service.dao;
 
 import java.util.List;
+import java.util.Locale;
 import javax.ejb.Local;
-import org.vetcontrol.entity.Locale;
 
 /**
  *
