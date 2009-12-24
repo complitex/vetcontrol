@@ -100,9 +100,9 @@
   PRIMARY KEY  (`id`),
   KEY `FK_registeredproducts_name` (`name`),
   KEY `FK_registeredproducts_classificator` (`classificator`),
-  CONSTRAINT `FK_registeredproducts_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
-  CONSTRAINT `FK_registeredproducts_classificator` FOREIGN KEY (`classificator`) REFERENCES `stringculture` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
+  CONSTRAINT `FK_registeredproducts_classificator` FOREIGN KEY (`classificator`) REFERENCES `stringculture` (`id`),
+  CONSTRAINT `FK_registeredproducts_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8</sql_create_table>
 </table>
 <table name="stringculture" view="colnames">
 <left>795</left>
@@ -128,7 +128,7 @@
   PRIMARY KEY  (`id`),
   KEY `FK_countrybook_name` (`name`),
   CONSTRAINT `FK_countrybook_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8</sql_create_table>
 </table>
 </tables>
 </canvas>
