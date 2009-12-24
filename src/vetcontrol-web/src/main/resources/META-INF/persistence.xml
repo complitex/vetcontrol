@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
+    <persistence-unit name="vetcontroldb" transaction-type="JTA">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <jta-data-source>jdbc/vetcontroldb</jta-data-source>
+
+        <class>org.vetcontrol.entity.User</class>
+        <class>org.vetcontrol.entity.UserGroup</class>
+        <class>org.vetcontrol.entity.Department</class>         
+
+        <properties>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
+            <!--<property name="hibernate.show_sql" value="true"/>-->
+        </properties>
+    </persistence-unit>
+</persistence>

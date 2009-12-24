@@ -1,51 +1,19 @@
-INSERT INTO project1.`roles` (`name`) VALUES ('ADMIN');
-INSERT INTO project1.roles (`name`) VALUES ('DONT_EDIT_ADMIN');
+INSERT INTO `department` VALUES (1,'Государственный комитет ветеринарной медицины',NULL,1),
+(2,'Підроздели Одеськой РСДВСКН',1,2),(3,'Апарат управління',2,3),(4,'Арцизький ПДВСКН',2,3),
+(5,'Б-Дністровський ПДВСКН',2,3),(6,'Березінський ПДВСКН',2,3),(7,'Болградський ПДВСКН',2,3),
+(8,'Велико-Михайлівський ПДВСКН',2,3),(9,'Вознесенський ПДВСКН',2,3),(10,'Звенігородський ПДВСКН',2,3),
+(11,'Знамянський ПДВСКН',2,3),(12,'Ізмаїльський ПДВСКН',2,3),(13,'Іллічівський ПДВСКН',2,3),
+(14,'Каховський ПДВСКН',2,3),(15,'Кілійський ПДВСКН',2,3),(16,'Кіровоградський ПДВСКН',2,3),
+(17,'Кодимський ПДВСКН',2,3),(18,'Котовський ПДВСКН',2,3),(19,'Красно-Окнянський ПДВСКН',2,3),
+(20,'Миколаївський ПДВСКН',2,3),(21,'Одеський ПДВСКН',2,3),(22,'Первомайский ПДВСКН',2,3),
+(23,'Роздільнянський ПДВСКН',2,3),(24,'Ренійський ПДВСКН',2,3),(32,'Скадовський ПДВСКН',2,3),
+(33,'Старокозацький ПДВСКН',2,3),(34,'Вапнярський ПДВСКН',2,3),(35,'Удобнянський ПДВСКН',2,3),
+(36,'Уманський ПДВСКН',2,3),(37,'Херсонський ПДВСКН',2,3),(38,'Черкаський ПДВСКН',2,3),
+(39,'Шевченківський ПДВСКН',2,3),(40,'Южненський ПДВСКН',2,3);
 
-INSERT INTO project1.`user`
-        (`name`,
-	`login`,
-	`password`,
-	`parentNodeId`,
-	`blocked`
-	)
-	VALUES
-	('ADMIN',
-	'ADMIN',
-	'ADMIN',
-	null,
-	0
-	);
-INSERT INTO project1.`user`
-        (`name`,
-	`login`,
-	`password`,
-	`parentNodeId`,
-	`blocked`
-	)
-	VALUES
-	('DONT_EDIT_ADMIN',
-	'DONT_EDIT_ADMIN',
-	'DONT_EDIT_ADMIN',
-	null,
-	0
-	);
-
-INSERT INTO project1.`role`
-	(`role`,
-	`userName`
-	)
-	VALUES
-	('ADMIN',
-	'ADMIN'
-	);
-INSERT INTO project1.`role`
-	(`role`,
-	`userName`
-	)
-	VALUES
-	('DONT_EDIT_ADMIN',
-	'DONT_EDIT_ADMIN'
-	);
+--Login:test Password:test
+INSERT INTO `user` VALUES (1,'test','098f6bcd4621d373cade4e832627b4f6',NULL,NULL,NULL,NULL);
+INSERT INTO `usergroup` VALUES (1,'test','ADMINISTRATORS');
 
 INSERT INTO `generator`(`generatorName`, `generatorValue`) VALUES ('books', 0);
 

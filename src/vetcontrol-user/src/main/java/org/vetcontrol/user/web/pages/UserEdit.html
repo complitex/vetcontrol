@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"  xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <wicket:head><title wicket:id="title"></title></wicket:head>
+</head>
+
+<body>
+<wicket:extend>
+    <div id="users" style="border-width:thin; border-style:solid">
+        <div id="messages" wicket:id="messages"></div>
+
+        <form action="" wicket:id="user_edit_form">
+            <table>
+                <tbody>
+                <tr>
+                    <td><label for="login"><wicket:message key="user.login"/></label></td>
+                    <td><input id="login" wicket:id="login" type="text"/></td>
+                </tr>
+                <tr>
+                    <td><label for="password"><wicket:message key="user.password"/></label></td>
+                    <td><input id="password" wicket:id="password" type="password"/></td>
+                </tr>
+                <tr>
+                    <td><label for="last_name"><wicket:message key="user.last_name"/></label></td>
+                    <td><input id="last_name" wicket:id="last_name" type="text"/></td>
+                </tr>
+                <tr>
+                    <td><label for="first_name"><wicket:message key="user.first_name"/></label></td>
+                    <td><input id="first_name" wicket:id="first_name" type="text"/></td>
+                </tr>
+                <tr>
+                    <td><label for="middle_name"><wicket:message key="user.middle_name"/></label></td>
+                    <td><input id="middle_name" wicket:id="middle_name" type="text"/></td>
+                </tr>
+                <tr>
+                    <td><wicket:message key="user.department"/></td>
+                    <td><select wicket:id="department"></select></td>
+                </tr>
+                <tr>
+                    <td><wicket:message key="user.usergroup"/></td>
+                    <td><span wicket:id="usergroups"></span></td>
+                </tr>
+                </tbody>
+                <tfoot align="right">
+                <tr>
+                    <td colspan="2">
+                        <input type="reset" wicket:message="value:user.cancel" value="Cancel"/>
+                        <input type="submit" wicket:message="value:user.save" value="Save"/>
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </form>
+    </div>
+</wicket:extend>
+</body>
+</html>

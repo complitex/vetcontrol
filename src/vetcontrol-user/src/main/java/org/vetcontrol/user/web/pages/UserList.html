@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"  xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <wicket:head><title wicket:id="title"></title></wicket:head>
+</head>
+
+<body>
+<wicket:extend>
+    <div id="users" style="border-width:thin; border-style:solid">
+        <table>
+            <thead>
+            <tr align="center">
+                <th><wicket:message key="user.last_name"/></th>
+                <th><wicket:message key="user.first_name"/></th>
+                <th><wicket:message key="user.middle_name"/></th>
+                <th><wicket:message key="user.department"/></th>
+                <th><wicket:message key="user.login"/></th>
+                <th><wicket:message key="user.usergroup"/></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr wicket:id="users">
+                <td><span wicket:id="last_name"></span></td>
+                <td><span wicket:id="first_name"></span></td>
+                <td><span wicket:id="middle_name"></span></td>
+                <td><span wicket:id="department"></span></td>
+                <td><span wicket:id="login"></span></td>
+                <td><span wicket:id="groups"></span></td>
+                <td><a href="#" wicket:id="edit"><wicket:message key="user.edit"/></a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</wicket:extend>
+</body>
+</html>

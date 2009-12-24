@@ -20,9 +20,133 @@
         <module>vetcontrol-logging</module>
         <module>vetcontrol-sync-client</module>
         <module>vetcontrol-sync-server</module>
-        <module>vetcontrol-web-server</module>
-        <module>vetcontrol-web-client</module>
+        <module>vetcontrol-web</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <!--VetControl Modules-->
+            <dependency>
+                <groupId>org.vetcontrol</groupId>
+                <artifactId>vetcontrol-commons</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.vetcontrol</groupId>
+                <artifactId>vetcontrol-user</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.vetcontrol</groupId>
+                <artifactId>vetcontrol-information</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.vetcontrol</groupId>
+                <artifactId>vetcontrol-document</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.vetcontrol</groupId>
+                <artifactId>vetcontrol-logging</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.vetcontrol</groupId>
+                <artifactId>vetcontrol-report</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.vetcontrol</groupId>
+                <artifactId>vetcontrol-sync-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.vetcontrol</groupId>
+                <artifactId>vetcontrol-sync-server</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.vetcontrol</groupId>
+                <artifactId>vetcontrol-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!--Wicket-->
+            <dependency>
+                <groupId>org.apache.wicket</groupId>
+                <artifactId>wicket</artifactId>
+                <version>1.4.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.wicket</groupId>
+                <artifactId>wicket-auth-roles</artifactId>
+                <version>1.4.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.wicket</groupId>
+                <artifactId>wicket-ioc</artifactId>
+                <version>1.4.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wicketstuff</groupId>
+                <artifactId>wicket-contrib-javaee</artifactId>
+                <scope>system</scope>
+                <version>1.1</version>
+                <systemPath>${project.basedir}/../lib/wicket-contrib-javaee-1.1.jar</systemPath>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.wicket</groupId>
+                <artifactId>wicket-extensions</artifactId>
+                <version>1.4.4</version>
+            </dependency>
+
+            <!-- Java EE API -->
+            <dependency>
+                <groupId>javax</groupId>
+                <artifactId>javaee-web-api</artifactId>
+                <version>6.0</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- slf4j logging -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.5.10</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>1.5.10</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jul-to-slf4j</artifactId>
+                <version>1.5.10</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>0.9.18</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>0.9.18</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- Tests -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.4</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <resources>
@@ -101,6 +225,5 @@
             <id>jboss</id>
             <url>http://repository.jboss.com/maven2</url>
         </repository>
-        
     </repositories>
 </project>
