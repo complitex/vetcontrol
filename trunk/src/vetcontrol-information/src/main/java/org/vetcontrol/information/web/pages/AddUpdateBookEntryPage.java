@@ -16,7 +16,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
 import org.vetcontrol.information.service.generator.Sequence;
-import org.vetcontrol.information.util.web.BeanPropertiesUtil;
+import org.vetcontrol.information.util.web.BeanPropertyUtil;
 import org.vetcontrol.information.web.component.BookEntryFormControl;
 import org.vetcontrol.web.pages.BasePage;
 
@@ -50,7 +50,7 @@ public class AddUpdateBookEntryPage extends BasePage {
         Form form = new Form("form");
         add(form);
 
-        BeanPropertiesUtil.addLocalization(bookEntry, supportedLocales);
+        BeanPropertyUtil.addLocalization(bookEntry, supportedLocales);
 
         form.add(new BookEntryFormControl("book", new Model(bookEntry)) {
 
