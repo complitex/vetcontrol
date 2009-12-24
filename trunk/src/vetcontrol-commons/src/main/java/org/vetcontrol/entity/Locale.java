@@ -18,7 +18,7 @@ import javax.persistence.Table;
 @Table(name = "locales", catalog = "project1")
 public class Locale implements Serializable {
 
-    private String locale;
+    private String language;
     private boolean isSystem;
 
     public Locale() {
@@ -30,16 +30,16 @@ public class Locale implements Serializable {
     }
 
     @Id
-    @Column(name = "locale", length = 2)
-    public String getLocale() {
-        return locale;
+    @Column(name = "language", length = 2)
+    public String getLanguage() {
+        return language;
     }
 
     private void setSystem(boolean isSystem) {
         this.isSystem = isSystem;
     }
 
-    private void setLocale(String locale) {
-        this.locale = locale;
+    private void setLanguage(String locale) {
+        this.language = locale;
     }
 }
