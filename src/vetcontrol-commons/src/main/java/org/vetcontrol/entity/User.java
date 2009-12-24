@@ -1,0 +1,115 @@
+package org.vetcontrol.entity;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * User: Anatoly A. Ivanov java@inheaven.ru
+ * Date: 21.12.2009 16:13:49
+ */
+@Entity
+@Table(name = "user")
+public class User implements Serializable{
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @Column(name = "login", length = 32, unique = true, nullable = false)
+    private String login;
+
+    @Column(name = "_password", length = 32, nullable = false)
+    private String password;
+
+    @Transient
+    private String changePassword;
+
+    @Column(name = "first_name", length = 45)
+    private String firstName;
+
+    @Column(name = "middle_name", length = 45)
+    private String middleName;
+
+    @Column(name = "last_name", length = 45)
+    private String lastName;
+        
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER ,cascade = CascadeType.ALL, orphanRemoval = true)    
+    private List<UserGroup> userGroups = new ArrayList<UserGroup>();
+
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private Department department;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getChangePassword() {
+        return changePassword;
+    }
+
+    public void setChangePassword(String changePassword) {
+        this.changePassword = changePassword;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public List<UserGroup> getUserGroups() {
+        return userGroups;
+    }
+
+    public void setUserGroups(List<UserGroup> userGroups) {
+        this.userGroups = userGroups;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+}
