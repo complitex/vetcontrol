@@ -1,0 +1,40 @@
+...
+
+  <resources>
+    ...
+
+    <jdbc-connection-pool datasource-classname="com.mysql.jdbc.jdbc2.optional.MysqlDataSource" res-type="javax.sql.DataSource" name="vetcontrol-pool">
+      <property name="user" value="vc_user" />
+      <property name="password" value="vc_pass" />
+      <property name="url" value="jdbc:mysql://localhost:3306/vetcontrol" />
+    </jdbc-connection-pool>
+    <jdbc-resource pool-name="vetcontrol-pool" jndi-name="jdbc/vetcontroldb" />
+
+    ...
+  </resources>
+  <servers>
+    <server name="server" config-ref="server-config">
+       ...
+      <resource-ref ref="jdbc/vetcontroldb" />
+       ...
+    </server>
+  </servers>
+  <configs>
+    <config name="server-config">
+       ...      
+
+      <security-service>
+         ...
+        <auth-realm name="VetcontrolRealm" classname="com.sun.enterprise.security.auth.realm.jdbc.JDBCRealm">
+          <property name="jaas-context" value="jdbcRealm" />
+          <property name="datasource-jndi" value="jdbc/vetcontroldb" />
+          <property name="user-table" value="user" />
+          <property name="user-name-column" value="login" />
+          <property name="password-column" value="_password" />
+          <property name="group-table" value="usergroup" />
+          <property name="group-name-column" value="usergroup" />
+          <property name="charset" value="UTF-8" />
+        </auth-realm>
+         ...
+
+...
