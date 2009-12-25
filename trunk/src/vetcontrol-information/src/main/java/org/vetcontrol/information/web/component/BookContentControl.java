@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
@@ -23,6 +24,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.vetcontrol.information.util.web.BeanPropertyUtil;
 import org.vetcontrol.information.util.web.Constants;
 import org.vetcontrol.information.util.web.Property;
@@ -50,7 +52,7 @@ public abstract class BookContentControl extends Panel {
         }
     }
 
-    public BookContentControl(String id, final DataProvider dataProvider, String bookName) throws IntrospectionException {
+    public BookContentControl(String id, final DataProvider dataProvider, String bookName, Locale systemLocale) throws IntrospectionException {
         super(id);
 
         add(new Label("bookName", bookName));
@@ -60,9 +62,9 @@ public abstract class BookContentControl extends Panel {
         if (it.hasNext()) {
             Object first = it.next();
             for (Property prop : BeanPropertyUtil.filter(first.getClass())) {
-                columns.add(new TitledPropertyColumn<Serializable>(new DisplayPropertyLocalizableModel(first.getClass(), prop.getName()), prop));
+                columns.add(new TitledPropertyColumn<Serializable>(new DisplayPropertyLocalizableModel(prop, this), prop, systemLocale));
             }
-            columns.add(new AbstractColumn(new Model("Edit")) {
+            columns.add(new AbstractColumn(new ResourceModel("book.edit.header")) {
 
                 @Override
                 public void populateItem(Item cellItem, String componentId, IModel rowModel) {

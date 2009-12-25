@@ -21,7 +21,6 @@ import javax.persistence.criteria.Root;
  * @author Artem
  */
 @Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class LocaleDAO implements ILocaleDAO {
 
     @PersistenceContext

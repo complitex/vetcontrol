@@ -6,10 +6,8 @@ package org.vetcontrol.information.web.pages;
 
 import java.beans.IntrospectionException;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import javax.ejb.EJB;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilterStateLocator;
@@ -27,6 +25,7 @@ import org.vetcontrol.information.web.component.BookContentControl;
 import org.vetcontrol.information.web.component.LocalePicker;
 import org.vetcontrol.web.pages.BasePage;
 import org.vetcontrol.information.web.support.BookTypes;
+import org.vetcontrol.service.dao.ILocaleDAO;
 
 /**
  *
@@ -39,19 +38,16 @@ public class BookPage extends BasePage {
         private Serializable filterBean;
         private int size;
 
-        public DataProvider(){
+        public DataProvider() {
         }
 
         @Override
         public Iterator<Serializable> iterator(int first, int count) {
             return fasade.getContent(filterBean, first, count).iterator();
-
-//            return fasade.getBookContent(bookType, first, count).iterator();
         }
 
         @Override
         public int size() {
-//            return fasade.size(filterBean).intValue();
             return size;
         }
 
@@ -74,17 +70,19 @@ public class BookPage extends BasePage {
             this.filterBean = (Serializable) state;
         }
 
-        public void init(){
+        public void init() {
             Long localSize = fasade.size(filterBean);
             size = localSize == null ? 0 : localSize.intValue();
         }
 
-        public void init(Class bookType) throws InstantiationException, IllegalAccessException{
+        public void init(Class bookType) throws InstantiationException, IllegalAccessException {
             filterBean = (Serializable) bookType.newInstance();
         }
     }
     @EJB(name = "BookPageFasade")
     private BookPageFasade fasade;
+    @EJB(name = "LocaleDAO")
+    private ILocaleDAO localeDAO;
     public static final MetaDataKey SELECTED_BOOK_ENTRY = new MetaDataKey() {
     };
     private static final MetaDataKey<Class> SELECTED_BOOK_TYPE = new MetaDataKey<Class>() {
@@ -101,7 +99,7 @@ public class BookPage extends BasePage {
             bookType = getSession().getMetaData(SELECTED_BOOK_TYPE);
         }
 
-        add(new LocalePicker("localePicker", Arrays.asList(new Locale[]{Locale.ENGLISH, new Locale("ru")})));
+        add(new LocalePicker("localePicker", localeDAO.all()));
 
         final Form form = new Form("form");
         add(form);
@@ -151,7 +149,7 @@ public class BookPage extends BasePage {
 
     private void addBookContent(final Form form) throws IntrospectionException {
         if (dataProvider.size() != 0) {
-            final BookContentControl bookContent = new BookContentControl("bookContent", dataProvider, bookType.getSimpleName()) {
+            final BookContentControl bookContent = new BookContentControl("bookContent", dataProvider, bookType.getSimpleName(), localeDAO.systemLocale()) {
 
                 @Override
                 public void selected(Serializable obj) {

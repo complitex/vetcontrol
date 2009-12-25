@@ -20,8 +20,6 @@ public interface IBookDAO {
 
     void setSequence(Sequence sequence);
 
-    <T> List<T> getBookContent(Class<T> bookType, int first, int count);
-
     <T> List<T> getContent(T example, int first, int count);
 
     <T> Long size(T example);

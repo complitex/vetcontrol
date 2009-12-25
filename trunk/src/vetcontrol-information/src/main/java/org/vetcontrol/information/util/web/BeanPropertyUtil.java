@@ -11,12 +11,15 @@ import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import org.vetcontrol.information.model.StringCulture;
@@ -45,6 +48,7 @@ public class BeanPropertyUtil {
             Property property = new Property();
             property.setName(prop.getDisplayName());
             property.setType(prop.getPropertyType());
+            property.setSurroundingClass(beanClass);
 
             if (prop.getReadMethod() != null
                     && Modifier.isPublic(prop.getReadMethod().getModifiers())
@@ -138,5 +142,25 @@ public class BeanPropertyUtil {
                 }
             }
         }
+    }
+
+    public static Map<PropertyDescriptor, PropertyDescriptor> getMappedProperties(Class bookType) throws IntrospectionException {
+        //List prop to long prop
+        Map<PropertyDescriptor, PropertyDescriptor> mappedProperties = new HashMap<PropertyDescriptor, PropertyDescriptor>();
+        BeanInfo beanInfo = Introspector.getBeanInfo(bookType);
+        PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
+        for (PropertyDescriptor prop : props) {
+            Method getter = prop.getReadMethod();
+            MappedProperty mp = getter.getAnnotation(MappedProperty.class);
+            if (mp != null && prop.getPropertyType().equals(List.class)) {
+                String mappedProperty = mp.value();
+                for (PropertyDescriptor prop2 : props) {
+                    if (prop2.getName().equals(mappedProperty)) {
+                        mappedProperties.put(prop, prop2);
+                    }
+                }
+            }
+        }
+        return mappedProperties;
     }
 }

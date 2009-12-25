@@ -105,7 +105,6 @@ public class Registeredproducts implements java.io.Serializable {
     public void setDate(Date date) {
         this.date = date;
     }
-
     private List<StringCulture> names = new ArrayList<StringCulture>();
 
     /**
@@ -115,6 +114,7 @@ public class Registeredproducts implements java.io.Serializable {
      */
     @MappedProperty("name")
     @Transient
+    @Column(length = 10, nullable = false)
     public List<StringCulture> getNames() {
         return names;
     }
@@ -128,10 +128,9 @@ public class Registeredproducts implements java.io.Serializable {
         this.names = names;
     }
 
-    public void addName(StringCulture name){
+    public void addName(StringCulture name) {
         names.add(name);
     }
-
     private List<StringCulture> classificators = new ArrayList<StringCulture>();
 
     /**
@@ -141,6 +140,7 @@ public class Registeredproducts implements java.io.Serializable {
      */
     @MappedProperty("classificator")
     @Transient
+    @Column(length = 10, nullable = false)
     public List<StringCulture> getClassificators() {
         return classificators;
     }
@@ -154,11 +154,9 @@ public class Registeredproducts implements java.io.Serializable {
         this.classificators = classificators;
     }
 
-    public void addClassificator(StringCulture classificator){
+    public void addClassificator(StringCulture classificator) {
         classificators.add(classificator);
     }
-
-
 }
 
 

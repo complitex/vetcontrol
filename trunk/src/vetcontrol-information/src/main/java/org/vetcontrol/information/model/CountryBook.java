@@ -53,6 +53,7 @@ public class CountryBook implements java.io.Serializable {
 
     @MappedProperty("name")
     @Transient
+    @Column(length = 10, nullable = false)
     public List<StringCulture> getNames() {
         return this.names;
     }

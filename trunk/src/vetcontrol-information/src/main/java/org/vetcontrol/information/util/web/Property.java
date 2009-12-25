@@ -5,12 +5,13 @@
 package org.vetcontrol.information.util.web;
 
 import java.io.Serializable;
+import org.vetcontrol.information.model.CountryBook;
 
 /**
  *
  * @author Artem
  */
-public class Property implements Serializable {
+public class Property implements Serializable, Cloneable {
 
     protected String name;
 
@@ -144,5 +145,33 @@ public class Property implements Serializable {
      */
     public void setLocalizable(boolean localizable) {
         this.localizable = localizable;
+    }
+    protected Class surroundingClass;
+
+    /**
+     * Get the value of surroundingClass
+     *
+     * @return the value of surroundingClass
+     */
+    public Class getSurroundingClass() {
+        return surroundingClass;
+    }
+
+    /**
+     * Set the value of surroundingClass
+     *
+     * @param surroundingClass new value of surroundingClass
+     */
+    public void setSurroundingClass(Class surroundingClass) {
+        this.surroundingClass = surroundingClass;
+    }
+
+    @Override
+    public Property clone() {
+        try {
+            return (Property)super.clone();
+        } catch (CloneNotSupportedException e) {
+        }
+        return null;
     }
 }

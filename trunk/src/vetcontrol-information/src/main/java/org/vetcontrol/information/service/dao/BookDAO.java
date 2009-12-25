@@ -4,14 +4,11 @@
  */
 package org.vetcontrol.information.service.dao;
 
-import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
-import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
@@ -31,7 +28,6 @@ import org.hibernate.criterion.Subqueries;
 import org.hibernate.type.Type;
 import org.vetcontrol.information.model.StringCulture;
 import org.vetcontrol.information.service.generator.Sequence;
-import org.vetcontrol.information.util.model.annotation.MappedProperty;
 import org.vetcontrol.information.util.service.dao.HibernateSessionTransformer;
 import org.vetcontrol.information.util.web.BeanPropertyUtil;
 import org.vetcontrol.information.util.web.Property;
@@ -52,18 +48,14 @@ public class BookDAO implements IBookDAO {
         this.sequence = sequence;
     }
 
+    @PersistenceContext
     @Override
-    public <T> List<T> getBookContent(Class<T> bookType, int first, int count) {
-        Session session = HibernateSessionTransformer.getSession(getEntityManager());
-        List<T> results = session.createCriteria(bookType).addOrder(Order.asc("id")).setFirstResult(first).setMaxResults(count).list();
+    public void setEntityManager(EntityManager em) {
+        this.em = em;
+    }
 
-        try {
-            Map<PropertyDescriptor, PropertyDescriptor> mappedProperties = getMappedProperties(bookType);
-            prepareLocalizableStrings(results, mappedProperties, session);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return results;
+    private EntityManager getEntityManager() {
+        return em;
     }
 
     private <T> void prepareLocalizableStrings(List<T> results, Map<PropertyDescriptor, PropertyDescriptor> mappedProperties, Session session) throws IllegalArgumentException, HibernateException, IllegalAccessException, InvocationTargetException {
@@ -86,31 +78,11 @@ public class BookDAO implements IBookDAO {
         }
     }
 
-    private Map<PropertyDescriptor, PropertyDescriptor> getMappedProperties(Class bookType) throws IntrospectionException {
-        //List prop to long prop
-        Map<PropertyDescriptor, PropertyDescriptor> mappedProperties = new HashMap<PropertyDescriptor, PropertyDescriptor>();
-        BeanInfo beanInfo = Introspector.getBeanInfo(bookType);
-        PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
-        for (PropertyDescriptor prop : props) {
-            Method getter = prop.getReadMethod();
-            MappedProperty mp = getter.getAnnotation(MappedProperty.class);
-            if (mp != null && prop.getPropertyType().equals(List.class)) {
-                String mappedProperty = mp.value();
-                for (PropertyDescriptor prop2 : props) {
-                    if (prop2.getName().equals(mappedProperty)) {
-                        mappedProperties.put(prop, prop2);
-                    }
-                }
-            }
-        }
-        return mappedProperties;
-    }
-
     @Override
     public void saveOrUpdate(Serializable book) {
 
         try {
-            Map<PropertyDescriptor, PropertyDescriptor> mappedProperties = getMappedProperties(book.getClass());
+            Map<PropertyDescriptor, PropertyDescriptor> mappedProperties = BeanPropertyUtil.getMappedProperties(book.getClass());
 
             for (PropertyDescriptor prop : mappedProperties.keySet()) {
                 PropertyDescriptor mappedProperty = mappedProperties.get(prop);
@@ -137,20 +109,9 @@ public class BookDAO implements IBookDAO {
                 }
             }
             getEntityManager().merge(book);
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private EntityManager getEntityManager() {
-        return em;
-    }
-
-    @PersistenceContext
-    @Override
-    public void setEntityManager(EntityManager em) {
-        this.em = em;
     }
 
     @Override
@@ -170,13 +131,12 @@ public class BookDAO implements IBookDAO {
 
         Session session = HibernateSessionTransformer.getSession(em);
         try {
-            Map<PropertyDescriptor, PropertyDescriptor> mappedProperties = getMappedProperties(bookType);
+            Map<PropertyDescriptor, PropertyDescriptor> mappedProperties = BeanPropertyUtil.getMappedProperties(bookType);
             DetachedCriteria query = query(example);
             List<T> results = query.getExecutableCriteria(session).setFirstResult(first).setMaxResults(count).list();
             prepareLocalizableStrings(results, mappedProperties, session);
 
             return results;
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -184,7 +144,7 @@ public class BookDAO implements IBookDAO {
 
     private <T> DetachedCriteria query(T example) throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Class bookType = example.getClass();
-        Map<PropertyDescriptor, PropertyDescriptor> mappedProperties = getMappedProperties(bookType);
+        Map<PropertyDescriptor, PropertyDescriptor> mappedProperties = BeanPropertyUtil.getMappedProperties(bookType);
 
         DetachedCriteria query = DetachedCriteria.forClass(bookType, "book").addOrder(Order.asc("id"));
 
