@@ -9,7 +9,7 @@
 
     <artifactId>vetcontrol-commons</artifactId>
     <packaging>jar</packaging>
-    <name>vetcontrol commons package</name>
+    <name>vetcontrol commons</name>
 
     <dependencies>
         <dependency>
