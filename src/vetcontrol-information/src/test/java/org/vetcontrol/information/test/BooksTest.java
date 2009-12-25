@@ -108,7 +108,7 @@ public class BooksTest {
         bookDAO.setSequence(s);
         bookDAO.setEntityManager(entityManager);
 
-        List<CountryBook> books = bookDAO.getBookContent(CountryBook.class, 0, 2);
+        List<CountryBook> books = bookDAO.getContent(new CountryBook(), 0, 2);
 
         Assert.assertEquals(1, books.size());
         CountryBook book = books.get(0);
@@ -130,7 +130,7 @@ public class BooksTest {
         bookDAO.setSequence(s);
         bookDAO.setEntityManager(entityManager);
 
-        CountryBook book = bookDAO.getBookContent(CountryBook.class, 0, 2).get(0);
+        CountryBook book = bookDAO.getContent(new CountryBook(), 0, 2).get(0);
         StringCulture culture = book.getNames().get(0);
         culture.setValue("england_new");
         bookDAO.saveOrUpdate(book);

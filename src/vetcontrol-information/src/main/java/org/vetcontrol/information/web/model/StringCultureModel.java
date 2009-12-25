@@ -22,10 +22,6 @@ public class StringCultureModel implements IModel {
         this.model = model;
     }
 
-//    public TestModel(IModel model, Property property) {
-//        super(model, property.getName());
-//        this.property = property;
-//    }
     @Override
     public Object getObject() {
         List<StringCulture> strings = (List<StringCulture>) model.getObject();
@@ -45,18 +41,4 @@ public class StringCultureModel implements IModel {
     @Override
     public void detach() {
     }
-//    @Override
-//    public void setObject(Object object) {
-//        if (property.isLocalizable()) {
-//            final String expression = propertyExpression();
-//            PropertyResolverConverter prc = null;
-//            prc = new PropertyResolverConverter(Application.get().getConverterLocator(),
-//                    Session.get().getLocale());
-//            final String asString = (String) object;
-//            List<StringCulture> value = Arrays.asList(new StringCulture(new StringCultureId(), asString));
-//            PropertyResolver.setValue(expression, getTarget(), object, prc);
-//        } else {
-//            super.setObject(object);
-//        }
-//    }
 }

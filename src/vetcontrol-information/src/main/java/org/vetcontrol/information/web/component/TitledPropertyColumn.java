@@ -18,6 +18,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.lang.PropertyResolver;
+import org.apache.wicket.util.string.Strings;
 import org.vetcontrol.information.model.StringCulture;
 import org.vetcontrol.information.util.web.Constants;
 import org.vetcontrol.information.util.web.Property;
@@ -30,10 +31,12 @@ import org.vetcontrol.information.web.model.StringCultureModel;
 public class TitledPropertyColumn<T> extends TextFilteredPropertyColumn<T, Serializable> {
 
     private Property property;
+    private Locale systemLocale;
 
-    public TitledPropertyColumn(IModel<String> displayModel, Property property) {
+    public TitledPropertyColumn(IModel<String> displayModel, Property property, Locale systemLocale) {
         super(displayModel, property.getName());
         this.property = property;
+        this.systemLocale = systemLocale;
     }
 
     @Override
@@ -49,10 +52,24 @@ public class TitledPropertyColumn<T> extends TextFilteredPropertyColumn<T, Seria
                 Locale currentLocale = Session.get().getLocale();
                 List<StringCulture> list = (List<StringCulture>) propertyValue;
                 boolean finded = false;
+                //try to find in current locale.
                 for (StringCulture culture : list) {
                     if (new Locale(culture.getId().getLocale()).getLanguage().equalsIgnoreCase(currentLocale.getLanguage())) {
-                        finded = true;
-                        asString = culture.getValue();
+                        if (!Strings.isEmpty(culture.getValue())) {
+                            finded = true;
+                            asString = culture.getValue();
+                        }
+                    }
+                }
+                if (!finded) {
+                    //try to find in system locale.
+                    for (StringCulture culture : list) {
+                        if (new Locale(culture.getId().getLocale()).getLanguage().equalsIgnoreCase(systemLocale.getLanguage())) {
+                            if (!Strings.isEmpty(culture.getValue())) {
+                                finded = true;
+                                asString = culture.getValue();
+                            }
+                        }
                     }
                 }
                 if (!finded) {

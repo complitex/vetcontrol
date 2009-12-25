@@ -7,6 +7,7 @@ package org.vetcontrol.information.web.component;
 import java.beans.IntrospectionException;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.FormComponentPanel;
 import org.apache.wicket.markup.html.form.SubmitLink;
@@ -30,7 +31,7 @@ public abstract class BookEntryFormControl extends FormComponentPanel {
 
     private static final Logger log = LoggerFactory.getLogger(BookEntryFormControl.class);
 
-    public BookEntryFormControl(String id, final IModel model) throws IntrospectionException {
+    public BookEntryFormControl(String id, final IModel model, final Locale systemLocale) throws IntrospectionException {
         super(id, model);
 
         List<Property> filtered = BeanPropertyUtil.filter(model.getObject().getClass());
@@ -41,7 +42,7 @@ public abstract class BookEntryFormControl extends FormComponentPanel {
             protected void populateItem(ListItem<Property> item) {
                 Property prop = item.getModelObject();
 
-                item.add(new Label("bookFieldDesc", new DisplayPropertyLocalizableModel(model.getObject().getClass(), prop.getName())));
+                item.add(new Label("bookFieldDesc", new DisplayPropertyLocalizableModel(prop, BookEntryFormControl.this)));
 
                 boolean isSimpleText = false;
                 boolean isDate = false;
@@ -61,6 +62,7 @@ public abstract class BookEntryFormControl extends FormComponentPanel {
                 Panel datePanel = null;
                 Panel textPanel = null;
                 Panel localizableTextPanel = null;
+                
                 //choose what panel is editable:
                 if (isSimpleText) {
                     textPanel = new TextPanel("textPanel", m, prop);
@@ -69,7 +71,7 @@ public abstract class BookEntryFormControl extends FormComponentPanel {
                 } else if (isLocalizableText) {
                     textPanel = new EmptyPanel("textPanel");
                     datePanel = new EmptyPanel("datePanel");
-                    localizableTextPanel = new LocalizableTextPanel("localizableTextPanel", m, prop);
+                    localizableTextPanel = new LocalizableTextPanel("localizableTextPanel", m, prop, systemLocale);
                 } else if (isDate) {
                     textPanel = new EmptyPanel("textPanel");
                     datePanel = new DatePanel("datePanel", m, prop);

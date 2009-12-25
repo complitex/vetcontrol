@@ -5,7 +5,6 @@
 
 package org.vetcontrol.information.service.fasade.pages;
 
-import java.io.Serializable;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -22,17 +21,9 @@ import org.vetcontrol.service.fasade.AbstractFasade;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class BookPageFasade extends AbstractFasade{
 
+    @EJB
     private IBookDAO bookDAO;
 
-    @EJB
-    public void setBookDAO(IBookDAO bookDAO) {
-        this.bookDAO = bookDAO;
-    }
-
-    public <T> List<T> getBookContent(Class<T> bookType, int first, int count) {
-        return bookDAO.getBookContent(bookType, first, count);
-    }
-    
     public <T> List<T> getContent(T example, int first, int count) {
         return bookDAO.getContent(example, first, count);
     }

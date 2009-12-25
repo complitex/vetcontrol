@@ -19,19 +19,16 @@
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket</artifactId>
-            <version>1.4.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket-auth-roles</artifactId>
-            <version>1.4.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket-ioc</artifactId>
-            <version>1.4.4</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -44,7 +41,6 @@
             <groupId>org.wicketstuff</groupId>
             <artifactId>wicket-contrib-javaee</artifactId>
             <scope>system</scope>
-            <version>1.1</version>
             <systemPath>${project.basedir}/lib/wicket-contrib-javaee-1.1.jar</systemPath>
         </dependency>
 
@@ -80,19 +76,16 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.5.10</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>0.9.18</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>0.9.18</version>
             <scope>test</scope>
         </dependency>
 
@@ -114,7 +107,6 @@
         <dependency>
             <groupId>org.vetcontrol</groupId>
             <artifactId>vetcontrol-commons</artifactId>
-            <version>${parent.version}</version>
         </dependency>
 
         <dependency>
@@ -128,7 +120,6 @@
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket-extensions</artifactId>
-            <version>1.4.4</version>            
         </dependency>
 
         <dependency>

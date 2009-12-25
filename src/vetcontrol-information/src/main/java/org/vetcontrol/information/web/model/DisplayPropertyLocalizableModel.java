@@ -8,6 +8,7 @@ import java.util.MissingResourceException;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.vetcontrol.information.util.web.Property;
 
 /**
  *
@@ -16,14 +17,15 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 public class DisplayPropertyLocalizableModel extends AbstractReadOnlyModel<String> {
 
     private static final String SEPARATOR = ".";
-    private static final String SUFFIX = "header";
-
+    private static final String SUFFIX = "prop";
     private Class<?> clazz;
     private String property;
+    private Component component;
 
-    public DisplayPropertyLocalizableModel(Class<?> clazz, String property) {
-        this.clazz = clazz;
-        this.property = property;
+    public DisplayPropertyLocalizableModel(Property property, Component component) {
+        this.clazz = property.getSurroundingClass();
+        this.property = property.getName();
+        this.component = component;
     }
 
     @Override
@@ -32,13 +34,13 @@ public class DisplayPropertyLocalizableModel extends AbstractReadOnlyModel<Strin
 
         //attempt #1
         String key1 = clazz.getSimpleName() + SEPARATOR + property + SEPARATOR + SUFFIX;
-        if((value = attempt(key1)) != null){
+        if ((value = attempt(key1)) != null) {
             return value;
         }
 
         //attempt #2
         String key2 = clazz.getName() + SEPARATOR + property + SEPARATOR + SUFFIX;
-        if((value = attempt(key2)) != null){
+        if ((value = attempt(key2)) != null) {
             return value;
         }
 
@@ -46,9 +48,9 @@ public class DisplayPropertyLocalizableModel extends AbstractReadOnlyModel<Strin
         return property;
     }
 
-    private String attempt(String key){
+    private String attempt(String key) {
         try {
-            return Application.get().getResourceSettings().getLocalizer().getString(key, (Component) null);
+            return Application.get().getResourceSettings().getLocalizer().getString(key, component);
         } catch (MissingResourceException e) {
             return null;
         }
