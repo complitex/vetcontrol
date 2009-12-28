@@ -14,33 +14,6 @@ MySQL - 5.0.88-community-nt : Database - project1
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-USE `project1`;
-
-/*Table structure for table `book1` */
-
-DROP TABLE IF EXISTS `book1`;
-
-CREATE TABLE `book1` (
-  `key1` int(11) NOT NULL auto_increment,
-  `value1` varchar(20) default NULL,
-  `value2` varchar(20) default NULL,
-  `value3` varchar(100) default NULL,
-  `dateValue` date default NULL,
-  PRIMARY KEY  (`key1`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-
-/*Table structure for table `book2` */
-
-DROP TABLE IF EXISTS `book2`;
-
-CREATE TABLE `book2` (
-  `key1` int(11) NOT NULL auto_increment,
-  `val1` varchar(20) default NULL,
-  `val2` varchar(50) default NULL,
-  `val3` varchar(50) default NULL,
-  `val4` varchar(100) default NULL,
-  PRIMARY KEY  (`key1`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 /*Table structure for table `node` */
 
@@ -109,7 +82,7 @@ CREATE TABLE `locales` (
   PRIMARY KEY  (`language`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
+/*Table structure for table `generator` */
 DROP TABLE IF EXISTS `generator`;
 
 create table `generator`(
@@ -151,14 +124,16 @@ CREATE TABLE `registeredproducts` (
   `name` int(11) NOT NULL,
   `classificator` int(11) NOT NULL,
   `vendor` varchar(50) NOT NULL,
-  `country` varchar(2) NOT NULL,
   `regnumber` varchar(50) NOT NULL,
   `date` date NOT NULL,
+  `country` int(11) NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `FK_registeredproducts_name` (`name`),
   CONSTRAINT `FK_registeredproducts_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
   KEY `FK_registeredproducts_classificator` (`classificator`),
-  CONSTRAINT `FK_registeredproducts_classificator` FOREIGN KEY (`classificator`) REFERENCES `stringculture` (`id`)
+  CONSTRAINT `FK_registeredproducts_classificator` FOREIGN KEY (`classificator`) REFERENCES `stringculture` (`id`),
+  KEY `FK_registeredproducts_countryref` (`country`),
+  CONSTRAINT `FK_registeredproducts_countryref` FOREIGN KEY (`country`) REFERENCES `countrybook` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
