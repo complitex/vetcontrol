@@ -3,10 +3,7 @@
     <persistence-unit name="vetcontroldb" transaction-type="JTA">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <jta-data-source>jdbc/vetcontroldb</jta-data-source>
-
-        <class>org.vetcontrol.entity.User</class>
-        <class>org.vetcontrol.entity.UserGroup</class>
-        <class>org.vetcontrol.entity.Department</class>         
+        <jar-file>lib\vetcontrol-commons-1.0-SNAPSHOT.jar</jar-file>
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
