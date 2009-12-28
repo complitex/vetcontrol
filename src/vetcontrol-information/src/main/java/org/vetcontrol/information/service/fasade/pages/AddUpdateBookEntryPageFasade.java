@@ -6,6 +6,7 @@
 package org.vetcontrol.information.service.fasade.pages;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -18,7 +19,7 @@ import org.vetcontrol.service.fasade.AbstractFasade;
  * @author Artem
  */
 @Stateless(name="AddUpdateBookEntryPageFasade")
-@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class AddUpdateBookEntryPageFasade extends AbstractFasade {
 
     @EJB
@@ -26,6 +27,17 @@ public class AddUpdateBookEntryPageFasade extends AbstractFasade {
 
     public void saveOrUpdate(final Serializable bookEntry) {
         bookDAO.saveOrUpdate(bookEntry);
+    }
+
+    public <T> List<T> getAll(Class<T> bookType){
+        try {
+            T example = bookType.newInstance();
+            return bookDAO.getContent(example, 0,
+                bookDAO.size(example).intValue());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
 }

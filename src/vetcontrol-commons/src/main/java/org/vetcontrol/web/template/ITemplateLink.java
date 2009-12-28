@@ -4,6 +4,7 @@ import org.apache.wicket.Page;
 
 import java.io.Serializable;
 import java.util.Locale;
+import org.apache.wicket.PageParameters;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -25,4 +26,10 @@ public interface ITemplateLink extends Serializable{
      * @return Страница модуля
      */
     public Class<? extends Page> getPage();
+
+    /**
+     * Параметры страницы.
+     * @return Параметры страницы.
+     */
+    public PageParameters getParameters();
 }

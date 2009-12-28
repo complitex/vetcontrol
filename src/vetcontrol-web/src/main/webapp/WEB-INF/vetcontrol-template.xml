@@ -3,6 +3,7 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.vetcontrol.org/web/template http://www.vetcontrol.org/web/template/vetcontrol-template.xsd">
     <sidebar>
-        <menu class="org.vetcontrol.user.web.pages.UserTemplateMenu"/>        
+        <menu class="org.vetcontrol.user.web.pages.UserTemplateMenu"/>
+        <menu class="org.vetcontrol.information.web.pages.BookMenu"/>
     </sidebar>
 </template>

@@ -13,17 +13,23 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import org.apache.wicket.Session;
+import org.apache.wicket.util.string.Strings;
 import org.vetcontrol.information.model.StringCulture;
 import org.vetcontrol.information.model.StringCultureId;
+import org.vetcontrol.information.util.model.annotation.BookReference;
 import org.vetcontrol.information.util.model.annotation.MappedProperty;
 
 /**
@@ -79,6 +85,18 @@ public class BeanPropertyUtil {
                             property.setLocalizable(true);
                             String excludeProp = ((MappedProperty) annotation).value();
                             excludes.add(excludeProp);
+                        }
+
+
+                        if(annotation.annotationType().equals(BookReference.class)){
+                            property.setBeanReference(true);
+                            String referencedField = ((BookReference)annotation).referencedProperty();
+                            property.setReferencedField(referencedField);
+                        }
+
+                        if(annotation.annotationType().equals(JoinColumn.class)){
+                            JoinColumn joinColumn = (JoinColumn)annotation;
+                            property.setNullable(joinColumn.nullable());
                         }
                     }
                 }
@@ -162,5 +180,101 @@ public class BeanPropertyUtil {
             }
         }
         return mappedProperties;
+    }
+
+    public static Object getPropertyValue(Object target, String propertyName) throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+        BeanInfo beanInfo = Introspector.getBeanInfo(target.getClass());
+        PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
+        for (PropertyDescriptor prop : props) {
+            if(prop.getName().equals(propertyName)){
+                return prop.getReadMethod().invoke(target);
+            }
+        }
+        throw new RuntimeException("Property '"+propertyName+"' was not found in type "+target.getClass());
+    }
+
+//    public static PropertyDescriptor getPropertyDescriptor(Class beanClass, String propertyName) throws IntrospectionException{
+//        BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
+//        PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
+//        for (PropertyDescriptor prop : props) {
+//            if(prop.getName().equals(propertyName)){
+//                return prop;
+//            }
+//        }
+//        throw new RuntimeException("Property '"+propertyName+"' was not found in type "+beanClass);
+//    }
+
+    public static String getAsString(Object propertyValue, Property property, Locale systemLocale) throws IntrospectionException {
+        String asString = "";
+        if (propertyValue != null) {
+            if (Date.class.isAssignableFrom(property.getType())) {
+                DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Session.get().getLocale());
+                asString = dateFormat.format((Date) propertyValue);
+            } else if (property.isLocalizable()) {
+                Locale currentLocale = Session.get().getLocale();
+                List<StringCulture> list = (List<StringCulture>) propertyValue;
+                boolean finded = false;
+                //try to find in current locale.
+                for (StringCulture culture : list) {
+                    if (new Locale(culture.getId().getLocale()).getLanguage().equalsIgnoreCase(currentLocale.getLanguage())) {
+                        if (!Strings.isEmpty(culture.getValue())) {
+                            finded = true;
+                            asString = culture.getValue();
+                        }
+                    }
+                }
+                if (!finded) {
+                    //try to find in system locale.
+                    for (StringCulture culture : list) {
+                        if (new Locale(culture.getId().getLocale()).getLanguage().equalsIgnoreCase(systemLocale.getLanguage())) {
+                            if (!Strings.isEmpty(culture.getValue())) {
+                                finded = true;
+                                asString = culture.getValue();
+                            }
+                        }
+                    }
+                }
+                if (!finded) {
+                    if (!list.isEmpty()) {
+                        asString = list.get(0).getValue();
+                    }
+                }
+            } else if(property.isBeanReference()) {
+                Object referencedBook = propertyValue;
+                String referencedField = property.getReferencedField();
+                Object value = null;
+                try {
+                    value = BeanPropertyUtil.getPropertyValue(referencedBook, referencedField);
+                } catch (Exception e) {
+                    //TODO: remove it after testing.
+                    throw new RuntimeException(e);
+                }
+                asString = getAsString(value, getPropertyByName(referencedBook.getClass(), referencedField), systemLocale);
+
+            } else {
+                asString = propertyValue.toString();
+            }
+        }
+        return asString;
+    }
+
+    public static Property getPropertyByName(Class beanClass, String propertyName) throws IntrospectionException{
+        for(Property prop : filter(beanClass)){
+            if(prop.getName().equals(propertyName)){
+                return prop;
+            }
+        }
+        return null;
+    }
+
+    public static void setPropertyValue(Object target, String propertyName, Object value) throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+        BeanInfo beanInfo = Introspector.getBeanInfo(target.getClass());
+        PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
+        for (PropertyDescriptor prop : props) {
+            if(prop.getName().equals(propertyName)){
+                prop.getWriteMethod().invoke(target, value);
+            }
+        }
+        throw new RuntimeException("Property '"+propertyName+"' was not found in type "+target.getClass());
     }
 }

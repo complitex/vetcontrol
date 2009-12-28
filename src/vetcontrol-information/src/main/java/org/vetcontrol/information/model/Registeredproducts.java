@@ -6,13 +6,19 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.vetcontrol.information.util.model.annotation.BookReference;
 import org.vetcontrol.information.util.model.annotation.MappedProperty;
 
 /**
@@ -26,16 +32,14 @@ public class Registeredproducts implements java.io.Serializable {
     private long name;
     private long classificator;
     private String vendor;
-    private String country;
     private String regnumber;
     private Date date;
 
     public Registeredproducts() {
     }
 
-    public Registeredproducts(String vendor, String country, String regnumber, Date date) {
+    public Registeredproducts(String vendor, String regnumber, Date date) {
         this.vendor = vendor;
-        this.country = country;
         this.regnumber = regnumber;
         this.date = date;
     }
@@ -76,15 +80,6 @@ public class Registeredproducts implements java.io.Serializable {
 
     public void setVendor(String vendor) {
         this.vendor = vendor;
-    }
-
-    @Column(name = "country", nullable = false, length = 2)
-    public String getCountry() {
-        return this.country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
     }
 
     @Column(name = "regnumber", nullable = false, length = 50)
@@ -156,6 +151,29 @@ public class Registeredproducts implements java.io.Serializable {
 
     public void addClassificator(StringCulture classificator) {
         classificators.add(classificator);
+    }
+    protected CountryBook country;
+
+    /**
+     * Get the value of referencedCountry
+     *
+     * @return the value of referencedCountry
+     */
+    @BookReference(referencedProperty = "code")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "country", nullable = false)
+    public CountryBook getCountry() {
+        return country;
+    }
+
+    /**
+     * Set the value of referencedCountry
+     *
+     * @param referencedCountry new value of referencedCountry
+     */
+    public void setCountry(CountryBook referencedCountry) {
+        this.country = referencedCountry;
     }
 }
 

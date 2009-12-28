@@ -19,6 +19,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vetcontrol.information.service.fasade.pages.AddUpdateBookEntryPageFasade;
 import org.vetcontrol.information.util.web.BeanPropertyUtil;
 import org.vetcontrol.information.util.web.Property;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
@@ -31,7 +32,7 @@ public abstract class BookEntryFormControl extends FormComponentPanel {
 
     private static final Logger log = LoggerFactory.getLogger(BookEntryFormControl.class);
 
-    public BookEntryFormControl(String id, final IModel model, final Locale systemLocale) throws IntrospectionException {
+    public BookEntryFormControl(String id, final IModel model, final Locale systemLocale, final AddUpdateBookEntryPageFasade fasade) throws IntrospectionException {
         super(id, model);
 
         List<Property> filtered = BeanPropertyUtil.filter(model.getObject().getClass());
@@ -47,6 +48,7 @@ public abstract class BookEntryFormControl extends FormComponentPanel {
                 boolean isSimpleText = false;
                 boolean isDate = false;
                 boolean isLocalizableText = false;
+                boolean isSelectable = false;
 
                 if (prop.getType().equals(String.class) || prop.getType().equals(int.class) || prop.getType().equals(Integer.class)
                         || prop.getType().equals(long.class) || prop.getType().equals(Long.class)) {
@@ -55,33 +57,32 @@ public abstract class BookEntryFormControl extends FormComponentPanel {
                     isDate = true;
                 } else if (prop.isLocalizable()) {
                     isLocalizableText = true;
+                } else if (prop.isBeanReference()) {
+                    isSelectable = true;
                 }
 
                 IModel m = new PropertyModel(model, prop.getName());
 
-                Panel datePanel = null;
-                Panel textPanel = null;
-                Panel localizableTextPanel = null;
-                
+                Panel datePanel = new EmptyPanel("datePanel");
+                Panel textPanel = new EmptyPanel("textPanel");
+                Panel localizableTextPanel = new EmptyPanel("localizableTextPanel");
+                Panel selectablePanel = new EmptyPanel("selectablePanel");
+
                 //choose what panel is editable:
                 if (isSimpleText) {
                     textPanel = new TextPanel("textPanel", m, prop);
-                    datePanel = new EmptyPanel("datePanel");
-                    localizableTextPanel = new EmptyPanel("localizableTextPanel");
                 } else if (isLocalizableText) {
-                    textPanel = new EmptyPanel("textPanel");
-                    datePanel = new EmptyPanel("datePanel");
                     localizableTextPanel = new LocalizableTextPanel("localizableTextPanel", m, prop, systemLocale);
                 } else if (isDate) {
-                    textPanel = new EmptyPanel("textPanel");
                     datePanel = new DatePanel("datePanel", m, prop);
-                    localizableTextPanel = new EmptyPanel("localizableTextPanel");
+                } else if (isSelectable) {
+                    selectablePanel = new SelectPanel("selectablePanel", m, prop, fasade.getAll(prop.getType()), systemLocale);
                 }
 
                 item.add(datePanel);
                 item.add(textPanel);
                 item.add(localizableTextPanel);
-
+                item.add(selectablePanel);
             }
         });
 

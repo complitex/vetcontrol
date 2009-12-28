@@ -1,6 +1,7 @@
 package org.vetcontrol.user.web.pages;
 
 import org.apache.wicket.Page;
+import org.apache.wicket.PageParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.web.template.ITemplateLink;
@@ -50,6 +51,13 @@ public class UserTemplateMenu implements ITemplateMenu{
             public Class<? extends Page> getPage() {
                 return UserList.class;
             }
+
+            @Override
+            public PageParameters getParameters() {
+                return PageParameters.NULL;
+            }
+
+
         });
 
         links.add(new ITemplateLink(){
@@ -66,6 +74,13 @@ public class UserTemplateMenu implements ITemplateMenu{
             public Class<? extends Page> getPage() {
                 return UserEdit.class;
             }
+
+            @Override
+            public PageParameters getParameters() {
+                return PageParameters.NULL;
+            }
+
+
         });
 
         return links;
