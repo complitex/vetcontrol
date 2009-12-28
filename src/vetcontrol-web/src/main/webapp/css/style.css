@@ -8,6 +8,9 @@ body{
     clear:both;
 }
 
+.right{
+    float:right;
+}
 
 #wrap {
     margin:0 auto;
@@ -26,13 +29,12 @@ body{
 }
 
 #userdetails{
-    padding:7px 10px;
-    float:right;
+    padding:7px 10px;    
 }
 
 #exit{
     padding:7px 10px;
-    float:right;
+    text-align:right;
 }
 
 #sidebar {

@@ -15,7 +15,7 @@ import javax.persistence.Table;
  * @author Artem
  */
 @Entity
-@Table(name = "locales", catalog = "project1")
+@Table(name = "locales")
 public class Locale implements Serializable {
 
     private String language;

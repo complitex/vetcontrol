@@ -9,30 +9,42 @@
 <body>
 <wicket:extend>
     <div id="users" style="border-width:thin; border-style:solid">
-        <table>
-            <thead>
-            <tr align="center">
-                <th><wicket:message key="user.last_name"/></th>
-                <th><wicket:message key="user.first_name"/></th>
-                <th><wicket:message key="user.middle_name"/></th>
-                <th><wicket:message key="user.department"/></th>
-                <th><wicket:message key="user.login"/></th>
-                <th><wicket:message key="user.usergroup"/></th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr wicket:id="users">
-                <td><span wicket:id="last_name"></span></td>
-                <td><span wicket:id="first_name"></span></td>
-                <td><span wicket:id="middle_name"></span></td>
-                <td><span wicket:id="department"></span></td>
-                <td><span wicket:id="login"></span></td>
-                <td><span wicket:id="groups"></span></td>
-                <td><a href="#" wicket:id="edit"><wicket:message key="user.edit"/></a></td>
-            </tr>
-            </tbody>
-        </table>
+        <div>
+            <form action="#" wicket:id="filter_form">
+                <input type="text" wicket:id="filter_value"/>
+                <input type="submit" wicket:message="value:user.list.filter"/>
+            </form>
+        </div>
+        <div>
+            <table>
+                <thead>
+                <tr align="center">
+                    <th wicket:id="order_last_name"><wicket:message key="user.last_name"/></th>
+                    <th wicket:id="order_first_name"><wicket:message key="user.first_name"/></th>
+                    <th wicket:id="order_middle_name"><wicket:message key="user.middle_name"/></th>
+                    <th wicket:id="order_department"><wicket:message key="user.department"/></th>
+                    <th wicket:id="order_login"><wicket:message key="user.login"/></th>
+                    <th><wicket:message key="user.usergroup"/></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr wicket:id="users">
+                    <td><span wicket:id="last_name"></span></td>
+                    <td><span wicket:id="first_name"></span></td>
+                    <td><span wicket:id="middle_name"></span></td>
+                    <td><span wicket:id="department"></span></td>
+                    <td><span wicket:id="login"></span></td>
+                    <td><span wicket:id="groups"></span></td>
+                    <td><a href="#" wicket:id="edit">[*]</a></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div>
+                <span wicket:id="navigator">[dataview navigator]</span>
+            </div>
+        </div>
     </div>
 </wicket:extend>
 </body>

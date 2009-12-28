@@ -13,23 +13,47 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Fragment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vetcontrol.entity.User;
+import org.vetcontrol.service.UserProfileBean;
 
+import javax.ejb.EJB;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * User: Anatoly A. Ivanov java@inheaven.ru
+ * @author Anatoly A. Ivanov java@inheaven.ru
  * Date: 18.12.2009 19:14:31
+ *
+ * Суперкласс для отображения страниц независимых модулей в едином шаблоне.
+ * Для инициализации шаблона наследники должны вызывать метод super().
  */
 public abstract class TemplatePage extends WebPage{
-    public TemplatePage() {            
+    private static final Logger log = LoggerFactory.getLogger(TemplatePage.class);
+
+    @EJB(name = "UserProfileBean")
+    private UserProfileBean userProfileBean;
+
+    public TemplatePage() {
         add(new ListView<ITemplateMenu>("sidebar", newTemplateMenus()){
             @Override
             protected void populateItem(ListItem<ITemplateMenu> item) {
                 item.add(new TemplateMenu("menu_placeholder", "menu", this, item.getModelObject()));
             }
         });
+
+        String userdetails = "[Гость]";
+        try {
+            final User user = userProfileBean.getCurrentUser();
+            userdetails = user.getLastName() + " " + user.getFirstName() + " " + user.getMiddleName()
+                    + " [" + user.getLogin() + "]";
+        } catch (Exception e) {
+            log.warn("Пользователь не авторизован", e);
+        }
+
+        add(new Label("userdetails",userdetails));
 
         add(new Form("exit"){
             @Override
@@ -40,6 +64,9 @@ public abstract class TemplatePage extends WebPage{
         });
     }
 
+    /**
+     * Боковая панель с меню, которое устанавливается в конфигурационном файле.
+     */
     public class TemplateMenu extends Fragment{
         public TemplateMenu(String id, String markupId, MarkupContainer markupProvider, ITemplateMenu menu) {
             super(id, markupId, markupProvider);
@@ -56,6 +83,7 @@ public abstract class TemplatePage extends WebPage{
         }
     }
 
+    //Загрузка списка классов меню из файла конфирурации и их создание
     private List<ITemplateMenu> newTemplateMenus(){
         List<String> classes = ((TemplateWebApplication)getApplication()).getTemplateLoader().getMenuClassNames();
         List<ITemplateMenu> templateMenus = new ArrayList<ITemplateMenu>();
@@ -80,6 +108,11 @@ public abstract class TemplatePage extends WebPage{
         return templateMenus;
     }
 
+    /**
+     * Проверка роли пользователя для отображения меню модуля.
+     * @param menuClass Класс меню.
+     * @return Отображать ли меню пользователю в зависимости от его роли.
+     */
     private boolean isTemplateMenuAuthorized(Class<?> menuClass){
         boolean authorized = true;
 

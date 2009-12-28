@@ -8,6 +8,8 @@ import java.util.List;
 /**
  * User: Anatoly A. Ivanov java@inheaven.ru
  * Date: 21.12.2009 16:13:49
+ *
+ * Модель пользователя
  */
 @Entity
 @Table(name = "user")
@@ -111,5 +113,19 @@ public class User implements Serializable{
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append("[hash: ").append(Integer.toHexString(hashCode()))
+                .append(", id: ").append(id)
+                .append(", login: ").append(login)
+                .append(", firstName: ").append(firstName)
+                .append(", lastName: ").append(lastName)
+                .append(", middleName: ").append(middleName)
+                .append(", userGroups: ").append(userGroups)
+                .append(", department: ").append(department).append("]")
+                .toString();
     }
 }

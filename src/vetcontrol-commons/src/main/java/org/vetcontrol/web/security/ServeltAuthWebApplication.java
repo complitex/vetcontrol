@@ -12,8 +12,10 @@ import org.apache.wicket.protocol.http.WebRequestCycle;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * User: Anatoly A. Ivanov java@inheaven.ru
+ * @author Anatoly A. Ivanov java@inheaven.ru
  * Date: 16.12.2009 20:18:49
+ *
+ * Wicket приложение, которое использует авторизацию сервлет контейнера.
  */
 public abstract class ServeltAuthWebApplication extends WebApplication
         implements IRoleCheckingStrategy, IUnauthorizedComponentInstantiationListener {
@@ -41,7 +43,8 @@ public abstract class ServeltAuthWebApplication extends WebApplication
     public void onUnauthorizedInstantiation(Component component) {
         if (component instanceof Page){
             WebRequestCycle webRequestCycle = (WebRequestCycle) RequestCycle.get();
-			if (webRequestCycle.getWebRequest().getHttpServletRequest().getUserPrincipal() == null){                
+			if (webRequestCycle.getWebRequest().getHttpServletRequest().getUserPrincipal() == null){
+                
 				throw new RedirectToUrlException("/login.html");
 			}
 			else{

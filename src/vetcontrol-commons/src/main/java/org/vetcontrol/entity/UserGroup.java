@@ -6,6 +6,8 @@ import java.io.Serializable;
 /**
  * User: Anatoly A. Ivanov java@inheaven.ru
  * Date: 21.12.2009 17:03:03
+ *
+ * Модель группы привилегий
  */
 @Entity
 @Table(name = "usergroup")
@@ -43,5 +45,14 @@ public class UserGroup implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
-    }        
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append("[hash: ").append(Integer.toHexString(hashCode()))
+                .append(", id: ").append(id)
+                .append(", userGroup: ").append(userGroup).append("]")
+                .toString();
+    }
 }

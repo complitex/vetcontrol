@@ -1,8 +1,10 @@
 package org.vetcontrol.web.security;
 
 /**
- * User: Anatoly A. Ivanov java@inheaven.ru
+ * @author Anatoly A. Ivanov java@inheaven.ru
  * Date: 19.12.2009 0:43:11
+ *
+ * Список ролей доступа к ресурсам и функциональности системы.
  */
 public class SecurityRoles {
     public final static String AUTHORIZED = "AUTHORIZED";
