@@ -1,4 +1,4 @@
-﻿INSERT INTO `department` VALUES (1,'Госудаственный комитет ветеинаной медицины',NULL,1),
+INSERT INTO `department` VALUES (1,'Госудаственный комитет ветеинаной медицины',NULL,1),
 (2,'Підоздели Одеськой СДВСКН',1,2),(3,'Апаат упавління',2,3),(4,'Ацизький ПДВСКН',2,3),
 (5,'Б-Дністовський ПДВСКН',2,3),(6,'Беезінський ПДВСКН',2,3),(7,'Болгадський ПДВСКН',2,3),
 (8,'Велико-Михайлівський ПДВСКН',2,3),(9,'Вознесенський ПДВСКН',2,3),(10,'Звенігоодський ПДВСКН',2,3),
@@ -14,5 +14,5 @@
 
 INSERT INTO `generator`(`generatorName`, `generatorValue`) VALUES ('books', 0);
 
-INSERT INTO `locales`(`language`, `isSystem`) VALUES ('en', '1');
-INSERT INTO `locales`(`language`) VALUES ('ru');
+INSERT INTO `locales`(`language`, isSystem) VALUES ('ru', 1);
+INSERT INTO `locales`(`language`) VALUES ('en');
