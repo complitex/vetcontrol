@@ -4,6 +4,7 @@
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <jta-data-source>jdbc/vetcontroldb</jta-data-source>
         <jar-file>lib\vetcontrol-commons-1.0-SNAPSHOT.jar</jar-file>
+        <jar-file>lib\vetcontrol-information-1.0-SNAPSHOT.jar</jar-file>
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
