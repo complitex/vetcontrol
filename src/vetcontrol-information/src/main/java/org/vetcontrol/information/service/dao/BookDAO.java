@@ -213,8 +213,15 @@ public class BookDAO implements IBookDAO {
         }
         //TODO: add book referenced search.
         //filter by book referenced info.
-        
 
+        for (Property prop : BeanPropertyUtil.filter(bookType)) {
+            if (prop.isBeanReference()) {
+                Object value = BeanPropertyUtil.getPropertyValue(example, prop.getName());
+                if (value != null) {
+                    query.add(Restrictions.eq(prop.getName(), value));
+                }
+            }
+        }
 
         return query;
     }
