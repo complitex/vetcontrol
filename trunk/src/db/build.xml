@@ -6,6 +6,7 @@
         
         <sql
             driver="com.mysql.jdbc.Driver"
+            encoding="UTF-8"
             url="${url}"
             userid="${username}"
             password="${password}">
