@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import javax.ejb.EJB;
 import org.apache.wicket.MetaDataKey;
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilterStateLocator;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
@@ -20,18 +21,20 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.ResourceModel;
+import org.vetcontrol.information.service.fasade.pages.AddUpdateBookEntryPageFasade;
 import org.vetcontrol.information.service.fasade.pages.BookPageFasade;
 import org.vetcontrol.information.web.component.BookContentControl;
 import org.vetcontrol.information.web.component.LocalePicker;
-import org.vetcontrol.web.pages.BasePage;
 import org.vetcontrol.information.web.support.BookTypes;
 import org.vetcontrol.service.dao.ILocaleDAO;
+import org.vetcontrol.web.template.TemplatePage;
 
 /**
  *
  * @author Artem
  */
-public class BookPage extends BasePage {
+public class BookPage extends TemplatePage {
 
     public class DataProvider implements IDataProvider<Serializable>, IFilterStateLocator {
 
@@ -70,34 +73,35 @@ public class BookPage extends BasePage {
             this.filterBean = (Serializable) state;
         }
 
-        public void init() {
+        public void initSize(){
             Long localSize = fasade.size(filterBean);
             size = localSize == null ? 0 : localSize.intValue();
         }
 
-        public void init(Class bookType) throws InstantiationException, IllegalAccessException {
-            filterBean = (Serializable) bookType.newInstance();
+        public void init(Class type) throws InstantiationException, IllegalAccessException {
+            filterBean = (Serializable) type.newInstance();
         }
     }
     @EJB(name = "BookPageFasade")
     private BookPageFasade fasade;
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
+    @EJB(name = "AddUpdateBookEntryPageFasade")
+    private AddUpdateBookEntryPageFasade addUpdateBookEntryPageFasade;
     public static final MetaDataKey SELECTED_BOOK_ENTRY = new MetaDataKey() {
     };
     private static final MetaDataKey<Class> SELECTED_BOOK_TYPE = new MetaDataKey<Class>() {
     };
-    private Class<Serializable> bookType;
+    static final String BOOK_TYPE = "bookType";
     private DataProvider dataProvider;
 
-    public BookPage() throws IntrospectionException, InstantiationException, IllegalAccessException {
+    public BookPage(PageParameters params) throws IntrospectionException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+        init(params.getString(BOOK_TYPE));
+    }
 
-        List<Class> bookTypies = BookTypes.BOOK_TYPES;
-        if (getSession().getMetaData(SELECTED_BOOK_TYPE) == null) {
-            bookType = bookTypies.get(0);
-        } else {
-            bookType = getSession().getMetaData(SELECTED_BOOK_TYPE);
-        }
+    public void init(String bookType) throws IntrospectionException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+
+        final Class bookClass = Thread.currentThread().getContextClassLoader().loadClass(bookType);
 
         add(new LocalePicker("localePicker", localeDAO.all()));
 
@@ -105,51 +109,14 @@ public class BookPage extends BasePage {
         add(form);
 
         dataProvider = new DataProvider();
+        dataProvider.init(bookClass);
+        dataProvider.initSize();
 
-        initBookContentList();
-        addBookContent(form);
-
-        final DropDownChoice types = new DropDownChoice<Class>("type", new PropertyModel<Class>(this, "bookType"), bookTypies,
-                new ChoiceRenderer<Class>("simpleName", "name")) {
-
-            @Override
-            protected void onSelectionChanged(Class newSelection) {
-                form.remove("bookContent");
-                try {
-                    initBookContentList();
-                    addBookContent(form);
-                    getSession().setMetaData(SELECTED_BOOK_TYPE, bookType);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            protected boolean wantOnSelectionChangedNotifications() {
-                return true;
-            }
-        };
-        form.add(types);
-
-        form.add(new SubmitLink("new") {
-
-            @Override
-            public void onSubmit() {
-                try {
-                    final Serializable entry = (Serializable) bookType.newInstance();
-                    goToEditPage(entry);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
-
-    }
-
-    private void addBookContent(final Form form) throws IntrospectionException {
         if (dataProvider.size() != 0) {
-            final BookContentControl bookContent = new BookContentControl("bookContent", dataProvider, bookType.getSimpleName(), localeDAO.systemLocale()) {
+            final BookContentControl bookContent = new BookContentControl("bookContent", dataProvider,
+                    bookClass,
+                    addUpdateBookEntryPageFasade,
+                    localeDAO.systemLocale()) {
 
                 @Override
                 public void selected(Serializable obj) {
@@ -158,13 +125,21 @@ public class BookPage extends BasePage {
             };
             form.add(bookContent);
         } else {
-            form.add(new Label("bookContent", "This book is empty."));
+            form.add(new Label("bookContent", new ResourceModel("book.content.empty")));
         }
-    }
 
-    private void initBookContentList() throws InstantiationException, IllegalAccessException {
-        dataProvider.init(bookType);
-        dataProvider.init();
+        form.add(new SubmitLink("new") {
+
+            @Override
+            public void onSubmit() {
+                try {
+                    final Serializable entry = (Serializable) bookClass.newInstance();
+                    goToEditPage(entry);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private void goToEditPage(Serializable entry) {

@@ -9,6 +9,7 @@ import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
@@ -16,6 +17,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.apache.wicket.util.string.Strings;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
@@ -58,24 +60,40 @@ public class BookDAO implements IBookDAO {
         return em;
     }
 
-    private <T> void prepareLocalizableStrings(List<T> results, Map<PropertyDescriptor, PropertyDescriptor> mappedProperties, Session session) throws IllegalArgumentException, HibernateException, IllegalAccessException, InvocationTargetException {
+    private <T> void prepareLocalizableStrings(List<T> results, Map<PropertyDescriptor, PropertyDescriptor> mappedProperties, Session session) throws IllegalArgumentException, HibernateException, IllegalAccessException, InvocationTargetException, IntrospectionException {
         for (T currentResult : results) {
-            for (PropertyDescriptor prop : mappedProperties.keySet()) {
-                PropertyDescriptor mappedProperty = mappedProperties.get(prop);
-                Method setter = prop.getWriteMethod();
-                Object id = mappedProperty.getReadMethod().invoke(currentResult);
-                List<StringCulture> subResults = session.createCriteria(StringCulture.class).addOrder(Order.asc("id.locale")).add(Restrictions.eq("id.id", id)).list();
-                for (StringCulture culture : subResults) {
-                    if (culture.getValue() == null) {
-                        culture.setValue("");
+            if (currentResult != null) {
+                for (PropertyDescriptor prop : mappedProperties.keySet()) {
+                    PropertyDescriptor mappedProperty = mappedProperties.get(prop);
+                    Method setter = prop.getWriteMethod();
+                    Object id = mappedProperty.getReadMethod().invoke(currentResult);
+                    List<StringCulture> subResults = session.createCriteria(StringCulture.class).
+                            addOrder(Order.asc("id.locale")).
+                            add(Restrictions.eq("id.id", id)).
+                            list();
+                    for (StringCulture culture : subResults) {
+                        if (culture.getValue() == null) {
+                            culture.setValue("");
+                        }
+                    }
+                    setter.invoke(currentResult, subResults);
+                    if (subResults != null && !subResults.isEmpty()) {
+                        mappedProperty.getWriteMethod().invoke(currentResult, subResults.get(0).getId().getId());
                     }
                 }
-                setter.invoke(currentResult, subResults);
-                if (subResults != null && !subResults.isEmpty()) {
-                    mappedProperty.getWriteMethod().invoke(currentResult, subResults.get(0).getId().getId());
+
+                for (Property prop : BeanPropertyUtil.filter(currentResult.getClass())) {
+                    if (prop.isBeanReference()) {
+                        prepareLocalizableStrings(BeanPropertyUtil.getPropertyValue(currentResult, prop.getName()),
+                                BeanPropertyUtil.getMappedProperties(prop.getType()), session);
+                    }
                 }
             }
         }
+    }
+
+    private <T> void prepareLocalizableStrings(T book, Map<PropertyDescriptor, PropertyDescriptor> mappedProperties, Session session) throws IllegalArgumentException, HibernateException, IllegalAccessException, InvocationTargetException, IntrospectionException {
+        prepareLocalizableStrings(Arrays.asList(book), mappedProperties, session);
     }
 
     @Override
@@ -85,32 +103,39 @@ public class BookDAO implements IBookDAO {
             Map<PropertyDescriptor, PropertyDescriptor> mappedProperties = BeanPropertyUtil.getMappedProperties(book.getClass());
 
             for (PropertyDescriptor prop : mappedProperties.keySet()) {
-                PropertyDescriptor mappedProperty = mappedProperties.get(prop);
-                Method getter = prop.getReadMethod();
-
-                List<StringCulture> localizableStrings = (List<StringCulture>) getter.invoke(book);
-                if (!localizableStrings.isEmpty()) {
-                    if (localizableStrings.get(0).getId().getId() == 0) {
-                        long ID = sequence.next();
-                        for (StringCulture culture : localizableStrings) {
-                            culture.getId().setId(ID);
-
-                            if (Strings.isEmpty(culture.getValue())) {
-                                culture.setValue(null);
-                            }
-
-                            getEntityManager().merge(culture);
-                        }
-                        mappedProperty.getWriteMethod().invoke(book, ID);
-                    }
-                }
-                for (StringCulture culture : localizableStrings) {
-                    getEntityManager().merge(culture);
-                }
+                saveOrUpdateLocalizableStrings(mappedProperties, prop, book);
             }
+//            for(Property prop : BeanPropertyUtil.filter(book.getClass())){
+//                if(prop.isBeanReference()){
+//                    saveOrUpdateLocalizableStrings(BeanPropertyUtil.getMappedProperties(prop.getType()),
+//                            BeanPropertyUtil.getPropertyDescriptor(prop.getType(), prop.getName()), book);
+//                }
+//            }
             getEntityManager().merge(book);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void saveOrUpdateLocalizableStrings(Map<PropertyDescriptor, PropertyDescriptor> mappedProperties, PropertyDescriptor prop, Serializable book) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+        PropertyDescriptor mappedProperty = mappedProperties.get(prop);
+        Method getter = prop.getReadMethod();
+        List<StringCulture> localizableStrings = (List<StringCulture>) getter.invoke(book);
+        if (!localizableStrings.isEmpty()) {
+            if (localizableStrings.get(0).getId().getId() == 0) {
+                long ID = sequence.next();
+                for (StringCulture culture : localizableStrings) {
+                    culture.getId().setId(ID);
+                    if (Strings.isEmpty(culture.getValue())) {
+                        culture.setValue(null);
+                    }
+                    getEntityManager().merge(culture);
+                }
+                mappedProperty.getWriteMethod().invoke(book, ID);
+            }
+        }
+        for (StringCulture culture : localizableStrings) {
+            getEntityManager().merge(culture);
         }
     }
 
@@ -146,17 +171,23 @@ public class BookDAO implements IBookDAO {
         Class bookType = example.getClass();
         Map<PropertyDescriptor, PropertyDescriptor> mappedProperties = BeanPropertyUtil.getMappedProperties(bookType);
 
-        DetachedCriteria query = DetachedCriteria.forClass(bookType, "book").addOrder(Order.asc("id"));
+        DetachedCriteria query = DetachedCriteria.forClass(bookType, "book").
+                setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).
+                addOrder(Order.asc("id"));
 
         final List<Property> properties = BeanPropertyUtil.filter(bookType);
 
-        Example exampleBook = Example.create(example).ignoreCase().enableLike(MatchMode.ANYWHERE).setPropertySelector(new Example.PropertySelector() {
+        Example exampleBook = Example.create(example).
+                ignoreCase().
+                enableLike(MatchMode.ANYWHERE).
+                setPropertySelector(new Example.PropertySelector() {
 
             @Override
             public boolean include(Object propertyValue, String propertyName, Type type) {
                 if (propertyValue != null) {
                     for (Property property : properties) {
-                        if (!property.isLocalizable() && property.getName().equals(propertyName)) {
+
+                        if (!property.isLocalizable() && !property.isBeanReference() && property.getName().equals(propertyName)) {
                             return true;
                         }
                     }
@@ -180,6 +211,11 @@ public class BookDAO implements IBookDAO {
                 }
             }
         }
+        //TODO: add book referenced search.
+        //filter by book referenced info.
+        
+
+
         return query;
     }
 }

@@ -165,6 +165,46 @@ public class Property implements Serializable, Cloneable {
     public void setSurroundingClass(Class surroundingClass) {
         this.surroundingClass = surroundingClass;
     }
+    protected boolean beanReference = false;
+
+    /**
+     * Get the value of beanReference
+     *
+     * @return the value of beanReference
+     */
+    public boolean isBeanReference() {
+        return beanReference;
+    }
+
+    /**
+     * Set the value of beanReference
+     *
+     * @param beanReference new value of beanReference
+     */
+    public void setBeanReference(boolean beanReference) {
+        this.beanReference = beanReference;
+    }
+    protected String referencedField;
+
+    /**
+     * Get the value of referencedField
+     *
+     * @return the value of referencedField
+     */
+    public String getReferencedField() {
+        return referencedField;
+    }
+
+    /**
+     * Set the value of referencedField
+     *
+     * @param referencedField new value of referencedField
+     */
+    public void setReferencedField(String referencedField) {
+        this.referencedField = referencedField;
+    }
+
+
 
     @Override
     public Property clone() {

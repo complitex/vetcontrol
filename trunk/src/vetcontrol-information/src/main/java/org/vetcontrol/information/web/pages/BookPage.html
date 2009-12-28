@@ -9,20 +9,18 @@ and open the template in the editor.
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     </head>
     <body>
+    <wicket:extend>
         <div wicket:id="localePicker"></div>
         <center>
             <form wicket:id="form">
-                <span>Choose book type : </span>
-                <select wicket:id="type">
-                    <option></option>
-                </select>
                 <div>
                     <span wicket:id="bookContent"></span>
                 </div>
                 <br/>
                 <br/>
-                <input type="button" wicket:id="new" value="Add new entry"/>
+                <input type="button" wicket:id="new" wicket:message="value:book.add"/>
             </form>
         </center>
-    </body>
+    </wicket:extend>
+</body>
 </html>

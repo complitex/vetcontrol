@@ -4,11 +4,10 @@
  */
 package org.vetcontrol.information.web.model;
 
-import java.util.MissingResourceException;
-import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.vetcontrol.information.util.web.Property;
+import org.vetcontrol.information.util.web.ResourcesUtil;
 
 /**
  *
@@ -49,10 +48,6 @@ public class DisplayPropertyLocalizableModel extends AbstractReadOnlyModel<Strin
     }
 
     private String attempt(String key) {
-        try {
-            return Application.get().getResourceSettings().getLocalizer().getString(key, component);
-        } catch (MissingResourceException e) {
-            return null;
-        }
+        return ResourcesUtil.getString(key, component);
     }
 }

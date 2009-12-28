@@ -81,14 +81,18 @@ public class BooksTest {
         CountryBook book = new CountryBook("en");
         book.addName(new StringCulture(new StringCultureId("en"), "england"));
         book.addName(new StringCulture(new StringCultureId("ru"), "england2"));
+        bookDAO.saveOrUpdate(book);
+        transaction.commit();
+
 
         //2 registered products
-        Registeredproducts r = new Registeredproducts("Vendor", "uk", "abc123", new Date());
+        transaction = entityManager.getTransaction();
+        transaction.begin();
+        Registeredproducts r = new Registeredproducts("Vendor", "abc123", new Date());
         r.addName(new StringCulture(new StringCultureId("en"), "milk"));
         r.addName(new StringCulture(new StringCultureId("uk"), "milk2"));
         r.addClassificator(new StringCulture(new StringCultureId("en"), "class #1"));
-
-        bookDAO.saveOrUpdate(book);
+        r.setCountry(book);
         bookDAO.saveOrUpdate(r);
 
         transaction.commit();
@@ -150,8 +154,8 @@ public class BooksTest {
         bookDAO.setSequence(s);
         bookDAO.setEntityManager(entityManager);
 
-        entityManager.createNativeQuery("DELETE FROM countrybook").executeUpdate();
         entityManager.createNativeQuery("DELETE FROM registeredproducts").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM countrybook").executeUpdate();
         entityManager.createNativeQuery("DELETE FROM stringculture").executeUpdate();
 
         transaction.commit();
@@ -196,6 +200,31 @@ public class BooksTest {
         propduct.addName(new StringCulture(new StringCultureId(), "m"));
         books = bookDAO.getContent(propduct, 0, 2);
         Assert.assertEquals(1, books.size());
+
+        transaction.commit();
+        entityManager.close();
+    }
+
+//    @Test
+    public void getBookReferenceTest() {
+        cleanUp();
+        saveTest();
+
+        EntityManager entityManager = managerFactory.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+
+        Sequence s = new Sequence();
+        s.setEntityManager(entityManager);
+        BookDAO bookDAO = new BookDAO();
+        bookDAO.setSequence(s);
+        bookDAO.setEntityManager(entityManager);
+
+        CountryBook cb = bookDAO.getContent(new CountryBook(), 0, 1).get(0);
+
+        Registeredproducts r = bookDAO.getContent(new Registeredproducts(), 0, 1).get(0);
+        r.setCountry(cb);
+        bookDAO.saveOrUpdate(r);
 
         transaction.commit();
         entityManager.close();

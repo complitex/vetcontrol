@@ -9,23 +9,23 @@ import org.vetcontrol.information.service.fasade.pages.AddUpdateBookEntryPageFas
 import java.beans.IntrospectionException;
 import java.io.Serializable;
 import javax.ejb.EJB;
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
 import org.vetcontrol.information.util.web.BeanPropertyUtil;
 import org.vetcontrol.information.web.component.BookEntryFormControl;
 import org.vetcontrol.service.dao.ILocaleDAO;
-import org.vetcontrol.web.pages.BasePage;
+import org.vetcontrol.web.template.TemplatePage;
 
 /**
  *
  * @author Artem
  */
-public class AddUpdateBookEntryPage extends BasePage {
+public class AddUpdateBookEntryPage extends TemplatePage {
 
     @EJB(name = "AddUpdateBookEntryPageFasade")
     private AddUpdateBookEntryPageFasade fasade;
-    
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
 
@@ -50,17 +50,23 @@ public class AddUpdateBookEntryPage extends BasePage {
 
         BeanPropertyUtil.addLocalization(bookEntry, localeDAO.all());
 
-        form.add(new BookEntryFormControl("book", new Model(bookEntry), localeDAO.systemLocale()) {
+        form.add(new BookEntryFormControl("book", new Model(bookEntry), localeDAO.systemLocale(), fasade) {
 
             @Override
             public void saveOrUpdate() {
                 fasade.saveOrUpdate(bookEntry);
-                setResponsePage(BookPage.class);
+                goToBooksPage();
+            }
+
+            private void goToBooksPage() {
+                PageParameters params = new PageParameters();
+                params.add(BookPage.BOOK_TYPE, bookEntry.getClass().getName());
+                setResponsePage(BookPage.class, params);
             }
 
             @Override
             public void cancel() {
-                setResponsePage(BookPage.class);
+                goToBooksPage();
             }
         });
     }

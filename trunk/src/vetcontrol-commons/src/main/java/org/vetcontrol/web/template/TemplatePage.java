@@ -22,6 +22,7 @@ import javax.ejb.EJB;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.wicket.PageParameters;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -75,7 +76,8 @@ public abstract class TemplatePage extends WebPage{
 
                 @Override
                 protected void populateItem(ListItem<ITemplateLink> item) {
-                    BookmarkablePageLink link = new BookmarkablePageLink<Class<? extends  Page>>("link", item.getModelObject().getPage());
+                    BookmarkablePageLink link = new BookmarkablePageLink<Class<? extends  Page>>("link", item.getModelObject().getPage(),
+                            item.getModelObject().getParameters());
                     link.add(new Label("label", item.getModelObject().getLabel(getLocale())));                    
                     item.add(link);
                 }

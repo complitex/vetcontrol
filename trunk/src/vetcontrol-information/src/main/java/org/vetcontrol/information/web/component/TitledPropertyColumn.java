@@ -4,22 +4,21 @@
  */
 package org.vetcontrol.information.web.component;
 
-import java.io.Serializable;
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.List;
 import java.util.Locale;
-import org.apache.wicket.Session;
+import org.apache.wicket.Component;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.ChoiceFilter;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterForm;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.TextFilteredPropertyColumn;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilteredPropertyColumn;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.TextFilter;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.lang.PropertyResolver;
-import org.apache.wicket.util.string.Strings;
-import org.vetcontrol.information.model.StringCulture;
+import org.vetcontrol.information.service.fasade.pages.AddUpdateBookEntryPageFasade;
+import org.vetcontrol.information.util.web.BeanPropertyUtil;
 import org.vetcontrol.information.util.web.Constants;
 import org.vetcontrol.information.util.web.Property;
 import org.vetcontrol.information.web.model.StringCultureModel;
@@ -28,15 +27,17 @@ import org.vetcontrol.information.web.model.StringCultureModel;
  *
  * @author Artem
  */
-public class TitledPropertyColumn<T> extends TextFilteredPropertyColumn<T, Serializable> {
+public class TitledPropertyColumn<T> extends FilteredPropertyColumn<T> {
 
     private Property property;
     private Locale systemLocale;
+    private AddUpdateBookEntryPageFasade fasade;
 
-    public TitledPropertyColumn(IModel<String> displayModel, Property property, Locale systemLocale) {
+    public TitledPropertyColumn(IModel<String> displayModel, Property property, AddUpdateBookEntryPageFasade fasade, Locale systemLocale) {
         super(displayModel, property.getName());
         this.property = property;
         this.systemLocale = systemLocale;
+        this.fasade = fasade;
     }
 
     @Override
@@ -44,42 +45,11 @@ public class TitledPropertyColumn<T> extends TextFilteredPropertyColumn<T, Seria
         Object propertyValue = PropertyResolver.getValue(getPropertyExpression(), rowModel.getObject());
 
         String asString = "";
-        if (propertyValue != null) {
-            if (Date.class.isAssignableFrom(property.getType())) {
-                DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Session.get().getLocale());
-                asString = dateFormat.format((Date) propertyValue);
-            } else if (List.class.isAssignableFrom(property.getType()) && property.isLocalizable()) {
-                Locale currentLocale = Session.get().getLocale();
-                List<StringCulture> list = (List<StringCulture>) propertyValue;
-                boolean finded = false;
-                //try to find in current locale.
-                for (StringCulture culture : list) {
-                    if (new Locale(culture.getId().getLocale()).getLanguage().equalsIgnoreCase(currentLocale.getLanguage())) {
-                        if (!Strings.isEmpty(culture.getValue())) {
-                            finded = true;
-                            asString = culture.getValue();
-                        }
-                    }
-                }
-                if (!finded) {
-                    //try to find in system locale.
-                    for (StringCulture culture : list) {
-                        if (new Locale(culture.getId().getLocale()).getLanguage().equalsIgnoreCase(systemLocale.getLanguage())) {
-                            if (!Strings.isEmpty(culture.getValue())) {
-                                finded = true;
-                                asString = culture.getValue();
-                            }
-                        }
-                    }
-                }
-                if (!finded) {
-                    if (!list.isEmpty()) {
-                        asString = list.get(0).getValue();
-                    }
-                }
-            } else {
-                asString = propertyValue.toString();
-            }
+        try {
+            asString = BeanPropertyUtil.getAsString(propertyValue, property, systemLocale);
+        } catch (Exception e) {
+            //TODO: remove it after testing.
+            throw new RuntimeException(e);
         }
 
         String value = asString;
@@ -102,12 +72,26 @@ public class TitledPropertyColumn<T> extends TextFilteredPropertyColumn<T, Seria
         item.add(label);
     }
 
+//    @Override
+//    protected IModel<Serializable> getFilterModel(FilterForm form) {
+//        if (property.isLocalizable()) {
+//            return new StringCultureModel(super.getFilterModel(form));
+////        } else if (property.isBeanReference()) {
+////            return new BookReferenceModel(property.getType(), super.getFilterModel(form), property.getReferencedField());
+//        } else {
+//            return super.getFilterModel(form);
+//        }
+//    }
     @Override
-    protected IModel<Serializable> getFilterModel(FilterForm form) {
+    public Component getFilter(String componentId, FilterForm form) {
         if (property.isLocalizable()) {
-            return new StringCultureModel(super.getFilterModel(form));
+            return new TextFilter(componentId, new StringCultureModel(new PropertyModel(form.getDefaultModel(), getPropertyExpression())), form);
+        } else if (property.isBeanReference()) {
+            return new ChoiceFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form,
+                    fasade.getAll(property.getType()),
+                    new BookChoiceRenderer(property, systemLocale), false);
         } else {
-            return super.getFilterModel(form);
+            return new TextFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form);
         }
     }
 }
