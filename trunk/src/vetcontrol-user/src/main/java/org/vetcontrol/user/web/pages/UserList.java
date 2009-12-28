@@ -40,7 +40,7 @@ public class UserList extends UserI18N{
     @EJB(name = "UserBean")
     private UserBean userBean;
 
-    private final static int ITEMS_ON_PAGE = 20;
+    private final static int ITEMS_ON_PAGE = 1;
 
     public UserList() {
         super();
