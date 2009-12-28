@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.vetcontrol.web.security.SecurityRoles;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -17,6 +19,7 @@ import java.util.ResourceBundle;
  *
  * Реализация меню модуля Редактирование Пользователей для общего шаблона сайта
  */
+@AuthorizeInstantiation(SecurityRoles.USER_EDIT)
 public class UserTemplateMenu implements ITemplateMenu{
     private static final Logger log = LoggerFactory.getLogger(UserTemplateMenu.class);
 
