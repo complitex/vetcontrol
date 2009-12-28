@@ -14,8 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * User: Anatoly A. Ivanov java@inheaven.ru
+ * @author Anatoly A. Ivanov java@inheaven.ru
  * Date: 22.12.2009 18:33:27
+ *
+ * Загружает список меню из файла конфигурации.
  */
 public class TemplateLoader {
     private List<String> menuClassNames;

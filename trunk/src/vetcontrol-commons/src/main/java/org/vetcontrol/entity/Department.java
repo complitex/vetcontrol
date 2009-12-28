@@ -5,8 +5,10 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * User: Anatoly A. Ivanov java@inheaven.ru
+ * @author Anatoly A. Ivanov java@inheaven.ru
  * Date: 21.12.2009 17:52:08
+ *
+ * Модель структурной единицы
  */
 @Entity
 @Table
@@ -77,5 +79,16 @@ public class Department implements Serializable{
 
     public void setUsers(List<User> users) {
         this.users = users;
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append("[hash: ").append(Integer.toHexString(hashCode()))
+                .append(", id: ").append(id)
+                .append(", name: ").append(name)
+                .append(", level: ").append(level)
+                .append(", parent_id: ").append(parent.getId()).append("]")                
+                .toString();
     }
 }

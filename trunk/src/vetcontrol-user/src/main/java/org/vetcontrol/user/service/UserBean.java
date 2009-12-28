@@ -9,6 +9,8 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.List;
 
 /**
@@ -18,21 +20,64 @@ import java.util.List;
 @Stateless(name = "UserBean")
 @RolesAllowed(SecurityRoles.USER_EDIT)
 public class UserBean {
+    public static enum OrderBy {LOGIN, FIRST_NAME, LAST_NAME, MIDDLE_NAME, DEPARTMENT}
+
     @PersistenceContext
     private EntityManager entityManager;
 
-    @SuppressWarnings({"unchecked"})
     public List<User> getUsers(){
-        return entityManager.createQuery("from User").getResultList();
+        return entityManager.createQuery("from User", User.class).getResultList();
+    }
+
+    public List<User> getUsers(int first, int count, OrderBy orderBy, boolean asc, String filter){
+        String order = "";
+        switch(orderBy){
+            case LOGIN: order = " order by u.login"; break;
+            case FIRST_NAME: order = " order by u.firstName"; break;
+            case LAST_NAME: order = " order by u.lastName"; break;
+            case MIDDLE_NAME: order = " order by u.middleName"; break;
+            case DEPARTMENT: order = " order by u.department.name"; break;
+        }
+
+        String where = "";
+        if (filter != null){
+            where = " where upper(u.login) like :filter or upper(u.firstName) like :filter " +
+                    "or upper(u.lastName) like :filter or upper(u.middleName) like :filter " +
+                    "or upper(u.department.name) like :filter";
+        }
+
+        TypedQuery<User> query = entityManager.createQuery("from User u" + where + order + (asc ? " asc":" desc"), User.class);
+
+        if (filter != null){
+            query.setParameter("filter", "%" + filter.toUpperCase() + "%");
+        }
+
+        return query.setFirstResult(first).setMaxResults(count).getResultList();                  
+    }
+
+    public Long getUserCount(String filter){
+         String where = "";
+        if (filter != null){
+            where = " where upper(u.login) like :filter or upper(u.firstName) like :filter " +
+                    "or upper(u.lastName) like :filter or upper(u.middleName) like :filter " +
+                    "or upper(u.department.name) like :filter";
+        }
+
+        TypedQuery<Long> query = entityManager.createQuery("select count(u) from User u" + where, Long.class);
+
+        if (filter != null){
+            query.setParameter("filter", "%" + filter.toUpperCase() + "%");
+        }
+
+        return query.getSingleResult();
     }
 
     public User getUser(long id){
         return entityManager.find(User.class, id);
     }
 
-    @SuppressWarnings({"unchecked"})
     public List<Department> getDepartments(){
-        return entityManager.createQuery("from Department").getResultList();
+        return entityManager.createQuery("from Department", Department.class).getResultList();
     }
 
     public void save(User user){
@@ -65,7 +110,7 @@ public class UserBean {
     }
 
     public boolean containsLogin(String login){
-        return (Long)entityManager.createQuery("select count(u) from User u where u.login = :login")
+        return entityManager.createQuery("select count(u) from User u where u.login = :login", Long.class)
                 .setParameter("login",login)
                 .getSingleResult() > 0;
 
