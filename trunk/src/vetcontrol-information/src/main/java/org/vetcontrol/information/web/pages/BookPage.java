@@ -95,9 +95,6 @@ public class BookPage extends TemplatePage {
 
         add(new LocalePicker("localePicker", localeDAO.all(), localeDAO.systemLocale()));
 
-        final Form form = new Form("form");
-        add(form);
-
         dataProvider = new DataProvider();
         dataProvider.init(bookClass);
         dataProvider.initSize();
@@ -113,10 +110,13 @@ public class BookPage extends TemplatePage {
                     goToEditPage(obj);
                 }
             };
-            form.add(bookContent);
+            add(bookContent);
         } else {
-            form.add(new Label("bookContent", new ResourceModel("book.content.empty")));
+            add(new Label("bookContent", new ResourceModel("book.content.empty")));
         }
+
+        final Form form = new Form("form");
+        add(form);
 
         form.add(new SubmitLink("new") {
 
