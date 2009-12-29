@@ -83,16 +83,22 @@ public class BooksTest {
         book.addName(new StringCulture(new StringCultureId("ru"), "england2"));
         bookDAO.saveOrUpdate(book);
         transaction.commit();
-
+        entityManager.close();
 
         //2 registered products
+        entityManager = managerFactory.createEntityManager();
         transaction = entityManager.getTransaction();
         transaction.begin();
+        
+        s.setEntityManager(entityManager);
+        bookDAO.setEntityManager(entityManager);
+        
         Registeredproducts r = new Registeredproducts("Vendor", "abc123", new Date());
         r.addName(new StringCulture(new StringCultureId("en"), "milk"));
         r.addName(new StringCulture(new StringCultureId("uk"), "milk2"));
         r.addClassificator(new StringCulture(new StringCultureId("en"), "class #1"));
-        r.setCountry(book);
+        CountryBook country = bookDAO.getContent(new CountryBook(), 0, 1).get(0);
+        r.setCountry(country);
         bookDAO.saveOrUpdate(r);
 
         transaction.commit();
