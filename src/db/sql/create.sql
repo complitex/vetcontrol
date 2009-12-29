@@ -136,6 +136,18 @@ CREATE TABLE `registeredproducts` (
   CONSTRAINT `FK_registeredproducts_countryref` FOREIGN KEY (`country`) REFERENCES `countrybook` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/*Table structure for table `vehicletypes` */
+
+DROP TABLE IF EXISTS `vehicletypes`;
+
+CREATE TABLE `vehicletypes` (
+    `id` int(11) NOT NULL auto_increment,
+    `name` int(11) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FK_vehicletypes_name` (`name`),
+    CONSTRAINT `FK_vehicletypes_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;

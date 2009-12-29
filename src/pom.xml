@@ -11,9 +11,6 @@
 
     <name>Veterinary control</name>
 
-
-
-
     <modules>
         <module>vetcontrol-commons</module>
         <module>vetcontrol-user</module>
@@ -25,8 +22,6 @@
         <module>vetcontrol-sync-server</module>
         <module>vetcontrol-web</module>
     </modules>
-
-
 
     <dependencyManagement>
         <dependencies>
@@ -187,7 +182,7 @@
                 </excludes>
             </testResource>
             <testResource>
-                <filtering>false</filtering>
+                <filtering>true</filtering>
                 <directory>src/test/resources</directory>
             </testResource>
         </testResources>
@@ -202,7 +197,7 @@
                     <encoding>UTF-8</encoding> 
                 </configuration>
             </plugin>
-           <!-- <plugin>
+            <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <configuration>
@@ -213,6 +208,12 @@
         </plugins>
     </build>
     <properties>
+        <!-- test db access properties -->
+        <!-- change test db access parameters for test db -->
+        <connection.url>jdbc:mysql://localhost:3306/vetcontrol</connection.url>
+        <connection.username>artem</connection.username>
+        <connection.password>artem</connection.password>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
     </properties>
