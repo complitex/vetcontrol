@@ -35,7 +35,7 @@ public abstract class BookEntryFormControl extends FormComponentPanel {
     public BookEntryFormControl(String id, final IModel model, final Locale systemLocale, final AddUpdateBookEntryPageFasade fasade) throws IntrospectionException {
         super(id, model);
 
-        List<Property> filtered = BeanPropertyUtil.filter(model.getObject().getClass());
+        List<Property> filtered = BeanPropertyUtil.getProperties(model.getObject().getClass());
 
         add(new ListView<Property>("bookFields", filtered) {
 

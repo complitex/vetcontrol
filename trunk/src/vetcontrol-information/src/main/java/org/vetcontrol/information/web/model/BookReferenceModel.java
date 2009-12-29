@@ -16,6 +16,7 @@ import org.vetcontrol.information.util.web.Property;
  *
  * @author Artem
  */
+@Deprecated
 public class BookReferenceModel implements IModel<Serializable> {
 
     private IModel model;

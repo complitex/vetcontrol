@@ -24,7 +24,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
-import org.vetcontrol.information.service.fasade.pages.AddUpdateBookEntryPageFasade;
+import org.vetcontrol.information.service.fasade.pages.BookPageFasade;
 import org.vetcontrol.information.util.web.BeanPropertyUtil;
 import org.vetcontrol.information.util.web.Constants;
 import org.vetcontrol.information.util.web.Property;
@@ -53,15 +53,15 @@ public abstract class BookContentControl extends Panel {
         }
     }
 
-    public BookContentControl(String id, final DataProvider dataProvider, Class bookClass, AddUpdateBookEntryPageFasade fasade, Locale systemLocale) throws IntrospectionException {
+    public BookContentControl(String id, final DataProvider dataProvider, Class bookClass, BookPageFasade fasade, Locale systemLocale) throws IntrospectionException {
         super(id);
 
         add(new Label("bookName", new DisplayBookClassModel(bookClass, getLocale())));
 
         List<IColumn<Serializable>> columns = new ArrayList<IColumn<Serializable>>();
 
-        for (Property prop : BeanPropertyUtil.filter(bookClass)) {
-            columns.add(new TitledPropertyColumn<Serializable>(new DisplayPropertyLocalizableModel(prop, this), prop, fasade, systemLocale));
+        for (Property prop : BeanPropertyUtil.getProperties(bookClass)) {
+            columns.add(new BookPropertyColumn<Serializable>(new DisplayPropertyLocalizableModel(prop, this), prop, fasade, systemLocale));
         }
         columns.add(new AbstractColumn(new ResourceModel("book.edit.header")) {
 

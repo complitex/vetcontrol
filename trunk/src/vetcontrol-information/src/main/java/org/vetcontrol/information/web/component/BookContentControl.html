@@ -10,7 +10,7 @@ and open the template in the editor.
     </head>
     <body>
     <wicket:panel>
-        <h3><wicket:message key="book.content.label"/> <span wicket:id="bookName"></span></h3>
+        <h3><span wicket:id="bookName"></span></h3>
         <form wicket:id="filterForm">
             <span wicket:id="navigator"></span>
             <table border="1" wicket:id="table">
@@ -21,8 +21,6 @@ and open the template in the editor.
             <input wicket:id="focus-tracker" type="hidden"/>
             <div wicket:id="focus-restore"></div>
             <div wicket:id="goAndClearFilter"></div>
-
-            <!--<input type="submit" value="search" />-->
         </form>
     </wicket:panel>
 </body>
