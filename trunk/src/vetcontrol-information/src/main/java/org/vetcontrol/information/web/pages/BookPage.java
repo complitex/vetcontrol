@@ -20,7 +20,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.vetcontrol.information.service.fasade.pages.BookPageFasade;
 import org.vetcontrol.information.web.component.BookContentControl;
-import org.vetcontrol.information.web.component.LocalePicker;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.web.template.TemplatePage;
 
@@ -92,8 +91,6 @@ public class BookPage extends TemplatePage {
     public void init(String bookType) throws IntrospectionException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 
         final Class bookClass = Thread.currentThread().getContextClassLoader().loadClass(bookType);
-
-        add(new LocalePicker("localePicker", localeDAO.all(), localeDAO.systemLocale()));
 
         dataProvider = new DataProvider();
         dataProvider.init(bookClass);

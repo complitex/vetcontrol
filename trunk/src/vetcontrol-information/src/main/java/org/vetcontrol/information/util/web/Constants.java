@@ -19,4 +19,5 @@ public class Constants {
     public static final int TITLE_LIMIT = 30;
     public static final String CONTINUE = "...";
 
+    public static final int FILTER_FIELD_SIZE = 10;
 }

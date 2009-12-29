@@ -15,7 +15,7 @@
 #wrap {
     margin:0 auto;
     text-align:left;
-    width:960px;
+    width:100%;
 }
 
 #container{
@@ -40,17 +40,15 @@
 #sidebar {
     background:#FFFFFF none repeat scroll 0 0;
     float:left;
-    margin:10px 0 0;
+    margin:10px 10px 0;
     overflow:hidden;
     width:250px;
 }
 
 #main{
     background:#FFFFFF none repeat scroll 0 0;
-    float:right;
     margin:10px 0 0;
     overflow:hidden;
-    width:690px;                                  
 }
 
 .menu{
@@ -176,3 +174,4 @@ input.btnMiddle { background:url('images/btn-middle.gif') no-repeat #007AAE; wid
 /* стили для справочников */
 .filterPanel input{ background:url('images/btn-middle.gif') no-repeat #007AAE; width:126px; height:26px; border:0px; color: #FFFFFF; font-size: 12px; font-weight: bold; text-transform: uppercase; }
 .bookContent td {text-align: center;}
+.bookContent th {text-align: center;}

@@ -76,15 +76,23 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
     @Override
     public Component getFilter(String componentId, FilterForm form) {
         if (property.isLocalizable()) {
-            return new TextFilter(componentId, new StringCultureModel(new PropertyModel(form.getDefaultModel(), getPropertyExpression())), form);
+            TextFilter filter = new TextFilter(componentId,
+                    new StringCultureModel(new PropertyModel(form.getDefaultModel(), getPropertyExpression())),
+                    form);
+            filter.getFilter().add(new SimpleAttributeModifier("size", String.valueOf(Constants.FILTER_FIELD_SIZE)));
+            return filter;
         } else if (property.isBeanReference()) {
             return new ChoiceFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form,
                     fasade.getAll(property.getType()),
                     new BookChoiceRenderer(property, systemLocale), false);
         } else if (Date.class.isAssignableFrom(property.getType())) {
-            return new DateFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form);
+            DateFilter filter = new DateFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form);
+            filter.getFilter().add(new SimpleAttributeModifier("size", String.valueOf(Constants.FILTER_FIELD_SIZE)));
+            return filter;
         } else {
-            return new TextFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form);
+            TextFilter filter = new TextFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form);
+            filter.getFilter().add(new SimpleAttributeModifier("size", String.valueOf(Constants.FILTER_FIELD_SIZE)));
+            return filter;
         }
     }
 }
