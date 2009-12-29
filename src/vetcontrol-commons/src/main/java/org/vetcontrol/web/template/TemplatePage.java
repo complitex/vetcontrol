@@ -6,9 +6,7 @@ import org.apache.wicket.authorization.strategies.role.Roles;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.SubmitLink;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -19,10 +17,10 @@ import org.vetcontrol.entity.User;
 import org.vetcontrol.service.UserProfileBean;
 
 import javax.ejb.EJB;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.wicket.PageParameters;
+import org.vetcontrol.service.dao.ILocaleDAO;
+import org.vetcontrol.web.component.LocalePicker;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -37,7 +35,14 @@ public abstract class TemplatePage extends WebPage{
     @EJB(name = "UserProfileBean")
     private UserProfileBean userProfileBean;
 
+    @EJB(name = "LocaleDAO")
+    private ILocaleDAO localeDAO;
+
     public TemplatePage() {
+
+        //locale picker
+        add(new LocalePicker("localePicker", localeDAO.all(), localeDAO.systemLocale()));
+
         add(new ListView<ITemplateMenu>("sidebar", newTemplateMenus()){
             @Override
             protected void populateItem(ListItem<ITemplateMenu> item) {

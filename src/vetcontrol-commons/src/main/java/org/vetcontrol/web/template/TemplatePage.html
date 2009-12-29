@@ -2,61 +2,71 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/">
-<head>
-    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
-    <link href="css/style.css" rel="stylesheet" type="text/css"/>
-</head>
-<body>
-<div id="wrap">
-    <div id="container">
-        <div id="header">
-            <div id="logo">
-                <h1>Ветеринарный контроль</h1>
-            </div>
-            <div class="right">
-                <div id="userdetails">
-                    <span wicket:id="userdetails"/>
-                </div>
-                <div id="exit">
-                    <form wicket:id="exit" action="">
-                        <input type="submit" value="Выход"/>
-                    </form>
-                </div>
-            </div>
-            <div class="fixed"></div>
-        </div>
-        <div id="content">
-            <div id="sidebar">
-                <div wicket:id="sidebar">
-                    <div wicket:id="menu_placeholder">[menu content will go here]</div>
-
-                    <wicket:fragment wicket:id="menu">
-                        <div class="menu">
-                            <h3><span wicket:id="menu_title"></span></h3>
-                            <ul>
-                                <li wicket:id="menu_items">
-                                    <a href="#" wicket:id="link"><span wicket:id="label"></span></a>
-                                </li>
-                            </ul>
+    <head>
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+        <link href="css/style.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <body>
+        <div id="wrap">
+            <div id="container">
+                <div id="header">
+                    <div id="logo">
+                        <h1>Ветеринарный контроль</h1>
+                    </div>
+                    <div class="right">
+                        <div id="userdetails">
+                            <span wicket:id="userdetails"/>
                         </div>
-                    </wicket:fragment>
+                        <table cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                                <td>
+                                    <div style="padding: 5px,5px,5px,5px;" wicket:id="localePicker"></div>
+                                </td>
+                                <td>
+                                    <div id="exit">
+                                        <form wicket:id="exit" action="">
+                                            <input type="submit" value="Выход"/>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+                    <div class="fixed"></div>
+                </div>
+                <div id="content">
+                    <div id="sidebar">
+                        <div wicket:id="sidebar">
+                            <div wicket:id="menu_placeholder">[menu content will go here]</div>
+
+                            <wicket:fragment wicket:id="menu">
+                                <div class="menu">
+                                    <h3><span wicket:id="menu_title"></span></h3>
+                                    <ul>
+                                        <li wicket:id="menu_items">
+                                            <a href="#" wicket:id="link"><span wicket:id="label"></span></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </wicket:fragment>
+                        </div>
+                    </div>
+                    <div id="main">
+                        <wicket:child/>
+
+                        <wicket:remove>
+                            Main Context Here!
+                        </wicket:remove>
+                    </div>
+                </div>
+                <div class="fixed"></div>
+
+                <div id="footer">
+                    <div>Комплитекс 2009</div>
                 </div>
             </div>
-            <div id="main">
-                <wicket:child/>
-
-                <wicket:remove>
-                    Main Context Here!
-                </wicket:remove>
-            </div>
         </div>
-        <div class="fixed"></div>
 
-        <div id="footer">
-            <div>Комплитекс 2009</div>
-        </div>
-    </div>
-</div>
-
-</body>
+    </body>
 </html>
