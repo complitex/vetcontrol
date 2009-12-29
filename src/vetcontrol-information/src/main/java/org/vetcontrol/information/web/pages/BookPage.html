@@ -12,13 +12,12 @@ and open the template in the editor.
     <wicket:extend>
         <div wicket:id="localePicker"></div>
         <center>
+            <div>
+                <span wicket:id="bookContent"></span>
+            </div>
+            <br/>
             <form wicket:id="form">
-                <div>
-                    <span wicket:id="bookContent"></span>
-                </div>
-                <br/>
-                <br/>
-                <input type="button" wicket:id="new" wicket:message="value:book.add"/>
+                <input class="btnBig" type="button" wicket:id="new" wicket:message="value:book.add"/>
             </form>
         </center>
     </wicket:extend>
