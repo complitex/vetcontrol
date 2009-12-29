@@ -11,9 +11,12 @@ import javax.ejb.EJB;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilterStateLocator;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.SubmitLink;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -96,8 +99,11 @@ public class BookPage extends TemplatePage {
         dataProvider.init(bookClass);
         dataProvider.initSize();
 
+        Panel bookContent = new EmptyPanel("bookContent");
+        WebMarkupContainer emptyContent = new WebMarkupContainer("emptyContent");
+
         if (dataProvider.size() != 0) {
-            final BookContentControl bookContent = new BookContentControl("bookContent", dataProvider,
+            bookContent = new BookContentControl("bookContent", dataProvider,
                     bookClass,
                     fasade,
                     localeDAO.systemLocale()) {
@@ -107,10 +113,10 @@ public class BookPage extends TemplatePage {
                     goToEditPage(obj);
                 }
             };
-            add(bookContent);
-        } else {
-            add(new Label("bookContent", new ResourceModel("book.content.empty")));
+            emptyContent.setVisible(false);
         }
+        add(bookContent);
+        add(emptyContent);
 
         final Form form = new Form("form");
         add(form);

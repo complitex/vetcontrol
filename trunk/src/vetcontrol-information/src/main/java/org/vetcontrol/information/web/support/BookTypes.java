@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import org.vetcontrol.information.model.CountryBook;
 import org.vetcontrol.information.model.Registeredproducts;
+import org.vetcontrol.information.model.VehicleType;
 
 /**
  *
@@ -19,6 +20,7 @@ public class BookTypes {
     public static final List<Class> BOOK_TYPES = Collections.unmodifiableList(Arrays.asList(new Class[]{
         CountryBook.class,
         Registeredproducts.class,
+        VehicleType.class,
     }));
 
     @Deprecated

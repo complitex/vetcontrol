@@ -67,6 +67,7 @@ public class BeanPropertyUtil {
                         || Modifier.isAbstract(prop.getWriteMethod().getModifiers())) {
 
                     property.setWritable(false);
+                    validProperty = false;
                 } else {
                     property.setWritable(true);
                     for (Annotation annotation : prop.getReadMethod().getAnnotations()) {
