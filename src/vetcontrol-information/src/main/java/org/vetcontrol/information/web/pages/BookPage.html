@@ -14,6 +14,12 @@ and open the template in the editor.
             <div>
                 <span wicket:id="bookContent"></span>
             </div>
+            <div wicket:id="emptyContent">
+                <h1>
+                    <wicket:message key="book.content.empty"/>
+                </h1>
+            </div>
+
             <br/>
             <form wicket:id="form">
                 <input class="btnBig" type="button" wicket:id="new" wicket:message="value:book.add"/>
