@@ -175,3 +175,6 @@ input.btnMiddle { background:url('images/btn-middle.gif') no-repeat #007AAE; wid
 .filterPanel input{ background:url('images/btn-middle.gif') no-repeat #007AAE; width:126px; height:26px; border:0px; color: #FFFFFF; font-size: 12px; font-weight: bold; text-transform: uppercase; }
 .bookContent td {text-align: center;}
 .bookContent th {text-align: center;}
+.filter-td input[type="text"]{
+    width:100%;
+}
