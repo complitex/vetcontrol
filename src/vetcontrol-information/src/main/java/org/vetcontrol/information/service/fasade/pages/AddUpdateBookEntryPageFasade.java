@@ -37,7 +37,6 @@ public class AddUpdateBookEntryPageFasade extends AbstractFasade {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 
 }

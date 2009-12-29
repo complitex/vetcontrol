@@ -4,6 +4,7 @@
  */
 package org.vetcontrol.information.web.component;
 
+import java.util.Date;
 import java.util.Locale;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
@@ -17,7 +18,7 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.lang.PropertyResolver;
-import org.vetcontrol.information.service.fasade.pages.AddUpdateBookEntryPageFasade;
+import org.vetcontrol.information.service.fasade.pages.BookPageFasade;
 import org.vetcontrol.information.util.web.BeanPropertyUtil;
 import org.vetcontrol.information.util.web.Constants;
 import org.vetcontrol.information.util.web.Property;
@@ -27,13 +28,13 @@ import org.vetcontrol.information.web.model.StringCultureModel;
  *
  * @author Artem
  */
-public class TitledPropertyColumn<T> extends FilteredPropertyColumn<T> {
+public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
 
     private Property property;
     private Locale systemLocale;
-    private AddUpdateBookEntryPageFasade fasade;
+    private BookPageFasade fasade;
 
-    public TitledPropertyColumn(IModel<String> displayModel, Property property, AddUpdateBookEntryPageFasade fasade, Locale systemLocale) {
+    public BookPropertyColumn(IModel<String> displayModel, Property property, BookPageFasade fasade, Locale systemLocale) {
         super(displayModel, property.getName());
         this.property = property;
         this.systemLocale = systemLocale;
@@ -46,7 +47,7 @@ public class TitledPropertyColumn<T> extends FilteredPropertyColumn<T> {
 
         String asString = "";
         try {
-            asString = BeanPropertyUtil.getAsString(propertyValue, property, systemLocale);
+            asString = BeanPropertyUtil.getPropertyAsString(propertyValue, property, systemLocale);
         } catch (Exception e) {
             //TODO: remove it after testing.
             throw new RuntimeException(e);
@@ -72,16 +73,6 @@ public class TitledPropertyColumn<T> extends FilteredPropertyColumn<T> {
         item.add(label);
     }
 
-//    @Override
-//    protected IModel<Serializable> getFilterModel(FilterForm form) {
-//        if (property.isLocalizable()) {
-//            return new StringCultureModel(super.getFilterModel(form));
-////        } else if (property.isBeanReference()) {
-////            return new BookReferenceModel(property.getType(), super.getFilterModel(form), property.getReferencedField());
-//        } else {
-//            return super.getFilterModel(form);
-//        }
-//    }
     @Override
     public Component getFilter(String componentId, FilterForm form) {
         if (property.isLocalizable()) {
@@ -90,6 +81,8 @@ public class TitledPropertyColumn<T> extends FilteredPropertyColumn<T> {
             return new ChoiceFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form,
                     fasade.getAll(property.getType()),
                     new BookChoiceRenderer(property, systemLocale), false);
+        } else if (Date.class.isAssignableFrom(property.getType())) {
+            return new DateFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form);
         } else {
             return new TextFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form);
         }

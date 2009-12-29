@@ -82,7 +82,7 @@ public class BookDAO implements IBookDAO {
                     }
                 }
 
-                for (Property prop : BeanPropertyUtil.filter(currentResult.getClass())) {
+                for (Property prop : BeanPropertyUtil.getProperties(currentResult.getClass())) {
                     if (prop.isBeanReference()) {
                         prepareLocalizableStrings(BeanPropertyUtil.getPropertyValue(currentResult, prop.getName()),
                                 BeanPropertyUtil.getMappedProperties(prop.getType()), session);
@@ -175,7 +175,7 @@ public class BookDAO implements IBookDAO {
                 setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).
                 addOrder(Order.asc("id"));
 
-        final List<Property> properties = BeanPropertyUtil.filter(bookType);
+        final List<Property> properties = BeanPropertyUtil.getProperties(bookType);
 
         Example exampleBook = Example.create(example).
                 ignoreCase().
@@ -211,10 +211,9 @@ public class BookDAO implements IBookDAO {
                 }
             }
         }
-        //TODO: add book referenced search.
-        //filter by book referenced info.
 
-        for (Property prop : BeanPropertyUtil.filter(bookType)) {
+        //filter by book referenced info.
+        for (Property prop : BeanPropertyUtil.getProperties(bookType)) {
             if (prop.isBeanReference()) {
                 Object value = BeanPropertyUtil.getPropertyValue(example, prop.getName());
                 if (value != null) {

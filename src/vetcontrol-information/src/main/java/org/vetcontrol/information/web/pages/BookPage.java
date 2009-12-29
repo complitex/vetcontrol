@@ -7,26 +7,20 @@ package org.vetcontrol.information.web.pages;
 import java.beans.IntrospectionException;
 import java.io.Serializable;
 import java.util.Iterator;
-import java.util.List;
 import javax.ejb.EJB;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilterStateLocator;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.ChoiceRenderer;
-import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.SubmitLink;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
-import org.vetcontrol.information.service.fasade.pages.AddUpdateBookEntryPageFasade;
 import org.vetcontrol.information.service.fasade.pages.BookPageFasade;
 import org.vetcontrol.information.web.component.BookContentControl;
 import org.vetcontrol.information.web.component.LocalePicker;
-import org.vetcontrol.information.web.support.BookTypes;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.web.template.TemplatePage;
 
@@ -73,7 +67,7 @@ public class BookPage extends TemplatePage {
             this.filterBean = (Serializable) state;
         }
 
-        public void initSize(){
+        public void initSize() {
             Long localSize = fasade.size(filterBean);
             size = localSize == null ? 0 : localSize.intValue();
         }
@@ -86,11 +80,7 @@ public class BookPage extends TemplatePage {
     private BookPageFasade fasade;
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
-    @EJB(name = "AddUpdateBookEntryPageFasade")
-    private AddUpdateBookEntryPageFasade addUpdateBookEntryPageFasade;
     public static final MetaDataKey SELECTED_BOOK_ENTRY = new MetaDataKey() {
-    };
-    private static final MetaDataKey<Class> SELECTED_BOOK_TYPE = new MetaDataKey<Class>() {
     };
     static final String BOOK_TYPE = "bookType";
     private DataProvider dataProvider;
@@ -103,7 +93,7 @@ public class BookPage extends TemplatePage {
 
         final Class bookClass = Thread.currentThread().getContextClassLoader().loadClass(bookType);
 
-        add(new LocalePicker("localePicker", localeDAO.all()));
+        add(new LocalePicker("localePicker", localeDAO.all(), localeDAO.systemLocale()));
 
         final Form form = new Form("form");
         add(form);
@@ -115,7 +105,7 @@ public class BookPage extends TemplatePage {
         if (dataProvider.size() != 0) {
             final BookContentControl bookContent = new BookContentControl("bookContent", dataProvider,
                     bookClass,
-                    addUpdateBookEntryPageFasade,
+                    fasade,
                     localeDAO.systemLocale()) {
 
                 @Override

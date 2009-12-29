@@ -27,12 +27,12 @@ public class BookChoiceRenderer extends ChoiceRenderer<Object> {
     @Override
     public Object getDisplayValue(Object object) {
         try {
-            List<Property> props = BeanPropertyUtil.filter(object.getClass());
+            List<Property> props = BeanPropertyUtil.getProperties(object.getClass());
             for (Property prop : props) {
                 if (prop.getName().equals(property.getReferencedField())) {
                     Object value = BeanPropertyUtil.getPropertyValue(object, prop.getName());
                     if (prop.isLocalizable()) {
-                        return BeanPropertyUtil.getAsString(value, prop, systemLocale);
+                        return BeanPropertyUtil.getPropertyAsString(value, prop, systemLocale);
                     } else {
                         return value;
                     }

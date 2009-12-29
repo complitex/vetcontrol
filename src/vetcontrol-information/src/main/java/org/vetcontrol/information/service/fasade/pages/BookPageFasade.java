@@ -31,4 +31,14 @@ public class BookPageFasade extends AbstractFasade{
     public <T> Long size(T example){
         return bookDAO.size(example);
     }
+
+     public <T> List<T> getAll(Class<T> bookType){
+        try {
+            T example = bookType.newInstance();
+            return bookDAO.getContent(example, 0,
+                bookDAO.size(example).intValue());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

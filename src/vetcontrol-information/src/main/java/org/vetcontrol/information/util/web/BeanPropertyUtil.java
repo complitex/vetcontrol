@@ -38,7 +38,7 @@ import org.vetcontrol.information.util.model.annotation.MappedProperty;
  */
 public class BeanPropertyUtil {
 
-    public static List<Property> filter(Class<?> beanClass) throws IntrospectionException {
+    public static List<Property> getProperties(Class<?> beanClass) throws IntrospectionException {
         BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
         PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
         List<Property> filtered = new ArrayList<Property>();
@@ -193,18 +193,7 @@ public class BeanPropertyUtil {
         throw new RuntimeException("Property '"+propertyName+"' was not found in type "+target.getClass());
     }
 
-//    public static PropertyDescriptor getPropertyDescriptor(Class beanClass, String propertyName) throws IntrospectionException{
-//        BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
-//        PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
-//        for (PropertyDescriptor prop : props) {
-//            if(prop.getName().equals(propertyName)){
-//                return prop;
-//            }
-//        }
-//        throw new RuntimeException("Property '"+propertyName+"' was not found in type "+beanClass);
-//    }
-
-    public static String getAsString(Object propertyValue, Property property, Locale systemLocale) throws IntrospectionException {
+    public static String getPropertyAsString(Object propertyValue, Property property, Locale systemLocale) throws IntrospectionException {
         String asString = "";
         if (propertyValue != null) {
             if (Date.class.isAssignableFrom(property.getType())) {
@@ -249,7 +238,7 @@ public class BeanPropertyUtil {
                     //TODO: remove it after testing.
                     throw new RuntimeException(e);
                 }
-                asString = getAsString(value, getPropertyByName(referencedBook.getClass(), referencedField), systemLocale);
+                asString = getPropertyAsString(value, getPropertyByName(referencedBook.getClass(), referencedField), systemLocale);
 
             } else {
                 asString = propertyValue.toString();
@@ -259,12 +248,12 @@ public class BeanPropertyUtil {
     }
 
     public static Property getPropertyByName(Class beanClass, String propertyName) throws IntrospectionException{
-        for(Property prop : filter(beanClass)){
+        for(Property prop : getProperties(beanClass)){
             if(prop.getName().equals(propertyName)){
                 return prop;
             }
         }
-        return null;
+         throw new RuntimeException("Property '"+propertyName+"' was not found in type "+beanClass);
     }
 
     public static void setPropertyValue(Object target, String propertyName, Object value) throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
@@ -277,4 +266,6 @@ public class BeanPropertyUtil {
         }
         throw new RuntimeException("Property '"+propertyName+"' was not found in type "+target.getClass());
     }
+
+
 }

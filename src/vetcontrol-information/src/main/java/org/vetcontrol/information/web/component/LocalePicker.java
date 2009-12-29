@@ -17,11 +17,11 @@ import org.apache.wicket.model.IModel;
  */
 public class LocalePicker extends Panel {
 
-    public LocalePicker(String id, final List<Locale> supportedLocales) {
+    public LocalePicker(String id, final List<Locale> supportedLocales, Locale systemLocale) {
         super(id);
 
         if (getSession().getLocale() == null || !supportedLocales.contains(getSession().getLocale())) {
-            getSession().setLocale(supportedLocales.get(0));
+            getSession().setLocale(systemLocale);
         }
         add(new DropDownChoice("localeDropDown", new IModel<Locale>() {
 
