@@ -79,7 +79,9 @@ public class UserBean {
         return entityManager.createQuery("from Department", Department.class).getResultList();
     }
 
-    public boolean isUserAuthChanged(User localUser){        
+    public boolean isUserAuthChanged(User localUser){ 
+        if (localUser.getId() == null) return false;
+
         User dbUser = entityManager.find(User.class, localUser.getId());
 
         return localUser.getUserGroups().size() != dbUser.getUserGroups().size()
