@@ -22,7 +22,7 @@
 
         <dependency>
             <groupId>org.vetcontrol</groupId>
-            <artifactId>vetcontrol-commons</artifactId>                        
+            <artifactId>vetcontrol-commons</artifactId>
         </dependency>
 
         <dependency>
@@ -35,7 +35,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.wicket</groupId>
-            <artifactId>wicket-auth-roles</artifactId>            
+            <artifactId>wicket-auth-roles</artifactId>
         </dependency>
 
         <dependency>
@@ -45,6 +45,4 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
-
 </project>

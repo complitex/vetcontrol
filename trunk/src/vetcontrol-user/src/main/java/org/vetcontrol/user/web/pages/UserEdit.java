@@ -16,8 +16,10 @@ import org.vetcontrol.entity.UserGroup;
 import org.vetcontrol.user.service.UserBean;
 import org.vetcontrol.web.security.SecurityGroup;
 import org.vetcontrol.web.security.SecurityRoles;
+import org.vetcontrol.web.security.SecurityWebListener;
 
 import javax.ejb.EJB;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -42,7 +44,7 @@ public class UserEdit extends UserI18N {
     }
 
     public UserEdit(final PageParameters parameters){
-        super();                                             
+        super();
         init(parameters.getAsLong("user_id"));
     }
 
@@ -52,7 +54,7 @@ public class UserEdit extends UserI18N {
         add(new FeedbackPanel("messages"));
 
         //Модель данных
-        LoadableDetachableModel<User> userModel = new LoadableDetachableModel<User>(){
+        final LoadableDetachableModel<User> userModel = new LoadableDetachableModel<User>(){
             @Override
             protected User load() {
                 try {
@@ -85,9 +87,18 @@ public class UserEdit extends UserI18N {
                 }
 
                 try {
+                    boolean toLogout = userBean.isUserAuthChanged(user);
+
                     userBean.save(user);
                     log.info("Пользователь сохранен: " + user);
                     info(getString("user.info.saved"));
+
+                    if (toLogout){
+                        if (logout(user.getLogin())){
+                            log.info("Текущая сессия пользователя деактивирована: " + user);
+                            info(getString("user.info.logoff"));
+                        }
+                    }
                 } catch (Exception e) {
                     log.error("Ошибка сохранения пользователя в базу данных");
                     error(getString("user.info.error.saved"));
@@ -96,18 +107,19 @@ public class UserEdit extends UserI18N {
         };
         add(form);
 
-        TextField login = new TextField<String>("login", new PropertyModel<String>(userModel, "login"));
+        RequiredTextField login = new RequiredTextField<String>("user.login", new PropertyModel<String>(userModel, "login"));
         login.setEnabled(id == null);
+        login.setRequired(id == null);
         form.add(login);
 
-        PasswordTextField password = new PasswordTextField("password", new PropertyModel<String>(userModel, "changePassword"));
+        PasswordTextField password = new PasswordTextField("user.password", new PropertyModel<String>(userModel, "changePassword"));
         password.setEnabled(id != null);
         password.setRequired(false);
         form.add(password);
 
-        form.add(new RequiredTextField<String>("last_name", new PropertyModel<String>(userModel, "lastName")));
-        form.add(new RequiredTextField<String>("first_name", new PropertyModel<String>(userModel, "firstName")));
-        form.add(new RequiredTextField<String>("middle_name", new PropertyModel<String>(userModel, "middleName")));
+        form.add(new RequiredTextField<String>("user.last_name", new PropertyModel<String>(userModel, "lastName")));
+        form.add(new RequiredTextField<String>("user.first_name", new PropertyModel<String>(userModel, "firstName")));
+        form.add(new RequiredTextField<String>("user.middle_name", new PropertyModel<String>(userModel, "middleName")));
 
         //Department drop down menu
         List<Department> departments = null;
@@ -131,32 +143,39 @@ public class UserEdit extends UserI18N {
                 }));
 
 
-        //User groups checkbox select    
-        List<UserGroup> userGroupChoises = new ArrayList<UserGroup>();
+        //User groups checkbox select
+        final LoadableDetachableModel<List<UserGroup>> userGroupModel = new LoadableDetachableModel<List<UserGroup>>(){
+            @Override
+            protected List<UserGroup> load() {
+                List<UserGroup> userGroupChoises = new ArrayList<UserGroup>();
 
-        for (SecurityGroup securityGroup : SecurityGroup.values()){
-            boolean hasGroup = false;
+                for (SecurityGroup securityGroup : SecurityGroup.values()){
+                    boolean hasGroup = false;
 
-            for (UserGroup userGroup : userModel.getObject().getUserGroups()){
-                if (userGroup.getUserGroup().equals(securityGroup.name())){
-                    userGroupChoises.add(userGroup);
-                    hasGroup = true;
-                    break;
+                    for (UserGroup userGroup : userModel.getObject().getUserGroups()){
+                        if (userGroup.getUserGroup().equals(securityGroup.name())){
+                            userGroupChoises.add(userGroup);
+                            hasGroup = true;
+                            break;
+                        }
+                    }
+
+                    if (!hasGroup){
+                        UserGroup userGroup = new UserGroup();
+                        userGroup.setUserGroup(securityGroup.name());
+                        userGroupChoises.add(userGroup);
+                    }
                 }
-            }
 
-            if (!hasGroup){
-                UserGroup userGroup = new UserGroup();
-                userGroup.setUserGroup(securityGroup.name());
-                userGroupChoises.add(userGroup);
+                return userGroupChoises;
             }
-        }
+        };
 
         form.add(new CheckBoxMultipleChoice<UserGroup>("usergroups",
                 new PropertyModel<Collection<UserGroup>>(userModel, "userGroups"),
-                userGroupChoises, new IChoiceRenderer<UserGroup>(){
+                userGroupModel, new IChoiceRenderer<UserGroup>(){
                     @Override
-                    public Object getDisplayValue(UserGroup userGroup) {                        
+                    public Object getDisplayValue(UserGroup userGroup) {
                         return getString(userGroup.getUserGroup());
                     }
 
@@ -165,5 +184,21 @@ public class UserEdit extends UserI18N {
                         return userGroup.getUserGroup();
                     }
                 }));
+    }
+
+    /**
+     * Деактивирование пользователя
+     * @param login Логин пользователя
+     * @return был ли пользователь авторизован
+     */
+    private boolean logout(String login){
+        List<HttpSession> httpSessions = SecurityWebListener.getSessions(login);
+        if (httpSessions.size() == 0) return false;
+
+        for (HttpSession httpSession : httpSessions){
+            getApplication().getSessionStore().unbind(httpSession.getId());
+            httpSession.invalidate();
+        }
+        return true;
     }
 }

@@ -4,6 +4,7 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.authorization.strategies.role.Roles;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -15,12 +16,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.User;
 import org.vetcontrol.service.UserProfileBean;
+import org.vetcontrol.service.dao.ILocaleDAO;
+import org.vetcontrol.web.component.LocalePicker;
 
 import javax.ejb.EJB;
 import java.util.ArrayList;
 import java.util.List;
-import org.vetcontrol.service.dao.ILocaleDAO;
-import org.vetcontrol.web.component.LocalePicker;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -39,6 +40,7 @@ public abstract class TemplatePage extends WebPage{
     private ILocaleDAO localeDAO;
 
     public TemplatePage() {
+        add(CSSPackageResource.getHeaderContribution("/css/style.css"));
 
         //locale picker
         add(new LocalePicker("localePicker", localeDAO.all(), localeDAO.systemLocale()));

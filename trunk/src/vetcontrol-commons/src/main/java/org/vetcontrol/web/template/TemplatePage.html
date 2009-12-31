@@ -1,72 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/">
-    <head>
-        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
-        <link href="css/style.css" rel="stylesheet" type="text/css"/>
-    </head>
-    <body>
-        <div id="wrap">
-            <div id="container">
-                <div id="header">
-                    <div id="logo">
-                        <h1>Ветеринарный контроль</h1>
-                    </div>
-                    <div class="right">
-                        <div id="userdetails">
-                            <span wicket:id="userdetails"/>
-                        </div>
-                        <table cellpadding="0" cellspacing="0" border="0">
-                            <tr>
-                                <td>
-                                    <div style="padding: 5px,5px,5px,5px;" wicket:id="localePicker"></div>
-                                </td>
-                                <td>
-                                    <div id="exit">
-                                        <form wicket:id="exit" action="">
-                                            <input type="submit" value="Выход"/>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
-
-                    </div>
-                    <div class="fixed"></div>
-                </div>
-                <div id="content">
-                    <div id="sidebar">
-                        <div wicket:id="sidebar">
-                            <div wicket:id="menu_placeholder">[menu content will go here]</div>
-
-                            <wicket:fragment wicket:id="menu">
-                                <div class="menu">
-                                    <h3><span wicket:id="menu_title"></span></h3>
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <link href="/css/style.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+    <tr>
+        <td id="Header">
+            <div id="LoginForm">
+                <table border="0" cellspacing="0" cellpadding="0" >
+                    <tr>
+                        <td><span wicket:id="localePicker"></span></td>
+                        <td><span wicket:id="userdetails"></span></td>
+                        <td>
+                            <form wicket:id="exit" action="">
+                                <input type="submit" value="Выход" name="" class="buttonLogin"/>
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td id="TopPanel">          
+        </td>
+      </tr>
+    <tr>
+        <td>
+            <div id="LeftPanel" >
+                    <div id="LeftBlock" wicket:id="sidebar">
+                        <div wicket:id="menu_placeholder">[menu content will go here]</div>
+                        <wicket:fragment wicket:id="menu">
+                            <h2><a href="#"><span wicket:id="menu_title"></span></a></h2>
+                            <div class="bottom">
+                                <div class="content">
                                     <ul>
                                         <li wicket:id="menu_items">
                                             <a href="#" wicket:id="link"><span wicket:id="label"></span></a>
                                         </li>
                                     </ul>
                                 </div>
-                            </wicket:fragment>
-                        </div>
+                            </div>
+                        </wicket:fragment>
                     </div>
-                    <div id="main">
-                        <wicket:child/>
-
-                        <wicket:remove>
-                            Main Context Here!
-                        </wicket:remove>
-                    </div>
-                </div>
-                <div class="fixed"></div>
-
-                <div id="footer">
-                    <div>Комплитекс 2009</div>
-                </div>
             </div>
-        </div>
 
-    </body>
+            <div id="Content">
+                <table border="0" cellspacing="0" cellpadding="0" class="formFrame">
+                    <tr valign="top">
+                        <td class="ff_l"><img src="images/formFrame-tl.gif" width="4" height="180" alt=""/></td>
+                        <td class="ff_t">
+                            <wicket:child/>
+                        </td>
+                        <td class="ff_r"><img src="images/formFrame-tr.gif" width="4" height="180" alt=""/></td>
+                    </tr>
+                    <tr>
+                        <td class="ff_bl"><img src="images/formFrame-bl.gif" width="4" height="4" alt=""/></td>
+                        <td class="ff_b"><img src="images/spacer.gif" width="4" height="4" alt=""/></td>
+                        <td class="ff_br"><img src="images/formFrame-br.gif"  width="4" height="4" alt=""/></td>
+                    </tr>
+                </table>                
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div><img src="images/spacer.gif" width="800" height="1" alt=""/></div>
+        </td>
+    </tr>
+</table>
+</body>
 </html>

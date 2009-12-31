@@ -9,7 +9,6 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
@@ -78,6 +77,14 @@ public class UserBean {
 
     public List<Department> getDepartments(){
         return entityManager.createQuery("from Department", Department.class).getResultList();
+    }
+
+    public boolean isUserAuthChanged(User localUser){        
+        User dbUser = entityManager.find(User.class, localUser.getId());
+
+        return localUser.getUserGroups().size() != dbUser.getUserGroups().size()
+                || !localUser.getPassword().equals(dbUser.getPassword())
+                || !localUser.getUserGroups().containsAll(dbUser.getUserGroups());
     }
 
     public void save(User user){
