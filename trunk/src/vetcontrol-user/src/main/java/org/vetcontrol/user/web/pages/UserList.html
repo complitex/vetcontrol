@@ -24,8 +24,7 @@
                     <th class="center" wicket:id="order_middle_name"><wicket:message key="user.middle_name"/></th>
                     <th class="center" wicket:id="order_department"><wicket:message key="user.department"/></th>
                     <th class="center" wicket:id="order_login"><wicket:message key="user.login"/></th>
-                    <th class="center"><wicket:message key="user.usergroup"/></th>
-                    <th></th>
+                    <th class="center"><wicket:message key="user.usergroup"/></th>                    
                 </tr>
                 </thead>
                 <tbody>
@@ -34,9 +33,8 @@
                     <td><span wicket:id="first_name"></span></td>
                     <td><span wicket:id="middle_name"></span></td>
                     <td><span wicket:id="department"></span></td>
-                    <td><span wicket:id="login"></span></td>
+                    <td><a href="#" wicket:id="edit"><span wicket:id="login"></span></a></td>
                     <td><span wicket:id="groups"></span></td>
-                    <td><a href="#" wicket:id="edit">[*]</a></td>
                 </tr>
                 </tbody>
             </table>

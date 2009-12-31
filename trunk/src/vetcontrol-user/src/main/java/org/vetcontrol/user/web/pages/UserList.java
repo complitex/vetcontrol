@@ -9,6 +9,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.IModel;
@@ -97,10 +98,11 @@ public class UserList extends UserI18N{
                 }else{
                     userItem.add(new Label("department", "DEVELOPMENT"));
                 }
-                userItem.add(new Label("login", user.getLogin()));
+                Link<UserEdit> edit = new BookmarkablePageLink<UserEdit>("edit", UserEdit.class,
+                        new PageParameters("user_id="+user.getId()));
+                edit.add(new Label("login", user.getLogin()));  
+                userItem.add(edit);
                 userItem.add(new Label("groups", getGroups(user)));
-                userItem.add(new BookmarkablePageLink<UserEdit>("edit", UserEdit.class,
-                        new PageParameters("user_id="+user.getId())));
             }
         };
 
