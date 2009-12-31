@@ -48,6 +48,17 @@ public class UserGroup implements Serializable {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof UserGroup){
+            UserGroup ug = (UserGroup) obj;
+            if (ug.getUser() != null && user != null && user.getLogin()!= null && userGroup != null){
+                return user.getLogin().equals(ug.getUser().getLogin()) && userGroup.equals(ug.getUserGroup());               
+            }
+        }
+        return super.equals(obj);
+    }
+
+    @Override
     public String toString() {
         return new StringBuilder()
                 .append("[hash: ").append(Integer.toHexString(hashCode()))

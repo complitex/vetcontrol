@@ -9,9 +9,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
-import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.IModel;
@@ -21,11 +18,11 @@ import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.User;
 import org.vetcontrol.entity.UserGroup;
 import org.vetcontrol.user.service.UserBean;
+import org.vetcontrol.web.component.paging.PagingNavigator;
 import org.vetcontrol.web.security.SecurityRoles;
 
 import javax.ejb.EJB;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -40,7 +37,7 @@ public class UserList extends UserI18N{
     @EJB(name = "UserBean")
     private UserBean userBean;
 
-    private final static int ITEMS_ON_PAGE = 1;
+    private final static int ITEMS_ON_PAGE = 20;
 
     public UserList() {
         super();
@@ -137,7 +134,9 @@ public class UserList extends UserI18N{
         });
 
         //Панель ссылок для постраничной навигации
-        add(new PagingNavigator("navigator", userDataView));
+        PagingNavigator pagingNavigator = new PagingNavigator("navigator", userDataView);        
+
+        add(pagingNavigator);
     }
 
     /**

@@ -8,23 +8,23 @@
 
 <body>
 <wicket:extend>
-    <div id="users" style="border-width:thin; border-style:solid">
-        <div>
+
+        <div id="user_list_filter">
             <form action="#" wicket:id="filter_form">
                 <input type="text" wicket:id="filter_value"/>
-                <input type="submit" wicket:message="value:user.list.filter"/>
+                <input class="btnSmall" type="submit" wicket:message="value:user.list.filter"/>
             </form>
         </div>
         <div>
-            <table>
+            <table  border="0" cellspacing="0" cellpadding="0" class="tbColor">
                 <thead>
-                <tr align="center">
-                    <th wicket:id="order_last_name"><wicket:message key="user.last_name"/></th>
-                    <th wicket:id="order_first_name"><wicket:message key="user.first_name"/></th>
-                    <th wicket:id="order_middle_name"><wicket:message key="user.middle_name"/></th>
-                    <th wicket:id="order_department"><wicket:message key="user.department"/></th>
-                    <th wicket:id="order_login"><wicket:message key="user.login"/></th>
-                    <th><wicket:message key="user.usergroup"/></th>
+                <tr>
+                    <th class="center" wicket:id="order_last_name"><wicket:message key="user.last_name"/></th>
+                    <th class="center" wicket:id="order_first_name"><wicket:message key="user.first_name"/></th>
+                    <th class="center" wicket:id="order_middle_name"><wicket:message key="user.middle_name"/></th>
+                    <th class="center" wicket:id="order_department"><wicket:message key="user.department"/></th>
+                    <th class="center" wicket:id="order_login"><wicket:message key="user.login"/></th>
+                    <th class="center"><wicket:message key="user.usergroup"/></th>
                     <th></th>
                 </tr>
                 </thead>
@@ -45,7 +45,7 @@
                 <span wicket:id="navigator">[dataview navigator]</span>
             </div>
         </div>
-    </div>
+
 </wicket:extend>
 </body>
 </html>
