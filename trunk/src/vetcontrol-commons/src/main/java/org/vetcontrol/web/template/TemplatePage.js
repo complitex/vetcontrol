@@ -1,27 +1,53 @@
 
-//menu
+//menus
+var expandedMenuClassName = "expanded";
+var collapsedMenuClassName = "collapsed";
 
-var expandedImage = "url(/images/leftBlock-top.gif)";
-var collapsedImage = "url(/images/leftBlock-off.gif)";
-
-$(document).ready(function(){
-    $(".block h2").addClass("expanded");
-    $(".block h2").hover(function(){
-        $(this).css("cursor", "pointer");
+menuLoad = function(){
+    $(".block h2 div").hover(function(){
+        $(this).addClass("hover");
+    }, function(){
+        $(this).removeClass("hover");
     });
     $(".block h2").click(function(){
         $(this).parent().find(".bottom").toggle("fast");
-        if($(this).hasClass("expanded")){
-            $(this).removeClass("expanded");
-            //$(this).closest(".LeftBlock").addClass("LeftBlockOff").removeClass("LeftBlock");
-            $(this).css("background-image", collapsedImage);
-            $(this).css("height", "25px");
+        if($(this).hasClass(expandedMenuClassName)){
+            $(this).removeClass(expandedMenuClassName).addClass(collapsedMenuClassName);
+        //            $(this).closest(".LeftBlock").addClass("LeftBlockOff").removeClass("LeftBlock");
         } else {
-            $(this).addClass("expanded");
-            //$(this).closest(".LeftBlockOff").addClass("LeftBlock").removeClass("LeftBlockOff");
-            $(this).css("background-image", expandedImage);
-            $(this).css("height", "24px"); 
+            $(this).removeClass(collapsedMenuClassName).addClass(expandedMenuClassName);
+        //            $(this).closest(".LeftBlockOff").addClass("LeftBlock").removeClass("LeftBlockOff");
         }
     });
-});
+};
 
+//main information panel and content panel
+
+var expandedContentClassName = "ContentExpanded";
+var collapsedContentClassName = "ContentCollapsed";
+var expandedMainMenuClassName = "expanded";
+var collapsedMainMenuClassName = "collapsed";
+
+mainPanelLoad = function(){
+    $("#TopPanel #ButtonMain").addClass(expandedMainMenuClassName);
+    $("#TopPanel #ButtonMain div").hover(function(){
+        $(this).addClass("hover");
+    }, function(){
+        $(this).removeClass("hover");
+    })
+    $("#TopPanel #ButtonMain").click(function(){
+        $("#LeftPanel").toggle("fast");
+        if($(this).hasClass(expandedMainMenuClassName)){
+            $(this).removeClass(expandedMainMenuClassName).addClass(collapsedMainMenuClassName);
+            $("#Content").removeClass(collapsedContentClassName).addClass(expandedContentClassName);
+        } else {
+            $(this).addClass(expandedMainMenuClassName).removeClass(collapsedMainMenuClassName);
+            $("#Content").removeClass(expandedContentClassName).addClass(collapsedContentClassName);
+        }
+    });
+};
+
+$(document).ready(function(){
+    menuLoad();
+    mainPanelLoad();
+});
