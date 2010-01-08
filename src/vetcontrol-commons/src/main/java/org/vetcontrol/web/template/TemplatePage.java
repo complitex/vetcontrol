@@ -22,6 +22,8 @@ import org.vetcontrol.web.component.LocalePicker;
 import javax.ejb.EJB;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.odlabs.wiquery.core.commons.CoreJavaScriptResourceReference;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -30,22 +32,24 @@ import java.util.List;
  * Суперкласс для отображения страниц независимых модулей в едином шаблоне.
  * Для инициализации шаблона наследники должны вызывать метод super().
  */
-public abstract class TemplatePage extends WebPage{
-    private static final Logger log = LoggerFactory.getLogger(TemplatePage.class);
+public abstract class TemplatePage extends WebPage {
 
+    private static final Logger log = LoggerFactory.getLogger(TemplatePage.class);
     @EJB(name = "UserProfileBean")
     private UserProfileBean userProfileBean;
-
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
 
     public TemplatePage() {
         add(CSSPackageResource.getHeaderContribution("/css/style.css"));
+        add(JavascriptPackageResource.getHeaderContribution(CoreJavaScriptResourceReference.get()));
+        add(JavascriptPackageResource.getHeaderContribution(TemplatePage.class, "TemplatePage.js"));
 
         //locale picker
         add(new LocalePicker("localePicker", localeDAO.all(), localeDAO.systemLocale()));
 
-        add(new ListView<ITemplateMenu>("sidebar", newTemplateMenus()){
+        add(new ListView<ITemplateMenu>("sidebar", newTemplateMenus()) {
+
             @Override
             protected void populateItem(ListItem<ITemplateMenu> item) {
                 item.add(new TemplateMenu("menu_placeholder", "menu", this, item.getModelObject()));
@@ -61,9 +65,10 @@ public abstract class TemplatePage extends WebPage{
             log.warn("Пользователь не авторизован", e);
         }
 
-        add(new Label("userdetails",userdetails));
+        add(new Label("userdetails", userdetails));
 
-        add(new Form("exit"){
+        add(new Form("exit") {
+
             @Override
             public void onSubmit() {
                 getSession().invalidateNow();
@@ -75,17 +80,17 @@ public abstract class TemplatePage extends WebPage{
     /**
      * Боковая панель с меню, которое устанавливается в конфигурационном файле.
      */
-    public class TemplateMenu extends Fragment{
+    public class TemplateMenu extends Fragment {
+
         public TemplateMenu(String id, String markupId, MarkupContainer markupProvider, ITemplateMenu menu) {
             super(id, markupId, markupProvider);
             add(new Label("menu_title", menu.getTitle(getLocale())));
-            add(new ListView<ITemplateLink>("menu_items", menu.getTemplateLinks(getLocale())){
-
+            add(new ListView<ITemplateLink>("menu_items", menu.getTemplateLinks(getLocale())) {
                 @Override
                 protected void populateItem(ListItem<ITemplateLink> item) {
-                    BookmarkablePageLink link = new BookmarkablePageLink<Class<? extends  Page>>("link", item.getModelObject().getPage(),
+                    BookmarkablePageLink link = new BookmarkablePageLink<Class<? extends Page>>("link", item.getModelObject().getPage(),
                             item.getModelObject().getParameters());
-                    link.add(new Label("label", item.getModelObject().getLabel(getLocale())));                    
+                    link.add(new Label("label", item.getModelObject().getLabel(getLocale())));
                     item.add(link);
                 }
             });
@@ -93,15 +98,15 @@ public abstract class TemplatePage extends WebPage{
     }
 
     //Загрузка списка классов меню из файла конфирурации и их создание
-    private List<ITemplateMenu> newTemplateMenus(){
-        List<String> classes = ((TemplateWebApplication)getApplication()).getTemplateLoader().getMenuClassNames();
+    private List<ITemplateMenu> newTemplateMenus() {
+        List<String> classes = ((TemplateWebApplication) getApplication()).getTemplateLoader().getMenuClassNames();
         List<ITemplateMenu> templateMenus = new ArrayList<ITemplateMenu>();
 
-        for (String _class : classes){
+        for (String _class : classes) {
             try {
-                Class menuClass =  getSession().getClassResolver().resolveClass(_class);
+                Class menuClass = getSession().getClassResolver().resolveClass(_class);
 
-                if (isTemplateMenuAuthorized(menuClass)){
+                if (isTemplateMenuAuthorized(menuClass)) {
                     ITemplateMenu templateMenu = (ITemplateMenu) menuClass.newInstance();
                     templateMenus.add(templateMenu);
                 }
@@ -122,17 +127,14 @@ public abstract class TemplatePage extends WebPage{
      * @param menuClass Класс меню.
      * @return Отображать ли меню пользователю в зависимости от его роли.
      */
-    private boolean isTemplateMenuAuthorized(Class<?> menuClass){
+    private boolean isTemplateMenuAuthorized(Class<?> menuClass) {
         boolean authorized = true;
 
         final AuthorizeInstantiation classAnnotation = menuClass.getAnnotation(AuthorizeInstantiation.class);
         if (classAnnotation != null) {
-            authorized = ((TemplateWebApplication)getApplication()).hasAnyRole(new Roles(classAnnotation.value()));
+            authorized = ((TemplateWebApplication) getApplication()).hasAnyRole(new Roles(classAnnotation.value()));
         }
 
         return authorized;
     }
-
-
-
 }
