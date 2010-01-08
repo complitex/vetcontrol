@@ -27,15 +27,23 @@
             </tr>
             <tr>
                 <td id="TopPanel">
+                    <div id="ButtonMain" class="expanded">
+                        <div>
+                            <wicket:message key="main-sidebar.message"/>
+                        </div>
+                    </div>
+                    <a href="#">
+                        <img height="34" width="34" border="0" alt="Help" src="images/icon-help.gif"/>
+                    </a>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <div id="LeftPanel" >
+                    <div id="LeftPanel">
                         <div class="block LeftBlock" wicket:id="sidebar">
                             <div wicket:id="menu_placeholder">[menu content will go here]</div>
                             <wicket:fragment wicket:id="menu">
-                                <h2>
+                                <h2 class="expanded">
                                     <div>
                                         <span wicket:id="menu_title">
                                         </span>
@@ -53,8 +61,7 @@
                             </wicket:fragment>
                         </div>
                     </div>
-
-                    <div id="Content">
+                    <div id="Content" class="ContentCollapsed">
                         <table border="0" cellspacing="0" cellpadding="0" class="formFrame">
                             <tr valign="top">
                                 <td class="ff_l"><img src="images/formFrame-tl.gif" width="4" height="180" alt=""/></td>
