@@ -8,6 +8,7 @@ import java.beans.IntrospectionException;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.FormComponentPanel;
 import org.apache.wicket.markup.html.form.SubmitLink;
@@ -44,6 +45,10 @@ public abstract class BookEntryFormControl extends FormComponentPanel {
                 Property prop = item.getModelObject();
 
                 item.add(new Label("bookFieldDesc", new DisplayPropertyLocalizableModel(prop, BookEntryFormControl.this)));
+
+                WebMarkupContainer requiredContainer = new WebMarkupContainer("bookFieldRequired");
+                requiredContainer.setVisible(!prop.isNullable());
+                item.add(requiredContainer);
 
                 boolean isSimpleText = false;
                 boolean isDate = false;

@@ -12,11 +12,16 @@ and open the template in the editor.
     <wicket:panel>
         <h1><span wicket:id="bookName"></span></h1>
         <form wicket:id="filterForm">
-            <span wicket:id="navigator"></span>
-            <table class="tbColor bookContent" cellspacing="0" cellpadding="0" border="1" wicket:id="table">
+            <table class="tbColor bookContent" cellspacing="0" cellpadding="0" border="0" wicket:id="table">
             </table>
             <input wicket:id="focus-tracker" type="hidden"/>
             <div wicket:id="focus-restore"></div>
+            <div>
+                <span wicket:id="navigator"></span>
+            </div>
+            <br/>
+            <br/>
+            <br/>
             <div class="filterPanel" wicket:id="goAndClearFilter"></div>
         </form>
     </wicket:panel>

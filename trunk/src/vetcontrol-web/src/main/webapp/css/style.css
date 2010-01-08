@@ -44,22 +44,26 @@ text-decoration:none;
 
 #LeftPanel { float: left; width: 240px;}
 
-#LeftBlock { background:url('/images/leftBlock-bg.gif') repeat-y #FFFFFF; margin-bottom: 5px;}
-#LeftBlock h2 { background:url('/images/leftBlock-top.gif') no-repeat #D8DEE3; height: 24px; color: #007AAE; font-size: 11px; text-transform: uppercase; margin:0px; padding:0px;}
-#LeftBlock h2 a, #LeftBlock h2 a:visited { display: block; width:220px; color: #007AAE; font-size: 11px; font-weight: bold; text-transform: uppercase; padding: 6px 5px 3px 13px;}
-#LeftBlock h2 a:hover { color: #0090CD; text-decoration: none;}
-#LeftBlock .bottom { background:url('/images/leftBlock-bottom.gif') no-repeat bottom; padding: 2px 2px 4px 2px;}
-#LeftBlock .content { height:100px; overflow: auto; padding: 0px 10px 0px 10px; font-size: 11px;}
-#LeftBlock .content p { padding: 0px 0px 8px 0px; margin: 0px; font-size: 11px;}
-#LeftBlock .content ul { margin: 0px; padding: 0px; width:92%;}
-#LeftBlock .content ul li { margin: 0px; padding: 2px 0px 3px 0px; list-style-type: none; font-size: 12px; border-bottom: 1px solid #ECEFF1; }
-#LeftBlock .content table { margin: 0px; padding: 0px;}
-#LeftBlock .content table th{ background-color:#D9E9F0; border-right: 1px solid #FFFFFF; text-align: left; font-size: 11px; color: #007AAE; padding: 2px 5px 3px 5px;}
-#LeftBlock .content table td{ border-bottom: 1px solid #ECEFF1; border-right: 1px solid #FFFFFF; text-align: left; font-size: 11px; padding: 2px 5px 2px 5px;}
-#LeftBlockOff { margin-bottom: 5px;}
-#LeftBlockOff h2 { background:url('/images/leftBlock-off.gif') no-repeat #D8DEE3; height: 25px; color: #007AAE; font-size: 11px; text-transform: uppercase; margin:0px; padding:0px;}
-#LeftBlockOff h2 a, #LeftBlockOff h2 a:visited { display: block; width:220px;  color: #007AAE; font-size: 11px; font-weight: bold; text-transform: uppercase; padding: 6px 5px 3px 13px;}
-#LeftBlockOff h2 a:hover { color: #0090CD; text-decoration: none;}
+.LeftBlock { background:url('/images/leftBlock-bg.gif') repeat-y #FFFFFF; margin-bottom: 5px;}
+.LeftBlock h2 { background:url('/images/leftBlock-top.gif') no-repeat #D8DEE3; height: 24px; color: #007AAE; font-size: 11px; text-transform: uppercase; margin:0px; padding:0px;}
+/*.LeftBlock h2 a, #LeftBlock h2 a:visited { display: block; width:220px; color: #007AAE; font-size: 11px; font-weight: bold; text-transform: uppercase; padding: 6px 5px 3px 13px;}*/
+
+.LeftBlock h2 div { display: block; width:220px; color: #007AAE; font-size: 11px; font-weight: bold; text-transform: uppercase; padding: 6px 5px 3px 13px;}
+
+/*#LeftBlock h2 a:hover { color: #0090CD; text-decoration: none;}*/
+.LeftBlock .bottom { background:url('/images/leftBlock-bottom.gif') no-repeat bottom; padding: 2px 2px 4px 2px;}
+.LeftBlock .content { height:100px; overflow: auto; padding: 0px 10px 0px 10px; font-size: 11px;}
+.LeftBlock .content p { padding: 0px 0px 8px 0px; margin: 0px; font-size: 11px;}
+.LeftBlock .content ul { margin: 0px; padding: 0px; width:92%;}
+.LeftBlock .content ul li { margin: 0px; padding: 2px 0px 3px 0px; list-style-type: none; font-size: 12px; border-bottom: 1px solid #ECEFF1; }
+.LeftBlock .content table { margin: 0px; padding: 0px;}
+.LeftBlock .content table th{ background-color:#D9E9F0; border-right: 1px solid #FFFFFF; text-align: left; font-size: 11px; color: #007AAE; padding: 2px 5px 3px 5px;}
+.LeftBlock .content table td{ border-bottom: 1px solid #ECEFF1; border-right: 1px solid #FFFFFF; text-align: left; font-size: 11px; padding: 2px 5px 2px 5px;}
+.LeftBlockOff { margin-bottom: 5px;}
+.LeftBlockOff h2 { background:url('/images/leftBlock-off.gif') no-repeat #D8DEE3; height: 25px; color: #007AAE; font-size: 11px; text-transform: uppercase; margin:0px; padding:0px;}
+/*.LeftBlockOff h2 a, #LeftBlockOff h2 a:visited { display: block; width:220px;  color: #007AAE; font-size: 11px; font-weight: bold; text-transform: uppercase; padding: 6px 5px 3px 13px;}*/
+.LeftBlockOff h2 div { display: block; width:220px;  color: #007AAE; font-size: 11px; font-weight: bold; text-transform: uppercase; padding: 6px 5px 3px 13px;}
+/*.LeftBlockOff h2 a:hover { color: #0090CD; text-decoration: none;}*/
 
 #Content { padding-left: 260px;}
 
@@ -152,6 +156,12 @@ input.btnMiddle {
 .bookContent th {text-align: center;}
 .filter-td input[type="text"]{
     width:100%;
+}
+.tbColor .filter-td{
+    border-bottom:1px solid #667584;
+}
+.feedbackPanelERROR{
+    color: #FF0000;
 }
 
 /* редактирование пользователей*/

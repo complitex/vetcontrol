@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.HeadersToolbar;
@@ -19,7 +18,6 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.Filte
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.GoAndClearFilter;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
@@ -31,6 +29,7 @@ import org.vetcontrol.information.util.web.Property;
 import org.vetcontrol.information.web.model.DisplayBookClassModel;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 import org.vetcontrol.information.web.pages.BookPage.DataProvider;
+import org.vetcontrol.web.component.paging.PagingNavigator;
 
 /**
  *
@@ -85,7 +84,7 @@ public abstract class BookContentControl extends Panel {
                 new ResourceModel("book.filter.button.clear")));
         table.addTopToolbar(new FilterToolbar(table, filterForm, dataProvider));
         table.setOutputMarkupId(true);
-        PagingNavigator navigator = new AjaxPagingNavigator("navigator", table);
+        PagingNavigator navigator = new PagingNavigator("navigator", table);
         filterForm.add(navigator);
         filterForm.add(table);
         add(filterForm);

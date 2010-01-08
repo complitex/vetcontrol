@@ -162,6 +162,7 @@ public class BooksTest {
 
         entityManager.createNativeQuery("DELETE FROM registeredproducts").executeUpdate();
         entityManager.createNativeQuery("DELETE FROM countrybook").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM vehicletypes").executeUpdate();
         entityManager.createNativeQuery("DELETE FROM stringculture").executeUpdate();
 
         transaction.commit();
