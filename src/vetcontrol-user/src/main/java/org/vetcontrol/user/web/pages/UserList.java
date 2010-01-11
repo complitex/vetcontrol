@@ -21,6 +21,7 @@ import org.vetcontrol.entity.UserGroup;
 import org.vetcontrol.user.service.UserBean;
 import org.vetcontrol.web.component.paging.PagingNavigator;
 import org.vetcontrol.web.security.SecurityRoles;
+import org.vetcontrol.web.template.TemplatePage;
 
 import javax.ejb.EJB;
 import java.util.Iterator;
@@ -32,7 +33,7 @@ import java.util.Iterator;
  * Класс используется для отображения списка пользователей с фильтрацией по ключевому слову и сортировкой.
  */
 @AuthorizeInstantiation(SecurityRoles.USER_EDIT)
-public class UserList extends UserI18N{
+public class UserList extends TemplatePage{
     private static final Logger log = LoggerFactory.getLogger(UserList.class);
 
     @EJB(name = "UserBean")

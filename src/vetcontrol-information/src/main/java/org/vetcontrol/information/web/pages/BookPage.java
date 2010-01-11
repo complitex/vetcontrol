@@ -4,15 +4,10 @@
  */
 package org.vetcontrol.information.web.pages;
 
-import java.beans.IntrospectionException;
-import java.io.Serializable;
-import java.util.Iterator;
-import javax.ejb.EJB;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilterStateLocator;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.SubmitLink;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
@@ -20,17 +15,21 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.ResourceModel;
 import org.vetcontrol.information.service.fasade.pages.BookPageFasade;
 import org.vetcontrol.information.web.component.BookContentControl;
 import org.vetcontrol.service.dao.ILocaleDAO;
-import org.vetcontrol.web.template.TemplatePage;
+import org.vetcontrol.web.template.FormTemplatePage;
+
+import javax.ejb.EJB;
+import java.beans.IntrospectionException;
+import java.io.Serializable;
+import java.util.Iterator;
 
 /**
  *
  * @author Artem
  */
-public class BookPage extends TemplatePage {
+public class BookPage extends FormTemplatePage {
 
     public class DataProvider implements IDataProvider<Serializable>, IFilterStateLocator {
 
