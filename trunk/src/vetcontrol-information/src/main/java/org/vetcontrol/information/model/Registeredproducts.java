@@ -159,7 +159,7 @@ public class Registeredproducts implements java.io.Serializable {
      *
      * @return the value of referencedCountry
      */
-    @BookReference(referencedProperty = "code")
+    @BookReference(referencedProperty = "names")
     @ManyToOne(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "country", nullable = false)
