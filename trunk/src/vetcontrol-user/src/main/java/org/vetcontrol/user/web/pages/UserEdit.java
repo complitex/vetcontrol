@@ -17,6 +17,7 @@ import org.vetcontrol.user.service.UserBean;
 import org.vetcontrol.web.security.SecurityGroup;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.security.SecurityWebListener;
+import org.vetcontrol.web.template.FormTemplatePage;
 
 import javax.ejb.EJB;
 import javax.servlet.http.HttpSession;
@@ -32,7 +33,7 @@ import java.util.List;
  * изменений в базу данных.
  */
 @AuthorizeInstantiation(SecurityRoles.USER_EDIT)
-public class UserEdit extends UserI18N {
+public class UserEdit extends FormTemplatePage {
     private static final Logger log = LoggerFactory.getLogger(UserEdit.class);
 
     @EJB(name = "UserBean")
@@ -128,20 +129,25 @@ public class UserEdit extends UserI18N {
         } catch (Exception e) {
             log.error("Ошибка загрузки списка структурных единиц",e);
         }
-        form.add(new DropDownChoice<Department>("department", new PropertyModel<Department>(userModel, "department"),
-                departments, new IChoiceRenderer<Department>() {
-                    @Override
-                    public Object getDisplayValue(Department department) {
-                        //TODO Localize
-                        return department.getName();
-                    }
 
-                    @Override
-                    public String getIdValue(Department department, int index) {
-                        return String.valueOf(department.getId());
-                    }
-                }));
+        DropDownChoice<Department> dropDownChoice =
+                new DropDownChoice<Department>("user.department", new PropertyModel<Department>(userModel, "department"),
+                        departments, new IChoiceRenderer<Department>() {
+                            @Override
+                            public Object getDisplayValue(Department department) {
+                                //TODO Localize
+                                return department.getName();
+                            }
 
+                            @Override
+                            public String getIdValue(Department department, int index) {
+                                return String.valueOf(department.getId());
+                            }
+                        });
+
+        dropDownChoice.setRequired(true);
+
+        form.add(dropDownChoice);
 
         //User groups checkbox select
         final LoadableDetachableModel<List<UserGroup>> userGroupModel = new LoadableDetachableModel<List<UserGroup>>(){
