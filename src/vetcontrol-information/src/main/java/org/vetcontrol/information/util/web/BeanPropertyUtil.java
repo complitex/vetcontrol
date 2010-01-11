@@ -210,6 +210,7 @@ public class BeanPropertyUtil {
                         if (!Strings.isEmpty(culture.getValue())) {
                             finded = true;
                             asString = culture.getValue();
+                            break;
                         }
                     }
                 }
@@ -220,6 +221,7 @@ public class BeanPropertyUtil {
                             if (!Strings.isEmpty(culture.getValue())) {
                                 finded = true;
                                 asString = culture.getValue();
+                                break;
                             }
                         }
                     }
