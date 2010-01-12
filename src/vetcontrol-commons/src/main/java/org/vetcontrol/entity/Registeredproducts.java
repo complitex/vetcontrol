@@ -31,15 +31,13 @@ public class Registeredproducts implements java.io.Serializable {
     private Integer id;
     private long name;
     private long classificator;
-    private String vendor;
     private String regnumber;
     private Date date;
 
     public Registeredproducts() {
     }
 
-    public Registeredproducts(String vendor, String regnumber, Date date) {
-        this.vendor = vendor;
+    public Registeredproducts(String regnumber, Date date) {
         this.regnumber = regnumber;
         this.date = date;
     }
@@ -72,13 +70,17 @@ public class Registeredproducts implements java.io.Serializable {
     public void setClassificator(long classificator) {
         this.classificator = classificator;
     }
+    private Producer vendor;
 
-    @Column(name = "vendor", nullable = false, length = 50)
-    public String getVendor() {
+    @BookReference(referencedProperty = "names")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "vendor", nullable = false)
+    public Producer getVendor() {
         return this.vendor;
     }
 
-    public void setVendor(String vendor) {
+    public void setVendor(Producer vendor) {
         this.vendor = vendor;
     }
 

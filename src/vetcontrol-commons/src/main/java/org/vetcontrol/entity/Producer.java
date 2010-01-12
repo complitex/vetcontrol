@@ -11,8 +11,8 @@ import java.util.List;
  *         Date: 12.01.2010 14:41:47
  */
 
-//@Entity
-//@Table(name = "producer")
+@Entity
+@Table(name = "producer")
 public class Producer {
     private Integer id;
     private Long name;

@@ -1,5 +1,6 @@
 package org.vetcontrol.entity;
 
+import java.io.Serializable;
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
 
 import javax.persistence.*;
@@ -13,9 +14,9 @@ import java.util.List;
  * 	отправители грузов
  */
 
-//@Entity
-//@Table(name = "cargo_sender")
-public class CargoSender {
+@Entity
+@Table(name = "cargo_sender")
+public class CargoSender implements Serializable {
     private Integer id;
     private Long name;
     private List<StringCulture> names = new ArrayList<StringCulture>();
