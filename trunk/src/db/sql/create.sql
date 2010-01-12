@@ -17,16 +17,6 @@ MySQL - 5.0.88-community-nt : Database - project1
 
 -- users --
 
-/*Table structure for table `node` */
-
-DROP TABLE IF EXISTS `node`;
-
-CREATE TABLE `node` (
-  `nodeId` int(10) unsigned NOT NULL auto_increment,
-  `nodeName` varchar(45) NOT NULL,
-  PRIMARY KEY  (`nodeId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE  `user` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -110,7 +100,7 @@ CREATE TABLE `registeredproducts` (
   `id` int(11) NOT NULL auto_increment,
   `name` int(11) NOT NULL,
   `classificator` int(11) NOT NULL,
-  `vendor` varchar(50) NOT NULL,
+  `vendor` int(11) NOT NULL,
   `regnumber` varchar(50) NOT NULL,
   `date` date NOT NULL,
   `country` int(11) NOT NULL,
@@ -119,8 +109,10 @@ CREATE TABLE `registeredproducts` (
   CONSTRAINT `FK_registeredproducts_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
   KEY `FK_registeredproducts_classificator` (`classificator`),
   CONSTRAINT `FK_registeredproducts_classificator` FOREIGN KEY (`classificator`) REFERENCES `stringculture` (`id`),
-  KEY `FK_registeredproducts_countryref` (`country`),
-  CONSTRAINT `FK_registeredproducts_countryref` FOREIGN KEY (`country`) REFERENCES `countrybook` (`id`)
+  KEY `FK_registeredproducts_country_ref` (`country`),
+  CONSTRAINT `FK_registeredproducts_country_ref` FOREIGN KEY (`country`) REFERENCES `countrybook` (`id`),
+  KEY `FK_registeredproducts_producer_ref` (`vendor`),
+  CONSTRAINT `FK_registeredproducts_producer_ref` FOREIGN KEY (`vendor`) REFERENCES `producer` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `vehicletypes` */
@@ -149,23 +141,101 @@ CREATE TABLE  `department` (
     CONSTRAINT `FK_department_parent` FOREIGN KEY (`parent_id`) REFERENCES `department` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `baseunits` */
+/*Table structure for table `cargo_sender` */
 
---DROP TABLE IF EXISTS `baseunits`;
---
---CREATE TABLE `baseunits` (
---    `id` int(11) NOT NULL auto_increment,
---    `name` int(11) NOT NULL,
---    `parent_id` int(11) NULL,
-----    `level` int(11) NOT NULL,
---    PRIMARY KEY (`id`),
---    KEY `FK_baseunits_name` (`name`),
---    CONSTRAINT `FK_baseunits_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
---    KEY `fk_baseunits_parent` (`parent_id`),
---    CONSTRAINT `fk_baseunits_parent` FOREIGN KEY (`parent_id`) REFERENCES `baseunits` (`id`)
---) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `cargo_sender`;
+CREATE TABLE  `cargo_sender` (
+    `id` int(11) NOT NULL auto_increment,
+    `name` int(11) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FK_cargo_sender_name` (`name`),
+    CONSTRAINT `FK_cargo_sender_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/*Table structure for table `cargo_receiver` */
 
+DROP TABLE IF EXISTS `cargo_receiver`;
+CREATE TABLE  `cargo_receiver` (
+    `id` int(11) NOT NULL auto_increment,
+    `name` int(11) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FK_cargo_receiver_name` (`name`),
+    CONSTRAINT `FK_cargo_receiver_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Table structure for table `customs_point` */
+
+DROP TABLE IF EXISTS `customs_point`;
+CREATE TABLE  `customs_point` (
+    `id` int(11) NOT NULL auto_increment,
+    `name` int(11) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FK_customs_point_name` (`name`),
+    CONSTRAINT `FK_customs_point_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Table structure for table `movement_type` */
+
+DROP TABLE IF EXISTS `movement_type`;
+CREATE TABLE  `movement_type` (
+    `id` int(11) NOT NULL auto_increment,
+    `name` int(11) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FK_movement_type_name` (`name`),
+    CONSTRAINT `FK_movement_type_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Table structure for table `producer` */
+
+DROP TABLE IF EXISTS `producer`;
+CREATE TABLE  `producer` (
+    `id` int(11) NOT NULL auto_increment,
+    `name` int(11) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FK_producer_name` (`name`),
+    CONSTRAINT `FK_producer_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Table structure for table `unit_type` */
+
+DROP TABLE IF EXISTS `unit_type`;
+CREATE TABLE  `unit_type` (
+    `id` int(11) NOT NULL auto_increment,
+    `name` int(11) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FK_unit_type_name` (`name`),
+    CONSTRAINT `FK_unit_type_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Table structure for table `cargo_type` */
+
+DROP TABLE IF EXISTS `cargo_type`;
+CREATE TABLE  `cargo_type` (
+    `id` int(11) NOT NULL auto_increment,
+    `name` int(11) NOT NULL,
+    `ukt_zed_code` VARCHAR(10) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FK_cargo_type_name` (`name`),
+    CONSTRAINT `FK_cargo_type_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Table structure for table `cargo_mode` */
+
+DROP TABLE IF EXISTS `cargo_mode`;
+
+CREATE TABLE `cargo_mode` (
+  `id` int(11) NOT NULL auto_increment,
+  `name` int(11) NOT NULL,
+  `cargo_type` int(11) NOT NULL,
+  `unit_type` int(11) NOT NULL,
+  PRIMARY KEY  (`id`),
+  KEY `FK_cargo_mode_name` (`name`),
+  CONSTRAINT `FK_cargo_mode_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+  KEY `FK_cargo_mode_cargo_type_ref` (`cargo_type`),
+  CONSTRAINT `FK_cargo_mode_cargo_type_ref` FOREIGN KEY (`cargo_type`) REFERENCES `cargo_type` (`id`),
+  KEY `FK_cargo_mode_unit_type_ref` (`unit_type`),
+  CONSTRAINT `FK_cargo_mode_unit_type_ref` FOREIGN KEY (`unit_type`) REFERENCES `unit_type` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
