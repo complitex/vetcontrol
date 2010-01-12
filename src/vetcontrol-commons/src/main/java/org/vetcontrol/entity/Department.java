@@ -1,94 +1,120 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package org.vetcontrol.entity;
 
-import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.vetcontrol.util.book.entity.annotation.BookReference;
+import org.vetcontrol.util.book.entity.annotation.MappedProperty;
 
 /**
- * @author Anatoly A. Ivanov java@inheaven.ru
- * Date: 21.12.2009 17:52:08
  *
- * Модель структурной единицы
+ * @author Artem
  */
 @Entity
-@Table
-public class Department implements Serializable{
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+@Table(name = "department")
+public class Department implements Serializable {
+
     private Long id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
-
-    @Column(name = "level", nullable = false)
-    private int level;
-
-    @ManyToOne    
-    @JoinColumn(name = "parent_id")
-    private Department parent;
-
-    @OneToMany(mappedBy = "parent")
-    private List<Department> childs;
-
-    @OneToMany(mappedBy = "department")
-    private List<User> users;
-
+    /**
+     * Get the value of id
+     *
+     * @return the value of id
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", unique = true, nullable = false)
     public Long getId() {
         return id;
     }
 
+    /**
+     * Set the value of id
+     *
+     * @param id new value of id
+     */
     public void setId(Long id) {
         this.id = id;
     }
+    private Long name;
 
-    public String getName() {
+    /**
+     * Get the value of name
+     *
+     * @return the value of name
+     */
+    @Column(name = "name")
+    public Long getName() {
         return name;
     }
 
-    public void setName(String name) {
+    /**
+     * Set the value of name
+     *
+     * @param name new value of name
+     */
+    public void setName(Long name) {
         this.name = name;
     }
+    private List<StringCulture> names = new ArrayList<StringCulture>();
 
-    public int getLevel() {
-        return level;
+    /**
+     * Get the value of names
+     *
+     * @return the value of names
+     */
+    @Transient
+    @MappedProperty("name")
+    @Column(length = 50, nullable = false)
+    public List<StringCulture> getNames() {
+        return names;
     }
 
-    public void setLevel(int level) {
-        this.level = level;
+    /**
+     * Set the value of names
+     *
+     * @param names new value of names
+     */
+    public void setNames(List<StringCulture> names) {
+        this.names = names;
     }
+    private Department parent;
 
+    /**
+     * Get the value of parent
+     *
+     * @return the value of parent
+     */
+    @BookReference(referencedProperty = "names")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "parent_id", nullable = true)
     public Department getParent() {
         return parent;
     }
 
+    /**
+     * Set the value of parent
+     *
+     * @param parent new value of parent
+     */
     public void setParent(Department parent) {
         this.parent = parent;
-    }
-
-    public List<Department> getChilds() {
-        return childs;
-    }
-
-    public void setChilds(List<Department> childs) {
-        this.childs = childs;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
-
-    @Override
-    public String toString() {
-        return new StringBuilder()
-                .append("[hash: ").append(Integer.toHexString(hashCode()))
-                .append(", id: ").append(id)
-                .append(", name: ").append(name)
-                .append(", level: ").append(level)
-                .append(", parent_id: ").append(parent.getId()).append("]")                
-                .toString();
     }
 }

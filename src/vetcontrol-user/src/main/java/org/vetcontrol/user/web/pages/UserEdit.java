@@ -10,7 +10,6 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vetcontrol.entity.Department;
 import org.vetcontrol.entity.User;
 import org.vetcontrol.entity.UserGroup;
 import org.vetcontrol.user.service.UserBean;
@@ -24,6 +23,9 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.vetcontrol.entity.Department;
+import org.vetcontrol.service.dao.ILocaleDAO;
+import org.vetcontrol.util.book.BeanPropertyUtil;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -38,6 +40,9 @@ public class UserEdit extends FormTemplatePage {
 
     @EJB(name = "UserBean")
     private UserBean userBean;
+
+    @EJB(name = "LocaleDAO")
+    private ILocaleDAO localeDAO;
 
     public UserEdit() {
         super();
@@ -79,7 +84,7 @@ public class UserEdit extends FormTemplatePage {
                 if (id == null){
                     user.setPassword(DigestUtils.md5Hex(user.getLogin()));
                     if (userBean.containsLogin(user.getLogin())){
-                        log.warn("Пользователь с логином: " + user.getLogin() + " уже существует");
+                        log.warn("Пользователь �? логином: " + user.getLogin() + " уже �?уще�?твует");
                         error(getString("user.edit.contain_login"));
                         return;
                     }
@@ -129,21 +134,18 @@ public class UserEdit extends FormTemplatePage {
         } catch (Exception e) {
             log.error("Ошибка загрузки списка структурных единиц",e);
         }
+        DropDownChoice dropDownChoice = new DropDownChoice<Department>("user.department", new PropertyModel<Department>(userModel, "department"),
+                departments, new IChoiceRenderer<Department>() {
+                    @Override
+                    public Object getDisplayValue(Department department) {
+                        return BeanPropertyUtil.getLocalizablePropertyAsString(department.getNames(), localeDAO.systemLocale(), null);
+                    }
 
-        DropDownChoice<Department> dropDownChoice =
-                new DropDownChoice<Department>("user.department", new PropertyModel<Department>(userModel, "department"),
-                        departments, new IChoiceRenderer<Department>() {
-                            @Override
-                            public Object getDisplayValue(Department department) {
-                                //TODO Localize
-                                return department.getName();
-                            }
-
-                            @Override
-                            public String getIdValue(Department department, int index) {
-                                return String.valueOf(department.getId());
-                            }
-                        });
+                    @Override
+                    public String getIdValue(Department department, int index) {
+                        return String.valueOf(department.getId());
+                    }
+                });
 
         dropDownChoice.setRequired(true);
 
