@@ -14,6 +14,7 @@ import org.vetcontrol.entity.CargoType;
 import org.vetcontrol.entity.Department;
 import org.vetcontrol.entity.CountryBook;
 import org.vetcontrol.entity.CustomsPoint;
+import org.vetcontrol.entity.Job;
 import org.vetcontrol.entity.MovementType;
 import org.vetcontrol.entity.Producer;
 import org.vetcontrol.entity.Registeredproducts;
@@ -39,6 +40,7 @@ public class BookTypes {
         UnitType.class,
         CargoType.class,
         CargoMode.class,
+        Job.class,
     }));
 
     @Deprecated
