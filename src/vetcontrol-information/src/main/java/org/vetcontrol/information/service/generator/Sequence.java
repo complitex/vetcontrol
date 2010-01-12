@@ -11,8 +11,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
-import org.vetcontrol.information.model.Generator;
-import org.vetcontrol.information.util.service.dao.HibernateSessionTransformer;
+import org.vetcontrol.entity.Generator;
+import org.vetcontrol.util.book.service.HibernateSessionTransformer;
 
 /**
  *

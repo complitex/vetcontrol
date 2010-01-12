@@ -13,10 +13,10 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import org.junit.Assert;
 import org.junit.Test;
-import org.vetcontrol.information.model.CountryBook;
-import org.vetcontrol.information.model.Registeredproducts;
-import org.vetcontrol.information.model.StringCulture;
-import org.vetcontrol.information.model.StringCultureId;
+import org.vetcontrol.entity.CountryBook;
+import org.vetcontrol.entity.Registeredproducts;
+import org.vetcontrol.entity.StringCulture;
+import org.vetcontrol.entity.StringCultureId;
 import org.vetcontrol.information.service.dao.BookDAO;
 import org.vetcontrol.information.service.generator.Sequence;
 
@@ -89,10 +89,10 @@ public class BooksTest {
         entityManager = managerFactory.createEntityManager();
         transaction = entityManager.getTransaction();
         transaction.begin();
-        
+
         s.setEntityManager(entityManager);
         bookDAO.setEntityManager(entityManager);
-        
+
         Registeredproducts r = new Registeredproducts("Vendor", "abc123", new Date());
         r.addName(new StringCulture(new StringCultureId("en"), "milk"));
         r.addName(new StringCulture(new StringCultureId("uk"), "milk2"));
@@ -163,7 +163,7 @@ public class BooksTest {
         entityManager.createNativeQuery("DELETE FROM registeredproducts").executeUpdate();
         entityManager.createNativeQuery("DELETE FROM countrybook").executeUpdate();
         entityManager.createNativeQuery("DELETE FROM vehicletypes").executeUpdate();
-        entityManager.createNativeQuery("DELETE FROM stringculture").executeUpdate();
+//        entityManager.createNativeQuery("DELETE FROM stringculture").executeUpdate();
 
         transaction.commit();
         entityManager.close();

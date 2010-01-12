@@ -7,8 +7,8 @@ package org.vetcontrol.information.web.model;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.wicket.model.IModel;
-import org.vetcontrol.information.model.StringCulture;
-import org.vetcontrol.information.model.StringCultureId;
+import org.vetcontrol.entity.StringCulture;
+import org.vetcontrol.entity.StringCultureId;
 
 /**
  *

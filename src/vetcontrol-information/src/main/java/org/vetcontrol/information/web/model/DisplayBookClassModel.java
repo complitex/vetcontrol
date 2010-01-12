@@ -7,7 +7,7 @@ package org.vetcontrol.information.web.model;
 
 import java.util.Locale;
 import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.vetcontrol.information.util.web.ResourcesUtil;
+import org.vetcontrol.information.util.web.ResourceUtil;
 
 /**
  *
@@ -44,6 +44,6 @@ public class DisplayBookClassModel extends AbstractReadOnlyModel<String> {
     }
 
      private String attempt(String key) {
-        return ResourcesUtil.getString(ResourcesUtil.BOOK_NAMES_BUNDLE, key, locale);
+        return ResourceUtil.getString(ResourceUtil.BOOK_NAMES_BUNDLE, key, locale);
      }
 }

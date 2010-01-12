@@ -19,9 +19,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.lang.PropertyResolver;
 import org.vetcontrol.information.service.fasade.pages.BookPageFasade;
-import org.vetcontrol.information.util.web.BeanPropertyUtil;
+import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.information.util.web.Constants;
-import org.vetcontrol.information.util.web.Property;
+import org.vetcontrol.util.book.Property;
 import org.vetcontrol.information.web.model.StringCultureModel;
 
 /**
@@ -79,7 +79,6 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
             TextFilter filter = new TextFilter(componentId,
                     new StringCultureModel(new PropertyModel(form.getDefaultModel(), getPropertyExpression())),
                     form);
-//            filter.getFilter().add(new SimpleAttributeModifier("size", String.valueOf(Constants.FILTER_FIELD_SIZE)));
             return filter;
         } else if (property.isBeanReference()) {
             return new ChoiceFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form,
@@ -87,11 +86,9 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
                     new BookChoiceRenderer(property, systemLocale), false);
         } else if (Date.class.isAssignableFrom(property.getType())) {
             DateFilter filter = new DateFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form);
-//            filter.getFilter().add(new SimpleAttributeModifier("size", String.valueOf(Constants.FILTER_FIELD_SIZE)));
             return filter;
         } else {
             TextFilter filter = new TextFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form);
-//            filter.getFilter().add(new SimpleAttributeModifier("size", String.valueOf(Constants.FILTER_FIELD_SIZE)));
             return filter;
         }
     }

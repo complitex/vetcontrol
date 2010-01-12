@@ -7,10 +7,10 @@ package org.vetcontrol.information.web.model;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import org.apache.wicket.model.IModel;
-import org.vetcontrol.information.model.StringCulture;
-import org.vetcontrol.information.model.StringCultureId;
-import org.vetcontrol.information.util.web.BeanPropertyUtil;
-import org.vetcontrol.information.util.web.Property;
+import org.vetcontrol.entity.StringCulture;
+import org.vetcontrol.entity.StringCultureId;
+import org.vetcontrol.util.book.BeanPropertyUtil;
+import org.vetcontrol.util.book.Property;
 
 /**
  *

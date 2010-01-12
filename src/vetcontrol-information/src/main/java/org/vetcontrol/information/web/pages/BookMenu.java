@@ -11,7 +11,7 @@ import java.util.Locale;
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.vetcontrol.information.util.web.ResourcesUtil;
+import org.vetcontrol.information.util.web.ResourceUtil;
 import org.vetcontrol.information.web.model.DisplayBookClassModel;
 import org.vetcontrol.information.web.support.BookTypes;
 import org.vetcontrol.web.security.SecurityRoles;
@@ -27,7 +27,7 @@ public class BookMenu implements ITemplateMenu {
 
     @Override
     public String getTitle(Locale locale) {
-        return ResourcesUtil.getString(ResourcesUtil.BOOK_NAMES_BUNDLE, "book.menu.title", locale);
+        return ResourceUtil.getString(ResourceUtil.BOOK_NAMES_BUNDLE, "book.menu.title", locale);
     }
 
     @Override

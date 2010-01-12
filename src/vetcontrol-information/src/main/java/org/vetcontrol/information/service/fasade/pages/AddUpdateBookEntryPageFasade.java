@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.vetcontrol.information.service.fasade.pages;
 
 import java.io.Serializable;
@@ -18,7 +17,7 @@ import org.vetcontrol.service.fasade.AbstractFasade;
  *
  * @author Artem
  */
-@Stateless(name="AddUpdateBookEntryPageFasade")
+@Stateless(name = "AddUpdateBookEntryPageFasade")
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class AddUpdateBookEntryPageFasade extends AbstractFasade {
 
@@ -29,14 +28,13 @@ public class AddUpdateBookEntryPageFasade extends AbstractFasade {
         bookDAO.saveOrUpdate(bookEntry);
     }
 
-    public <T> List<T> getAll(Class<T> bookType){
+    public <T> List<T> getAll(Class<T> bookType) {
         try {
             T example = bookType.newInstance();
             return bookDAO.getContent(example, 0,
-                bookDAO.size(example).intValue());
+                    bookDAO.size(example).intValue());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
-
 }

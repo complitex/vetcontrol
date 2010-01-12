@@ -3,10 +3,10 @@
     <persistence-unit name="applicationPersistenceUnitTest" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
 
-        <class>org.vetcontrol.information.model.Generator</class>
-        <class>org.vetcontrol.information.model.CountryBook</class>
-        <class>org.vetcontrol.information.model.Registeredproducts</class>
-        <class>org.vetcontrol.information.model.StringCulture</class>
+        <class>org.vetcontrol.entity.Generator</class>
+        <class>org.vetcontrol.entity.CountryBook</class>
+        <class>org.vetcontrol.entity.Registeredproducts</class>
+        <class>org.vetcontrol.entity.StringCulture</class>
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
