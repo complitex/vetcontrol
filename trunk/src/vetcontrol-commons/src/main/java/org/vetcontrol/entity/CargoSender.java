@@ -10,12 +10,12 @@ import java.util.List;
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 12.01.2010 14:38:41
  *
- * 	отправители/получатели грузов
+ * 	отправители грузов
  */
 
 //@Entity
-//@Table(name = "sender_receiver")
-public class SenderReceiver {
+//@Table(name = "cargo_sender")
+public class CargoSender {
     private Integer id;
     private Long name;
     private List<StringCulture> names = new ArrayList<StringCulture>();
