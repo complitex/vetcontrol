@@ -7,9 +7,10 @@ package org.vetcontrol.information.web.support;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.vetcontrol.information.model.CountryBook;
-import org.vetcontrol.information.model.Registeredproducts;
-import org.vetcontrol.information.model.VehicleType;
+import org.vetcontrol.entity.Department;
+import org.vetcontrol.entity.CountryBook;
+import org.vetcontrol.entity.Registeredproducts;
+import org.vetcontrol.entity.VehicleType;
 
 /**
  *
@@ -18,6 +19,7 @@ import org.vetcontrol.information.model.VehicleType;
 public class BookTypes {
 
     public static final List<Class> BOOK_TYPES = Collections.unmodifiableList(Arrays.asList(new Class[]{
+        Department.class,
         CountryBook.class,
         Registeredproducts.class,
         VehicleType.class,

@@ -6,12 +6,10 @@ package org.vetcontrol.information.web.component;
 
 import java.util.List;
 import java.util.Locale;
-import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.vetcontrol.information.util.web.BeanPropertyUtil;
-import org.vetcontrol.information.util.web.Property;
+import org.vetcontrol.util.book.Property;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 
 /**

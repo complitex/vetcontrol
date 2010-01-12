@@ -15,8 +15,8 @@ public class Constants {
 
     public static final int TEXT_FIELD_MAX_LENGTH = 40;
 
-    public static final int TEXT_LIMIT = 15;
-    public static final int TITLE_LIMIT = 30;
+    public static final int TEXT_LIMIT = 30;
+    public static final int TITLE_LIMIT = 45;
     public static final String CONTINUE = "...";
 
     public static final int FILTER_FIELD_SIZE = 10;

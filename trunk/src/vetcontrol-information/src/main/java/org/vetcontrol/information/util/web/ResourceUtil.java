@@ -16,13 +16,12 @@ import org.slf4j.LoggerFactory;
  *
  * @author Artem
  */
-public class ResourcesUtil {
+public class ResourceUtil {
 
     public static final String BOOK_NAMES_BUNDLE = "org.vetcontrol.information.web.pages.Books";
+    private static final Logger log = LoggerFactory.getLogger(ResourceUtil.class);
 
-    private static final Logger log = LoggerFactory.getLogger(ResourcesUtil.class);
-    
-    public static String getString(String key, Component component){
+    public static String getString(String key, Component component) {
         try {
             return Application.get().getResourceSettings().getLocalizer().getString(key, component);
         } catch (MissingResourceException e) {
@@ -32,14 +31,20 @@ public class ResourcesUtil {
     }
 
     public static String getString(String bundle, String key, Locale locale) {
-        return getResourceBundle(bundle, locale).getString(key);
+        String result = key;
+        try {
+            result = getResourceBundle(bundle, locale).getString(key);
+        } catch (MissingResourceException e) {
+            log.error("error with finding resource", e);
+        }
+        return result;
     }
 
     private static ResourceBundle getResourceBundle(String bundle, Locale locale) {
         try {
             return ResourceBundle.getBundle(bundle, locale);
         } catch (Exception e) {
-            log.error("error with finding resource", e);
+            log.error("error with finding bundle", e);
         }
         return null;
     }

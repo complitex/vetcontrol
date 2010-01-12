@@ -6,8 +6,8 @@ package org.vetcontrol.information.web.model;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.vetcontrol.information.util.web.Property;
-import org.vetcontrol.information.util.web.ResourcesUtil;
+import org.vetcontrol.util.book.Property;
+import org.vetcontrol.information.util.web.ResourceUtil;
 
 /**
  *
@@ -48,6 +48,6 @@ public class DisplayPropertyLocalizableModel extends AbstractReadOnlyModel<Strin
     }
 
     private String attempt(String key) {
-        return ResourcesUtil.getString(key, component);
+        return ResourceUtil.getString(key, component);
     }
 }

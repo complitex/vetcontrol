@@ -8,7 +8,7 @@ import java.util.Date;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.odlabs.wiquery.ui.datepicker.DatePicker;
-import org.vetcontrol.information.util.web.Property;
+import org.vetcontrol.util.book.Property;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 
 /**

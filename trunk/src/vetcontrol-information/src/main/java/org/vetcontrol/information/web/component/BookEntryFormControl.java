@@ -21,8 +21,8 @@ import org.apache.wicket.model.PropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.information.service.fasade.pages.AddUpdateBookEntryPageFasade;
-import org.vetcontrol.information.util.web.BeanPropertyUtil;
-import org.vetcontrol.information.util.web.Property;
+import org.vetcontrol.util.book.BeanPropertyUtil;
+import org.vetcontrol.util.book.Property;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 
 /**

@@ -8,8 +8,7 @@ import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
-import org.vetcontrol.information.service.fasade.pages.AddUpdateBookEntryPageFasade;
-import org.vetcontrol.information.util.web.BeanPropertyUtil;
+import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.information.web.component.BookEntryFormControl;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.web.template.FormTemplatePage;
@@ -18,6 +17,7 @@ import javax.ejb.EJB;
 import java.beans.IntrospectionException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import org.vetcontrol.information.service.fasade.pages.AddUpdateBookEntryPageFasade;
 
 /**
  *
