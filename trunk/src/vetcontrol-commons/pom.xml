@@ -22,9 +22,9 @@
         </dependency>
         <dependency>
             <groupId>org.apache.wicket</groupId>
-            <artifactId>wicket-ioc</artifactId>        
+            <artifactId>wicket-ioc</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket-extensions</artifactId>
@@ -41,8 +41,24 @@
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
-            <version>6.0</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>3.5.0-Beta-2</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>hsqldb</groupId>
+                    <artifactId>hsqldb</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.transaction</groupId>
+                    <artifactId>jta</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>

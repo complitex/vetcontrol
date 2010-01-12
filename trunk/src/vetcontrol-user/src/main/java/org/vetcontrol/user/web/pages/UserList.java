@@ -25,6 +25,8 @@ import org.vetcontrol.web.template.TemplatePage;
 
 import javax.ejb.EJB;
 import java.util.Iterator;
+import org.vetcontrol.service.dao.ILocaleDAO;
+import org.vetcontrol.util.book.BeanPropertyUtil;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -35,10 +37,10 @@ import java.util.Iterator;
 @AuthorizeInstantiation(SecurityRoles.USER_EDIT)
 public class UserList extends TemplatePage{
     private static final Logger log = LoggerFactory.getLogger(UserList.class);
-
     @EJB(name = "UserBean")
     private UserBean userBean;
-
+    @EJB(name = "LocaleDAO")
+    private ILocaleDAO localeDAO;
     private final static int ITEMS_ON_PAGE = 13;
 
     public UserList() {
@@ -46,7 +48,7 @@ public class UserList extends TemplatePage{
 
         add(new Label("title", getString("user.list.title")));
 
-        //Форма фильтра по ключевому слову
+        //Форма фильтра по ключевому �?лову
         String filter = null;
         final Form<String> filterForm = new Form<String>("filter_form", new Model<String>(filter));
         add(filterForm);
@@ -87,21 +89,26 @@ public class UserList extends TemplatePage{
         userSort.setSort("LAST_NAME", true);
 
         //Таблица пользователей
-        final DataView<User> userDataView = new DataView<User>("users", userSort, ITEMS_ON_PAGE){
+        final DataView<User> userDataView = new DataView<User>("users", userSort, ITEMS_ON_PAGE) {
+
             @Override
             protected void populateItem(Item<User> userItem) {
                 User user = userItem.getModelObject();
                 userItem.add(new Label("last_name", user.getLastName()));
                 userItem.add(new Label("first_name", user.getFirstName()));
                 userItem.add(new Label("middle_name", user.getMiddleName()));
-                if (user.getDepartment() != null){
-                    userItem.add(new Label("department", user.getDepartment().getName()));
-                }else{
+                if (user.getDepartment() != null) {
+                    if (user.getDepartment().getNames().isEmpty()) {
+                        log.error("user : "+user.getId());
+                    }
+                    userItem.add(new Label("department",
+                            BeanPropertyUtil.getLocalizablePropertyAsString(user.getDepartment().getNames(), localeDAO.systemLocale(), null)));
+                } else {
                     userItem.add(new Label("department", "DEVELOPMENT"));
                 }
                 Link<UserEdit> edit = new BookmarkablePageLink<UserEdit>("edit", UserEdit.class,
-                        new PageParameters("user_id="+user.getId()));
-                edit.add(new Label("login", user.getLogin()));  
+                        new PageParameters("user_id=" + user.getId()));
+                edit.add(new Label("login", user.getLogin()));
                 userItem.add(edit);
                 userItem.add(new Label("groups", getGroups(user)));
             }
@@ -120,24 +127,27 @@ public class UserList extends TemplatePage{
                 userDataView.setCurrentPage(0);
             }
         });
-        add(new OrderByBorder("order_middle_name", "MIDDLE_NAME", userSort){
-            protected void onSortChanged(){
+        add(new OrderByBorder("order_middle_name", "MIDDLE_NAME", userSort) {
+
+            protected void onSortChanged() {
                 userDataView.setCurrentPage(0);
             }
         });
-        add(new OrderByBorder("order_department", "DEPARTMENT", userSort){
-            protected void onSortChanged(){
+        add(new OrderByBorder("order_department", "DEPARTMENT", userSort) {
+
+            protected void onSortChanged() {
                 userDataView.setCurrentPage(0);
             }
         });
-        add(new OrderByBorder("order_login", "LOGIN", userSort){
-            protected void onSortChanged(){
+        add(new OrderByBorder("order_login", "LOGIN", userSort) {
+
+            protected void onSortChanged() {
                 userDataView.setCurrentPage(0);
             }
         });
 
         //Панель ссылок для постраничной навигации
-        PagingNavigator pagingNavigator = new PagingNavigator("navigator", userDataView);        
+        PagingNavigator pagingNavigator = new PagingNavigator("navigator", userDataView);
 
         add(pagingNavigator);
     }
@@ -147,18 +157,19 @@ public class UserList extends TemplatePage{
      * @param user Пользователь
      * @return Список групп
      */
-    private String getGroups(User user){
-        if (user.getUserGroups() == null || user.getUserGroups().isEmpty()){
+    private String getGroups(User user) {
+        if (user.getUserGroups() == null || user.getUserGroups().isEmpty()) {
             return getString("user.blocked");
         }
 
         StringBuilder sb = new StringBuilder();
 
-        for (Iterator<UserGroup> it = user.getUserGroups().iterator();;){
+        for (Iterator<UserGroup> it = user.getUserGroups().iterator();;) {
             sb.append(getString(it.next().getUserGroup()));
-            if (!it.hasNext()) return sb.toString();
+            if (!it.hasNext()) {
+                return sb.toString();
+            }
             sb.append(", ");
         }
     }
-
 }

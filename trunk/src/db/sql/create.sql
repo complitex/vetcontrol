@@ -15,6 +15,8 @@ MySQL - 5.0.88-community-nt : Database - project1
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
+-- users --
+
 /*Table structure for table `node` */
 
 DROP TABLE IF EXISTS `node`;
@@ -25,21 +27,6 @@ CREATE TABLE `node` (
   PRIMARY KEY  (`nodeId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
-
-/*Table structure for table `user` */
-
-DROP TABLE IF EXISTS `department`;
-CREATE TABLE  `department` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(45) NOT NULL,
-  `parent_id` int(10) unsigned DEFAULT NULL,
-  `level` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_department_parent` (`parent_id`),
-  CONSTRAINT `fk_department_parent` FOREIGN KEY (`parent_id`) REFERENCES `department` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE  `user` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -48,7 +35,7 @@ CREATE TABLE  `user` (
   `first_name` varchar(45) DEFAULT NULL,
   `middle_name` varchar(45) DEFAULT NULL,
   `last_name` varchar(45) DEFAULT NULL,
-  `department_id` int(10) unsigned DEFAULT NULL,
+  `department_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_login` (`login`),
   KEY `fk_user_department` (`department_id`),
@@ -147,6 +134,38 @@ CREATE TABLE `vehicletypes` (
     KEY `FK_vehicletypes_name` (`name`),
     CONSTRAINT `FK_vehicletypes_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Table structure for table `department` */
+
+DROP TABLE IF EXISTS `department`;
+CREATE TABLE  `department` (
+    `id` int(11) NOT NULL auto_increment,
+    `name` int(11) NOT NULL,
+    `parent_id` int(11) NULL,
+    PRIMARY KEY (`id`),
+    KEY `FK_department_name` (`name`),
+    CONSTRAINT `FK_department_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+    KEY `FK_department_parent` (`parent_id`),
+    CONSTRAINT `FK_department_parent` FOREIGN KEY (`parent_id`) REFERENCES `department` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Table structure for table `baseunits` */
+
+--DROP TABLE IF EXISTS `baseunits`;
+--
+--CREATE TABLE `baseunits` (
+--    `id` int(11) NOT NULL auto_increment,
+--    `name` int(11) NOT NULL,
+--    `parent_id` int(11) NULL,
+----    `level` int(11) NOT NULL,
+--    PRIMARY KEY (`id`),
+--    KEY `FK_baseunits_name` (`name`),
+--    CONSTRAINT `FK_baseunits_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+--    KEY `fk_baseunits_parent` (`parent_id`),
+--    CONSTRAINT `fk_baseunits_parent` FOREIGN KEY (`parent_id`) REFERENCES `baseunits` (`id`)
+--) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

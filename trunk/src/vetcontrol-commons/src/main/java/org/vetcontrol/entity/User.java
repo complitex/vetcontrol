@@ -4,6 +4,8 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 /**
  * User: Anatoly A. Ivanov java@inheaven.ru
@@ -13,34 +15,29 @@ import java.util.List;
  */
 @Entity
 @Table(name = "user")
-public class User implements Serializable{
+public class User implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     @Column(name = "login", length = 32, unique = true, nullable = false)
     private String login;
-
     @Column(name = "_password", length = 32, nullable = false)
     private String password;
-
     @Transient
     private String changePassword;
-
     @Column(name = "first_name", length = 45)
     private String firstName;
-
     @Column(name = "middle_name", length = 45)
     private String middleName;
-
     @Column(name = "last_name", length = 45)
     private String lastName;
-        
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER ,cascade = CascadeType.ALL, orphanRemoval = true)    
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserGroup> userGroups = new ArrayList<UserGroup>();
 
-    @ManyToOne
-    @JoinColumn(name = "department_id")
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "department_id", nullable = true)
     private Department department;
 
     public Long getId() {
@@ -117,15 +114,6 @@ public class User implements Serializable{
 
     @Override
     public String toString() {
-        return new StringBuilder()
-                .append("[hash: ").append(Integer.toHexString(hashCode()))
-                .append(", id: ").append(id)
-                .append(", login: ").append(login)
-                .append(", firstName: ").append(firstName)
-                .append(", lastName: ").append(lastName)
-                .append(", middleName: ").append(middleName)
-                .append(", userGroups: ").append(userGroups)
-                .append(", department: ").append(department).append("]")
-                .toString();
+        return new StringBuilder().append("[hash: ").append(Integer.toHexString(hashCode())).append(", id: ").append(id).append(", login: ").append(login).append(", firstName: ").append(firstName).append(", lastName: ").append(lastName).append(", middleName: ").append(middleName).append(", userGroups: ").append(userGroups).append(", department: ").append(department).append("]").toString();
     }
 }
