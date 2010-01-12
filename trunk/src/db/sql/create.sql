@@ -237,6 +237,17 @@ CREATE TABLE `cargo_mode` (
   CONSTRAINT `FK_cargo_mode_unit_type_ref` FOREIGN KEY (`unit_type`) REFERENCES `unit_type` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/*Table structure for table `job` */
+
+DROP TABLE IF EXISTS `job`;
+CREATE TABLE  `job` (
+    `id` int(11) NOT NULL auto_increment,
+    `name` int(11) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FK_job_name` (`name`),
+    CONSTRAINT `FK_job_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
