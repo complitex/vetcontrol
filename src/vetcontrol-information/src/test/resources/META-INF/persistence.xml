@@ -6,6 +6,7 @@
         <class>org.vetcontrol.entity.Generator</class>
         <class>org.vetcontrol.entity.CountryBook</class>
         <class>org.vetcontrol.entity.Registeredproducts</class>
+        <class>org.vetcontrol.entity.Producer</class>
         <class>org.vetcontrol.entity.StringCulture</class>
 
         <properties>
