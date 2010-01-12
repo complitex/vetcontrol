@@ -93,13 +93,13 @@ public class BooksTest {
         s.setEntityManager(entityManager);
         bookDAO.setEntityManager(entityManager);
 
-        Registeredproducts r = new Registeredproducts("Vendor", "abc123", new Date());
-        r.addName(new StringCulture(new StringCultureId("en"), "milk"));
-        r.addName(new StringCulture(new StringCultureId("uk"), "milk2"));
-        r.addClassificator(new StringCulture(new StringCultureId("en"), "class #1"));
-        CountryBook country = bookDAO.getContent(new CountryBook(), 0, 1).get(0);
-        r.setCountry(country);
-        bookDAO.saveOrUpdate(r);
+//        Registeredproducts r = new Registeredproducts("abc123", new Date());
+//        r.addName(new StringCulture(new StringCultureId("en"), "milk"));
+//        r.addName(new StringCulture(new StringCultureId("uk"), "milk2"));
+//        r.addClassificator(new StringCulture(new StringCultureId("en"), "class #1"));
+//        CountryBook country = bookDAO.getContent(new CountryBook(), 0, 1).get(0);
+//        r.setCountry(country);
+//        bookDAO.saveOrUpdate(r);
 
         transaction.commit();
         entityManager.close();

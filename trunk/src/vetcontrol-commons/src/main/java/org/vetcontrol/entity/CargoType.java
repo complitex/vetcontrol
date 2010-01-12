@@ -1,24 +1,22 @@
 package org.vetcontrol.entity;
 
-import org.vetcontrol.util.book.entity.annotation.MappedProperty;
-
-import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.*;
+import org.vetcontrol.util.book.entity.annotation.MappedProperty;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 12.01.2010 14:31:39
  *
- * виды грузов (для отражения в отчетности)
+ * тип груза
  */
-//@Entity
-//@Table(name = "cargo_type")
-public class CargoType {
+@Entity
+@Table(name = "cargo_type")
+public class CargoType implements Serializable {
 
     private Integer id;
-    private Long name;
-    private List<StringCulture> names = new ArrayList<StringCulture>();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +28,17 @@ public class CargoType {
     public void setId(Integer id) {
         this.id = id;
     }
+    private String uktZedCode;
+
+    @Column(name = "ukt_zed_code", nullable = false, length = 10)
+    public String getCode() {
+        return uktZedCode;
+    }
+
+    public void setCode(String uktZedCode) {
+        this.uktZedCode = uktZedCode;
+    }
+    private Long name;
 
     @Column(name = "name")
     public Long getName() {
@@ -39,6 +48,8 @@ public class CargoType {
     public void setName(Long name) {
         this.name = name;
     }
+
+    private List<StringCulture> names = new ArrayList<StringCulture>();
 
     @Transient
     @MappedProperty("name")

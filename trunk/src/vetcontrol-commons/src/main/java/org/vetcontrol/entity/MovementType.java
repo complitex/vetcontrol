@@ -1,5 +1,6 @@
 package org.vetcontrol.entity;
 
+import java.io.Serializable;
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
 
 import javax.persistence.*;
@@ -12,9 +13,9 @@ import java.util.List;
  *
  * виды движения груза (импорт, экспорт, транзит, импортный транзит)
  */
-//@Entity
-//@Table(name = "movement_type")
-public class MovementType {
+@Entity
+@Table(name = "movement_type")
+public class MovementType implements Serializable{
     
     private Integer id;
     private Long name;

@@ -1,5 +1,6 @@
 package org.vetcontrol.entity;
 
+import java.io.Serializable;
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
 
 import javax.persistence.*;
@@ -12,11 +13,11 @@ import java.util.List;
  *
  * 	места таможенного оформления грузов
  */
+@Entity
+@Table(name = "customs_point")
+public class CustomsPoint implements Serializable {
 
-//@Entity
-//@Table(name = "customs_point")
-public class CustomsPoint {
-     private Integer id;
+    private Integer id;
     private Long name;
     private List<StringCulture> names = new ArrayList<StringCulture>();
 
@@ -49,5 +50,5 @@ public class CustomsPoint {
 
     public void setNames(List<StringCulture> names) {
         this.names = names;
-    }        
+    }
 }
