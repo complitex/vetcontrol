@@ -8,10 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 2.4.3.8 Справочник видов движения груза
+ *
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 12.01.2010 14:14:57
  *
- * виды движения груза (импорт, экспорт, транзит, импортный транзит)
  */
 @Entity
 @Table(name = "movement_type")

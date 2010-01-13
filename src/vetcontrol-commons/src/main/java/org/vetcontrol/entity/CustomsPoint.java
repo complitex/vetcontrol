@@ -8,10 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 2.4.3.14 Справочник места таможенного оформления грузов
+ *
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 12.01.2010 14:46:58
  *
- * 	места таможенного оформления грузов
  */
 @Entity
 @Table(name = "customs_point")

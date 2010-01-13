@@ -8,10 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 2.4.3.16 Справочник отправителей/получателей грузов
+ * отправители грузов
+ *
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 12.01.2010 14:38:41
- *
- * 	отправители грузов
+ * 	
  */
 
 @Entity

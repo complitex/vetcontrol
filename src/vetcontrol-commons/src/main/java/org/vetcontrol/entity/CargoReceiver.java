@@ -18,6 +18,7 @@ import javax.persistence.Transient;
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
 
 /**
+ * 2.4.3.16 Справочник отправителей/получателей грузов
  * получатели грузов
  *
  * @author Artem

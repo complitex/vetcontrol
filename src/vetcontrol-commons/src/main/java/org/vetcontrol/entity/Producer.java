@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 2.4.3.17 Справочник производителей
+ *
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 12.01.2010 14:41:47
  */
