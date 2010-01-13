@@ -248,6 +248,83 @@ CREATE TABLE  `job` (
     CONSTRAINT `FK_job_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/*Table structure for table `prohibition_country` */
+
+DROP TABLE IF EXISTS `prohibition_country`;
+CREATE TABLE  `prohibition_country` (
+    `id` int(11) NOT NULL auto_increment,
+    `date` date NOT NULL,
+    `number` VARCHAR(10) NOT NULL,
+    `country` int(11) NOT NULL,
+    `reason` int(11) NOT NULL,
+    `region` int(11) NOT NULL,
+    `target` int(11) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FK_prohibition_country_country_ref` (`country`),
+    CONSTRAINT `FK_prohibition_country_country_ref` FOREIGN KEY (`country`) REFERENCES `countrybook` (`id`),
+    KEY `FK_prohibition_country_reason` (`reason`),
+    CONSTRAINT `FK_prohibition_country_reason` FOREIGN KEY (`reason`) REFERENCES `stringculture` (`id`),
+    KEY `FK_prohibition_country_region` (`region`),
+    CONSTRAINT `FK_prohibition_country_region` FOREIGN KEY (`region`) REFERENCES `stringculture` (`id`),
+    KEY `FK_prohibition_country_target` (`target`),
+    CONSTRAINT `FK_prohibition_country_target` FOREIGN KEY (`target`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Table structure for table `arrest_reason` */
+
+DROP TABLE IF EXISTS `arrest_reason`;
+CREATE TABLE  `arrest_reason` (
+    `id` int(11) NOT NULL auto_increment,
+    `name` int(11) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FK_arrest_reason_name` (`name`),
+    CONSTRAINT `FK_arrest_reason_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Table structure for table `bad_epizootic_situation` */
+
+DROP TABLE IF EXISTS `bad_epizootic_situation`;
+CREATE TABLE  `bad_epizootic_situation` (
+    `id` int(11) NOT NULL auto_increment,
+    `name` int(11) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FK_bad_epizootic_situation_name` (`name`),
+    CONSTRAINT `FK_bad_epizootic_situation_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Table structure for table `tariff` */
+
+DROP TABLE IF EXISTS `tariff`;
+CREATE TABLE  `tariff` (
+    `id` int(11) NOT NULL auto_increment,
+    `name` int(11) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FK_tariff_name` (`name`),
+    CONSTRAINT `FK_tariff_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Table structure for table `passing_border_point` */
+
+DROP TABLE IF EXISTS `passing_border_point`;
+CREATE TABLE  `passing_border_point` (
+    `id` int(11) NOT NULL auto_increment,
+    `name` int(11) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FK_passing_border_point_name` (`name`),
+    CONSTRAINT `FK_passing_border_point_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Table structure for table `addressbook` */
+
+DROP TABLE IF EXISTS `addressbook`;
+CREATE TABLE  `addressbook` (
+    `id` int(11) NOT NULL auto_increment,
+    `name` int(11) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FK_addressbook_name` (`name`),
+    CONSTRAINT `FK_addressbook_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
