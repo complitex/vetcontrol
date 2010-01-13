@@ -7,6 +7,8 @@ package org.vetcontrol.information.web.support;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.vetcontrol.entity.AddressBook;
+import org.vetcontrol.entity.ArrestReason;
 import org.vetcontrol.entity.CargoMode;
 import org.vetcontrol.entity.CargoReceiver;
 import org.vetcontrol.entity.CargoSender;
@@ -16,8 +18,11 @@ import org.vetcontrol.entity.CountryBook;
 import org.vetcontrol.entity.CustomsPoint;
 import org.vetcontrol.entity.Job;
 import org.vetcontrol.entity.MovementType;
+import org.vetcontrol.entity.PassingBorderPoint;
 import org.vetcontrol.entity.Producer;
+import org.vetcontrol.entity.Prohibition;
 import org.vetcontrol.entity.Registeredproducts;
+import org.vetcontrol.entity.Tariff;
 import org.vetcontrol.entity.UnitType;
 import org.vetcontrol.entity.VehicleType;
 
@@ -41,6 +46,11 @@ public class BookTypes {
         CargoType.class,
         CargoMode.class,
         Job.class,
+        Prohibition.class,
+        Tariff.class,
+        ArrestReason.class,
+        AddressBook.class,
+        PassingBorderPoint.class,
     }));
 
     @Deprecated

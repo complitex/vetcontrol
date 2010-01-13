@@ -8,10 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 2.4.3.10 Справочник единиц измерения
+ *
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 12.01.2010 14:34:56
  *
- *  единицы измерения
  */
 
 @Entity

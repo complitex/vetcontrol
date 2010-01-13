@@ -18,7 +18,7 @@ import javax.persistence.Transient;
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
 
 /**
- * должность
+ * 2.4.3.7 Справочник должностей
  *
  * @author Artem
  */

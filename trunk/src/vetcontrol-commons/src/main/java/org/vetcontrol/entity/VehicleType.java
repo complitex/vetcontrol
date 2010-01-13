@@ -17,6 +17,7 @@ import javax.persistence.Transient;
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
 
 /**
+ * 2.4.3.18 Справочник типов транспортных средств
  *
  * @author Artem
  */

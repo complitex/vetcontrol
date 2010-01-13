@@ -23,6 +23,7 @@ import org.vetcontrol.util.book.entity.annotation.BookReference;
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
 
 /**
+ * 2.4.3.1 Справочник структурных единиц
  *
  * @author Artem
  */
