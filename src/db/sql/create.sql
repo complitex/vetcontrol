@@ -214,6 +214,7 @@ CREATE TABLE  `cargo_type` (
     `id` int(11) NOT NULL auto_increment,
     `name` int(11) NOT NULL,
     `ukt_zed_code` VARCHAR(10) NOT NULL,
+    `controled` tinyint(1) NOT NULL,
     PRIMARY KEY (`id`),
     KEY `FK_cargo_type_name` (`name`),
     CONSTRAINT `FK_cargo_type_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
