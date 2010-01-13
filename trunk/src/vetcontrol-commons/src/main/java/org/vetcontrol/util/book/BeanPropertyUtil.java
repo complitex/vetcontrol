@@ -15,6 +15,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -37,6 +39,12 @@ import org.vetcontrol.util.book.entity.annotation.MappedProperty;
  * @author Artem
  */
 public class BeanPropertyUtil {
+
+    public static final List<Class> SIMPLE_TYPIES = Arrays.asList(new Class[]{
+                int.class, byte.class, short.class, long.class, double.class, float.class, boolean.class,
+                Integer.class, Byte.class, Short.class, Long.class, Double.class, Float.class, Boolean.class,
+                String.class, List.class, Set.class, Map.class
+            });
 
     public static List<Property> getProperties(Class<?> beanClass) throws IntrospectionException {
         BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);

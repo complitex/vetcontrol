@@ -39,11 +39,6 @@ import org.vetcontrol.util.book.service.HibernateSessionTransformer;
 @Stateless
 public class BookViewDAO implements IBookViewDAO {
 
-    private static final List<Class> SIMPLE_TYPIES = Arrays.asList(new Class[]{
-                int.class, byte.class, short.class, long.class, double.class, float.class,
-                Integer.class, Byte.class, Short.class, Long.class, Double.class, Float.class,
-                String.class, List.class, Set.class, Map.class
-            });
     private EntityManager em;
 
     @PersistenceContext
@@ -141,7 +136,7 @@ public class BookViewDAO implements IBookViewDAO {
 //                        }
                     Class propType = prop.getType();
                     boolean isSuitableType = true;
-                    for (Class simpleType : SIMPLE_TYPIES) {
+                    for (Class simpleType : BeanPropertyUtil.SIMPLE_TYPIES) {
                         if (simpleType.isAssignableFrom(propType)) {
                             isSuitableType = false;
                             break;

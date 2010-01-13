@@ -60,7 +60,7 @@ public abstract class BookContentControl extends Panel {
         List<IColumn<Serializable>> columns = new ArrayList<IColumn<Serializable>>();
 
         for (Property prop : BeanPropertyUtil.getProperties(bookClass)) {
-            columns.add(new BookPropertyColumn<Serializable>(new DisplayPropertyLocalizableModel(prop, this), prop, fasade, systemLocale));
+            columns.add(new BookPropertyColumn<Serializable>(this, new DisplayPropertyLocalizableModel(prop, this), prop, fasade, systemLocale));
         }
         columns.add(new AbstractColumn(new ResourceModel("book.edit.header")) {
 

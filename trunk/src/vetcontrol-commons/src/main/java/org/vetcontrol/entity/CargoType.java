@@ -61,4 +61,26 @@ public class CargoType implements Serializable {
     public void setNames(List<StringCulture> names) {
         this.names = names;
     }
+
+    private Boolean controled;
+
+    /**
+     * Get the value of controled
+     *
+     * @return the value of controled
+     */
+    @Column(name="controled", nullable=false)
+    public Boolean getControled() {
+        return controled;
+    }
+
+    /**
+     * Set the value of controled
+     *
+     * @param controled new value of controled
+     */
+    public void setControled(Boolean controled) {
+        this.controled = controled;
+    }
+
 }

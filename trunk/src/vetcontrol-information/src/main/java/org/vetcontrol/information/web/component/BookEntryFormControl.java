@@ -54,6 +54,7 @@ public abstract class BookEntryFormControl extends FormComponentPanel {
                 boolean isDate = false;
                 boolean isLocalizableText = false;
                 boolean isSelectable = false;
+                boolean isBoolean = false;
 
                 if (prop.getType().equals(String.class) || prop.getType().equals(int.class) || prop.getType().equals(Integer.class)
                         || prop.getType().equals(long.class) || prop.getType().equals(Long.class)) {
@@ -64,6 +65,8 @@ public abstract class BookEntryFormControl extends FormComponentPanel {
                     isLocalizableText = true;
                 } else if (prop.isBeanReference()) {
                     isSelectable = true;
+                } else if(prop.getType().equals(boolean.class) || prop.getType().equals(Boolean.class)){
+                    isBoolean = true;
                 }
 
                 IModel m = new PropertyModel(model, prop.getName());
@@ -72,6 +75,7 @@ public abstract class BookEntryFormControl extends FormComponentPanel {
                 Panel textPanel = new EmptyPanel("textPanel");
                 Panel localizableTextPanel = new EmptyPanel("localizableTextPanel");
                 Panel selectablePanel = new EmptyPanel("selectablePanel");
+                Panel booleanPanel = new EmptyPanel("booleanPanel");
 
                 //choose what panel is editable:
                 if (isSimpleText) {
@@ -82,12 +86,15 @@ public abstract class BookEntryFormControl extends FormComponentPanel {
                     datePanel = new DatePanel("datePanel", m, prop);
                 } else if (isSelectable) {
                     selectablePanel = new SelectPanel("selectablePanel", m, prop, fasade.getAll(prop.getType()), systemLocale);
+                } else if(isBoolean){
+                    booleanPanel = new BooleanPanel("booleanPanel", m, prop);
                 }
 
                 item.add(datePanel);
                 item.add(textPanel);
                 item.add(localizableTextPanel);
                 item.add(selectablePanel);
+                item.add(booleanPanel);
             }
         });
 
