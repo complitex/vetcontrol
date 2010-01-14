@@ -4,17 +4,12 @@
  */
 package org.vetcontrol.entity;
 
+import org.vetcontrol.util.book.entity.annotation.MappedProperty;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import org.vetcontrol.util.book.entity.annotation.MappedProperty;
 
 /**
  * 2.4.3.18 Справочник типов транспортных средств
@@ -23,7 +18,7 @@ import org.vetcontrol.util.book.entity.annotation.MappedProperty;
  */
 @Entity
 @Table(name = "vehicletypes")
-public class VehicleType implements Serializable {
+public class VehicleType implements IBook, Serializable {
 
     private Integer id;
     private Long name;

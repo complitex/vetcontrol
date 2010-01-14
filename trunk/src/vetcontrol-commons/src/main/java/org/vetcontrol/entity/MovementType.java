@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "movement_type")
-public class MovementType implements Serializable{
+public class MovementType implements IBook, Serializable{
     
     private Integer id;
     private Long name;

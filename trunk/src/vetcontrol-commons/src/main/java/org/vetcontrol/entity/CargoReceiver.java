@@ -25,7 +25,7 @@ import org.vetcontrol.util.book.entity.annotation.MappedProperty;
  */
 @Entity
 @Table(name = "cargo_receiver")
-public class CargoReceiver implements Serializable {
+public class CargoReceiver implements IBook, Serializable {
 
     private Integer id;
     private Long name;

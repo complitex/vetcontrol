@@ -3,6 +3,7 @@ package org.vetcontrol.entity;
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "producer")
-public class Producer {
+public class Producer implements Serializable{
     private Integer id;
     private Long name;
     private List<StringCulture> names = new ArrayList<StringCulture>();

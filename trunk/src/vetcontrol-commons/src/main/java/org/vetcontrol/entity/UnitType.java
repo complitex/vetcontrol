@@ -17,7 +17,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "unit_type")
-public class UnitType implements Serializable{
+public class UnitType implements IBook, Serializable{
     private Integer id;
     private Long name;
     private List<StringCulture> names = new ArrayList<StringCulture>();
