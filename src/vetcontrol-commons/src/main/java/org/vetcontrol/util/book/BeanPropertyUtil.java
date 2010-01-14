@@ -93,6 +93,7 @@ public class BeanPropertyUtil {
                         if (annotation.annotationType().equals(MappedProperty.class)) {
                             property.setLocalizable(true);
                             String excludeProp = ((MappedProperty) annotation).value();
+                            property.setLocalizationForeignKeyProperty(excludeProp);
                             excludes.add(excludeProp);
                         }
 
@@ -298,7 +299,7 @@ public class BeanPropertyUtil {
                 return prop;
             }
         }
-        throw new RuntimeException("Property '" + propertyName + "' was not found in type " + beanClass);
+        return null;
     }
 
     public static void setPropertyValue(Object target, String propertyName, Object value) throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {

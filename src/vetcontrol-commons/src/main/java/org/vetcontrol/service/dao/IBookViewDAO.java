@@ -17,7 +17,7 @@ import javax.persistence.EntityManager;
 @Local
 public interface IBookViewDAO {
 
-    <T> List<T> getContent(T example, int first, int count);
+    <T> List<T> getContent(T example, int first, int count, String sortProperty, boolean isAscending, Locale locale);
 
     <T> List<T> getContent(Class<T> bookClass);
 
