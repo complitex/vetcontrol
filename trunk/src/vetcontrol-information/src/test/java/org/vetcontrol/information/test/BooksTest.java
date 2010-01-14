@@ -7,18 +7,22 @@ package org.vetcontrol.information.test;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import org.hibernate.Session;
 import org.junit.Assert;
 import org.junit.Test;
+import org.vetcontrol.entity.CargoMode;
 import org.vetcontrol.entity.CountryBook;
 import org.vetcontrol.entity.Registeredproducts;
 import org.vetcontrol.entity.StringCulture;
 import org.vetcontrol.entity.StringCultureId;
 import org.vetcontrol.information.service.dao.BookDAO;
 import org.vetcontrol.information.service.generator.Sequence;
+import org.vetcontrol.util.book.service.HibernateSessionTransformer;
 
 /**
  *
@@ -86,10 +90,10 @@ public class BooksTest {
         entityManager.close();
 
         //2 registered products
-        entityManager = managerFactory.createEntityManager();
-        transaction = entityManager.getTransaction();
-        transaction.begin();
-
+//        entityManager = managerFactory.createEntityManager();
+//        transaction = entityManager.getTransaction();
+//        transaction.begin();
+//
 //        s.setEntityManager(entityManager);
 //        bookDAO.setEntityManager(entityManager);
 //
@@ -105,50 +109,50 @@ public class BooksTest {
 //        entityManager.close();
     }
 
-//    @Test
-    public void getBookContentTest() {
-
-        EntityManager entityManager = managerFactory.createEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
-
-        Sequence s = new Sequence();
-        s.setEntityManager(entityManager);
-        BookDAO bookDAO = new BookDAO();
-        bookDAO.setSequence(s);
-        bookDAO.setEntityManager(entityManager);
-
-        List<CountryBook> books = bookDAO.getContent(new CountryBook(), 0, 2);
-
-        Assert.assertEquals(1, books.size());
-        CountryBook book = books.get(0);
-        Assert.assertEquals(2, book.getNames().size());
-
-        transaction.commit();
-        entityManager.close();
-    }
-
-//    @Test
-    public void updateTest() {
-        EntityManager entityManager = managerFactory.createEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
-
-        Sequence s = new Sequence();
-        s.setEntityManager(entityManager);
-        BookDAO bookDAO = new BookDAO();
-        bookDAO.setSequence(s);
-        bookDAO.setEntityManager(entityManager);
-
-        CountryBook book = bookDAO.getContent(new CountryBook(), 0, 2).get(0);
-        StringCulture culture = book.getNames().get(0);
-        culture.setValue("england_new");
-        bookDAO.saveOrUpdate(book);
-
-        transaction.commit();
-        entityManager.close();
-    }
-
+////    @Test
+//    public void getBookContentTest() {
+//
+//        EntityManager entityManager = managerFactory.createEntityManager();
+//        EntityTransaction transaction = entityManager.getTransaction();
+//        transaction.begin();
+//
+//        Sequence s = new Sequence();
+//        s.setEntityManager(entityManager);
+//        BookDAO bookDAO = new BookDAO();
+//        bookDAO.setSequence(s);
+//        bookDAO.setEntityManager(entityManager);
+//
+//        List<CountryBook> books = bookDAO.getContent(new CountryBook(), 0, 2);
+//
+//        Assert.assertEquals(1, books.size());
+//        CountryBook book = books.get(0);
+//        Assert.assertEquals(2, book.getNames().size());
+//
+//        transaction.commit();
+//        entityManager.close();
+//    }
+//
+////    @Test
+//    public void updateTest() {
+//        EntityManager entityManager = managerFactory.createEntityManager();
+//        EntityTransaction transaction = entityManager.getTransaction();
+//        transaction.begin();
+//
+//        Sequence s = new Sequence();
+//        s.setEntityManager(entityManager);
+//        BookDAO bookDAO = new BookDAO();
+//        bookDAO.setSequence(s);
+//        bookDAO.setEntityManager(entityManager);
+//
+//        CountryBook book = bookDAO.getContent(new CountryBook(), 0, 2).get(0);
+//        StringCulture culture = book.getNames().get(0);
+//        culture.setValue("england_new");
+//        bookDAO.saveOrUpdate(book);
+//
+//        transaction.commit();
+//        entityManager.close();
+//    }
+//
     public void cleanUp() {
         EntityManager entityManager = managerFactory.createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
@@ -168,18 +172,19 @@ public class BooksTest {
         transaction.commit();
         entityManager.close();
     }
-
-    @Test
-    public void allTest() {
-        cleanUp();
-        saveTest();
-        getBookContentTest();
-        updateTest();
-        getBookContentTest();
-    }
-
+//
 //    @Test
+//    public void allTest() {
+//        cleanUp();
+//        saveTest();
+//        getBookContentTest();
+//        updateTest();
+//        getBookContentTest();
+//    }
+//
+    @Test
     public void getContentTest() {
+
         EntityManager entityManager = managerFactory.createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
@@ -194,28 +199,52 @@ public class BooksTest {
         List books;
         //test 1
         example = new CountryBook();
-        books = bookDAO.getContent(example, 0, 2);
+        books = bookDAO.getContent(example, 0, 2, "names", true, new Locale("ru"));
         Assert.assertEquals(2, books.size());
 
-        //test 2
-        example = new CountryBook("us");
-        books = bookDAO.getContent(example, 0, 2);
-        Assert.assertEquals(0, books.size());
-
-        //test 3
-        Registeredproducts propduct = new Registeredproducts();
-        propduct.addName(new StringCulture(new StringCultureId(), "m"));
-        books = bookDAO.getContent(propduct, 0, 2);
-        Assert.assertEquals(1, books.size());
+//        //test 2
+//        example = new CountryBook("us");
+//        books = bookDAO.getContent(example, 0, 2);
+//        Assert.assertEquals(0, books.size());
+//
+//        //test 3
+//        Registeredproducts propduct = new Registeredproducts();
+//        propduct.addName(new StringCulture(new StringCultureId(), "m"));
+//        books = bookDAO.getContent(propduct, 0, 2);
+//        Assert.assertEquals(1, books.size());
 
         transaction.commit();
         entityManager.close();
     }
-
+//
+////    @Test
+//    public void getBookReferenceTest() {
+//        cleanUp();
+//        saveTest();
+//
+//        EntityManager entityManager = managerFactory.createEntityManager();
+//        EntityTransaction transaction = entityManager.getTransaction();
+//        transaction.begin();
+//
+//        Sequence s = new Sequence();
+//        s.setEntityManager(entityManager);
+//        BookDAO bookDAO = new BookDAO();
+//        bookDAO.setSequence(s);
+//        bookDAO.setEntityManager(entityManager);
+//
+//        CountryBook cb = bookDAO.getContent(new CountryBook(), 0, 1).get(0);
+//
+//        Registeredproducts r = bookDAO.getContent(new Registeredproducts(), 0, 1).get(0);
+//        r.setCountry(cb);
+//        bookDAO.saveOrUpdate(r);
+//
+//        transaction.commit();
+//        entityManager.close();
+//    }
 //    @Test
-    public void getBookReferenceTest() {
+    public void test() {
+
         cleanUp();
-        saveTest();
 
         EntityManager entityManager = managerFactory.createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
@@ -227,11 +256,34 @@ public class BooksTest {
         bookDAO.setSequence(s);
         bookDAO.setEntityManager(entityManager);
 
-        CountryBook cb = bookDAO.getContent(new CountryBook(), 0, 1).get(0);
+        CountryBook book = new CountryBook("en");
+        book.addName(new StringCulture(new StringCultureId("en"), "england"));
+        book.addName(new StringCulture(new StringCultureId("ru"), "england2"));
+        bookDAO.saveOrUpdate(book);
 
-        Registeredproducts r = bookDAO.getContent(new Registeredproducts(), 0, 1).get(0);
-        r.setCountry(cb);
-        bookDAO.saveOrUpdate(r);
+        CountryBook book2 = new CountryBook("ru");
+        book2.addName(new StringCulture(new StringCultureId("en"), "russian"));
+        book2.addName(new StringCulture(new StringCultureId("ru"), "russian2"));
+        bookDAO.saveOrUpdate(book2);
+
+        transaction.commit();
+        entityManager.close();
+
+        entityManager = managerFactory.createEntityManager();
+        transaction = entityManager.getTransaction();
+        transaction.begin();
+
+        Session session = HibernateSessionTransformer.getSession(entityManager);
+        String query = "SELECT DISTINCT {c.*} FROM cargo_mode c join stringculture sc on c.name = sc.id order by sc.value";
+        String hq = "select distinct a from CargoMode a, StringCulture sc where a.name=sc.id.id order by sc.value";
+        String hq2 = "select a from CargoMode a left join StringCulture sc left join a.cargoType cargoType where cargoType.name = sc.id.id " +
+                "and sc.id.locale='ru' and sc.value like :p order by sc.value";
+
+//        List<CargoMode> list = session.createSQLQuery(query).addEntity("c", CargoMode.class).list();
+        List<CargoMode> list = session.createQuery(hq2).setParameter("p", "%1%").list();
+        for (CargoMode b : list) {
+            System.out.println(b.getCargoType().getCode());
+        }
 
         transaction.commit();
         entityManager.close();

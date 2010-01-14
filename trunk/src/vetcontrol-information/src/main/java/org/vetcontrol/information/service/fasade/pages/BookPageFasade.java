@@ -5,6 +5,7 @@
 package org.vetcontrol.information.service.fasade.pages;
 
 import java.util.List;
+import java.util.Locale;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -23,8 +24,8 @@ public class BookPageFasade extends AbstractFasade {
     @EJB
     private IBookDAO bookDAO;
 
-    public <T> List<T> getContent(T example, int first, int count) {
-        return bookDAO.getContent(example, first, count);
+    public <T> List<T> getContent(T example, int first, int count, String sortProperty, boolean isAscending, Locale locale) {
+        return bookDAO.getContent(example, first, count, sortProperty, isAscending, locale);
     }
 
     public <T> Long size(T example) {
@@ -33,9 +34,7 @@ public class BookPageFasade extends AbstractFasade {
 
     public <T> List<T> getAll(Class<T> bookType) {
         try {
-            T example = bookType.newInstance();
-            return bookDAO.getContent(example, 0,
-                    bookDAO.size(example).intValue());
+            return bookDAO.getContent(bookType);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

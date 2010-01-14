@@ -6,13 +6,11 @@ package org.vetcontrol.information.web.pages;
 
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilterStateLocator;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.SubmitLink;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.vetcontrol.information.service.fasade.pages.BookPageFasade;
@@ -24,6 +22,8 @@ import javax.ejb.EJB;
 import java.beans.IntrospectionException;
 import java.io.Serializable;
 import java.util.Iterator;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilterStateLocator;
+import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 
 /**
  *
@@ -31,7 +31,7 @@ import java.util.Iterator;
  */
 public class BookPage extends FormTemplatePage {
 
-    public class DataProvider implements IDataProvider<Serializable>, IFilterStateLocator {
+    public class DataProvider extends SortableDataProvider<Serializable> implements IFilterStateLocator {
 
         private Serializable filterBean;
         private int size;
@@ -41,7 +41,7 @@ public class BookPage extends FormTemplatePage {
 
         @Override
         public Iterator<Serializable> iterator(int first, int count) {
-            return fasade.getContent(filterBean, first, count).iterator();
+            return fasade.getContent(filterBean, first, count, getSort().getProperty(), getSort().isAscending(), BookPage.this.getLocale()).iterator();
         }
 
         @Override
@@ -52,10 +52,6 @@ public class BookPage extends FormTemplatePage {
         @Override
         public IModel model(Serializable object) {
             return new Model(object);
-        }
-
-        @Override
-        public void detach() {
         }
 
         @Override
@@ -73,16 +69,20 @@ public class BookPage extends FormTemplatePage {
             size = localSize == null ? 0 : localSize.intValue();
         }
 
-        public void init(Class type) throws InstantiationException, IllegalAccessException {
+        public void init(Class type, String sortProperty, boolean isAscending) throws InstantiationException, IllegalAccessException {
             filterBean = (Serializable) type.newInstance();
+            setSort(sortProperty, isAscending);
         }
     }
     @EJB(name = "BookPageFasade")
     private BookPageFasade fasade;
+
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
+    
     public static final MetaDataKey SELECTED_BOOK_ENTRY = new MetaDataKey() {
     };
+    
     static final String BOOK_TYPE = "bookType";
     private DataProvider dataProvider;
 
@@ -95,7 +95,7 @@ public class BookPage extends FormTemplatePage {
         final Class bookClass = Thread.currentThread().getContextClassLoader().loadClass(bookType);
 
         dataProvider = new DataProvider();
-        dataProvider.init(bookClass);
+        dataProvider.init(bookClass, "id", true);
         dataProvider.initSize();
 
         Panel bookContent = new EmptyPanel("bookContent");
