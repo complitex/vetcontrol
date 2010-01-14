@@ -5,7 +5,6 @@
 package org.vetcontrol.util.book;
 
 import java.io.Serializable;
-import org.vetcontrol.entity.CountryBook;
 
 /**
  *
@@ -204,6 +203,25 @@ public class Property implements Serializable, Cloneable {
         this.referencedField = referencedField;
     }
 
+    protected String localizationForeignKeyProperty;
+
+    /**
+     * Get the value of localizationForeignKeyProperty
+     *
+     * @return the value of localizationForeignKeyProperty
+     */
+    public String getLocalizationForeignKeyProperty() {
+        return localizationForeignKeyProperty;
+    }
+
+    /**
+     * Set the value of localizationForeignKeyProperty
+     *
+     * @param localizationForeignKeyProperty new value of localizationForeignKeyProperty
+     */
+    public void setLocalizationForeignKeyProperty(String localizationForeignKeyProperty) {
+        this.localizationForeignKeyProperty = localizationForeignKeyProperty;
+    }
 
 
     @Override
