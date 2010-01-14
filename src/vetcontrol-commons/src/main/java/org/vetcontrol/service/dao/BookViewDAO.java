@@ -300,7 +300,7 @@ public class BookViewDAO implements IBookViewDAO {
                 Object propValue = BeanPropertyUtil.getPropertyValue(example, p.getName());
                 if (propValue != null) {
                     query.append(" AND a.").append(p.getName()).append(" = :").append(p.getName());
-                    queryParameters.put(p.getName(), propValue);
+                    queryParameters.put(p.getName(), "%" + propValue + "%");
                 }
             }
         }
