@@ -14,7 +14,7 @@ import org.vetcontrol.util.book.entity.annotation.MappedProperty;
  */
 @Entity
 @Table(name = "cargo_type")
-public class CargoType implements Serializable {
+public class CargoType implements IBook, Serializable {
 
     private Integer id;
 

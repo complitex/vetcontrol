@@ -18,7 +18,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "cargo_sender")
-public class CargoSender implements Serializable {
+public class CargoSender implements IBook, Serializable {
     private Integer id;
     private Long name;
     private List<StringCulture> names = new ArrayList<StringCulture>();
