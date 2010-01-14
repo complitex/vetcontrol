@@ -30,9 +30,7 @@ public class AddUpdateBookEntryPageFasade extends AbstractFasade {
 
     public <T> List<T> getAll(Class<T> bookType) {
         try {
-            T example = bookType.newInstance();
-            return bookDAO.getContent(example, 0,
-                    bookDAO.size(example).intValue());
+            return bookDAO.getContent(bookType);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

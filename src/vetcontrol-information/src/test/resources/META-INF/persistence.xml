@@ -8,6 +8,9 @@
         <class>org.vetcontrol.entity.Registeredproducts</class>
         <class>org.vetcontrol.entity.Producer</class>
         <class>org.vetcontrol.entity.StringCulture</class>
+        <class>org.vetcontrol.entity.CargoMode</class>
+        <class>org.vetcontrol.entity.CargoType</class>
+        <class>org.vetcontrol.entity.UnitType</class>
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>

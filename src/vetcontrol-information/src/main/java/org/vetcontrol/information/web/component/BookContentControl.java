@@ -70,7 +70,7 @@ public abstract class BookContentControl extends Panel {
             }
         });
         DataTable table = new DataTable("table", columns.toArray(new IColumn[columns.size()]), dataProvider, Constants.ROWS_PER_PAGE);
-        table.addTopToolbar(new HeadersToolbar(table, null));
+        table.addTopToolbar(new HeadersToolbar(table, dataProvider));
         final FilterForm filterForm = new FilterForm("filterForm", dataProvider) {
 
             @Override

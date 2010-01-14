@@ -40,7 +40,7 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
     private Component component;
 
     public BookPropertyColumn(Component component, IModel<String> displayModel, Property property, BookPageFasade fasade, Locale systemLocale) {
-        super(displayModel, property.getName());
+        super(displayModel, property.getName(), property.getName());
         this.component = component;
         this.property = property;
         this.systemLocale = systemLocale;
