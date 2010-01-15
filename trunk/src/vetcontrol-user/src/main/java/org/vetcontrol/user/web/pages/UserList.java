@@ -18,15 +18,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.User;
 import org.vetcontrol.entity.UserGroup;
+import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.user.service.UserBean;
+import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.web.component.paging.PagingNavigator;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.TemplatePage;
 
 import javax.ejb.EJB;
 import java.util.Iterator;
-import org.vetcontrol.service.dao.ILocaleDAO;
-import org.vetcontrol.util.book.BeanPropertyUtil;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -48,7 +48,7 @@ public class UserList extends TemplatePage{
 
         add(new Label("title", getString("user.list.title")));
 
-        //Форма фильтра по ключевому �?лову
+        //Форма фильтра по ключевому слову
         String filter = null;
         final Form<String> filterForm = new Form<String>("filter_form", new Model<String>(filter));
         add(filterForm);

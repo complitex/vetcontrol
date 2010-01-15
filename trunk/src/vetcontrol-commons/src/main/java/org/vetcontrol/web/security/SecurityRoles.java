@@ -9,9 +9,12 @@ package org.vetcontrol.web.security;
 public class SecurityRoles {
     public final static String AUTHORIZED = "AUTHORIZED";
     public final static String USER_EDIT = "USER_EDIT";
-    public final static String INFORMATION_EDIT = "INFORMATION_EDIT";            
+    public final static String INFORMATION_EDIT = "INFORMATION_EDIT";
+    public final static String DOCUMENT_CREATE = "DOCUMENT_CREATE";
+    public final static String DOCUMENT_EDIT = "DOCUMENT_EDIT";
 
-//    DOCUMENT_CREATE, DOCUMENT_EDIT, DOCUMENT_VIEW_DEPARTMENT, DOCUMENT_EDIT_DEPARTMENT,
+//    ,DOCUMENT_VIEW_DEPARTMENT, DOCUMENT_EDIT_DEPARTMENT,
 //    REPORT_CREATE, REPORT_EDIT, REPORT_VIEW_DEPARTMENT, REPORT_EDIT_DEPARTMENT
 
 }
+

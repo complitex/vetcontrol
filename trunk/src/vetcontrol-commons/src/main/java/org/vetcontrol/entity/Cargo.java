@@ -2,13 +2,14 @@ package org.vetcontrol.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 12.01.2010 15:11:00
  */
-//@Entity
-//@Table(name = "cargo")
+@Entity
+@Table(name = "cargo")
 public class Cargo implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,10 +24,6 @@ public class Cargo implements Serializable{
     private CargoType cargoType;
 
     @ManyToOne
-    @JoinColumn(name = "producer_id")
-    private Producer producer;
-    
-    @ManyToOne
     @JoinColumn(name = "cargo_mode_id")
     private CargoMode cargoMode;
 
@@ -36,6 +33,13 @@ public class Cargo implements Serializable{
 
     @Column(name = "count")
     private Integer count;
+
+    @Column(name = "certificate_details", length = 255)
+    private String certificateDetails;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "certificate_date")
+    private Date certificateDate;
 
     public Long getId() {
         return id;
@@ -51,14 +55,6 @@ public class Cargo implements Serializable{
 
     public void setDocumentCargo(DocumentCargo documentCargo) {
         this.documentCargo = documentCargo;
-    }
-
-    public Producer getProducer() {
-        return producer;
-    }
-
-    public void setProducer(Producer producer) {
-        this.producer = producer;
     }
 
     public CargoType getCargoType() {

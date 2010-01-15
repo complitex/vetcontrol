@@ -15,7 +15,7 @@
                 </classpath>
                 <transaction src="sql/create.sql"/>
                 <transaction src="sql/insert.sql"/>
-                <transaction src="sql/user_testdump.sql"/>
+                <transaction src="sql/testdump.sql"/>
         </sql>
     </target>
     

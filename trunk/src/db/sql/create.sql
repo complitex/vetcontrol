@@ -19,7 +19,7 @@ MySQL - 5.0.88-community-nt : Database - project1
 
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE  `user` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `login` varchar(32) NOT NULL,
   `_password` varchar(32) DEFAULT NULL,
   `first_name` varchar(45) DEFAULT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE  `user` (
 
 DROP TABLE IF EXISTS `usergroup`;
 CREATE TABLE  `usergroup` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `login` varchar(32) NOT NULL,
   `usergroup` varchar(32) NOT NULL,
   PRIMARY KEY (`id`),
@@ -325,6 +325,55 @@ CREATE TABLE  `addressbook` (
     KEY `FK_addressbook_name` (`name`),
     CONSTRAINT `FK_addressbook_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*documents*/
+DROP TABLE IF EXISTS `cargo`;
+CREATE TABLE  `cargo` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `document_cargo_id` bigint(20) NOT NULL,
+  `cargo_type_id` int(11) NOT NULL,
+  `cargo_mode_id` int(11) NOT NULL,
+  `unit_type_id` int(11) NOT NULL,
+  `count` int(11) NOT NULL,
+  `certificate_date` date NOT NULL,
+  `certificate_details` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_document_cargo` (`document_cargo_id`),
+  KEY `FK_cargo_type` (`cargo_type_id`),
+  KEY `FK_cargo_mode` (`cargo_mode_id`),
+  KEY `FK_unit_type` (`unit_type_id`),
+  CONSTRAINT `FK_document_cargo` FOREIGN KEY (`document_cargo_id`) REFERENCES `document_cargo` (`id`),
+  CONSTRAINT `FK_cargo_type` FOREIGN KEY (`cargo_type_id`) REFERENCES `cargo_type` (`id`),
+  CONSTRAINT `FK_cargo_mode` FOREIGN KEY (`cargo_mode_id`) REFERENCES `cargo_mode` (`id`),
+  CONSTRAINT `FK_unit_type` FOREIGN KEY (`unit_type_id`) REFERENCES `unit_type` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `document_cargo`;
+CREATE TABLE `document_cargo` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `creator_id` bigint(20) NOT NULL,
+  `created` datetime NOT NULL,
+  `updated` datetime DEFAULT NULL,
+  `movement_type_id` int(11) NOT NULL,
+  `vehicle_type_id` int(11) NOT NULL,
+  `vehicle_details` varchar(255) NOT NULL,
+  `cargo_sender_id` int(11) NOT NULL,
+  `cargo_receiver_id` int(11) NOT NULL,  
+  `cargo_producer_id` int(11) NOT NULL,
+  `details` varchar(255) DEFAULT NULL,
+  `detention_details` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_movement_type` (`movement_type_id`),
+  KEY `FK_vehicle_type` (`vehicle_type_id`),
+  KEY `FK_cargo_sender` (`cargo_sender_id`),
+  KEY `FK_cargo_receiver` (`cargo_receiver_id`),
+  KEY `FK_cargo_producer` (`cargo_producer_id`),
+  CONSTRAINT `FK_movement_type` FOREIGN KEY (`movement_type_id`) REFERENCES `movement_type` (`id`),
+  CONSTRAINT `FK_vehicle_type` FOREIGN KEY (`vehicle_type_id`) REFERENCES `vehicletypes` (`id`),
+  CONSTRAINT `FK_cargo_sender` FOREIGN KEY (`cargo_sender_id`) REFERENCES `cargo_sender` (`id`),
+  CONSTRAINT `FK_cargo_receiver` FOREIGN KEY (`cargo_receiver_id`) REFERENCES `cargo_receiver` (`id`),
+  CONSTRAINT `FK_cargo_producer` FOREIGN KEY (`cargo_producer_id`) REFERENCES `producer` (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

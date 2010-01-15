@@ -16,7 +16,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "producer")
-public class Producer implements Serializable{
+public class Producer implements IBook, Serializable{
     private Integer id;
     private Long name;
     private List<StringCulture> names = new ArrayList<StringCulture>();
