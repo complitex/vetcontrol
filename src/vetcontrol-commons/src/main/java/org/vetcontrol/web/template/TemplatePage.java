@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.odlabs.wiquery.core.commons.CoreJavaScriptResourceReference;
+import org.vetcontrol.service.dao.UIPreferences;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -86,6 +87,7 @@ public abstract class TemplatePage extends WebPage {
             super(id, markupId, markupProvider);
             add(new Label("menu_title", menu.getTitle(getLocale())));
             add(new ListView<ITemplateLink>("menu_items", menu.getTemplateLinks(getLocale())) {
+
                 @Override
                 protected void populateItem(ListItem<ITemplateLink> item) {
                     BookmarkablePageLink link = new BookmarkablePageLink<Class<? extends Page>>("link", item.getModelObject().getPage(),
@@ -136,5 +138,13 @@ public abstract class TemplatePage extends WebPage {
         }
 
         return authorized;
+    }
+
+    protected VetControlSession getVetControlSession() {
+        return (VetControlSession) getSession();
+    }
+
+    protected UIPreferences getPreferences() {
+        return getVetControlSession().getPreferences();
     }
 }
