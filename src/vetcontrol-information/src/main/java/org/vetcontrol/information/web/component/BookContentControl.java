@@ -17,17 +17,20 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.Filte
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.GoAndClearFilter;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
+import org.vetcontrol.service.dao.UIPreferences;
 import org.vetcontrol.information.service.fasade.pages.BookPageFasade;
 import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.information.util.web.Constants;
 import org.vetcontrol.util.book.Property;
 import org.vetcontrol.information.web.model.DisplayBookClassModel;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
+import org.vetcontrol.information.web.pages.BookPage;
 import org.vetcontrol.information.web.pages.BookPage.DataProvider;
 import org.vetcontrol.web.component.paging.PagingNavigator;
 
@@ -51,8 +54,10 @@ public abstract class BookContentControl extends Panel {
             });
         }
     }
+    private DataTable table;
 
-    public BookContentControl(String id, final DataProvider dataProvider, Class bookClass, BookPageFasade fasade, Locale systemLocale) throws IntrospectionException {
+    public BookContentControl(String id, final DataProvider dataProvider, final Class bookClass, BookPageFasade fasade,
+            Locale systemLocale, final UIPreferences preferences) throws IntrospectionException {
         super(id);
 
         add(new Label("bookName", new DisplayBookClassModel(bookClass, getLocale())));
@@ -69,19 +74,54 @@ public abstract class BookContentControl extends Panel {
                 cellItem.add(new EditPanel(componentId, rowModel));
             }
         });
-        DataTable table = new DataTable("table", columns.toArray(new IColumn[columns.size()]), dataProvider, Constants.ROWS_PER_PAGE);
+        table = new DataTable("table", columns.toArray(new IColumn[columns.size()]), dataProvider, Constants.ROWS_PER_PAGE) {
+
+            @Override
+            protected void onPageChanged() {
+                preferences.putPreference(UIPreferences.PreferenceType.PAGING, bookClass.getSimpleName() + BookPage.PAGING_KEY_SUFFIX, getCurrentPage());
+            }
+        };
+        //retrieve table page from preferences.
+        Integer page = preferences.getPreference(UIPreferences.PreferenceType.PAGING, bookClass.getSimpleName() + BookPage.PAGING_KEY_SUFFIX,
+                Integer.class);
+        if (page != null) {
+            table.setCurrentPage(page);
+        }
+
         table.addTopToolbar(new HeadersToolbar(table, dataProvider));
         final FilterForm filterForm = new FilterForm("filterForm", dataProvider) {
 
             @Override
             protected void onSubmit() {
-                dataProvider.initSize();
+//                dataProvider.initSize();
                 super.onSubmit();
             }
         };
 
-        filterForm.add(new GoAndClearFilter("goAndClearFilter", filterForm, new ResourceModel("book.filter.button.go"),
-                new ResourceModel("book.filter.button.clear")));
+        GoAndClearFilter goAndClearFilter = new GoAndClearFilter("goAndClearFilter", filterForm, new ResourceModel("book.filter.button.go"),
+                new ResourceModel("book.filter.button.clear")) {
+
+            @Override
+            protected void onGoSubmit(Button button) {
+                //save filter bean in preferences.
+                Object filterBean = button.getForm().getModelObject();
+                preferences.putPreference(UIPreferences.PreferenceType.FILTER, filterBean.getClass().getSimpleName() + BookPage.FILTER_KEY_SUFFIX,
+                        filterBean);
+            }
+
+            @Override
+            protected void onClearSubmit(Button button) {
+                try {
+                    Object filterBean = bookClass.newInstance();
+                    button.getForm().setDefaultModelObject(filterBean);
+                    preferences.putPreference(UIPreferences.PreferenceType.FILTER, filterBean.getClass().getSimpleName() + BookPage.FILTER_KEY_SUFFIX,
+                            filterBean);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+        filterForm.add(goAndClearFilter);
         table.addTopToolbar(new FilterToolbar(table, filterForm, dataProvider));
         table.setOutputMarkupId(true);
         PagingNavigator navigator = new PagingNavigator("navigator", table);

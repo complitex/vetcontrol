@@ -24,6 +24,9 @@ import java.io.Serializable;
 import java.util.Iterator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilterStateLocator;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
+import org.apache.wicket.model.LoadableDetachableModel;
+import org.vetcontrol.service.dao.UIPreferences;
+import org.vetcontrol.service.dao.UIPreferences.PreferenceType;
 
 /**
  *
@@ -34,19 +37,32 @@ public class BookPage extends FormTemplatePage {
     public class DataProvider extends SortableDataProvider<Serializable> implements IFilterStateLocator {
 
         private Serializable filterBean;
-        private int size;
+//        private int size;
+        private LoadableDetachableModel<Integer> sizeModel;
 
         public DataProvider() {
+            sizeModel = new LoadableDetachableModel<Integer>() {
+
+                @Override
+                protected Integer load() {
+                    return fasade.size(filterBean).intValue();
+                }
+            };
         }
 
         @Override
         public Iterator<Serializable> iterator(int first, int count) {
+            preferences.putPreference(PreferenceType.SORT_PROPERTY, filterBean.getClass().getSimpleName() + SORT_PROPERTY_KEY_SUFFIX,
+                    getSort().getProperty());
+            preferences.putPreference(PreferenceType.SORT_ORDER, filterBean.getClass().getSimpleName() + SORT_ORDER_KEY_SUFFIX,
+                    Boolean.valueOf(getSort().isAscending()));
+            
             return fasade.getContent(filterBean, first, count, getSort().getProperty(), getSort().isAscending(), BookPage.this.getLocale()).iterator();
         }
 
         @Override
         public int size() {
-            return size;
+            return sizeModel.getObject();
         }
 
         @Override
@@ -64,27 +80,41 @@ public class BookPage extends FormTemplatePage {
             this.filterBean = (Serializable) state;
         }
 
-        public void initSize() {
-            Long localSize = fasade.size(filterBean);
-            size = localSize == null ? 0 : localSize.intValue();
-        }
+//        public void initSize() {
+////            Long localSize = fasade.size(filterBean);
+////            size = localSize == null ? 0 : localSize.intValue();
+//
+//        }
 
         public void init(Class type, String sortProperty, boolean isAscending) throws InstantiationException, IllegalAccessException {
-            filterBean = (Serializable) type.newInstance();
-            setSort(sortProperty, isAscending);
+            //retrieve filter bean from preferences.
+            filterBean = preferences.getPreference(PreferenceType.FILTER, type.getSimpleName() + FILTER_KEY_SUFFIX, Serializable.class);
+            if (filterBean == null) {
+                filterBean = (Serializable) type.newInstance();
+            }
+
+            String sortPropertyFromPreferences = preferences.getPreference(PreferenceType.SORT_PROPERTY,
+                    type.getSimpleName() + SORT_PROPERTY_KEY_SUFFIX, String.class);
+            Boolean sortOrderFromPreferences = preferences.getPreference(PreferenceType.SORT_ORDER,
+                    type.getSimpleName() + SORT_ORDER_KEY_SUFFIX, Boolean.class);
+            String sortProp = sortPropertyFromPreferences != null ? sortPropertyFromPreferences : sortProperty;
+            boolean asc = sortOrderFromPreferences != null ? sortOrderFromPreferences.booleanValue() : isAscending;
+            setSort(sortProp, asc);
         }
     }
     @EJB(name = "BookPageFasade")
     private BookPageFasade fasade;
-
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
-    
     public static final MetaDataKey SELECTED_BOOK_ENTRY = new MetaDataKey() {
     };
-    
-    static final String BOOK_TYPE = "bookType";
+    public static final String BOOK_TYPE = "bookType";
+    public static final String FILTER_KEY_SUFFIX = "_FILTER";
+    public static final String PAGING_KEY_SUFFIX = "_PAGING";
+    public static final String SORT_PROPERTY_KEY_SUFFIX = "_SORT_PROPERTY";
+    public static final String SORT_ORDER_KEY_SUFFIX = "_SORT_ORDER";
     private DataProvider dataProvider;
+    private UIPreferences preferences;
 
     public BookPage(PageParameters params) throws IntrospectionException, InstantiationException, IllegalAccessException, ClassNotFoundException {
         init(params.getString(BOOK_TYPE));
@@ -93,10 +123,11 @@ public class BookPage extends FormTemplatePage {
     public void init(String bookType) throws IntrospectionException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 
         final Class bookClass = Thread.currentThread().getContextClassLoader().loadClass(bookType);
+        preferences = getPreferences();
 
         dataProvider = new DataProvider();
         dataProvider.init(bookClass, "id", true);
-        dataProvider.initSize();
+//        dataProvider.initSize();
 
         Panel bookContent = new EmptyPanel("bookContent");
         WebMarkupContainer emptyContent = new WebMarkupContainer("emptyContent");
@@ -105,7 +136,7 @@ public class BookPage extends FormTemplatePage {
             bookContent = new BookContentControl("bookContent", dataProvider,
                     bookClass,
                     fasade,
-                    localeDAO.systemLocale()) {
+                    localeDAO.systemLocale(), preferences) {
 
                 @Override
                 public void selected(Serializable obj) {
