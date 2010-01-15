@@ -10,9 +10,12 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vetcontrol.entity.Department;
 import org.vetcontrol.entity.User;
 import org.vetcontrol.entity.UserGroup;
+import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.user.service.UserBean;
+import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.web.security.SecurityGroup;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.security.SecurityWebListener;
@@ -23,9 +26,6 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.vetcontrol.entity.Department;
-import org.vetcontrol.service.dao.ILocaleDAO;
-import org.vetcontrol.util.book.BeanPropertyUtil;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -84,7 +84,7 @@ public class UserEdit extends FormTemplatePage {
                 if (id == null){
                     user.setPassword(DigestUtils.md5Hex(user.getLogin()));
                     if (userBean.containsLogin(user.getLogin())){
-                        log.warn("Пользователь �? логином: " + user.getLogin() + " уже �?уще�?твует");
+                        log.warn("Пользователь с логином: " + user.getLogin() + " уже существует");
                         error(getString("user.edit.contain_login"));
                         return;
                     }

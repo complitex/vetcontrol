@@ -31,6 +31,9 @@
     <security-role>
         <role-name>INFORMATION_EDIT</role-name>
     </security-role>
+    <security-role>
+        <role-name>DOCUMENT_CREATE</role-name>
+    </security-role>
 
     <login-config>
         <auth-method>FORM</auth-method>

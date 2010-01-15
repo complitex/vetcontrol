@@ -10,8 +10,8 @@ import java.util.List;
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 12.01.2010 13:52:01
  */
-//@Entity
-//@Table(name = "document_cargo")
+@Entity
+@Table(name = "document_cargo")
 public class DocumentCargo implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -49,8 +49,9 @@ public class DocumentCargo implements Serializable{
     @JoinColumn(name = "cargo_receiver_id")
     private CargoReceiver cargoReceiver;
 
-    @Column(name = "certificate_details", length = 255)
-    private String certificateDetails;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "cargo_producer_id")
+    private Producer producer;
 
     @Column(name = "detention_details", length = 255)
     private String detentionDetails;
@@ -138,12 +139,12 @@ public class DocumentCargo implements Serializable{
         this.cargoReceiver = cargoReceiver;
     }
 
-    public String getCertificateDetails() {
-        return certificateDetails;
+    public Producer getProducer() {
+        return producer;
     }
 
-    public void setCertificateDetails(String certificateDetails) {
-        this.certificateDetails = certificateDetails;
+    public void setProducer(Producer producer) {
+        this.producer = producer;
     }
 
     public String getDetentionDetails() {

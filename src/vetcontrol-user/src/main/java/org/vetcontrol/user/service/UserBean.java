@@ -1,18 +1,18 @@
 package org.vetcontrol.user.service;
 
+import org.vetcontrol.entity.Department;
 import org.vetcontrol.entity.User;
 import org.vetcontrol.entity.UserGroup;
+import org.vetcontrol.service.dao.IBookViewDAO;
 import org.vetcontrol.web.security.SecurityRoles;
 
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.List;
-import javax.ejb.EJB;
-import org.vetcontrol.entity.Department;
-import org.vetcontrol.service.dao.IBookViewDAO;
 
 /**
  * User: Anatoly A. Ivanov java@inheaven.ru
@@ -28,7 +28,7 @@ public class UserBean {
     }
     @PersistenceContext
     private EntityManager entityManager;
-    @EJB
+    @EJB(beanName = "BookViewDAO")
     private IBookViewDAO bookViewDAO;
 
     public List<User> getUsers() {
@@ -97,7 +97,7 @@ public class UserBean {
     }
 
     public List<Department> getDepartments() {
-        return (List<Department>) bookViewDAO.getContent(Department.class);
+        return bookViewDAO.getContent(Department.class);
     }
 
     public boolean isUserAuthChanged(User localUser) {

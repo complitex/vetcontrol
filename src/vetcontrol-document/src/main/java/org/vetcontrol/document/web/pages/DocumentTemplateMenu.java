@@ -1,9 +1,7 @@
-package org.vetcontrol.user.web.pages;
+package org.vetcontrol.document.web.pages;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.ITemplateLink;
 import org.vetcontrol.web.template.ResourceTemplateMenu;
 
@@ -13,16 +11,12 @@ import java.util.Locale;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
- * Date: 23.12.2009 17:16:39
- *
- * Реализация меню модуля Редактирование Пользователей для общего шаблона сайта
+ *         Date: 12.01.2010 12:08:10
  */
-@AuthorizeInstantiation(SecurityRoles.USER_EDIT)
-public class UserTemplateMenu extends ResourceTemplateMenu{
-
+public class DocumentTemplateMenu extends ResourceTemplateMenu {
     @Override
     public String getTitle(Locale locale) {
-        return getString(UserTemplateMenu.class, locale, "user.template.menu.title");
+        return getString(DocumentTemplateMenu.class, locale, "document.template.menu.title");
     }
 
     @Override
@@ -31,11 +25,11 @@ public class UserTemplateMenu extends ResourceTemplateMenu{
         links.add(new ITemplateLink(){
             @Override
             public String getLabel(Locale locale) {
-                return getString(UserTemplateMenu.class, locale, "user.template.menu.list");                
+                return getString(DocumentTemplateMenu.class, locale, "document.template.menu.cargo.list");
             }
             @Override
             public Class<? extends Page> getPage() {
-                return UserList.class;
+                return DocumentCargoList.class;
             }
 
             @Override
@@ -47,11 +41,11 @@ public class UserTemplateMenu extends ResourceTemplateMenu{
         links.add(new ITemplateLink(){
             @Override
             public String getLabel(Locale locale) {
-                return getString(UserTemplateMenu.class, locale, "user.template.menu.add");
+                return getString(DocumentTemplateMenu.class, locale, "document.template.menu.cargo.edit");
             }
             @Override
             public Class<? extends Page> getPage() {
-                return UserEdit.class;
+                return DocumentCargoEdit.class;
             }
 
             @Override
