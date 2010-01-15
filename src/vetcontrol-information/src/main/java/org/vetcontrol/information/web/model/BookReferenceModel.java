@@ -41,7 +41,7 @@ public class BookReferenceModel implements IModel<Serializable> {
             Object book = bookType.newInstance();
             Property prop = BeanPropertyUtil.getPropertyByName(bookType, property);
             if (!prop.isLocalizable()) {
-                if (!prop.isBeanReference()) {
+                if (!prop.isBookReference()) {
                     BeanPropertyUtil.setPropertyValue(book, property, value);
                     model.setObject(book);
                 }

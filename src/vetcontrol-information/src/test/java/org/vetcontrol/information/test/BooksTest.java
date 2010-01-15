@@ -5,6 +5,7 @@ package org.vetcontrol.information.test;
  * and open the template in the editor.
  */
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -17,11 +18,16 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.vetcontrol.entity.CargoMode;
 import org.vetcontrol.entity.CountryBook;
+import org.vetcontrol.entity.Department;
 import org.vetcontrol.entity.Registeredproducts;
 import org.vetcontrol.entity.StringCulture;
 import org.vetcontrol.entity.StringCultureId;
+import org.vetcontrol.entity.User;
 import org.vetcontrol.information.service.dao.BookDAO;
+import org.vetcontrol.information.service.dao.IBookDAO;
 import org.vetcontrol.information.service.generator.Sequence;
+import org.vetcontrol.service.dao.BookViewDAO;
+import org.vetcontrol.service.dao.IBookViewDAO;
 import org.vetcontrol.util.book.service.HibernateSessionTransformer;
 
 /**
@@ -182,7 +188,8 @@ public class BooksTest {
 //        getBookContentTest();
 //    }
 //
-    @Test
+//    @Test
+
     public void getContentTest() {
 
         EntityManager entityManager = managerFactory.createEntityManager();
@@ -242,6 +249,7 @@ public class BooksTest {
 //        entityManager.close();
 //    }
 //    @Test
+
     public void test() {
 
         cleanUp();
@@ -276,13 +284,39 @@ public class BooksTest {
         Session session = HibernateSessionTransformer.getSession(entityManager);
         String query = "SELECT DISTINCT {c.*} FROM cargo_mode c join stringculture sc on c.name = sc.id order by sc.value";
         String hq = "select distinct a from CargoMode a, StringCulture sc where a.name=sc.id.id order by sc.value";
-        String hq2 = "select a from CargoMode a left join StringCulture sc left join a.cargoType cargoType where cargoType.name = sc.id.id " +
-                "and sc.id.locale='ru' and sc.value like :p order by sc.value";
+        String hq2 = "select a from CargoMode a left join StringCulture sc left join a.cargoType cargoType where cargoType.name = sc.id.id "
+                + "and sc.id.locale='ru' and sc.value like :p order by sc.value";
 
 //        List<CargoMode> list = session.createSQLQuery(query).addEntity("c", CargoMode.class).list();
         List<CargoMode> list = session.createQuery(hq2).setParameter("p", "%1%").list();
         for (CargoMode b : list) {
             System.out.println(b.getCargoType().getCode());
+        }
+
+        transaction.commit();
+        entityManager.close();
+    }
+
+    @Test
+    public void usersTest() {
+
+        EntityManager entityManager = managerFactory.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+
+        IBookViewDAO bookViewDAO = new BookViewDAO();
+        bookViewDAO.setEntityManager(entityManager);
+        
+        User example = new User();
+        Department d = new Department();
+        StringCulture sc = new StringCulture();
+        sc.setValue("Госу");
+        d.setNames(Arrays.asList(sc));
+        example.setDepartment(d);
+
+        List<User> list = bookViewDAO.getContent(example, 0, 1, "department", true, Locale.ENGLISH);
+        for (User b : list) {
+            System.out.println(b.getLogin());
         }
 
         transaction.commit();

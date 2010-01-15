@@ -11,6 +11,9 @@
         <class>org.vetcontrol.entity.CargoMode</class>
         <class>org.vetcontrol.entity.CargoType</class>
         <class>org.vetcontrol.entity.UnitType</class>
+        <class>org.vetcontrol.entity.User</class>
+        <class>org.vetcontrol.entity.Department</class>
+        <class>org.vetcontrol.entity.UserGroup</class>
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
