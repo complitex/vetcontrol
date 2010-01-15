@@ -192,7 +192,7 @@ public class BookViewDAO implements IBookViewDAO {
                 if (propertyValue != null) {
                     for (Property property : properties) {
 
-                        if (!property.isLocalizable() && !property.isBeanReference() && property.getName().equals(propertyName)) {
+                        if (!property.isLocalizable() && !property.isBookReference() && property.getName().equals(propertyName)) {
                             return true;
                         }
                     }
@@ -219,7 +219,7 @@ public class BookViewDAO implements IBookViewDAO {
 
         //filter by book referenced info.
         for (Property prop : BeanPropertyUtil.getProperties(bookType)) {
-            if (prop.isBeanReference()) {
+            if (prop.isBookReference()) {
                 Object value = BeanPropertyUtil.getPropertyValue(example, prop.getName());
                 if (value != null) {
                     query.add(Restrictions.eq(prop.getName(), value));
@@ -249,13 +249,13 @@ public class BookViewDAO implements IBookViewDAO {
             if (sortProp != null) {
                 if (sortProp.isLocalizable()) {
                     query.append(", ").append(StringCulture.class.getSimpleName()).append(" as sc ");
-                } else if (sortProp.isBeanReference()) {
+                } else if (sortProp.isBookReference()) {
                     Class referencedBeanClass = sortProp.getType();
                     String referencedPropName = sortProp.getReferencedField();
                     Property referencedProperty = BeanPropertyUtil.getPropertyByName(referencedBeanClass, referencedPropName);
                     if (referencedProperty.isLocalizable()) {
                         query.append(", ").append(StringCulture.class.getSimpleName()).append(" as sc ");
-                    } else if (!referencedProperty.isBeanReference()) {
+                    } else if (!referencedProperty.isBookReference()) {
                         //simple property
                     }
                     query.append("LEFT JOIN a.").append(sortProp.getName()).append(" as ").append(sortProp.getName()).append(" ");
@@ -278,7 +278,7 @@ public class BookViewDAO implements IBookViewDAO {
                 query.append(" AND a.").append(localizationForeignKeyProp).append(" = sc.id.id").
                         append(" AND sc.id.locale = :").append(localeParameter);
                 queryParameters.put(localeParameter, locale.getLanguage());
-            } else if (sortProp.isBeanReference()) {
+            } else if (sortProp.isBookReference()) {
                 Class referencedBeanClass = sortProp.getType();
                 String referencedPropName = sortProp.getReferencedField();
                 Property referencedProperty = BeanPropertyUtil.getPropertyByName(referencedBeanClass, referencedPropName);
@@ -296,18 +296,27 @@ public class BookViewDAO implements IBookViewDAO {
         //filters
         //filter by simple properties
         for (Property p : BeanPropertyUtil.getProperties(bookType)) {
-            if (!p.isLocalizable() && !p.isBeanReference()) {
-                Object propValue = BeanPropertyUtil.getPropertyValue(example, p.getName());
-                if (propValue != null) {
-                    query.append(" AND a.").append(p.getName()).append(" like :").append(p.getName());
-                    queryParameters.put(p.getName(), "%" + propValue + "%");
+            if (!p.isLocalizable() && !p.isBookReference()) {
+                boolean isPrimitive = false;
+                for (Class primitive : BeanPropertyUtil.PRIMITIVES) {
+                    if (primitive.isAssignableFrom(p.getType())) {
+                        isPrimitive = true;
+                        break;
+                    }
+                }
+                if (isPrimitive) {
+                    Object propValue = BeanPropertyUtil.getPropertyValue(example, p.getName());
+                    if (propValue != null) {
+                        query.append(" AND a.").append(p.getName()).append(" like :").append(p.getName());
+                        queryParameters.put(p.getName(), "%" + propValue + "%");
+                    }
                 }
             }
         }
 
         //filter by referenced books
         for (Property p : BeanPropertyUtil.getProperties(bookType)) {
-            if (p.isBeanReference()) {
+            if (p.isBookReference()) {
                 Object propValue = BeanPropertyUtil.getPropertyValue(example, p.getName());
                 if (propValue != null) {
                     query.append(" AND a.").append(p.getName()).append(" = ").append(":").append(p.getName());
@@ -344,7 +353,7 @@ public class BookViewDAO implements IBookViewDAO {
             if (sortProp != null) {
                 if (sortProp.isLocalizable()) {
                     query.append("ORDER BY sc.value");
-                } else if (sortProp.isBeanReference()) {
+                } else if (sortProp.isBookReference()) {
                     Class referencedBeanClass = sortProp.getType();
                     String referencedPropName = sortProp.getReferencedField();
                     Property referencedProperty = BeanPropertyUtil.getPropertyByName(referencedBeanClass, referencedPropName);

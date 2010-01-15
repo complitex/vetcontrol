@@ -43,7 +43,12 @@ public class BeanPropertyUtil {
     public static final List<Class> SIMPLE_TYPIES = Arrays.asList(new Class[]{
                 int.class, byte.class, short.class, long.class, double.class, float.class, boolean.class,
                 Integer.class, Byte.class, Short.class, Long.class, Double.class, Float.class, Boolean.class,
-                String.class, List.class, Set.class, Map.class
+                String.class, Date.class, List.class, Set.class, Map.class
+            });
+    public static final List<Class> PRIMITIVES = Arrays.asList(new Class[]{
+                int.class, byte.class, short.class, long.class, double.class, float.class, boolean.class,
+                Integer.class, Byte.class, Short.class, Long.class, Double.class, Float.class, Boolean.class,
+                String.class, Date.class
             });
 
     public static List<Property> getProperties(Class<?> beanClass) throws IntrospectionException {
@@ -99,7 +104,7 @@ public class BeanPropertyUtil {
 
 
                         if (annotation.annotationType().equals(BookReference.class)) {
-                            property.setBeanReference(true);
+                            property.setBookReference(true);
                             String referencedField = ((BookReference) annotation).referencedProperty();
                             property.setReferencedField(referencedField);
                         }
@@ -238,7 +243,7 @@ public class BeanPropertyUtil {
                 asString = dateFormat.format((Date) propertyValue);
             } else if (property.isLocalizable()) {
                 asString = getLocalizablePropertyAsString((List<StringCulture>) propertyValue, systemLocale, asString);
-            } else if (property.isBeanReference()) {
+            } else if (property.isBookReference()) {
                 Object referencedBook = propertyValue;
                 String referencedField = property.getReferencedField();
                 Object value = null;
