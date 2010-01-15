@@ -90,7 +90,7 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
                     new StringCultureModel(new PropertyModel(form.getDefaultModel(), getPropertyExpression())),
                     form);
             return filter;
-        } else if (property.isBeanReference()) {
+        } else if (property.isBookReference()) {
             return new ChoiceFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form,
                     fasade.getAll(property.getType()),
                     new BookChoiceRenderer(property, systemLocale), false);

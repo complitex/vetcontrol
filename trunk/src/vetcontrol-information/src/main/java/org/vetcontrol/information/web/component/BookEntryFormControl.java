@@ -63,7 +63,7 @@ public abstract class BookEntryFormControl extends FormComponentPanel {
                     isDate = true;
                 } else if (prop.isLocalizable()) {
                     isLocalizableText = true;
-                } else if (prop.isBeanReference()) {
+                } else if (prop.isBookReference()) {
                     isSelectable = true;
                 } else if(prop.getType().equals(boolean.class) || prop.getType().equals(Boolean.class)){
                     isBoolean = true;
