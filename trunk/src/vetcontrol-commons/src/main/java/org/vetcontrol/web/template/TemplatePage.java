@@ -22,11 +22,16 @@ import org.vetcontrol.web.component.LocalePicker;
 
 import javax.ejb.EJB;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.util.string.Strings;
 import org.odlabs.wiquery.core.commons.CoreJavaScriptResourceReference;
 import org.vetcontrol.service.UIPreferences;
+import org.vetcontrol.web.component.toolbar.HelpButton;
+import org.vetcontrol.web.component.toolbar.ToolbarButton;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -51,6 +56,32 @@ public abstract class TemplatePage extends WebPage {
         //locale picker
         add(new LocalePicker("localePicker", localeDAO.all(), localeDAO.systemLocale(), getPreferences()));
 
+        //toolbar
+        WebMarkupContainer toolbar = new WebMarkupContainer("toolbar");
+        add(toolbar);
+        WebMarkupContainer commonPart = new WebMarkupContainer("commonPart");
+        toolbar.add(commonPart);
+
+        //add common buttons.
+        HelpButton help = new HelpButton("help");
+        commonPart.add(help);
+
+        //add page custom buttons.
+        List<ToolbarButton> pageToolbarButtonsList = getToolbarButtons("pageToolbarButton");
+        if (pageToolbarButtonsList == null) {
+            pageToolbarButtonsList = Collections.emptyList();
+        }
+        Component pagePart = new ListView<ToolbarButton>("pagePart", pageToolbarButtonsList) {
+
+            @Override
+            protected void populateItem(ListItem<ToolbarButton> item) {
+                item.add(item.getModelObject());
+            }
+        };
+        toolbar.add(pagePart);
+
+
+        //menu
         add(new ListView<ITemplateMenu>("sidebar", newTemplateMenus()) {
 
             @Override
@@ -160,5 +191,13 @@ public abstract class TemplatePage extends WebPage {
 
     protected UIPreferences getPreferences() {
         return getVetControlSession().getPreferences();
+    }
+
+    /**
+     * Subclass can override method in order to specify custom page toolbar buttons.
+     * @return
+     */
+    protected List<ToolbarButton> getToolbarButtons(String id) {
+        return null;
     }
 }
