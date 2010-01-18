@@ -24,11 +24,9 @@ import javax.ejb.EJB;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
-import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
 import org.odlabs.wiquery.core.commons.CoreJavaScriptResourceReference;
-import org.vetcontrol.service.dao.UIPreferences;
+import org.vetcontrol.service.UIPreferences;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -51,7 +49,7 @@ public abstract class TemplatePage extends WebPage {
         add(JavascriptPackageResource.getHeaderContribution(TemplatePage.class, "TemplatePage.js"));
 
         //locale picker
-        add(new LocalePicker("localePicker", localeDAO.all(), localeDAO.systemLocale()));
+        add(new LocalePicker("localePicker", localeDAO.all(), localeDAO.systemLocale(), getPreferences()));
 
         add(new ListView<ITemplateMenu>("sidebar", newTemplateMenus()) {
 
