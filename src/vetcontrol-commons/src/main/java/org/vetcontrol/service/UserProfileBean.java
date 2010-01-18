@@ -31,4 +31,8 @@ public class UserProfileBean {
                 .setParameter("login", login)
                 .getSingleResult();
     }
+
+    public User saveModifications(User user){
+        return entityManager.merge(user);
+    }
 }

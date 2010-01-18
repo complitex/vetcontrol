@@ -33,6 +33,10 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserGroup> userGroups = new ArrayList<UserGroup>();
 
+    @Column(name = "locale", length = 2)
+    private String locale;
+    @Column(name = "page_size")
+    private Integer pageSize;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "department_id", nullable = true)
@@ -108,6 +112,22 @@ public class User implements Serializable {
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
     }
 
     @Override

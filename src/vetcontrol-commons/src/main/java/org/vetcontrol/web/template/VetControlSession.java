@@ -6,7 +6,7 @@ package org.vetcontrol.web.template;
 
 import org.apache.wicket.Request;
 import org.apache.wicket.protocol.http.WebSession;
-import org.vetcontrol.service.dao.UIPreferences;
+import org.vetcontrol.service.UIPreferences;
 
 /**
  *

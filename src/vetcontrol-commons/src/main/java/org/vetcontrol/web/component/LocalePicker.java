@@ -10,6 +10,7 @@ import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.vetcontrol.service.UIPreferences;
 
 /**
  *
@@ -17,12 +18,18 @@ import org.apache.wicket.model.IModel;
  */
 public class LocalePicker extends Panel {
 
-    public LocalePicker(String id, final List<Locale> supportedLocales, Locale systemLocale) {
+    public LocalePicker(String id, final List<Locale> supportedLocales, Locale systemLocale, final UIPreferences preferences) {
         super(id);
 
-        if (getSession().getLocale() == null || !supportedLocales.contains(getSession().getLocale())) {
+        String userLocale = preferences.getPreference(UIPreferences.PreferenceType.LOCALE, "locale", String.class);
+        if(userLocale == null){
             getSession().setLocale(systemLocale);
+            preferences.putPreference(UIPreferences.PreferenceType.LOCALE, "locale", systemLocale.getLanguage());
+        } else{
+            Locale userLocalePreference = new Locale(userLocale);
+            getSession().setLocale(userLocalePreference);
         }
+
         add(new DropDownChoice("localeDropDown", new IModel<Locale>() {
 
             @Override
@@ -33,6 +40,7 @@ public class LocalePicker extends Panel {
             @Override
             public void setObject(Locale locale) {
                 getSession().setLocale(locale);
+                preferences.putPreference(UIPreferences.PreferenceType.LOCALE, "locale", locale.getLanguage());
             }
 
             @Override
