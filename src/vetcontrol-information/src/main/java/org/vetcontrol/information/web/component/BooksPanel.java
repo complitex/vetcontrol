@@ -24,6 +24,7 @@ import org.vetcontrol.information.web.support.BookTypes;
  *
  * @author Artem
  */
+@Deprecated
 public final class BooksPanel extends Panel {
 
     public static final String BOOK_TYPE_PARAM = "bookType";
