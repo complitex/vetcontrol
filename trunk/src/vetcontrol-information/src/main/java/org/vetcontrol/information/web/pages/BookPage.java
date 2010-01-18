@@ -25,8 +25,8 @@ import java.util.Iterator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilterStateLocator;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.vetcontrol.service.dao.UIPreferences;
-import org.vetcontrol.service.dao.UIPreferences.PreferenceType;
+import org.vetcontrol.service.UIPreferences;
+import org.vetcontrol.service.UIPreferences.PreferenceType;
 
 /**
  *

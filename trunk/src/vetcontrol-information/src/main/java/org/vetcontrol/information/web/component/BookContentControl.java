@@ -23,7 +23,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
-import org.vetcontrol.service.dao.UIPreferences;
+import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.information.service.fasade.pages.BookPageFasade;
 import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.information.util.web.Constants;
@@ -78,11 +78,11 @@ public abstract class BookContentControl extends Panel {
 
             @Override
             protected void onPageChanged() {
-                preferences.putPreference(UIPreferences.PreferenceType.PAGING, bookClass.getSimpleName() + BookPage.PAGING_KEY_SUFFIX, getCurrentPage());
+                preferences.putPreference(UIPreferences.PreferenceType.PAGE_NUMBER, bookClass.getSimpleName() + BookPage.PAGING_KEY_SUFFIX, getCurrentPage());
             }
         };
         //retrieve table page from preferences.
-        Integer page = preferences.getPreference(UIPreferences.PreferenceType.PAGING, bookClass.getSimpleName() + BookPage.PAGING_KEY_SUFFIX,
+        Integer page = preferences.getPreference(UIPreferences.PreferenceType.PAGE_NUMBER, bookClass.getSimpleName() + BookPage.PAGING_KEY_SUFFIX,
                 Integer.class);
         if (page != null) {
             table.setCurrentPage(page);
