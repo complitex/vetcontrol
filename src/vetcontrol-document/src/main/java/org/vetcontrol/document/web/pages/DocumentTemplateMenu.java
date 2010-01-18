@@ -56,4 +56,11 @@ public class DocumentTemplateMenu extends ResourceTemplateMenu {
 
         return links;
     }
+
+    @Override
+    public String getTagId() {
+        return "document_menu";
+    }
+
+
 }
