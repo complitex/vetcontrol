@@ -54,8 +54,6 @@ public abstract class BookContentControl extends Panel {
             });
         }
     }
-    private DataTable table;
-
     public BookContentControl(String id, final DataProvider dataProvider, final Class bookClass, BookPageFasade fasade,
             Locale systemLocale, final UIPreferences preferences) throws IntrospectionException {
         super(id);
@@ -74,7 +72,7 @@ public abstract class BookContentControl extends Panel {
                 cellItem.add(new EditPanel(componentId, rowModel));
             }
         });
-        table = new DataTable("table", columns.toArray(new IColumn[columns.size()]), dataProvider, Constants.ROWS_PER_PAGE) {
+        DataTable table = new DataTable("table", columns.toArray(new IColumn[columns.size()]), dataProvider, Constants.ROWS_PER_PAGE) {
 
             @Override
             protected void onPageChanged() {
