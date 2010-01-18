@@ -24,4 +24,9 @@ public interface ITemplateMenu extends Serializable{
      * @return Список ссылок
      */
     public List<ITemplateLink> getTemplateLinks(Locale locale);
+
+    /**
+     * Html element's id.
+     */
+    public String getTagId();
 }
