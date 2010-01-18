@@ -33,14 +33,15 @@ public class UIPreferences implements Serializable {
 
     private User currentUser;
 
-    private UserProfileBean userProfileBean;
-
     private Map<PreferenceType, Map<String, Object>> sessionPreferences = new EnumMap<PreferenceType, Map<String, Object>>(PreferenceType.class);
 
     public UIPreferences() {
-        try {
+    }
+
+    private UserProfileBean getUserProfileBean(){
+         try {
             InitialContext context = new InitialContext();
-            userProfileBean = (UserProfileBean)context.lookup("java:module/UserProfileBean");
+            return (UserProfileBean)context.lookup("java:module/UserProfileBean");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -83,7 +84,7 @@ public class UIPreferences implements Serializable {
 
     private void initCurrentUser() {
         if (currentUser == null) {
-            currentUser = userProfileBean.getCurrentUser();
+            currentUser = getUserProfileBean().getCurrentUser();
         }
     }
 
@@ -108,6 +109,6 @@ public class UIPreferences implements Serializable {
                 currentUser.setPageSize((Integer) value);
                 break;
         }
-        currentUser = userProfileBean.saveModifications(currentUser);
+        currentUser = getUserProfileBean().saveModifications(currentUser);
     }
 }
