@@ -37,17 +37,10 @@ public class BookPage extends FormTemplatePage {
     public class DataProvider extends SortableDataProvider<Serializable> implements IFilterStateLocator {
 
         private Serializable filterBean;
-//        private int size;
         private LoadableDetachableModel<Integer> sizeModel;
 
         public DataProvider() {
-            sizeModel = new LoadableDetachableModel<Integer>() {
-
-                @Override
-                protected Integer load() {
-                    return fasade.size(filterBean).intValue();
-                }
-            };
+            
         }
 
         @Override
@@ -80,11 +73,15 @@ public class BookPage extends FormTemplatePage {
             this.filterBean = (Serializable) state;
         }
 
-//        public void initSize() {
-////            Long localSize = fasade.size(filterBean);
-////            size = localSize == null ? 0 : localSize.intValue();
-//
-//        }
+        public void initSize() {
+            sizeModel = new LoadableDetachableModel<Integer>() {
+
+                @Override
+                protected Integer load() {
+                    return fasade.size(filterBean).intValue();
+                }
+            };
+        }
 
         public void init(Class type, String sortProperty, boolean isAscending) throws InstantiationException, IllegalAccessException {
             //retrieve filter bean from preferences.
@@ -127,7 +124,7 @@ public class BookPage extends FormTemplatePage {
 
         dataProvider = new DataProvider();
         dataProvider.init(bookClass, "id", true);
-//        dataProvider.initSize();
+        dataProvider.initSize();
 
         Panel bookContent = new EmptyPanel("bookContent");
         WebMarkupContainer emptyContent = new WebMarkupContainer("emptyContent");

@@ -89,11 +89,11 @@ public abstract class BookContentControl extends Panel {
         }
 
         table.addTopToolbar(new HeadersToolbar(table, dataProvider));
-        final FilterForm filterForm = new FilterForm("filterForm", dataProvider) {
+        final FilterForm filterForm = new FilterForm("filterForm", dataProvider){
 
             @Override
             protected void onSubmit() {
-//                dataProvider.initSize();
+                dataProvider.initSize();
                 super.onSubmit();
             }
         };
