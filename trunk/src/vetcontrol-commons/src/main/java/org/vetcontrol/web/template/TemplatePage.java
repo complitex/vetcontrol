@@ -4,6 +4,7 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.authorization.strategies.role.Roles;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -23,6 +24,9 @@ import javax.ejb.EJB;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.string.Strings;
 import org.odlabs.wiquery.core.commons.CoreJavaScriptResourceReference;
 import org.vetcontrol.service.dao.UIPreferences;
 
@@ -83,8 +87,12 @@ public abstract class TemplatePage extends WebPage {
      */
     public class TemplateMenu extends Fragment {
 
+        private String tagId;
+
         public TemplateMenu(String id, String markupId, MarkupContainer markupProvider, ITemplateMenu menu) {
             super(id, markupId, markupProvider);
+            this.tagId = menu.getTagId();
+
             add(new Label("menu_title", menu.getTitle(getLocale())));
             add(new ListView<ITemplateLink>("menu_items", menu.getTemplateLinks(getLocale())) {
 
@@ -96,6 +104,14 @@ public abstract class TemplatePage extends WebPage {
                     item.add(link);
                 }
             });
+        }
+
+        @Override
+        protected void onComponentTag(ComponentTag tag) {
+            super.onComponentTag(tag);
+            if (!Strings.isEmpty(tagId)) {
+                tag.put("id", tagId);
+            }
         }
     }
 
