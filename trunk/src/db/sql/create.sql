@@ -26,6 +26,8 @@ CREATE TABLE  `user` (
   `middle_name` varchar(45) DEFAULT NULL,
   `last_name` varchar(45) DEFAULT NULL,
   `department_id` int(11) DEFAULT NULL,
+  `locale` VARCHAR(2) NULL,
+  `page_size` int(3) NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_login` (`login`),
   KEY `fk_user_department` (`department_id`),
