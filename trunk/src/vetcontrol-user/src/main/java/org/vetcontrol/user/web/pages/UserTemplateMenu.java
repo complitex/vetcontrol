@@ -62,4 +62,9 @@ public class UserTemplateMenu extends ResourceTemplateMenu{
 
         return links;
     }
+
+    @Override
+    public String getTagId() {
+        return "user_menu";
+    }
 }

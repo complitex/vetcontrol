@@ -58,4 +58,8 @@ public class BookMenu implements ITemplateMenu {
         return links;
     }
 
+    @Override
+    public String getTagId() {
+        return "books_menu";
+    }
 }
