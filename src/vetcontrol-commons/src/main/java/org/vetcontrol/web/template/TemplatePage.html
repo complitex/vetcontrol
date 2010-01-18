@@ -32,9 +32,15 @@
                             <wicket:message key="main-sidebar.message"/>
                         </div>
                     </div>
-                    <a href="#">
-                        <img height="34" width="34" border="0" alt="Help" src="images/icon-help.gif"/>
-                    </a>
+                    <div wicket:id="toolbar">
+                        <span wicket:id="commonPart">
+                            <span wicket:id="help"></span>
+                        </span>
+                        <span wicket:id="pagePart">
+                            <span wicket:id="pageToolbarButton"></span>
+                        </span>
+                    </div>
+
                 </td>
             </tr>
             <tr>
