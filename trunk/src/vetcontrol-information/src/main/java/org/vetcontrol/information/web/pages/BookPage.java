@@ -30,7 +30,7 @@ import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvid
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UIPreferences.PreferenceType;
-import org.vetcontrol.web.component.toolbar.AddButton;
+import org.vetcontrol.web.component.toolbar.AddItemButton;
 
 /**
  *
@@ -184,7 +184,7 @@ public class BookPage extends FormTemplatePage {
     @Override
     protected List<ToolbarButton> getToolbarButtons(String id) {
         List<ToolbarButton> toolbarButtons = new ArrayList<ToolbarButton>();
-        toolbarButtons.add(new AddButton(id) {
+        toolbarButtons.add(new AddItemButton(id) {
 
             @Override
             protected void onClick() {
