@@ -82,11 +82,11 @@ public abstract class BookContentControl extends Panel {
 
             @Override
             protected void onPageChanged() {
-                preferences.putPreference(UIPreferences.PreferenceType.PAGE_NUMBER, bookClass.getSimpleName() + BookPage.PAGING_KEY_SUFFIX, getCurrentPage());
+                preferences.putPreference(UIPreferences.PreferenceType.PAGE_NUMBER, bookClass.getSimpleName() + BookPage.PAGE_NUMBER_KEY_SUFFIX, getCurrentPage());
             }
         };
         //retrieve table page from preferences.
-        Integer page = preferences.getPreference(UIPreferences.PreferenceType.PAGE_NUMBER, bookClass.getSimpleName() + BookPage.PAGING_KEY_SUFFIX,
+        Integer page = preferences.getPreference(UIPreferences.PreferenceType.PAGE_NUMBER, bookClass.getSimpleName() + BookPage.PAGE_NUMBER_KEY_SUFFIX,
                 Integer.class);
         if (page != null) {
             table.setCurrentPage(page);

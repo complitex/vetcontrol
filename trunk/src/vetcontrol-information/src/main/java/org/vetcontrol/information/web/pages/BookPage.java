@@ -110,7 +110,7 @@ public class BookPage extends FormTemplatePage {
     };
     public static final String BOOK_TYPE = "bookType";
     public static final String FILTER_KEY_SUFFIX = "_FILTER";
-    public static final String PAGING_KEY_SUFFIX = "_PAGING";
+    public static final String PAGE_NUMBER_KEY_SUFFIX = "_PAGING";
     public static final String SORT_PROPERTY_KEY_SUFFIX = "_SORT_PROPERTY";
     public static final String SORT_ORDER_KEY_SUFFIX = "_SORT_ORDER";
     private DataProvider dataProvider;

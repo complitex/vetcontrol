@@ -10,6 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import org.apache.wicket.util.string.Strings;
@@ -17,12 +18,14 @@ import org.vetcontrol.entity.StringCulture;
 import org.vetcontrol.information.service.generator.Sequence;
 import org.vetcontrol.service.dao.BookViewDAO;
 import org.vetcontrol.util.book.BeanPropertyUtil;
+import org.vetcontrol.web.security.SecurityRoles;
 
 /**
  *
  * @author Artem
  */
 @Stateless
+@RolesAllowed(SecurityRoles.INFORMATION_VIEW)
 public class BookDAO extends BookViewDAO implements IBookDAO {
 
     private Sequence sequence;
