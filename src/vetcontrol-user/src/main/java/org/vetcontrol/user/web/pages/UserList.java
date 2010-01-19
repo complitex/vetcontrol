@@ -30,6 +30,8 @@ import org.vetcontrol.web.template.TemplatePage;
 
 import javax.ejb.EJB;
 import java.util.Iterator;
+import org.vetcontrol.service.UIPreferences;
+import org.vetcontrol.service.UIPreferences.PreferenceType;
 import org.vetcontrol.web.component.toolbar.AddUserButton;
 
 /**
@@ -39,37 +41,51 @@ import org.vetcontrol.web.component.toolbar.AddUserButton;
  * Класс используется для отображения списка пользователей с фильтрацией по ключевому слову и сортировкой.
  */
 @AuthorizeInstantiation(SecurityRoles.USER_EDIT)
-public class UserList extends TemplatePage{
+public class UserList extends TemplatePage {
+
     private static final Logger log = LoggerFactory.getLogger(UserList.class);
     @EJB(name = "UserBean")
     private UserBean userBean;
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
+    private UIPreferences preferences;
     private final static int ITEMS_ON_PAGE = 13;
+    private static final String SORT_PROPERTY_KEY = UserList.class.getSimpleName() + "_SORT_PROPERTY";
+    private static final String SORT_ORDER_KEY = UserList.class.getSimpleName() + "_SORT_ORDER";
+    private static final String FILTER_KEY = UserList.class.getSimpleName() + "_FILTER";
+    private static final String PAGE_NUMBER_KEY = UserList.class.getSimpleName() + "_PAGE_NUMBER";
 
     public UserList() {
         super();
+        preferences = getPreferences();
 
         add(new Label("title", getString("user.list.title")));
 
         //Форма фильтра по ключевому слову
-        String filter = null;
+        String filter = preferences.getPreference(PreferenceType.FILTER, FILTER_KEY, String.class);
+        
         final Form<String> filterForm = new Form<String>("filter_form", new Model<String>(filter));
         add(filterForm);
         filterForm.add(new TextField<String>("filter_value", filterForm.getModel()));
 
         //Модель данных для сортировки и постраничного отображения списка пользователей
-        final SortableDataProvider<User> userSort = new SortableDataProvider<User>(){
+        final SortableDataProvider<User> userSort = new SortableDataProvider<User>() {
+
             @Override
             public Iterator<? extends User> iterator(int first, int count) {
                 SortParam sortParam = getSort();
+                preferences.putPreference(PreferenceType.SORT_PROPERTY, SORT_PROPERTY_KEY, sortParam.getProperty());
+                preferences.putPreference(PreferenceType.SORT_ORDER, SORT_ORDER_KEY, Boolean.valueOf(sortParam.isAscending()));
+
                 UserBean.OrderBy order = UserBean.OrderBy.valueOf(sortParam.getProperty());
+                
                 String filter = filterForm.getModelObject();
+                preferences.putPreference(UIPreferences.PreferenceType.FILTER, FILTER_KEY, filter);
 
                 try {
                     return userBean.getUsers(first, count, order, sortParam.isAscending(), filter).iterator();
                 } catch (Exception e) {
-                    log.error("Ошибка получения списка пользователей из базы данных",e);
+                    log.error("Ошибка получения списка пользователей из базы данных", e);
                 }
                 return null;
             }
@@ -90,7 +106,12 @@ public class UserList extends TemplatePage{
             }
         };
 
-        userSort.setSort("LAST_NAME", true);
+        //sort property and ordering
+        String sortPropertyFromPreferences = preferences.getPreference(PreferenceType.SORT_PROPERTY, SORT_PROPERTY_KEY, String.class);
+        Boolean sortOrderFromPreferences = preferences.getPreference(PreferenceType.SORT_ORDER, SORT_ORDER_KEY, Boolean.class);
+        String sortProp = sortPropertyFromPreferences != null ? sortPropertyFromPreferences : "LAST_NAME";
+        boolean asc = sortOrderFromPreferences != null ? sortOrderFromPreferences.booleanValue() : true;
+        userSort.setSort(sortProp, asc);
 
         //Таблица пользователей
         final DataView<User> userDataView = new DataView<User>("users", userSort, ITEMS_ON_PAGE) {
@@ -102,9 +123,6 @@ public class UserList extends TemplatePage{
                 userItem.add(new Label("first_name", user.getFirstName()));
                 userItem.add(new Label("middle_name", user.getMiddleName()));
                 if (user.getDepartment() != null) {
-                    if (user.getDepartment().getNames().isEmpty()) {
-                        log.error("user : "+user.getId());
-                    }
                     userItem.add(new Label("department",
                             BeanPropertyUtil.getLocalizablePropertyAsString(user.getDepartment().getNames(), localeDAO.systemLocale(), null)));
                 } else {
@@ -121,13 +139,15 @@ public class UserList extends TemplatePage{
         add(userDataView);
 
         //Ссылки для активации сортировки по полям
-        add(new OrderByBorder("order_last_name", "LAST_NAME", userSort){
-            protected void onSortChanged(){
+        add(new OrderByBorder("order_last_name", "LAST_NAME", userSort) {
+
+            protected void onSortChanged() {
                 userDataView.setCurrentPage(0);
             }
         });
-        add(new OrderByBorder("order_first_name", "FIRST_NAME", userSort){
-            protected void onSortChanged(){
+        add(new OrderByBorder("order_first_name", "FIRST_NAME", userSort) {
+
+            protected void onSortChanged() {
                 userDataView.setCurrentPage(0);
             }
         });
@@ -179,7 +199,7 @@ public class UserList extends TemplatePage{
 
     @Override
     protected List<ToolbarButton> getToolbarButtons(String id) {
-        return Arrays.asList( (ToolbarButton)new AddUserButton(id) {
+        return Arrays.asList((ToolbarButton) new AddUserButton(id) {
 
             @Override
             protected void onClick() {
@@ -187,5 +207,4 @@ public class UserList extends TemplatePage{
             }
         });
     }
-
 }
