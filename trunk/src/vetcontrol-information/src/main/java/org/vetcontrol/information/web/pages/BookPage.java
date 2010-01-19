@@ -7,9 +7,6 @@ package org.vetcontrol.information.web.pages;
 import java.util.List;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.vetcontrol.information.service.fasade.pages.BookPageFasade;
@@ -134,11 +131,14 @@ public class BookPage extends FormTemplatePage {
         dataProvider.init(bookClass, "id", true);
         dataProvider.initSize();
 
+        //TODO: remove after review
+        /*
         Panel bookContent = new EmptyPanel("bookContent");
         WebMarkupContainer emptyContent = new WebMarkupContainer("emptyContent");
+         */
 
-        if (dataProvider.size() != 0) {
-            bookContent = new BookContentControl("bookContent", dataProvider,
+        /*if (dataProvider.size() != 0) {*/
+            BookContentControl bookContent = new BookContentControl("bookContent", dataProvider,
                     bookClass,
                     fasade,
                     localeDAO.systemLocale(), preferences) {
@@ -148,10 +148,11 @@ public class BookPage extends FormTemplatePage {
                     goToEditPage(obj);
                 }
             };
-            emptyContent.setVisible(false);
+            /*emptyContent.setVisible(false);
         }
+             */
         add(bookContent);
-        add(emptyContent);
+        /*add(emptyContent);*/
 
 
         //TODO: remove after review
