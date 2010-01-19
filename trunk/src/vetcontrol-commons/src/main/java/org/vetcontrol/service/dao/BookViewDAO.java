@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -32,12 +33,14 @@ import org.vetcontrol.entity.StringCulture;
 import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.util.book.Property;
 import org.vetcontrol.util.book.service.HibernateSessionTransformer;
+import org.vetcontrol.web.security.SecurityRoles;
 
 /**
  *
  * @author Artem
  */
 @Stateless
+@RolesAllowed(SecurityRoles.INFORMATION_VIEW)
 public class BookViewDAO implements IBookViewDAO {
 
     private EntityManager em;
