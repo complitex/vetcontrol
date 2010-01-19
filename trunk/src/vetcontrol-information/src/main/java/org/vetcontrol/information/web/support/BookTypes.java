@@ -4,6 +4,7 @@
  */
 package org.vetcontrol.information.web.support;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -32,30 +33,25 @@ import org.vetcontrol.entity.VehicleType;
  */
 public class BookTypes {
 
-    public static final List<Class> BOOK_TYPES = Collections.unmodifiableList(Arrays.asList(new Class[]{
-        Department.class,
-        CountryBook.class,
-        Registeredproducts.class,
-        VehicleType.class,
-        CargoReceiver.class,
-        CargoSender.class,
-        CustomsPoint.class,
-        MovementType.class,
-        Producer.class,
-        UnitType.class,
-        CargoType.class,
-        CargoMode.class,
-        Job.class,
-        Prohibition.class,
-        Tariff.class,
-        ArrestReason.class,
-        AddressBook.class,
-        PassingBorderPoint.class,
-    }));
-
-    @Deprecated
-    public static List<Class<?>> getBookTypes() {
-       return null;
+    public static List<Class<? extends Serializable>> getList() {
+        return Collections.unmodifiableList(Arrays.asList(
+                Department.class,
+                CountryBook.class,
+                Registeredproducts.class,
+                VehicleType.class,
+                CargoReceiver.class,
+                CargoSender.class,
+                CustomsPoint.class,
+                MovementType.class,
+                Producer.class,
+                UnitType.class,
+                CargoType.class,
+                CargoMode.class,
+                Job.class,
+                Prohibition.class,
+                Tariff.class,
+                ArrestReason.class,
+                AddressBook.class,
+                PassingBorderPoint.class));
     }
-    
 }

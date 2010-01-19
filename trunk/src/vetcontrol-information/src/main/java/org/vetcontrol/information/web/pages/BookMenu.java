@@ -33,7 +33,7 @@ public class BookMenu implements ITemplateMenu {
     @Override
     public List<ITemplateLink> getTemplateLinks(final Locale locale) {
         List<ITemplateLink> links = new ArrayList<ITemplateLink>();
-        for(final Class bookType : BookTypes.BOOK_TYPES){
+        for(final Class bookType : BookTypes.getList()){
             links.add(new ITemplateLink() {
 
                 @Override

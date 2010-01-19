@@ -50,7 +50,7 @@ public final class BooksPanel extends Panel {
 
 
         add(content);
-        content.add(new ListView<Class>("Books", BookTypes.BOOK_TYPES) {
+        content.add(new ListView<Class>("Books", BookTypes.getList()) {
 
             @Override
             protected void populateItem(ListItem<Class> item) {
