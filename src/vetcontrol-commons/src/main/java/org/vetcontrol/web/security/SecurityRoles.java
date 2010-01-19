@@ -10,6 +10,7 @@ public class SecurityRoles {
     public final static String AUTHORIZED = "AUTHORIZED";
     public final static String USER_EDIT = "USER_EDIT";
     public final static String INFORMATION_EDIT = "INFORMATION_EDIT";
+    public final static String INFORMATION_VIEW = "INFORMATION_VIEW";
     public final static String DOCUMENT_CREATE = "DOCUMENT_CREATE";
     public final static String DOCUMENT_EDIT = "DOCUMENT_EDIT";
 
