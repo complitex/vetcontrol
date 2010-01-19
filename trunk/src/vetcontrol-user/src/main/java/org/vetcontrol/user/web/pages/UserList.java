@@ -1,5 +1,7 @@
 package org.vetcontrol.user.web.pages;
 
+import java.util.Arrays;
+import java.util.List;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.OrderByBorder;
@@ -22,11 +24,13 @@ import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.user.service.UserBean;
 import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.web.component.paging.PagingNavigator;
+import org.vetcontrol.web.component.toolbar.ToolbarButton;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.TemplatePage;
 
 import javax.ejb.EJB;
 import java.util.Iterator;
+import org.vetcontrol.web.component.toolbar.AddUserButton;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -172,4 +176,16 @@ public class UserList extends TemplatePage{
             sb.append(", ");
         }
     }
+
+    @Override
+    protected List<ToolbarButton> getToolbarButtons(String id) {
+        return Arrays.asList( (ToolbarButton)new AddUserButton(id) {
+
+            @Override
+            protected void onClick() {
+                setResponsePage(UserEdit.class);
+            }
+        });
+    }
+
 }

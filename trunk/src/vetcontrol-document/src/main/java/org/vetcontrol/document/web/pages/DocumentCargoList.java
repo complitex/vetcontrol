@@ -17,12 +17,15 @@ import org.vetcontrol.entity.IBook;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.web.component.BookmarkablePageLinkPanel;
+import org.vetcontrol.web.component.toolbar.ToolbarButton;
 import org.vetcontrol.web.template.TemplatePage;
 
 import javax.ejb.EJB;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import org.vetcontrol.web.component.toolbar.AddDocumentButton;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -123,6 +126,17 @@ public class DocumentCargoList extends TemplatePage{
 
     private String getName(IBook iBook){
         return BeanPropertyUtil.getLocalizablePropertyAsString(iBook.getNames(), localeDAO.systemLocale(), null);
+    }
+
+    @Override
+    protected List<ToolbarButton> getToolbarButtons(String id) {
+        return Arrays.asList( (ToolbarButton) new AddDocumentButton(id) {
+
+            @Override
+            protected void onClick() {
+                setResponsePage(DocumentCargoEdit.class);
+            }
+        });
     }
 
 }
