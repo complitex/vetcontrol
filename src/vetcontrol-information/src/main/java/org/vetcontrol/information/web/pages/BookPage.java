@@ -8,8 +8,6 @@ import java.util.List;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.SubmitLink;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -25,24 +23,24 @@ import java.beans.IntrospectionException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
+import org.apache.wicket.authorization.strategies.role.IRoleCheckingStrategy;
+import org.apache.wicket.authorization.strategies.role.Roles;
+import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilterStateLocator;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UIPreferences.PreferenceType;
 import org.vetcontrol.web.component.toolbar.AddItemButton;
+import org.vetcontrol.web.security.SecurityRoles;
 
 /**
  *
  * @author Artem
  */
+@AuthorizeInstantiation(SecurityRoles.INFORMATION_VIEW)
 public class BookPage extends FormTemplatePage {
-
-    private Class getBookClass() throws ClassNotFoundException {
-        final Class bookClass = Thread.currentThread().getContextClassLoader().loadClass(bookType);
-        return bookClass;
-    }
-
+    
     public class DataProvider extends SortableDataProvider<Serializable> implements IFilterStateLocator {
 
         private Serializable filterBean;
@@ -163,15 +161,15 @@ public class BookPage extends FormTemplatePage {
 
         form.add(new SubmitLink("new") {
 
-            @Override
-            public void onSubmit() {
-                try {
-                    final Serializable entry = (Serializable) getBookClass().newInstance();
-                    goToEditPage(entry);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+        @Override
+        public void onSubmit() {
+        try {
+        final Serializable entry = (Serializable) getBookClass().newInstance();
+        goToEditPage(entry);
+        } catch (Exception e) {
+        e.printStackTrace();
+        }
+        }
         });
          */
     }
@@ -181,22 +179,32 @@ public class BookPage extends FormTemplatePage {
         setResponsePage(AddUpdateBookEntryPage.class);
     }
 
+    private Class getBookClass() throws ClassNotFoundException {
+        final Class bookClass = Thread.currentThread().getContextClassLoader().loadClass(bookType);
+        return bookClass;
+    }
+
     @Override
     protected List<ToolbarButton> getToolbarButtons(String id) {
-        List<ToolbarButton> toolbarButtons = new ArrayList<ToolbarButton>();
-        toolbarButtons.add(new AddItemButton(id) {
+        IRoleCheckingStrategy application = (IRoleCheckingStrategy) getApplication();
+        if (application.hasAnyRole(new Roles(SecurityRoles.INFORMATION_EDIT))) {
+            List<ToolbarButton> toolbarButtons = new ArrayList<ToolbarButton>();
+            toolbarButtons.add(new AddItemButton(id) {
 
-            @Override
-            protected void onClick() {
-                try {
-                    final Serializable entry = (Serializable) getBookClass().newInstance();
-                    goToEditPage(entry);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                @Override
+                protected void onClick() {
+                    try {
+                        final Serializable entry = (Serializable) getBookClass().newInstance();
+                        goToEditPage(entry);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-        });
+            });
 
-        return toolbarButtons;
+            return toolbarButtons;
+        } else {
+            return null;
+        }
     }
 }

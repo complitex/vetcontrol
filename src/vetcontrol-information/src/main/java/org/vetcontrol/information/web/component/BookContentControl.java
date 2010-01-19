@@ -9,6 +9,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import org.apache.wicket.authorization.strategies.role.IRoleCheckingStrategy;
+import org.apache.wicket.authorization.strategies.role.Roles;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.HeadersToolbar;
@@ -23,6 +25,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.protocol.http.WebApplication;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.information.service.fasade.pages.BookPageFasade;
 import org.vetcontrol.util.book.BeanPropertyUtil;
@@ -33,6 +36,7 @@ import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 import org.vetcontrol.information.web.pages.BookPage;
 import org.vetcontrol.information.web.pages.BookPage.DataProvider;
 import org.vetcontrol.web.component.paging.PagingNavigator;
+import org.vetcontrol.web.security.SecurityRoles;
 
 /**
  *
@@ -65,13 +69,16 @@ public abstract class BookContentControl extends Panel {
         for (Property prop : BeanPropertyUtil.getProperties(bookClass)) {
             columns.add(new BookPropertyColumn<Serializable>(this, new DisplayPropertyLocalizableModel(prop, this), prop, fasade, systemLocale));
         }
-        columns.add(new AbstractColumn(new ResourceModel("book.edit.header")) {
+        IRoleCheckingStrategy application = (IRoleCheckingStrategy)getApplication();
+        if(application.hasAnyRole(new Roles(SecurityRoles.INFORMATION_EDIT))){
+            columns.add(new AbstractColumn(new ResourceModel("book.edit.header")) {
 
-            @Override
-            public void populateItem(Item cellItem, String componentId, IModel rowModel) {
-                cellItem.add(new EditPanel(componentId, rowModel));
-            }
-        });
+                @Override
+                public void populateItem(Item cellItem, String componentId, IModel rowModel) {
+                    cellItem.add(new EditPanel(componentId, rowModel));
+                }
+            });
+        }
         DataTable table = new DataTable("table", columns.toArray(new IColumn[columns.size()]), dataProvider, Constants.ROWS_PER_PAGE) {
 
             @Override
