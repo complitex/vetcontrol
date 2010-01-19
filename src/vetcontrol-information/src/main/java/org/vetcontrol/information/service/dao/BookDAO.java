@@ -25,7 +25,7 @@ import org.vetcontrol.web.security.SecurityRoles;
  * @author Artem
  */
 @Stateless
-@RolesAllowed(SecurityRoles.INFORMATION_VIEW)
+@RolesAllowed(SecurityRoles.INFORMATION_EDIT)
 public class BookDAO extends BookViewDAO implements IBookDAO {
 
     private Sequence sequence;
