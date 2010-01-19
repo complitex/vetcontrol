@@ -1,11 +1,14 @@
 package org.vetcontrol.web.template;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.authorization.strategies.role.Roles;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -13,25 +16,22 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.util.string.Strings;
+import org.odlabs.wiquery.core.commons.CoreJavaScriptResourceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.User;
+import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.web.component.LocalePicker;
+import org.vetcontrol.web.component.toolbar.HelpButton;
+import org.vetcontrol.web.component.toolbar.ToolbarButton;
 
 import javax.ejb.EJB;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.util.string.Strings;
-import org.odlabs.wiquery.core.commons.CoreJavaScriptResourceReference;
-import org.vetcontrol.service.UIPreferences;
-import org.vetcontrol.web.component.toolbar.HelpButton;
-import org.vetcontrol.web.component.toolbar.ToolbarButton;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -158,6 +158,7 @@ public abstract class TemplatePage extends WebPage {
                     templateMenus.add(templateMenu);
                 }
             } catch (ClassNotFoundException e) {
+                //TODO add log
                 e.printStackTrace();
             } catch (InstantiationException e) {
                 e.printStackTrace();

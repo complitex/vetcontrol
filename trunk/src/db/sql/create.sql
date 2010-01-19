@@ -1,10 +1,3 @@
-/*
-SQLyog Enterprise - MySQL GUI v8.14 
-MySQL - 5.0.88-community-nt : Database - project1
-*********************************************************************
-*/
-
-
 /*!40101 SET NAMES utf8 */;
 
 /*!40101 SET SQL_MODE=''*/;
@@ -25,7 +18,7 @@ CREATE TABLE  `user` (
   `first_name` varchar(45) DEFAULT NULL,
   `middle_name` varchar(45) DEFAULT NULL,
   `last_name` varchar(45) DEFAULT NULL,
-  `department_id` int(11) DEFAULT NULL,
+  `department_id` bigint(20) DEFAULT NULL,
   `locale` VARCHAR(2) NULL,
   `page_size` int(3) NULL,
   PRIMARY KEY (`id`),
@@ -75,7 +68,7 @@ create table `generator`(
 DROP TABLE IF EXISTS `stringculture`;
 
 CREATE TABLE `stringculture` (
-  `id` int(11) NOT NULL,
+  `id` bigint(20) NOT NULL,
   `locale` varchar(2) NOT NULL,
   `value` varchar(1024) default NULL,
   PRIMARY KEY  (`id`, `locale`)
@@ -86,9 +79,9 @@ CREATE TABLE `stringculture` (
 DROP TABLE IF EXISTS `countrybook`;
 
 CREATE TABLE `countrybook` (
-  `id` int(11) NOT NULL auto_increment,
+  `id` bigint(20) NOT NULL auto_increment,
   `code` varchar(2) NOT NULL,
-  `name` int(11) NOT NULL,
+  `name` bigint(20) NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `FK_countrybook_name` (`name`),
   CONSTRAINT `FK_countrybook_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -96,25 +89,25 @@ CREATE TABLE `countrybook` (
 
 /*Table structure for table `registeredproducts` */
 
-DROP TABLE IF EXISTS `registeredproducts`;
+DROP TABLE IF EXISTS `registered_products`;
 
-CREATE TABLE `registeredproducts` (
-  `id` int(11) NOT NULL auto_increment,
-  `name` int(11) NOT NULL,
-  `classificator` int(11) NOT NULL,
-  `vendor` int(11) NOT NULL,
+CREATE TABLE `registered_products` (
+  `id` bigint(20) NOT NULL auto_increment,
+  `name` bigint(20) NOT NULL,
+  `classificator` bigint(20) NOT NULL,
+  `cargo_producer_id` bigint(20) NOT NULL,
   `regnumber` varchar(50) NOT NULL,
   `date` date NOT NULL,
-  `country` int(11) NOT NULL,
+  `country_id` bigint(20) NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `FK_registeredproducts_name` (`name`),
   CONSTRAINT `FK_registeredproducts_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
   KEY `FK_registeredproducts_classificator` (`classificator`),
   CONSTRAINT `FK_registeredproducts_classificator` FOREIGN KEY (`classificator`) REFERENCES `stringculture` (`id`),
-  KEY `FK_registeredproducts_country_ref` (`country`),
-  CONSTRAINT `FK_registeredproducts_country_ref` FOREIGN KEY (`country`) REFERENCES `countrybook` (`id`),
-  KEY `FK_registeredproducts_producer_ref` (`vendor`),
-  CONSTRAINT `FK_registeredproducts_producer_ref` FOREIGN KEY (`vendor`) REFERENCES `producer` (`id`)
+  KEY `FK_registeredproducts_country_ref` (`country_id`),
+  CONSTRAINT `FK_registeredproducts_country_ref` FOREIGN KEY (`country_id`) REFERENCES `countrybook` (`id`),
+  KEY `FK_registeredproducts_producer_ref` (`cargo_producer_id`),
+  CONSTRAINT `FK_registeredproducts_producer_ref` FOREIGN KEY (`cargo_producer_id`) REFERENCES `cargo_producer` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `vehicletypes` */
@@ -122,8 +115,8 @@ CREATE TABLE `registeredproducts` (
 DROP TABLE IF EXISTS `vehicletypes`;
 
 CREATE TABLE `vehicletypes` (
-    `id` int(11) NOT NULL auto_increment,
-    `name` int(11) NOT NULL,
+    `id` bigint(20) NOT NULL auto_increment,
+    `name` bigint(20) NOT NULL,
     PRIMARY KEY (`id`),
     KEY `FK_vehicletypes_name` (`name`),
     CONSTRAINT `FK_vehicletypes_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -133,9 +126,9 @@ CREATE TABLE `vehicletypes` (
 
 DROP TABLE IF EXISTS `department`;
 CREATE TABLE  `department` (
-    `id` int(11) NOT NULL auto_increment,
-    `name` int(11) NOT NULL,
-    `parent_id` int(11) NULL,
+    `id` bigint(20) NOT NULL auto_increment,
+    `name` bigint(20) NOT NULL,
+    `parent_id` bigint(20) NULL,
     PRIMARY KEY (`id`),
     KEY `FK_department_name` (`name`),
     CONSTRAINT `FK_department_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
@@ -147,8 +140,8 @@ CREATE TABLE  `department` (
 
 DROP TABLE IF EXISTS `cargo_sender`;
 CREATE TABLE  `cargo_sender` (
-    `id` int(11) NOT NULL auto_increment,
-    `name` int(11) NOT NULL,
+    `id` bigint(20) NOT NULL auto_increment,
+    `name` bigint(20) NOT NULL,
     PRIMARY KEY (`id`),
     KEY `FK_cargo_sender_name` (`name`),
     CONSTRAINT `FK_cargo_sender_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -158,8 +151,8 @@ CREATE TABLE  `cargo_sender` (
 
 DROP TABLE IF EXISTS `cargo_receiver`;
 CREATE TABLE  `cargo_receiver` (
-    `id` int(11) NOT NULL auto_increment,
-    `name` int(11) NOT NULL,
+    `id` bigint(20) NOT NULL auto_increment,
+    `name` bigint(20) NOT NULL,
     PRIMARY KEY (`id`),
     KEY `FK_cargo_receiver_name` (`name`),
     CONSTRAINT `FK_cargo_receiver_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -169,8 +162,8 @@ CREATE TABLE  `cargo_receiver` (
 
 DROP TABLE IF EXISTS `customs_point`;
 CREATE TABLE  `customs_point` (
-    `id` int(11) NOT NULL auto_increment,
-    `name` int(11) NOT NULL,
+    `id` bigint(20) NOT NULL auto_increment,
+    `name` bigint(20) NOT NULL,
     PRIMARY KEY (`id`),
     KEY `FK_customs_point_name` (`name`),
     CONSTRAINT `FK_customs_point_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -180,19 +173,19 @@ CREATE TABLE  `customs_point` (
 
 DROP TABLE IF EXISTS `movement_type`;
 CREATE TABLE  `movement_type` (
-    `id` int(11) NOT NULL auto_increment,
-    `name` int(11) NOT NULL,
+    `id` bigint(20) NOT NULL auto_increment,
+    `name` bigint(20) NOT NULL,
     PRIMARY KEY (`id`),
     KEY `FK_movement_type_name` (`name`),
     CONSTRAINT `FK_movement_type_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `producer` */
+/*Table structure for table `cargo_producer` */
 
-DROP TABLE IF EXISTS `producer`;
-CREATE TABLE  `producer` (
-    `id` int(11) NOT NULL auto_increment,
-    `name` int(11) NOT NULL,
+DROP TABLE IF EXISTS `cargo_producer`;
+CREATE TABLE  `cargo_producer` (
+    `id` bigint(20) NOT NULL auto_increment,
+    `name` bigint(20) NOT NULL,
     PRIMARY KEY (`id`),
     KEY `FK_producer_name` (`name`),
     CONSTRAINT `FK_producer_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -202,8 +195,8 @@ CREATE TABLE  `producer` (
 
 DROP TABLE IF EXISTS `unit_type`;
 CREATE TABLE  `unit_type` (
-    `id` int(11) NOT NULL auto_increment,
-    `name` int(11) NOT NULL,
+    `id` bigint(20) NOT NULL auto_increment,
+    `name` bigint(20) NOT NULL,
     PRIMARY KEY (`id`),
     KEY `FK_unit_type_name` (`name`),
     CONSTRAINT `FK_unit_type_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -213,8 +206,8 @@ CREATE TABLE  `unit_type` (
 
 DROP TABLE IF EXISTS `cargo_type`;
 CREATE TABLE  `cargo_type` (
-    `id` int(11) NOT NULL auto_increment,
-    `name` int(11) NOT NULL,
+    `id` bigint(20) NOT NULL auto_increment,
+    `name` bigint(20) NOT NULL,
     `ukt_zed_code` VARCHAR(10) NOT NULL,
     `controled` tinyint(1) NOT NULL,
     PRIMARY KEY (`id`),
@@ -222,30 +215,12 @@ CREATE TABLE  `cargo_type` (
     CONSTRAINT `FK_cargo_type_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `cargo_mode` */
-
-DROP TABLE IF EXISTS `cargo_mode`;
-
-CREATE TABLE `cargo_mode` (
-  `id` int(11) NOT NULL auto_increment,
-  `name` int(11) NOT NULL,
-  `cargo_type` int(11) NOT NULL,
-  `unit_type` int(11) NOT NULL,
-  PRIMARY KEY  (`id`),
-  KEY `FK_cargo_mode_name` (`name`),
-  CONSTRAINT `FK_cargo_mode_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
-  KEY `FK_cargo_mode_cargo_type_ref` (`cargo_type`),
-  CONSTRAINT `FK_cargo_mode_cargo_type_ref` FOREIGN KEY (`cargo_type`) REFERENCES `cargo_type` (`id`),
-  KEY `FK_cargo_mode_unit_type_ref` (`unit_type`),
-  CONSTRAINT `FK_cargo_mode_unit_type_ref` FOREIGN KEY (`unit_type`) REFERENCES `unit_type` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 /*Table structure for table `job` */
 
 DROP TABLE IF EXISTS `job`;
 CREATE TABLE  `job` (
-    `id` int(11) NOT NULL auto_increment,
-    `name` int(11) NOT NULL,
+    `id` bigint(20) NOT NULL auto_increment,
+    `name` bigint(20) NOT NULL,
     PRIMARY KEY (`id`),
     KEY `FK_job_name` (`name`),
     CONSTRAINT `FK_job_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -255,16 +230,16 @@ CREATE TABLE  `job` (
 
 DROP TABLE IF EXISTS `prohibition_country`;
 CREATE TABLE  `prohibition_country` (
-    `id` int(11) NOT NULL auto_increment,
+    `id` bigint(20) NOT NULL auto_increment,
     `date` date NOT NULL,
     `number` VARCHAR(10) NOT NULL,
-    `country` int(11) NOT NULL,
-    `reason` int(11) NOT NULL,
-    `region` int(11) NOT NULL,
-    `target` int(11) NOT NULL,
+    `country_id` bigint(20) NOT NULL,
+    `reason` bigint(20) NOT NULL,
+    `region` bigint(20) NOT NULL,
+    `target` bigint(20) NOT NULL,
     PRIMARY KEY (`id`),
-    KEY `FK_prohibition_country_country_ref` (`country`),
-    CONSTRAINT `FK_prohibition_country_country_ref` FOREIGN KEY (`country`) REFERENCES `countrybook` (`id`),
+    KEY `FK_prohibition_country_country_ref` (`country_id`),
+    CONSTRAINT `FK_prohibition_country_country_ref` FOREIGN KEY (`country_id`) REFERENCES `countrybook` (`id`),
     KEY `FK_prohibition_country_reason` (`reason`),
     CONSTRAINT `FK_prohibition_country_reason` FOREIGN KEY (`reason`) REFERENCES `stringculture` (`id`),
     KEY `FK_prohibition_country_region` (`region`),
@@ -277,8 +252,8 @@ CREATE TABLE  `prohibition_country` (
 
 DROP TABLE IF EXISTS `arrest_reason`;
 CREATE TABLE  `arrest_reason` (
-    `id` int(11) NOT NULL auto_increment,
-    `name` int(11) NOT NULL,
+    `id` bigint(20) NOT NULL auto_increment,
+    `name` bigint(20) NOT NULL,
     PRIMARY KEY (`id`),
     KEY `FK_arrest_reason_name` (`name`),
     CONSTRAINT `FK_arrest_reason_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -288,8 +263,8 @@ CREATE TABLE  `arrest_reason` (
 
 DROP TABLE IF EXISTS `bad_epizootic_situation`;
 CREATE TABLE  `bad_epizootic_situation` (
-    `id` int(11) NOT NULL auto_increment,
-    `name` int(11) NOT NULL,
+    `id` bigint(20) NOT NULL auto_increment,
+    `name` bigint(20) NOT NULL,
     PRIMARY KEY (`id`),
     KEY `FK_bad_epizootic_situation_name` (`name`),
     CONSTRAINT `FK_bad_epizootic_situation_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -299,8 +274,8 @@ CREATE TABLE  `bad_epizootic_situation` (
 
 DROP TABLE IF EXISTS `tariff`;
 CREATE TABLE  `tariff` (
-    `id` int(11) NOT NULL auto_increment,
-    `name` int(11) NOT NULL,
+    `id` bigint(20) NOT NULL auto_increment,
+    `name` bigint(20) NOT NULL,
     PRIMARY KEY (`id`),
     KEY `FK_tariff_name` (`name`),
     CONSTRAINT `FK_tariff_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -310,8 +285,8 @@ CREATE TABLE  `tariff` (
 
 DROP TABLE IF EXISTS `passing_border_point`;
 CREATE TABLE  `passing_border_point` (
-    `id` int(11) NOT NULL auto_increment,
-    `name` int(11) NOT NULL,
+    `id` bigint(20) NOT NULL auto_increment,
+    `name` bigint(20) NOT NULL,
     PRIMARY KEY (`id`),
     KEY `FK_passing_border_point_name` (`name`),
     CONSTRAINT `FK_passing_border_point_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -321,8 +296,8 @@ CREATE TABLE  `passing_border_point` (
 
 DROP TABLE IF EXISTS `addressbook`;
 CREATE TABLE  `addressbook` (
-    `id` int(11) NOT NULL auto_increment,
-    `name` int(11) NOT NULL,
+    `id` bigint(20) NOT NULL auto_increment,
+    `name` bigint(20) NOT NULL,
     PRIMARY KEY (`id`),
     KEY `FK_addressbook_name` (`name`),
     CONSTRAINT `FK_addressbook_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -333,20 +308,17 @@ DROP TABLE IF EXISTS `cargo`;
 CREATE TABLE  `cargo` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `document_cargo_id` bigint(20) NOT NULL,
-  `cargo_type_id` int(11) NOT NULL,
-  `cargo_mode_id` int(11) NOT NULL,
-  `unit_type_id` int(11) NOT NULL,
+  `cargo_type_id` bigint(20) NOT NULL,
+  `unit_type_id` bigint(20) NOT NULL,
   `count` int(11) NOT NULL,
   `certificate_date` date NOT NULL,
   `certificate_details` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_document_cargo` (`document_cargo_id`),
   KEY `FK_cargo_type` (`cargo_type_id`),
-  KEY `FK_cargo_mode` (`cargo_mode_id`),
   KEY `FK_unit_type` (`unit_type_id`),
   CONSTRAINT `FK_document_cargo` FOREIGN KEY (`document_cargo_id`) REFERENCES `document_cargo` (`id`),
-  CONSTRAINT `FK_cargo_type` FOREIGN KEY (`cargo_type_id`) REFERENCES `cargo_type` (`id`),
-  CONSTRAINT `FK_cargo_mode` FOREIGN KEY (`cargo_mode_id`) REFERENCES `cargo_mode` (`id`),
+  CONSTRAINT `FK_cargo_type` FOREIGN KEY (`cargo_type_id`) REFERENCES `cargo_type` (`id`),  
   CONSTRAINT `FK_unit_type` FOREIGN KEY (`unit_type_id`) REFERENCES `unit_type` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -356,12 +328,13 @@ CREATE TABLE `document_cargo` (
   `creator_id` bigint(20) NOT NULL,
   `created` datetime NOT NULL,
   `updated` datetime DEFAULT NULL,
-  `movement_type_id` int(11) NOT NULL,
-  `vehicle_type_id` int(11) NOT NULL,
+  `movement_type_id` bigint(20) NOT NULL,
+  `vehicle_type_id` bigint(20) NOT NULL,
   `vehicle_details` varchar(255) NOT NULL,
-  `cargo_sender_id` int(11) NOT NULL,
-  `cargo_receiver_id` int(11) NOT NULL,  
-  `cargo_producer_id` int(11) NOT NULL,
+  `cargo_sender_id` bigint(20) NOT NULL,
+  `cargo_receiver_id` bigint(20) NOT NULL,
+  `cargo_producer_id` bigint(20) NOT NULL,
+  `passing_border_point_id` bigint(20) DEFAULT NULL,
   `details` varchar(255) DEFAULT NULL,
   `detention_details` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -370,11 +343,13 @@ CREATE TABLE `document_cargo` (
   KEY `FK_cargo_sender` (`cargo_sender_id`),
   KEY `FK_cargo_receiver` (`cargo_receiver_id`),
   KEY `FK_cargo_producer` (`cargo_producer_id`),
+  KEY `FK_passing_border_point` (`passing_border_point_id`),
   CONSTRAINT `FK_movement_type` FOREIGN KEY (`movement_type_id`) REFERENCES `movement_type` (`id`),
   CONSTRAINT `FK_vehicle_type` FOREIGN KEY (`vehicle_type_id`) REFERENCES `vehicletypes` (`id`),
   CONSTRAINT `FK_cargo_sender` FOREIGN KEY (`cargo_sender_id`) REFERENCES `cargo_sender` (`id`),
   CONSTRAINT `FK_cargo_receiver` FOREIGN KEY (`cargo_receiver_id`) REFERENCES `cargo_receiver` (`id`),
-  CONSTRAINT `FK_cargo_producer` FOREIGN KEY (`cargo_producer_id`) REFERENCES `producer` (`id`)
+  CONSTRAINT `FK_cargo_producer` FOREIGN KEY (`cargo_producer_id`) REFERENCES `cargo_producer` (`id`),
+  CONSTRAINT `FK_passing_border_point` FOREIGN KEY (`passing_border_point_id`) REFERENCES `passing_border_point` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

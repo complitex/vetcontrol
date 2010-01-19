@@ -4,26 +4,16 @@
  */
 package org.vetcontrol.entity;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.vetcontrol.util.book.entity.annotation.BookReference;
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 2.4.3.6 Справочник перечня запретов по странам
@@ -34,16 +24,16 @@ import org.vetcontrol.util.book.entity.annotation.MappedProperty;
 @Table(name = "prohibition_country")
 public class Prohibition implements Serializable {
 
-    private Integer id;
+    private Long id;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
     private Date date;
@@ -72,7 +62,7 @@ public class Prohibition implements Serializable {
     @BookReference(referencedProperty = "names")
     @ManyToOne(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "country", nullable = false)
+    @JoinColumn(name = "country_id", nullable = false)
     public CountryBook getCountry() {
         return country;
     }

@@ -8,8 +8,6 @@ INSERT INTO `unit_type` VALUES (1,43),(2,44),(3,45),(4,46),(5,47),(6,53);
 
 INSERT INTO `cargo_type` VALUES (1,48,'111',0),(2,49,'222',0),(3,50,'333',0);
 
-INSERT INTO `cargo_mode` VALUES (1,51,1,6),(2,52,1,6),(3,54,1,6),(4,55,2,4),(5,56,2,4),(6,57,3,1),(7,58,3,1);
-
 INSERT INTO `cargo_receiver` VALUES (1,30),(2,31),(3,32);
 
 INSERT INTO `cargo_sender` VALUES (1,33),(2,34),(3,35);
@@ -18,10 +16,10 @@ INSERT INTO `movement_type` VALUES (1,36),(2,37),(3,38),(4,39);
 
 INSERT INTO `passing_border_point` VALUES (1,59),(2,60),(3,61);
 
-INSERT INTO `producer` VALUES (1,40),(2,41),(3,42);
+INSERT INTO `cargo_producer` VALUES (1,40),(2,41),(3,42);
 
 INSERT INTO `vehicletypes` VALUES (1,25),(2,26),(3,27),(4,28),(5,29);
 
-INSERT INTO `document_cargo` VALUES (1,2,'2010-01-15 17:59:09',NULL,1,1,'транспорт 1',1,2,3,'примечание 3','задержан 2');
+INSERT INTO `document_cargo` VALUES (1,2,'2010-01-15 17:59:09',NULL,1,1, 'транспорт 1',1,2,3,1,'примечание 3','задержан 2');
 
-INSERT INTO `cargo` VALUES (1,1,1,1,1,1,'2010-01-15','сертификат 5');
+INSERT INTO `cargo` VALUES (1,1,1,1,1,'2010-01-15','сертификат 5');

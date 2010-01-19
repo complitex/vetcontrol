@@ -1,10 +1,10 @@
 package org.vetcontrol.entity;
 
-import java.io.Serializable;
+import org.vetcontrol.util.book.entity.annotation.MappedProperty;
+
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.*;
-import org.vetcontrol.util.book.entity.annotation.MappedProperty;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -14,20 +14,7 @@ import org.vetcontrol.util.book.entity.annotation.MappedProperty;
  */
 @Entity
 @Table(name = "cargo_type")
-public class CargoType implements IBook, Serializable {
-
-    private Integer id;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", unique = true, nullable = false)
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
+public class CargoType extends Localizable{
     private String uktZedCode;
 
     @Column(name = "ukt_zed_code", nullable = false, length = 10)
@@ -37,17 +24,7 @@ public class CargoType implements IBook, Serializable {
 
     public void setCode(String uktZedCode) {
         this.uktZedCode = uktZedCode;
-    }
-    private Long name;
-
-    @Column(name = "name")
-    public Long getName() {
-        return name;
-    }
-
-    public void setName(Long name) {
-        this.name = name;
-    }
+    }     
 
     private List<StringCulture> names = new ArrayList<StringCulture>();
 
