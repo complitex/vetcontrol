@@ -4,31 +4,24 @@ package org.vetcontrol.information.test;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import org.hibernate.Session;
 import org.junit.Assert;
 import org.junit.Test;
-import org.vetcontrol.entity.CargoMode;
-import org.vetcontrol.entity.CountryBook;
-import org.vetcontrol.entity.Department;
-import org.vetcontrol.entity.Registeredproducts;
-import org.vetcontrol.entity.StringCulture;
-import org.vetcontrol.entity.StringCultureId;
-import org.vetcontrol.entity.User;
+import org.vetcontrol.entity.*;
 import org.vetcontrol.information.service.dao.BookDAO;
-import org.vetcontrol.information.service.dao.IBookDAO;
 import org.vetcontrol.information.service.generator.Sequence;
 import org.vetcontrol.service.dao.BookViewDAO;
 import org.vetcontrol.service.dao.IBookViewDAO;
 import org.vetcontrol.util.book.service.HibernateSessionTransformer;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 /**
  *
@@ -282,16 +275,16 @@ public class BooksTest {
         transaction.begin();
 
         Session session = HibernateSessionTransformer.getSession(entityManager);
-        String query = "SELECT DISTINCT {c.*} FROM cargo_mode c join stringculture sc on c.name = sc.id order by sc.value";
-        String hq = "select distinct a from CargoMode a, StringCulture sc where a.name=sc.id.id order by sc.value";
-        String hq2 = "select a from CargoMode a left join StringCulture sc left join a.cargoType cargoType where cargoType.name = sc.id.id "
-                + "and sc.id.locale='ru' and sc.value like :p order by sc.value";
-
-//        List<CargoMode> list = session.createSQLQuery(query).addEntity("c", CargoMode.class).list();
-        List<CargoMode> list = session.createQuery(hq2).setParameter("p", "%1%").list();
-        for (CargoMode b : list) {
-            System.out.println(b.getCargoType().getCode());
-        }
+//        String query = "SELECT DISTINCT {c.*} FROM cargo_mode c join stringculture sc on c.name = sc.id order by sc.value";
+//        String hq = "select distinct a from CargoMode a, StringCulture sc where a.name=sc.id.id order by sc.value";
+//        String hq2 = "select a from CargoMode a left join StringCulture sc left join a.cargoType cargoType where cargoType.name = sc.id.id "
+//                + "and sc.id.locale='ru' and sc.value like :p order by sc.value";
+//
+////        List<CargoMode> list = session.createSQLQuery(query).addEntity("c", CargoMode.class).list();
+//        List<CargoMode> list = session.createQuery(hq2).setParameter("p", "%1%").list();
+//        for (CargoMode b : list) {
+//            System.out.println(b.getCargoType().getCode());
+//        }
 
         transaction.commit();
         entityManager.close();

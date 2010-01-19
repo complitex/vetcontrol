@@ -24,10 +24,6 @@ public class Cargo implements Serializable{
     private CargoType cargoType;
 
     @ManyToOne
-    @JoinColumn(name = "cargo_mode_id")
-    private CargoMode cargoMode;
-
-    @ManyToOne
     @JoinColumn(name = "unit_type_id")
     private UnitType unitType;
 
@@ -65,14 +61,6 @@ public class Cargo implements Serializable{
         this.cargoType = cargoType;
     }
 
-    public CargoMode getCargoMode() {
-        return cargoMode;
-    }
-
-    public void setCargoMode(CargoMode cargoMode) {
-        this.cargoMode = cargoMode;
-    }
-
     public UnitType getUnitType() {
         return unitType;
     }
@@ -87,6 +75,22 @@ public class Cargo implements Serializable{
 
     public void setCount(Integer count) {
         this.count = count;
+    }
+
+    public String getCertificateDetails() {
+        return certificateDetails;
+    }
+
+    public void setCertificateDetails(String certificateDetails) {
+        this.certificateDetails = certificateDetails;
+    }
+
+    public Date getCertificateDate() {
+        return certificateDate;
+    }
+
+    public void setCertificateDate(Date certificateDate) {
+        this.certificateDate = certificateDate;
     }
 }
 

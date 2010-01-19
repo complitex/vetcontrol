@@ -3,7 +3,6 @@ package org.vetcontrol.document.web.pages;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -12,17 +11,14 @@ import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.odlabs.wiquery.ui.datepicker.DatePicker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vetcontrol.document.service.DocumentBean;
+import org.vetcontrol.document.service.DocumentCargoBean;
 import org.vetcontrol.entity.*;
-import org.vetcontrol.service.dao.IBookViewDAO;
 import org.vetcontrol.service.dao.ILocaleDAO;
-import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.FormTemplatePage;
 
@@ -39,14 +35,11 @@ public class DocumentCargoEdit extends FormTemplatePage{
     private static final Logger log = LoggerFactory.getLogger(DocumentCargoEdit.class);
 
     @EJB(name = "DocumentBean")
-    DocumentBean documentBean;
+    DocumentCargoBean documentCargoBean;
 
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
 
-    @EJB(name = "BookViewDAO")
-    private IBookViewDAO bookViewDAO;
-    
     public DocumentCargoEdit() {
         super();
         init(null);
@@ -65,7 +58,7 @@ public class DocumentCargoEdit extends FormTemplatePage{
         //Модель данных
         DocumentCargo documentCargo = null;
         try {
-            documentCargo = (id != null) ? documentBean.loadDocumentCargo(id) : new DocumentCargo();
+            documentCargo = (id != null) ? documentCargoBean.loadDocumentCargo(id) : new DocumentCargo();
         } catch (Exception e) {
             log.error("Карточка на груз по id = " + id + " не найдена", e);
         }
@@ -77,7 +70,7 @@ public class DocumentCargoEdit extends FormTemplatePage{
             @Override
             protected void onSubmit() {
                 try {
-                    documentBean.save(getModelObject());
+                    documentCargoBean.save(getModelObject());
                     info("Карточка на груз №" + getModelObject().getId() + " сохранена");
                 } catch (Exception e) {
                     error("Ошибка сохранения карточки на груз №" + getModelObject().getId());
@@ -172,7 +165,10 @@ public class DocumentCargoEdit extends FormTemplatePage{
         addDropDownChoice(form, "document.cargo.cargo_receiver", CargoReceiver.class, documentCargoModel, "cargoReceiver");
 
         //Производитель
-        addDropDownChoice(form, "document.cargo.producer", Producer.class, documentCargoModel, "producer");
+        addDropDownChoice(form, "document.cargo.producer", CargoProducer.class, documentCargoModel, "cargoProducer");
+
+        //Пункт пропуска через границу
+        addDropDownChoice(form, "document.cargo.passingBorderPoint", PassingBorderPoint.class, documentCargoModel, "passingBorderPoint");
 
         //Реквизиты акта задержания груза
         TextField detentionDetails = new TextField<String>("document.cargo.detention_details",
@@ -185,11 +181,11 @@ public class DocumentCargoEdit extends FormTemplatePage{
         form.add(details);
     }
 
-    private <T extends IBook> DropDownChoice<T> addDropDownChoice(WebMarkupContainer container, String id, Class<T> bookClass, Object model, String property){
+    private <T extends Localizable> DropDownChoice<T> addDropDownChoice(WebMarkupContainer container, String id, Class<T> bookClass, Object model, String property){
         List<T> list = null;
 
         try {
-            list = bookViewDAO.getContent(bookClass);
+            list = documentCargoBean.getList(bookClass);
         } catch (Exception e) {
             log.error("Ошибка загрузки списка справочников: " + bookClass, e);
         }
@@ -200,7 +196,7 @@ public class DocumentCargoEdit extends FormTemplatePage{
 
                     @Override
                     public Object getDisplayValue(T object) {
-                        return BeanPropertyUtil.getLocalizablePropertyAsString(object.getNames(), localeDAO.systemLocale(), null);
+                        return object.getDisplayName(getLocale(), localeDAO.systemLocale());                        
                     }
 
                     @Override
@@ -218,46 +214,6 @@ public class DocumentCargoEdit extends FormTemplatePage{
     private void addCargo(final ListItem<Cargo> item){
         //Тип груза
         final DropDownChoice<CargoType> ddcCargoType = addDropDownChoice(item, "document.cargo.cargo_type", CargoType.class,item.getModelObject(), "cargoType");
-
-        //Модель данных для видов груза
-        LoadableDetachableModel<List<CargoMode>> cargoModeModel = new LoadableDetachableModel<List<CargoMode>>(){
-            @Override
-            protected List<CargoMode> load() {
-                List<CargoMode> cargoModes = documentBean.getCargoModes(ddcCargoType.getModelObject());
-                bookViewDAO.addLocalizationSupport(cargoModes);
-                return cargoModes;
-            }
-        };
-
-        //Вид груза
-        final DropDownChoice<CargoMode> ddcCargoMode = new DropDownChoice<CargoMode>("document.cargo.cargo_mode",
-                new PropertyModel<CargoMode>(item.getModelObject(), "cargoMode"),
-                cargoModeModel,
-                new IChoiceRenderer<CargoMode>(){
-
-                    @Override
-                    public Object getDisplayValue(CargoMode cargoMode) {
-                        return BeanPropertyUtil.getLocalizablePropertyAsString(cargoMode.getNames(), localeDAO.systemLocale(), null)
-                                + " (" + BeanPropertyUtil.getLocalizablePropertyAsString(cargoMode.getUnitType().getNames(), localeDAO.systemLocale(), null) + ")";
-                    }
-
-                    @Override
-                    public String getIdValue(CargoMode cargoMode, int index) {
-                        return String.valueOf(cargoMode.getId());
-                    }
-                });
-        ddcCargoMode.setRequired(true);
-        ddcCargoMode.setOutputMarkupId(true);
-        item.add(ddcCargoMode);
-
-        ddcCargoType.add(new AjaxFormComponentUpdatingBehavior("onchange"){
-
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                target.addComponent(ddcCargoMode);
-            }
-        });
-
         //Единицы измерения
         addDropDownChoice(item, "document.cargo.unit_type", UnitType.class, item.getModelObject(), "unitType");
 

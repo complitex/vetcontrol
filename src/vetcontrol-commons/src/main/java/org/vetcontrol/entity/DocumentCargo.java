@@ -51,7 +51,11 @@ public class DocumentCargo implements Serializable{
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "cargo_producer_id")
-    private Producer producer;
+    private CargoProducer cargoProducer;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "passing_border_point_id")
+    private PassingBorderPoint passingBorderPoint;
 
     @Column(name = "detention_details", length = 255)
     private String detentionDetails;
@@ -139,12 +143,20 @@ public class DocumentCargo implements Serializable{
         this.cargoReceiver = cargoReceiver;
     }
 
-    public Producer getProducer() {
-        return producer;
+    public CargoProducer getCargoProducer() {
+        return cargoProducer;
     }
 
-    public void setProducer(Producer producer) {
-        this.producer = producer;
+    public void setCargoProducer(CargoProducer cargoProducer) {
+        this.cargoProducer = cargoProducer;
+    }
+
+    public PassingBorderPoint getPassingBorderPoint() {
+        return passingBorderPoint;
+    }
+
+    public void setPassingBorderPoint(PassingBorderPoint passingBorderPoint) {
+        this.passingBorderPoint = passingBorderPoint;
     }
 
     public String getDetentionDetails() {

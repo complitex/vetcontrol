@@ -11,13 +11,14 @@ import java.util.List;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
- *         Date: 12.01.2010 14:46:58
+ *         Date: 12.01.2010 14:41:47
  *
- * Справочник места таможенного оформления грузов
+ * Справочник производителей
  */
+
 @Entity
-@Table(name = "customs_point")
-public class CustomsPoint extends Localizable{
+@Table(name = "cargo_producer")
+public class CargoProducer extends Localizable{
     private List<StringCulture> names = new ArrayList<StringCulture>();
 
     @Transient
@@ -29,5 +30,5 @@ public class CustomsPoint extends Localizable{
 
     public void setNames(List<StringCulture> names) {
         this.names = names;
-    }
+    }    
 }

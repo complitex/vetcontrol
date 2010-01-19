@@ -4,49 +4,23 @@
  */
 package org.vetcontrol.entity;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * 2.4.3.13 Справочник пунктов пропуска через границу
- *
  * @author Artem
+ *
+ * Справочник пунктов пропуска через границу
  */
 @Entity
 @Table(name = "passing_border_point")
-public class PassingBorderPoint implements Serializable {
-
-    private Integer id;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", unique = true, nullable = false)
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-    private long name;
-
-    @Column(name = "name")
-    public long getName() {
-        return this.name;
-    }
-
-    public void setName(long name) {
-        this.name = name;
-    }
+public class PassingBorderPoint extends Localizable{
     private List<StringCulture> names = new ArrayList<StringCulture>();
 
     @MappedProperty("name")

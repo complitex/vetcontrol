@@ -1,7 +1,5 @@
 package org.vetcontrol.user.web.pages;
 
-import java.util.Arrays;
-import java.util.List;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.OrderByBorder;
@@ -20,19 +18,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.User;
 import org.vetcontrol.entity.UserGroup;
+import org.vetcontrol.service.UIPreferences;
+import org.vetcontrol.service.UIPreferences.PreferenceType;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.user.service.UserBean;
 import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.web.component.paging.PagingNavigator;
+import org.vetcontrol.web.component.toolbar.AddUserButton;
 import org.vetcontrol.web.component.toolbar.ToolbarButton;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.TemplatePage;
 
 import javax.ejb.EJB;
+import java.util.Arrays;
 import java.util.Iterator;
-import org.vetcontrol.service.UIPreferences;
-import org.vetcontrol.service.UIPreferences.PreferenceType;
-import org.vetcontrol.web.component.toolbar.AddUserButton;
+import java.util.List;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -77,7 +77,7 @@ public class UserList extends TemplatePage {
             public Iterator<? extends User> iterator(int first, int count) {
                 SortParam sortParam = getSort();
                 preferences.putPreference(PreferenceType.SORT_PROPERTY, SORT_PROPERTY_KEY, sortParam.getProperty());
-                preferences.putPreference(PreferenceType.SORT_ORDER, SORT_ORDER_KEY, Boolean.valueOf(sortParam.isAscending()));
+                preferences.putPreference(PreferenceType.SORT_ORDER, SORT_ORDER_KEY, sortParam.isAscending());
 
                 UserBean.OrderBy order = UserBean.OrderBy.valueOf(sortParam.getProperty());
                 
@@ -112,7 +112,7 @@ public class UserList extends TemplatePage {
         String sortPropertyFromPreferences = preferences.getPreference(PreferenceType.SORT_PROPERTY, SORT_PROPERTY_KEY, String.class);
         Boolean sortOrderFromPreferences = preferences.getPreference(PreferenceType.SORT_ORDER, SORT_ORDER_KEY, Boolean.class);
         String sortProp = sortPropertyFromPreferences != null ? sortPropertyFromPreferences : "LAST_NAME";
-        boolean asc = sortOrderFromPreferences != null ? sortOrderFromPreferences.booleanValue() : true;
+        boolean asc = sortOrderFromPreferences != null ? sortOrderFromPreferences : true;
         userSort.setSort(sortProp, asc);
 
         //Таблица пользователей

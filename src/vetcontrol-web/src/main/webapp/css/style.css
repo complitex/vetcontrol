@@ -185,3 +185,7 @@ input.btnMiddle {
 #user_list_filter{
     margin-bottom:20px;
 }
+
+.table_input input, .table_input select{
+    width:100%;    
+}

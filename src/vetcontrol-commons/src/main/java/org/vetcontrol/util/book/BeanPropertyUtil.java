@@ -4,6 +4,17 @@
  */
 package org.vetcontrol.util.book;
 
+import org.apache.wicket.Session;
+import org.apache.wicket.util.string.Strings;
+import org.vetcontrol.entity.StringCulture;
+import org.vetcontrol.entity.StringCultureId;
+import org.vetcontrol.util.book.entity.annotation.BookReference;
+import org.vetcontrol.util.book.entity.annotation.MappedProperty;
+import org.vetcontrol.util.book.entity.annotation.ValidProperty;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -14,25 +25,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import org.apache.wicket.Session;
-import org.apache.wicket.util.string.Strings;
-import org.vetcontrol.entity.StringCulture;
-import org.vetcontrol.entity.StringCultureId;
-import org.vetcontrol.util.book.entity.annotation.BookReference;
-import org.vetcontrol.util.book.entity.annotation.MappedProperty;
+import java.util.*;
 
 /**
  *
@@ -84,6 +77,9 @@ public class BeanPropertyUtil {
                 } else {
                     property.setWritable(true);
                     for (Annotation annotation : prop.getReadMethod().getAnnotations()) {
+                        if (annotation.annotationType().equals(ValidProperty.class)){
+                            validProperty = ((ValidProperty)annotation).value();                            
+                        }
 
                         if (annotation.annotationType().equals(Id.class)) {
                             validProperty = false;

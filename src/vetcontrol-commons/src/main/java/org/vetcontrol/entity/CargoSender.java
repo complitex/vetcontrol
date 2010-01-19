@@ -1,47 +1,25 @@
 package org.vetcontrol.entity;
 
-import java.io.Serializable;
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 2.4.3.16 Справочник отправителей/получателей грузов
- * отправители грузов
- *
- * @author Anatoly A. Ivanov java@inheaven.ru
+ *@author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 12.01.2010 14:38:41
- * 	
+ *
+ * Справочник отправителей грузов
  */
 
 @Entity
 @Table(name = "cargo_sender")
-public class CargoSender implements IBook, Serializable {
-    private Integer id;
-    private Long name;
+public class CargoSender extends Localizable{
     private List<StringCulture> names = new ArrayList<StringCulture>();
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", unique = true, nullable = false)
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    @Column(name = "name")
-    public Long getName() {
-        return name;
-    }
-
-    public void setName(Long name) {
-        this.name = name;
-    }
 
     @Transient
     @MappedProperty("name")
