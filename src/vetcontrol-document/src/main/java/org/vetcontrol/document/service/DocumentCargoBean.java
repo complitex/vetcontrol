@@ -193,17 +193,17 @@ public class DocumentCargoBean {
 
             if (filter.getCargoSenderName() != null){
                 where += " and upper(m_cargoSender.value) like :cargoSenderName";
-                where += getWhereLocaleFilter("m_cargoSender", filter.getCurrentLocale(), filter.getSystemLocale());
+                where += getWhereLocaleFilter("cargoSender", filter.getCurrentLocale(), filter.getSystemLocale());
             }
 
             if (filter.getCargoReceiverName() != null){
                 where += " and upper(m_cargoReceiver.value) like :cargoReceiverName";
-                where += getWhereLocaleFilter("m_cargoReceiver", filter.getCurrentLocale(), filter.getSystemLocale());
+                where += getWhereLocaleFilter("cargoReceiver", filter.getCurrentLocale(), filter.getSystemLocale());
             }
 
             if (filter.getCargoProducerName() != null){
                 where += " and upper(m_cargoProducer.value) like :cargoProducerName";
-                where += getWhereLocaleFilter("m_cargoProducer", filter.getCurrentLocale(), filter.getSystemLocale());
+                where += getWhereLocaleFilter("cargoProducer", filter.getCurrentLocale(), filter.getSystemLocale());
             }
 
             if (filter.getDetentionDetails() != null){
