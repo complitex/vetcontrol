@@ -54,20 +54,24 @@ public class DocumentCargoList extends TemplatePage{
         super();
 
         final Locale systemLocale = localeDAO.systemLocale();
-        final Locale locale = localeDAO.systemLocale();
 
         add(new Label("title", getString("document.cargo.list.title")));
 
         //Фильтр
-        final IModel<DocumentCargoFilter> filter = new CompoundPropertyModel<DocumentCargoFilter>(new DocumentCargoFilter(locale,systemLocale));
+        final IModel<DocumentCargoFilter> filter = new CompoundPropertyModel<DocumentCargoFilter>(
+                new DocumentCargoFilter(getLocale(), systemLocale));
         final Form<DocumentCargoFilter> filterForm = new Form<DocumentCargoFilter>("filter_form", filter);
 
-        filterForm.add(new Button("filter_reset"){
+        Button filter_reset = new Button("filter_reset"){
             @Override
             public void onSubmit() {
-                filter.setObject(new DocumentCargoFilter(locale,systemLocale));
+                filterForm.clearInput();
+                filter.setObject(new DocumentCargoFilter(getLocale(), systemLocale));
             }
-        });
+        };
+
+        filter_reset.setDefaultFormProcessing(false);
+        filterForm.add(filter_reset);
 
         filterForm.add(new TextField<Integer>("id"));
         filterForm.add(new DropDownChoice<MovementType>("movementType", documentCargoBean.getList(MovementType.class),
@@ -75,7 +79,7 @@ public class DocumentCargoList extends TemplatePage{
 
                     @Override
                     public Object getDisplayValue(MovementType object) {
-                        return object.getDisplayName(locale, systemLocale);
+                        return object.getDisplayName(getLocale(), systemLocale);
                     }
 
                     @Override
@@ -89,7 +93,7 @@ public class DocumentCargoList extends TemplatePage{
 
                     @Override
                     public Object getDisplayValue(VehicleType object) {
-                        return object.getDisplayName(locale, systemLocale);
+                        return object.getDisplayName(getLocale(), systemLocale);
                     }
 
                     @Override
@@ -137,12 +141,12 @@ public class DocumentCargoList extends TemplatePage{
             protected void populateItem(Item<DocumentCargo> item) {
                 DocumentCargo dc = item.getModelObject();
                 item.add(new Label("id", String.valueOf(dc.getId())));
-                item.add(new Label("movementType", dc.getMovementType().getDisplayName(locale, systemLocale)));
-                item.add(new Label("vehicleType", dc.getVehicleType().getDisplayName(locale, systemLocale)));
+                item.add(new Label("movementType", dc.getMovementType().getDisplayName(getLocale(), systemLocale)));
+                item.add(new Label("vehicleType", dc.getVehicleType().getDisplayName(getLocale(), systemLocale)));
                 item.add(new Label("vehicleDetails", dc.getVehicleDetails()));
-                item.add(new Label("cargoSender", dc.getCargoSender().getDisplayName(locale, systemLocale)));
-                item.add(new Label("cargoReceiver", dc.getCargoReceiver().getDisplayName(locale, systemLocale)));
-                item.add(new Label("cargoProducer", dc.getCargoProducer().getDisplayName(locale, systemLocale)));
+                item.add(new Label("cargoSender", dc.getCargoSender().getDisplayName(getLocale(), systemLocale)));
+                item.add(new Label("cargoReceiver", dc.getCargoReceiver().getDisplayName(getLocale(), systemLocale)));
+                item.add(new Label("cargoProducer", dc.getCargoProducer().getDisplayName(getLocale(), systemLocale)));
                 item.add(new DateLabel("created", new Model<Date>(dc.getCreated()), new StyleDateConverter(true)));
                 item.add(new BookmarkablePageLinkPanel<DocumentCargo>("action", "Редактировать", DocumentCargoEdit.class,
                         new PageParameters("doc_cargo_id=" + dc.getId())));

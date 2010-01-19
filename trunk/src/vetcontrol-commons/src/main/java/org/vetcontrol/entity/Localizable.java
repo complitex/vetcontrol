@@ -52,7 +52,9 @@ public abstract class Localizable implements Serializable {
     @Transient
     public String getDisplayName(java.util.Locale current, java.util.Locale system){
         StringCulture stringCulture = null;
-        if ((stringCulture = stringCultureMap.get(current.getLanguage())) != null){
+        if ((stringCulture = stringCultureMap.get(current.getLanguage())) != null
+                && stringCulture.getValue() != null
+                && !stringCulture.getValue().isEmpty()){
             return stringCulture.getValue();
         }else if((stringCulture = stringCultureMap.get(system.getLanguage())) != null){
             return stringCulture.getValue();

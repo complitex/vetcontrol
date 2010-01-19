@@ -4,13 +4,14 @@
  */
 package org.vetcontrol.web.component;
 
-import java.util.List;
-import java.util.Locale;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.vetcontrol.service.UIPreferences;
+
+import java.util.List;
+import java.util.Locale;
 
 /**
  *
@@ -30,7 +31,7 @@ public class LocalePicker extends Panel {
             getSession().setLocale(userLocalePreference);
         }
 
-        add(new DropDownChoice("localeDropDown", new IModel<Locale>() {
+        add(new DropDownChoice<Locale>("localeDropDown", new IModel<Locale>() {
 
             @Override
             public Locale getObject() {
