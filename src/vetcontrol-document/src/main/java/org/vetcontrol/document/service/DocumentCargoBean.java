@@ -134,9 +134,10 @@ public class DocumentCargoBean {
     }
 
     private String getWhereLocaleFilter(String entity, Locale currentLocale, Locale systemLocale){
-        return " and ((m_"+entity+".id.locale = '" + currentLocale.getLanguage() + "' and m_"+entity+".value is not null)"
+        return " and ((m_"+entity+".id.locale = '" + currentLocale.getLanguage() + "' and length(m_"+entity+".value) > 0)" 
                 + " or (m_"+entity+".id.locale = '" + systemLocale.getLanguage()
-                +"' and not exists (select 1 from m_"+entity+" as n where n.id.locale = '" +currentLocale.getLanguage() +"')))";
+                +"' and not exists (select 1 from StringCulture n where n.id.id = m_"+entity+".id.id" +
+                " and n.id.locale = '" +currentLocale.getLanguage() +"' and length(n.value) > 0)))";
     }
     
     private String getJoin(DocumentCargoFilter filter, OrderBy orderBy){
