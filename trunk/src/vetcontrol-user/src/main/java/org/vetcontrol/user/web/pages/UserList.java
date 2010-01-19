@@ -54,6 +54,8 @@ public class UserList extends TemplatePage {
     private static final String SORT_ORDER_KEY = UserList.class.getSimpleName() + "_SORT_ORDER";
     private static final String FILTER_KEY = UserList.class.getSimpleName() + "_FILTER";
     private static final String PAGE_NUMBER_KEY = UserList.class.getSimpleName() + "_PAGE_NUMBER";
+    
+    private DataView<User> userDataView;
 
     public UserList() {
         super();
@@ -83,7 +85,7 @@ public class UserList extends TemplatePage {
                 preferences.putPreference(UIPreferences.PreferenceType.FILTER, FILTER_KEY, filter);
 
                 try {
-                    return userBean.getUsers(first, count, order, sortParam.isAscending(), filter).iterator();
+                    return userBean.getUsers(first, count, order, sortParam.isAscending(), filter, getSession().getLocale()).iterator();
                 } catch (Exception e) {
                     log.error("Ошибка получения списка пользователей из базы данных", e);
                 }
@@ -114,7 +116,7 @@ public class UserList extends TemplatePage {
         userSort.setSort(sortProp, asc);
 
         //Таблица пользователей
-        final DataView<User> userDataView = new DataView<User>("users", userSort, ITEMS_ON_PAGE) {
+        userDataView = new DataView<User>("users", userSort, ITEMS_ON_PAGE) {
 
             @Override
             protected void populateItem(Item<User> userItem) {
@@ -135,8 +137,13 @@ public class UserList extends TemplatePage {
                 userItem.add(new Label("groups", getGroups(user)));
             }
         };
-
         add(userDataView);
+
+        //retrieve page number from preferences.
+        Integer page = preferences.getPreference(PreferenceType.PAGE_NUMBER, PAGE_NUMBER_KEY, Integer.class);
+        if(page != null && page < userDataView.getPageCount()){
+            userDataView.setCurrentPage(page);
+        }
 
         //Ссылки для активации сортировки по полям
         add(new OrderByBorder("order_last_name", "LAST_NAME", userSort) {
@@ -195,6 +202,13 @@ public class UserList extends TemplatePage {
             }
             sb.append(", ");
         }
+    }
+
+    @Override
+    protected void onAfterRender() {
+        super.onAfterRender();
+        //save page number preference.
+        preferences.putPreference(PreferenceType.PAGE_NUMBER, PAGE_NUMBER_KEY, userDataView.getCurrentPage());
     }
 
     @Override

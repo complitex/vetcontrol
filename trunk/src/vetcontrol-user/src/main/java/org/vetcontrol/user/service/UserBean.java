@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * User: Anatoly A. Ivanov java@inheaven.ru
@@ -31,11 +32,16 @@ public class UserBean {
     @EJB(beanName = "BookViewDAO")
     private IBookViewDAO bookViewDAO;
 
-    public List<User> getUsers() {
-        return entityManager.createQuery("from User", User.class).getResultList();
-    }
+    public List<User> getUsers(int first, int count, OrderBy orderBy, boolean asc, String filter, Locale locale) {
+        String select = "SELECT DISTINCT u FROM User u, StringCulture sc LEFT JOIN FETCH u.department d ";
 
-    public List<User> getUsers(int first, int count, OrderBy orderBy, boolean asc, String filter) {
+        String where = " WHERE d.name = sc.id.id AND sc.id.locale = :locale ";
+        if (filter != null) {
+            where += "AND (upper(u.login) like :filter or upper(u.firstName) like :filter "
+                    + "or upper(u.lastName) like :filter or upper(u.middleName) like :filter "
+                    + "or d.name IN (SELECT sc2.id.id FROM StringCulture sc2 WHERE upper(sc2.value) like :filter))";
+        }
+
         String order = "";
         switch (orderBy) {
             case LOGIN:
@@ -51,19 +57,13 @@ public class UserBean {
                 order = " order by u.middleName";
                 break;
             case DEPARTMENT:
-                order = " order by u.department.name";
+                order = " order by sc.value";
                 break;
         }
 
-        String where = "";
-        if (filter != null) {
-            where = " where upper(u.login) like :filter or upper(u.firstName) like :filter "
-                    + "or upper(u.lastName) like :filter or upper(u.middleName) like :filter "
-                    + "or upper(u.department.name) like :filter";
-        }
+        TypedQuery<User> query = entityManager.createQuery(select + where + order + (asc ? " asc" : " desc"), User.class);
 
-        TypedQuery<User> query = entityManager.createQuery("from User u" + where + order + (asc ? " asc" : " desc"), User.class);
-
+        query.setParameter("locale", locale.getLanguage());
         if (filter != null) {
             query.setParameter("filter", "%" + filter.toUpperCase() + "%");
         }
@@ -76,14 +76,16 @@ public class UserBean {
     }
 
     public Long getUserCount(String filter) {
+        String select = "SELECT COUNT(DISTINCT u) FROM User u LEFT JOIN u.department d ";
+
         String where = "";
         if (filter != null) {
-            where = " where upper(u.login) like :filter or upper(u.firstName) like :filter "
+            where += "WHERE upper(u.login) like :filter or upper(u.firstName) like :filter "
                     + "or upper(u.lastName) like :filter or upper(u.middleName) like :filter "
-                    + "or upper(u.department.name) like :filter";
+                    + "or d.name IN (SELECT sc2.id.id FROM StringCulture sc2 WHERE upper(sc2.value) like :filter))";
         }
 
-        TypedQuery<Long> query = entityManager.createQuery("select count(u) from User u" + where, Long.class);
+        TypedQuery<Long> query = entityManager.createQuery(select + where, Long.class);
 
         if (filter != null) {
             query.setParameter("filter", "%" + filter.toUpperCase() + "%");

@@ -73,10 +73,13 @@ public class UserEdit extends FormTemplatePage {
         };
 
         //Форма
-        Form form = new Form<User>("user_edit_form", userModel){
+        Form form = new Form<User>("user_edit_form", userModel);
+        
+        Button save = new Button("save"){
+
             @Override
-            protected void onSubmit() {
-                User user = getModelObject();
+            public void onSubmit() {
+                User user = (User)getForm().getModelObject();
 
                 /*Пароль кодируется в MD5. Для нового пользователя пароль равен логину.
                 Пароль меняется в базе данныех, если поле пароля не пустое*/
@@ -110,7 +113,20 @@ public class UserEdit extends FormTemplatePage {
                     error(getString("user.info.error.saved"));
                 }
             }
+
         };
+        form.add(save);
+
+        Button cancel = new Button("back"){
+
+            @Override
+            public void onSubmit() {
+                setResponsePage(UserList.class);
+            }
+
+        };
+        cancel.setDefaultFormProcessing(false);
+        form.add(cancel);
         add(form);
 
         RequiredTextField login = new RequiredTextField<String>("user.login", new PropertyModel<String>(userModel, "login"));
