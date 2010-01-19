@@ -17,12 +17,15 @@ import javax.ejb.EJB;
 import java.beans.IntrospectionException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.vetcontrol.information.service.fasade.pages.AddUpdateBookEntryPageFasade;
+import org.vetcontrol.web.security.SecurityRoles;
 
 /**
  *
  * @author Artem
  */
+@AuthorizeInstantiation(SecurityRoles.INFORMATION_EDIT)
 public class AddUpdateBookEntryPage extends FormTemplatePage {
 
     @EJB(name = "AddUpdateBookEntryPageFasade")

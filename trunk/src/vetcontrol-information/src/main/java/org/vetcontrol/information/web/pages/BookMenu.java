@@ -22,7 +22,7 @@ import org.vetcontrol.web.template.ITemplateMenu;
  *
  * @author Artem
  */
-@AuthorizeInstantiation(SecurityRoles.INFORMATION_EDIT)
+@AuthorizeInstantiation(SecurityRoles.INFORMATION_VIEW)
 public class BookMenu implements ITemplateMenu {
 
     @Override
