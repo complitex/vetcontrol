@@ -10,8 +10,17 @@ and open the template in the editor.
     </head>
     <body>
     <wicket:panel>
-        <h1><span wicket:id="bookName"></span></h1>
+        <center>
+            <h1><span wicket:id="bookName"></span></h1>
+        </center>
+
         <form wicket:id="filterForm">
+            <br/>
+            <br/>
+            <center>
+                 <div class="filterPanel" wicket:id="goAndClearFilter"></div>
+            </center>
+            
             <table class="tbColor bookContent" cellspacing="0" cellpadding="0" border="0" wicket:id="table">
             </table>
             <input wicket:id="focus-tracker" type="hidden"/>
@@ -19,10 +28,10 @@ and open the template in the editor.
             <div>
                 <span wicket:id="navigator"></span>
             </div>
+            <!--<br/>
             <br/>
-            <br/>
-            <br/>
-            <div class="filterPanel" wicket:id="goAndClearFilter"></div>
+            <br/>-->
+
         </form>
     </wicket:panel>
 </body>

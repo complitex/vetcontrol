@@ -21,6 +21,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.GoAnd
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
@@ -57,6 +58,7 @@ public abstract class BookContentControl extends Panel {
             });
         }
     }
+
     public BookContentControl(String id, final DataProvider dataProvider, final Class bookClass, BookPageFasade fasade,
             Locale systemLocale, final UIPreferences preferences) throws IntrospectionException {
         super(id);
@@ -68,8 +70,8 @@ public abstract class BookContentControl extends Panel {
         for (Property prop : BeanPropertyUtil.getProperties(bookClass)) {
             columns.add(new BookPropertyColumn<Serializable>(this, new DisplayPropertyLocalizableModel(prop, this), prop, fasade, systemLocale));
         }
-        IRoleCheckingStrategy application = (IRoleCheckingStrategy)getApplication();
-        if(application.hasAnyRole(new Roles(SecurityRoles.INFORMATION_EDIT))){
+        IRoleCheckingStrategy application = (IRoleCheckingStrategy) getApplication();
+        if (application.hasAnyRole(new Roles(SecurityRoles.INFORMATION_EDIT))) {
             columns.add(new AbstractColumn(new ResourceModel("book.edit.header")) {
 
                 @Override
@@ -93,7 +95,7 @@ public abstract class BookContentControl extends Panel {
         }
 
         table.addTopToolbar(new HeadersToolbar(table, dataProvider));
-        final FilterForm filterForm = new FilterForm("filterForm", dataProvider){
+        final FilterForm filterForm = new FilterForm("filterForm", dataProvider) {
 
             @Override
             protected void onSubmit() {
@@ -128,7 +130,12 @@ public abstract class BookContentControl extends Panel {
         filterForm.add(goAndClearFilter);
         table.addTopToolbar(new FilterToolbar(table, filterForm, dataProvider));
         table.setOutputMarkupId(true);
-        PagingNavigator navigator = new PagingNavigator("navigator", table);
+
+        Panel navigator = new EmptyPanel("navigator");
+        if (table.getPageCount() > 1) {
+            navigator = new PagingNavigator("navigator", table);
+        }
+
         filterForm.add(navigator);
         filterForm.add(table);
         add(filterForm);
