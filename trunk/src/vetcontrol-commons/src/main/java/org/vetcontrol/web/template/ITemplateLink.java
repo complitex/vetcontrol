@@ -32,4 +32,10 @@ public interface ITemplateLink extends Serializable{
      * @return Параметры страницы.
      */
     public PageParameters getParameters();
+
+    /**
+     * Должен возвращать идентификатор html тега.
+     * @return tag id.
+     */
+    String getTagId();
 }

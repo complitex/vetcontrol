@@ -127,9 +127,20 @@ public abstract class TemplatePage extends WebPage {
 
                 @Override
                 protected void populateItem(ListItem<ITemplateLink> item) {
-                    BookmarkablePageLink link = new BookmarkablePageLink<Class<? extends Page>>("link", item.getModelObject().getPage(),
-                            item.getModelObject().getParameters());
-                    link.add(new Label("label", item.getModelObject().getLabel(getLocale())));
+                    final ITemplateLink templateLink = item.getModelObject();
+                    BookmarkablePageLink link = new BookmarkablePageLink<Class<? extends Page>>("link", templateLink.getPage(),
+                            templateLink.getParameters()){
+
+                        @Override
+                        protected void onComponentTag(ComponentTag tag) {
+                            super.onComponentTag(tag);
+                            if (!Strings.isEmpty(templateLink.getTagId())) {
+                                tag.put("id", templateLink.getTagId());
+                            }
+                        }
+
+                    };
+                    link.add(new Label("label", templateLink.getLabel(getLocale())));
                     item.add(link);
                 }
             });
