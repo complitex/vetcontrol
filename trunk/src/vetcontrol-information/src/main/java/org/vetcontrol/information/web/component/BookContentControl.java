@@ -58,6 +58,7 @@ public abstract class BookContentControl extends Panel {
             });
         }
     }
+    private Panel navigator;
 
     public BookContentControl(String id, final DataProvider dataProvider, final Class bookClass, BookPageFasade fasade,
             Locale systemLocale, final UIPreferences preferences) throws IntrospectionException {
@@ -80,7 +81,7 @@ public abstract class BookContentControl extends Panel {
                 }
             });
         }
-        DataTable table = new DataTable("table", columns.toArray(new IColumn[columns.size()]), dataProvider, Constants.ROWS_PER_PAGE) {
+        final DataTable table = new DataTable("table", columns.toArray(new IColumn[columns.size()]), dataProvider, Constants.ROWS_PER_PAGE) {
 
             @Override
             protected void onPageChanged() {
@@ -95,12 +96,27 @@ public abstract class BookContentControl extends Panel {
         }
 
         table.addTopToolbar(new HeadersToolbar(table, dataProvider));
+
+        initNavigator(table);
+
         final FilterForm filterForm = new FilterForm("filterForm", dataProvider) {
 
             @Override
             protected void onSubmit() {
                 dataProvider.initSize();
                 super.onSubmit();
+                changeNavigator();
+            }
+
+            private void changeNavigator() {
+                Panel newNavigator = null;
+                if (table.getPageCount() > 1) {
+                    newNavigator = new PagingNavigator("navigator", table);
+                } else {
+                    newNavigator = new EmptyPanel("navigator");
+                }
+                navigator.replaceWith(newNavigator);
+                navigator = newNavigator;
             }
         };
 
@@ -131,14 +147,16 @@ public abstract class BookContentControl extends Panel {
         table.addTopToolbar(new FilterToolbar(table, filterForm, dataProvider));
         table.setOutputMarkupId(true);
 
-        Panel navigator = new EmptyPanel("navigator");
-        if (table.getPageCount() > 1) {
-            navigator = new PagingNavigator("navigator", table);
-        }
-
         filterForm.add(navigator);
         filterForm.add(table);
         add(filterForm);
+    }
+
+    private void initNavigator(final DataTable table) {
+        navigator = new EmptyPanel("navigator");
+        if (table.getPageCount() > 1) {
+            navigator = new PagingNavigator("navigator", table);
+        }
     }
 
     public abstract void selected(Serializable obj);
