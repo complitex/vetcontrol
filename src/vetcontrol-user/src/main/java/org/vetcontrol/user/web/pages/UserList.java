@@ -58,6 +58,7 @@ public class UserList extends TemplatePage {
     private static final String PAGE_NUMBER_KEY = UserList.class.getSimpleName() + "_PAGE_NUMBER";
     
     private DataView<User> userDataView;
+    private Panel navigator;
 
     public UserList() {
         super();
@@ -68,7 +69,26 @@ public class UserList extends TemplatePage {
         //Форма фильтра по ключевому слову
         String filter = preferences.getPreference(PreferenceType.FILTER, FILTER_KEY, String.class);
         
-        final Form<String> filterForm = new Form<String>("filter_form", new Model<String>(filter));
+        final Form<String> filterForm = new Form<String>("filter_form", new Model<String>(filter)){
+
+            @Override
+            protected void onSubmit() {
+                super.onSubmit();
+                changeNavigator();
+            }
+
+            private void changeNavigator() {
+                Panel newNavigator = null;
+                if (userDataView.getPageCount() > 1) {
+                    newNavigator = new PagingNavigator("navigator", userDataView);
+                } else {
+                    newNavigator = new EmptyPanel("navigator");
+                }
+                navigator.replaceWith(newNavigator);
+                navigator = newNavigator;
+            }
+
+        };
         add(filterForm);
         filterForm.add(new TextField<String>("filter_value", filterForm.getModel()));
 
@@ -178,14 +198,17 @@ public class UserList extends TemplatePage {
                 userDataView.setCurrentPage(0);
             }
         });
+        initNavigator();
 
+        add(navigator);
+    }
+
+    private void initNavigator() {
         //Панель ссылок для постраничной навигации
-        Panel navigator = new EmptyPanel("navigator");
+        navigator = new EmptyPanel("navigator");
         if (userDataView.getPageCount() > 1) {
             navigator = new PagingNavigator("navigator", userDataView);
         }
-
-        add(navigator);
     }
 
     /**
