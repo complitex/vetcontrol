@@ -3,7 +3,7 @@
 var expandedMenuClassName = "expanded";
 var collapsedMenuClassName = "collapsed";
 
-var menuCookiePrefix = "MenuPrefix";
+var menuCookiePrefix = "MenuPrefix_";
 
 menuLoad = function(){
     $(".block div").each(function(){
@@ -39,6 +39,28 @@ menuLoad = function(){
         //            $(this).closest(".LeftBlockOff").addClass("LeftBlock").removeClass("LeftBlockOff");
         }
     });
+};
+
+//selected menu item behaviour
+var selectedMenuItemCookieName = "SelectedMenuItem";
+var selectedMenuItemClassName = "SelectedMenuItem";
+
+selectedMenuLoad = function(){
+    $(".block li a").each(function(){
+        id = $(this).attr("id");
+        if(id){
+            $(this).click(function(){
+                setCookie(selectedMenuItemCookieName, $(this).attr("id"), "", "/", "");
+            });
+        }
+    });
+
+    selecteMenuItemID = getCookie(selectedMenuItemCookieName);
+    if(selecteMenuItemID){
+        $("#"+selecteMenuItemID).parent().addClass(selectedMenuItemClassName)
+        $("#"+selecteMenuItemID).focus();
+        $(".buttonLogin").focus();
+    }
 };
 
 //main information panel and content panel
@@ -87,6 +109,7 @@ mainPanelLoad = function(){
 $(document).ready(function(){
     menuLoad();
     mainPanelLoad();
+    selectedMenuLoad();
 });
 
 

@@ -52,6 +52,12 @@ public class BookMenu implements ITemplateMenu {
                     params.add(BookPage.BOOK_TYPE, bookType.getName());
                     return params;
                 }
+
+                @Override
+                public String getTagId() {
+                    return bookType.getSimpleName();
+                }
+
             });
         }
 

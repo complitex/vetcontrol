@@ -42,6 +42,12 @@ public class UserTemplateMenu extends ResourceTemplateMenu{
             public PageParameters getParameters() {
                 return PageParameters.NULL;
             }
+
+            @Override
+            public String getTagId() {
+                return "UserList";
+            }
+
         });
 
         links.add(new ITemplateLink(){
@@ -57,6 +63,11 @@ public class UserTemplateMenu extends ResourceTemplateMenu{
             @Override
             public PageParameters getParameters() {
                 return PageParameters.NULL;
+            }
+
+            @Override
+            public String getTagId() {
+                return "UserAdd";
             }
         });
 

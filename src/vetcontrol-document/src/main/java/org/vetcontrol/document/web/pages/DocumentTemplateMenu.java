@@ -36,6 +36,12 @@ public class DocumentTemplateMenu extends ResourceTemplateMenu {
             public PageParameters getParameters() {
                 return PageParameters.NULL;
             }
+
+            @Override
+            public String getTagId() {
+                return "DocumentCargoList";
+            }
+
         });
 
         links.add(new ITemplateLink(){
@@ -52,6 +58,12 @@ public class DocumentTemplateMenu extends ResourceTemplateMenu {
             public PageParameters getParameters() {
                 return PageParameters.NULL;
             }
+
+            @Override
+            public String getTagId() {
+                return "DocumentCargoAdd";
+            }
+
         });
 
         return links;
