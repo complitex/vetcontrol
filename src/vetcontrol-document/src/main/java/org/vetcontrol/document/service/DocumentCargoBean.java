@@ -174,7 +174,10 @@ public class DocumentCargoBean {
 
             if (filter.getDepartment() != null){
                 if (filter.isChildDepartments()){
-                    where += " and (dc.creator.department = :department or dc.creator.department.parent = :department)";
+                    where += " and (dc.creator.department = :department" +
+                            " or dc.creator.department.parent = :department " +
+                            " or exists(select 1 from Department d where d.parent = :department" +
+                            " and d.id = dc.creator.department.parent.id))";
                 }else{
                     where += " and dc.creator.department = :department";
                 }

@@ -13,6 +13,11 @@ public class SecurityRoles {
     public final static String INFORMATION_VIEW = "INFORMATION_VIEW";
     public final static String DOCUMENT_CREATE = "DOCUMENT_CREATE";
     public final static String DOCUMENT_EDIT = "DOCUMENT_EDIT";
+    public final static String DOCUMENT_DEP_VIEW = "DOCUMENT_DEP_VIEW";
+    public final static String DOCUMENT_DEP_EDIT = "DOCUMENT_DEP_EDIT";
+    public final static String DOCUMENT_DEP_CHILD_VIEW = "DOCUMENT_DEP_CHILD_VIEW";
+    public final static String DOCUMENT_DEP_CHILD_EDIT = "DOCUMENT_DEP_CHILD_EDIT";
+
 
 //    ,DOCUMENT_VIEW_DEPARTMENT, DOCUMENT_EDIT_DEPARTMENT,
 //    REPORT_CREATE, REPORT_EDIT, REPORT_VIEW_DEPARTMENT, REPORT_EDIT_DEPARTMENT

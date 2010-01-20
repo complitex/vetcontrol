@@ -10,4 +10,12 @@ public class PagingNavigator extends org.apache.wicket.markup.html.navigation.pa
     public PagingNavigator(String id, IPageable pageable) {
         super(id, pageable);
     }
+
+    @Override
+    protected void onBeforeRender() {
+        if (getPageable().getPageCount() < 2){
+            setVisible(false);
+        }
+        super.onBeforeRender();
+    }
 }

@@ -132,6 +132,24 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return new StringBuilder().append("[hash: ").append(Integer.toHexString(hashCode())).append(", id: ").append(id).append(", login: ").append(login).append(", firstName: ").append(firstName).append(", lastName: ").append(lastName).append(", middleName: ").append(middleName).append(", userGroups: ").append(userGroups).append(", department: ").append(department).append("]").toString();
+        return new StringBuilder().append("[hash: ").append(Integer.toHexString(hashCode())).append(", id: ")
+                .append(id).append(", login: ").append(login).append(", firstName: ")
+                .append(firstName).append(", lastName: ").append(lastName).append(", middleName: ")
+                .append(middleName).append(", userGroups: ").append(userGroups).append(", department: ")
+                .append(department).append("]").toString();
+    }
+
+    @Transient
+    public String getFullName(){
+        return ((lastName != null) ? lastName + " " : "")
+                + ((firstName != null) ? firstName + " " : "")
+                + ((middleName != null) ? middleName: "");
+    }
+
+    @Transient
+    public String getShortName(){
+         return ((lastName != null) ? lastName + " " : "")
+                + ((firstName != null) ? firstName.substring(0,1) + ". " : "")
+                + ((middleName != null) ? middleName.substring(0,1): ".");           
     }
 }

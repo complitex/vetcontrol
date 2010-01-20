@@ -7,12 +7,21 @@
         <group-name>ADMINISTRATORS</group-name>
         <group-name>DEPARTMENT_OFFICERS</group-name>
         <group-name>LOCAL_OFFICERS</group-name>
+        <group-name>LOCAL_OFFICERS_EDIT</group-name>
+        <group-name>LOCAL_OFFICERS_DEP_VIEW</group-name>
+        <group-name>LOCAL_OFFICERS_DEP_EDIT</group-name>
+        <group-name>LOCAL_OFFICERS_DEP_CHILD_VIEW</group-name>
+        <group-name>LOCAL_OFFICERS_DEP_CHILD_EDIT</group-name>
         <group-name>MOBILE_OFFICERS</group-name>
     </security-role-mapping>
+
+    <!--USER-->
     <security-role-mapping>
         <role-name>USER_EDIT</role-name>
         <group-name>ADMINISTRATORS</group-name>
     </security-role-mapping>
+
+    <!--INFORMATION-->
     <security-role-mapping>
         <role-name>INFORMATION_EDIT</role-name>
         <group-name>ADMINISTRATORS</group-name>
@@ -24,8 +33,44 @@
         <group-name>LOCAL_OFFICERS</group-name>
         <group-name>MOBILE_OFFICERS</group-name>
     </security-role-mapping>
+
+    <!--DOCUMENTS-->
     <security-role-mapping>
         <role-name>DOCUMENT_CREATE</role-name>
         <group-name>ADMINISTRATORS</group-name>
+        <group-name>LOCAL_OFFICERS</group-name>
+        <group-name>LOCAL_OFFICERS_EDIT</group-name>
+    </security-role-mapping>
+    <security-role-mapping>
+        <role-name>DOCUMENT_EDIT</role-name>
+        <group-name>ADMINISTRATORS</group-name>
+        <group-name>LOCAL_OFFICERS_EDIT</group-name>
+        <group-name>LOCAL_OFFICERS_DEP_EDIT</group-name>
+        <group-name>LOCAL_OFFICERS_DEP_CHILD_EDIT</group-name>
+    </security-role-mapping>
+    <security-role-mapping>
+        <role-name>DOCUMENT_DEP_VIEW</role-name>
+        <group-name>ADMINISTRATORS</group-name>
+        <group-name>LOCAL_OFFICERS_DEP_VIEW</group-name>
+        <group-name>LOCAL_OFFICERS_DEP_EDIT</group-name>
+        <group-name>LOCAL_OFFICERS_DEP_CHILD_VIEW</group-name>
+        <group-name>LOCAL_OFFICERS_DEP_CHILD_EDIT</group-name>
+    </security-role-mapping>
+    <security-role-mapping>
+        <role-name>DOCUMENT_DEP_EDIT</role-name>
+        <group-name>ADMINISTRATORS</group-name>
+        <group-name>LOCAL_OFFICERS_DEP_EDIT</group-name>
+        <group-name>LOCAL_OFFICERS_DEP_CHILD_EDIT</group-name>
+    </security-role-mapping>
+    <security-role-mapping>
+        <role-name>DOCUMENT_DEP_CHILD_VIEW</role-name>
+        <group-name>ADMINISTRATORS</group-name>
+        <group-name>LOCAL_OFFICERS_DEP_CHILD_VIEW</group-name>
+        <group-name>LOCAL_OFFICERS_DEP_CHILD_EDIT</group-name>
+    </security-role-mapping>
+    <security-role-mapping>
+        <role-name>DOCUMENT_DEP_CHILD_EDIT</role-name>
+        <group-name>ADMINISTRATORS</group-name>
+        <group-name>LOCAL_OFFICERS_DEP_CHILD_EDIT</group-name>
     </security-role-mapping>
 </sun-web-app>

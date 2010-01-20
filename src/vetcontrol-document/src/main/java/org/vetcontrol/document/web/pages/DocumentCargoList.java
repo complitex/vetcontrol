@@ -2,6 +2,7 @@ package org.vetcontrol.document.web.pages;
 
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.datetime.StyleDateConverter;
 import org.apache.wicket.datetime.markup.html.basic.DateLabel;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
@@ -9,6 +10,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.sort.OrderByBorder
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -17,10 +19,8 @@ import org.apache.wicket.model.Model;
 import org.odlabs.wiquery.ui.datepicker.DatePicker;
 import org.vetcontrol.document.service.DocumentCargoBean;
 import org.vetcontrol.document.service.DocumentCargoFilter;
-import org.vetcontrol.entity.DocumentCargo;
-import org.vetcontrol.entity.MovementType;
-import org.vetcontrol.entity.VehicleType;
-import org.vetcontrol.service.dao.IBookViewDAO;
+import org.vetcontrol.entity.*;
+import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.web.component.BookmarkablePageLinkPanel;
 import org.vetcontrol.web.component.paging.PagingNavigator;
@@ -30,25 +30,27 @@ import org.vetcontrol.web.template.TemplatePage;
 
 import javax.ejb.EJB;
 import java.util.*;
+import java.util.Locale;
 
 import static org.vetcontrol.document.service.DocumentCargoBean.OrderBy;
+import static org.vetcontrol.web.security.SecurityRoles.*;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 12.01.2010 12:54:13
  */
+@AuthorizeInstantiation({DOCUMENT_CREATE, DOCUMENT_DEP_VIEW, DOCUMENT_DEP_CHILD_VIEW})
 public class DocumentCargoList extends TemplatePage{
     private final static int ITEMS_ON_PAGE = 13;
 
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
 
-    @EJB(name = "BookViewDAO")
-    private IBookViewDAO bookViewDAO;
-
     @EJB(name = "DocumentBean")
     DocumentCargoBean documentCargoBean;
 
+    @EJB(name = "UserProfileBean")
+    UserProfileBean userProfileBean;
 
     public DocumentCargoList() {
         super();
@@ -56,17 +58,19 @@ public class DocumentCargoList extends TemplatePage{
         final Locale systemLocale = localeDAO.systemLocale();
 
         add(new Label("title", getString("document.cargo.list.title")));
+        add(new Label("header", getString("document.cargo.list.title")));
+
+        add(new FeedbackPanel("messages"));
 
         //Фильтр
-        final IModel<DocumentCargoFilter> filter = new CompoundPropertyModel<DocumentCargoFilter>(
-                new DocumentCargoFilter(getLocale(), systemLocale));
+        final IModel<DocumentCargoFilter> filter = new CompoundPropertyModel<DocumentCargoFilter>(newDocumentCargoFilter());
         final Form<DocumentCargoFilter> filterForm = new Form<DocumentCargoFilter>("filter_form", filter);
 
         Button filter_reset = new Button("filter_reset"){
             @Override
             public void onSubmit() {
                 filterForm.clearInput();
-                filter.setObject(new DocumentCargoFilter(getLocale(), systemLocale));
+                filter.setObject(newDocumentCargoFilter());
             }
         };
 
@@ -140,7 +144,8 @@ public class DocumentCargoList extends TemplatePage{
             @Override
             protected void populateItem(Item<DocumentCargo> item) {
                 DocumentCargo dc = item.getModelObject();
-                item.add(new Label("id", String.valueOf(dc.getId())));
+                item.add(new BookmarkablePageLinkPanel<DocumentCargo>("id", String.valueOf(dc.getId()),
+                        DocumentCargoView.class, new PageParameters("document_cargo_id=" + dc.getId())));
                 item.add(new Label("movementType", dc.getMovementType().getDisplayName(getLocale(), systemLocale)));
                 item.add(new Label("vehicleType", dc.getVehicleType().getDisplayName(getLocale(), systemLocale)));
                 item.add(new Label("vehicleDetails", dc.getVehicleDetails()));
@@ -148,8 +153,13 @@ public class DocumentCargoList extends TemplatePage{
                 item.add(new Label("cargoReceiver", dc.getCargoReceiver().getDisplayName(getLocale(), systemLocale)));
                 item.add(new Label("cargoProducer", dc.getCargoProducer().getDisplayName(getLocale(), systemLocale)));
                 item.add(new DateLabel("created", new Model<Date>(dc.getCreated()), new StyleDateConverter(true)));
-                item.add(new BookmarkablePageLinkPanel<DocumentCargo>("action", "Редактировать", DocumentCargoEdit.class,
-                        new PageParameters("doc_cargo_id=" + dc.getId())));
+                if (canEdit(dc)){
+                    item.add(new BookmarkablePageLinkPanel<DocumentCargo>("action", getString("document.cargo.list.edit"),
+                            DocumentCargoEdit.class, new PageParameters("document_cargo_id=" + dc.getId())));
+                }else{
+                    item.add(new BookmarkablePageLinkPanel<DocumentCargo>("action", getString("document.cargo.list.view"),
+                        DocumentCargoView.class, new PageParameters("document_cargo_id=" + dc.getId())));
+                }
             }
         };
 
@@ -178,18 +188,59 @@ public class DocumentCargoList extends TemplatePage{
                 dateView.setCurrentPage(0);
             }
         });
+    }
 
+    private DocumentCargoFilter newDocumentCargoFilter(){
+        DocumentCargoFilter filter = new DocumentCargoFilter(getLocale(),localeDAO.systemLocale());
+
+        if(hasAnyRole(DOCUMENT_DEP_VIEW)){
+            filter.setDepartment(userProfileBean.getCurrentUser().getDepartment());
+            filter.setChildDepartments(hasAnyRole(DOCUMENT_DEP_CHILD_VIEW));
+            return  filter;
+        }
+
+        if (hasAnyRole(DOCUMENT_CREATE)){
+            filter.setCreator(userProfileBean.getCurrentUser());
+            return filter;
+        }
+
+        return filter;
+    }
+
+    private boolean canEdit(DocumentCargo dc){
+        User currentUser = userProfileBean.getCurrentUser();
+        
+        boolean authorized = hasAnyRole(DOCUMENT_EDIT)
+                && currentUser.getId().equals(dc.getCreator().getId());
+
+        if (!authorized && hasAnyRole(DOCUMENT_DEP_EDIT)){
+            authorized = currentUser.getDepartment().getId().equals(dc.getCreator().getDepartment().getId());
+        }
+
+        if (!authorized && hasAnyRole(DOCUMENT_DEP_CHILD_EDIT)){
+            for(Department d = dc.getCreator().getDepartment(); d != null; d = d.getParent()){
+                if (d.getId().equals(currentUser.getDepartment().getId())){
+                    authorized = true;
+                    break;
+                }
+            }
+        }
+        return authorized;
     }
 
     @Override
     protected List<ToolbarButton> getToolbarButtons(String id) {
-        return Arrays.asList( (ToolbarButton) new AddDocumentButton(id) {
+        if (hasAnyRole(DOCUMENT_CREATE)){
+            return Arrays.asList( (ToolbarButton) new AddDocumentButton(id) {
 
-            @Override
-            protected void onClick() {
-                setResponsePage(DocumentCargoEdit.class);
-            }
-        });
+                @Override
+                protected void onClick() {
+                    setResponsePage(DocumentCargoEdit.class);
+                }
+            });
+        }
+
+        return null;
     }
 
 }
