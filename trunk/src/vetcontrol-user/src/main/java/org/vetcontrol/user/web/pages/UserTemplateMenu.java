@@ -50,27 +50,6 @@ public class UserTemplateMenu extends ResourceTemplateMenu{
 
         });
 
-        links.add(new ITemplateLink(){
-            @Override
-            public String getLabel(Locale locale) {
-                return getString(UserTemplateMenu.class, locale, "user.template.menu.add");
-            }
-            @Override
-            public Class<? extends Page> getPage() {
-                return UserEdit.class;
-            }
-
-            @Override
-            public PageParameters getParameters() {
-                return PageParameters.NULL;
-            }
-
-            @Override
-            public String getTagId() {
-                return "UserAdd";
-            }
-        });
-
         return links;
     }
 

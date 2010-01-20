@@ -1,6 +1,7 @@
 package org.vetcontrol.document.service;
 
 import org.vetcontrol.entity.Cargo;
+import org.vetcontrol.entity.CargoType;
 import org.vetcontrol.entity.DocumentCargo;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.service.dao.IBookViewDAO;
@@ -8,10 +9,7 @@ import org.vetcontrol.util.DateUtil;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.util.List;
 import java.util.Locale;
 
@@ -257,6 +255,16 @@ public class DocumentCargoBean {
 
     public <T> List<T> getList(Class<T> _class){
         return entityManager.createQuery("from " + _class.getSimpleName(), _class).getResultList();
+    }
+
+    public CargoType getCargoType(String code){
+        try {
+            return entityManager.createQuery("from CargoType ct where ct.code = :code", CargoType.class)
+                    .setParameter("code", code)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
 }

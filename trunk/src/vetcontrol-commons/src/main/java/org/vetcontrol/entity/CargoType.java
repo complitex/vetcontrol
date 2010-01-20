@@ -17,7 +17,7 @@ import java.util.List;
 public class CargoType extends Localizable{
     private String uktZedCode;
 
-    @Column(name = "ukt_zed_code", nullable = false, length = 10)
+    @Column(name = "ukt_zed_code", nullable = false, length = 10, unique = true)
     public String getCode() {
         return uktZedCode;
     }

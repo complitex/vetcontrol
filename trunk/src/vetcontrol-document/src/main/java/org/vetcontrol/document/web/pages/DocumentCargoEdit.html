@@ -57,7 +57,8 @@
             <table  border="0" cellspacing="0" cellpadding="0" class="tbColor table_input">
                 <thead>
                 <tr>
-                    <th  class="center"><wicket:message key="document.cargo.cargo_type"/></th>                    
+                    <th  class="center"><wicket:message key="document.cargo.cargo_type_code"/></th>
+                    <th  class="center"><wicket:message key="document.cargo.cargo_type_name"/></th> 
                     <th  class="center"><wicket:message key="document.cargo.count"/></th>
                     <th  class="center"><wicket:message key="document.cargo.unit_type"/></th>                    
                     <th  class="center"><wicket:message key="document.cargo.certificate_detail"/></th>
@@ -67,7 +68,8 @@
                 </thead>
                 <tbody>
                 <tr wicket:id="document.cargo.cargo_list">
-                    <td><select wicket:id="document.cargo.cargo_type"></select></td>
+                    <td><input wicket:id="document.cargo.cargo_type_code"/></td>
+                    <td><input wicket:id="document.cargo.cargo_type_name"/></td>
                     <td><input wicket:id="document.cargo.count" type="text"/></td>
                     <td><select wicket:id="document.cargo.unit_type"></select></td>
                     <td><input wicket:id="document.cargo.certificate_detail" type="text"/></td>
@@ -87,7 +89,7 @@
 
         <div class="line"><img src="images/spacer.gif" style="width:1px; height:1px" width="1px" height="1px" alt=""></div>
         <input type="submit" class="btnBig" wicket:message="value:document.cargo.save" value="Save"/>
-        <input type="reset" class="btnMiddle" wicket:message="value:document.cargo.cancel" value="Cancel" onclick="history.back()"/>
+        <input type="submit"  wicket:id="cancel" class="btnMiddle" wicket:message="value:document.cargo.cancel" value="Cancel"/>
     </form>
 </wicket:extend>
 </body>

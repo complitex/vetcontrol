@@ -211,6 +211,7 @@ CREATE TABLE  `cargo_type` (
     `ukt_zed_code` VARCHAR(10) NOT NULL,
     `controled` tinyint(1) NOT NULL,
     PRIMARY KEY (`id`),
+    UNIQUE KEY `code` (`ukt_zed_code`),
     KEY `FK_cargo_type_name` (`name`),
     CONSTRAINT `FK_cargo_type_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
