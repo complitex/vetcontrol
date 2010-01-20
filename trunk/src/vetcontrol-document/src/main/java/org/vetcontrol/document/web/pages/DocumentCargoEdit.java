@@ -4,6 +4,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
+import org.apache.wicket.authorization.UnauthorizedInstantiationException;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -18,24 +19,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.document.service.DocumentCargoBean;
 import org.vetcontrol.entity.*;
+import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
-import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.FormTemplatePage;
 
 import javax.ejb.EJB;
 import java.util.Date;
 import java.util.List;
 
+import static org.vetcontrol.web.security.SecurityRoles.*;
+
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 12.01.2010 15:44:20
  */
-@AuthorizeInstantiation({SecurityRoles.DOCUMENT_CREATE, SecurityRoles.DOCUMENT_EDIT})
+@AuthorizeInstantiation({DOCUMENT_CREATE, DOCUMENT_DEP_EDIT, DOCUMENT_DEP_CHILD_EDIT})
 public class DocumentCargoEdit extends FormTemplatePage{
     private static final Logger log = LoggerFactory.getLogger(DocumentCargoEdit.class);
 
     @EJB(name = "DocumentBean")
     DocumentCargoBean documentCargoBean;
+
+    @EJB(name = "UserProfileBean")
+    UserProfileBean userProfileBean;
 
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
@@ -47,23 +53,64 @@ public class DocumentCargoEdit extends FormTemplatePage{
 
     public DocumentCargoEdit(final PageParameters parameters){
         super();
-        init(parameters.getAsLong("doc_cargo_id"));        
+        init(parameters.getAsLong("document_cargo_id"));        
     }
 
     private void init(final Long id){
-        add(new Label("title", getString("document.cargo.edit.title")));
+        //Модель данных
+        DocumentCargo dc;
+        try {
+            dc = (id != null) ? documentCargoBean.loadDocumentCargo(id) : new DocumentCargo();
+        } catch (Exception e) {
+            log.error("Карточка на груз по id = " + id + " не найдена", e);
+            getSession().error("Карточка на груз №" + id + " не найдена");
+            setResponsePage(DocumentCargoList.class);
+            return;
+        }
+
+        //Проверка доступа к данным        
+        User currentUser = userProfileBean.getCurrentUser();
+
+        if (id == null && !hasAnyRole(DOCUMENT_CREATE)){
+            log.error("Пользователю запрещен доступ на создание карточки на груз: " + currentUser.toString());
+            throw new UnauthorizedInstantiationException(DocumentCargoEdit.class);
+        }
+
+        if (id != null){
+            boolean authorized = hasAnyRole(DOCUMENT_EDIT)
+                    && currentUser.getId().equals(dc.getCreator().getId());
+
+            if (!authorized && hasAnyRole(DOCUMENT_DEP_EDIT)){
+                authorized = currentUser.getDepartment().getId().equals(dc.getCreator().getDepartment().getId());
+            }
+
+            if (!authorized && hasAnyRole(DOCUMENT_DEP_CHILD_EDIT)){
+                for(Department d = dc.getCreator().getDepartment(); d != null; d = d.getParent()){
+                    if (d.getId().equals(currentUser.getDepartment().getId())){
+                        authorized = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!authorized){
+                log.error("Пользователю запрещен доступ редактирование карточки на груз id = " + id +  ": "
+                        + currentUser.toString());
+                throw new UnauthorizedInstantiationException(DocumentCargoEdit.class);
+            }
+        }
+
+        //Заголовок
+        String title = (id != null)
+                ? getString("document.cargo.edit.title.edit") + id
+                : getString("document.cargo.edit.title.create");
+
+        add(new Label("title", title));
+        add(new Label("header", title));
 
         add(new FeedbackPanel("messages"));
 
-        //Модель данных
-        DocumentCargo documentCargo = null;
-        try {
-            documentCargo = (id != null) ? documentCargoBean.loadDocumentCargo(id) : new DocumentCargo();
-        } catch (Exception e) {
-            log.error("Карточка на груз по id = " + id + " не найдена", e);
-        }
-
-        final Model<DocumentCargo> documentCargoModel = new Model<DocumentCargo>(documentCargo);
+        final Model<DocumentCargo> documentCargoModel = new Model<DocumentCargo>(dc);
 
         //Форма
         final Form form = new Form<DocumentCargo>("doc_cargo_edit_form", documentCargoModel){
@@ -71,9 +118,14 @@ public class DocumentCargoEdit extends FormTemplatePage{
             protected void onSubmit() {
                 try {
                     documentCargoBean.save(getModelObject());
-                    info("Карточка на груз №" + getModelObject().getId() + " сохранена");
+                    setResponsePage(DocumentCargoList.class);
+                    if (id == null){
+                        getSession().info(getString("document.cargo.edit.message.added", getModel()));
+                    }else{
+                        getSession().info(getString("document.cargo.edit.message.saved", getModel()));
+                    }
                 } catch (Exception e) {
-                    error("Ошибка сохранения карточки на груз №" + getModelObject().getId());
+                    getSession().info(getString("document.cargo.edit.message.save.error", getModel()));
                     log.error("Ошибка сохранения карточки на груз №" + getModelObject().getId(), e);
                 }
             }
@@ -165,7 +217,7 @@ public class DocumentCargoEdit extends FormTemplatePage{
         addDropDownChoice(form, "document.cargo.cargo_receiver", CargoReceiver.class, documentCargoModel, "cargoReceiver");
 
         //Производитель
-        addDropDownChoice(form, "document.cargo.producer", CargoProducer.class, documentCargoModel, "cargoProducer");
+        addDropDownChoice(form, "document.cargo.cargo_producer", CargoProducer.class, documentCargoModel, "cargoProducer");
 
         //Пункт пропуска через границу
         addDropDownChoice(form, "document.cargo.passingBorderPoint", PassingBorderPoint.class, documentCargoModel, "passingBorderPoint");

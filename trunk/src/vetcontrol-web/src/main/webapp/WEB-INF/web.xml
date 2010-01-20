@@ -37,6 +37,21 @@
     <security-role>
         <role-name>DOCUMENT_CREATE</role-name>
     </security-role>
+    <security-role>
+        <role-name>DOCUMENT_EDIT</role-name>
+    </security-role>
+    <security-role>
+        <role-name>DOCUMENT_DEP_VIEW</role-name>
+    </security-role>
+    <security-role>
+        <role-name>DOCUMENT_DEP_EDIT</role-name>
+    </security-role>
+    <security-role>
+        <role-name>DOCUMENT_DEP_CHILD_VIEW</role-name>
+    </security-role>
+    <security-role>
+        <role-name>DOCUMENT_DEP_CHILD_EDIT</role-name>
+    </security-role>
 
     <login-config>
         <auth-method>FORM</auth-method>

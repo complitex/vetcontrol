@@ -10,6 +10,10 @@
 <wicket:extend>
 
     <div>
+        <h1 wicket:id="header"></h1>
+
+        <div id="messages" wicket:id="messages"></div>
+
         <form action="#" wicket:id="filter_form">
             <table  border="0" cellspacing="0" cellpadding="0" class="tbColor table_input">
                 <thead>
@@ -33,7 +37,7 @@
                     <th class="center"><input type="text" wicket:id="cargoReceiverName"/></th>
                     <th class="center"><input type="text" wicket:id="cargoProducerName"/></th>
                     <th class="center">
-                        <div style="width:100px">
+                        <div style="width:102px">
                             <input style="width:80px" type="text" wicket:id="created"/>
                         </div>
                     </th>

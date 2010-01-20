@@ -8,7 +8,7 @@
 
 <body>
 <wicket:extend>
-    <h2><wicket:message key="document.cargo.edit.title"/></h2>
+    <h2><span wicket:id="header" ></span> </h2>
 
     <div id="messages" wicket:id="messages"></div>
 
@@ -36,8 +36,8 @@
                 <td><select id="cargo_receiver" wicket:id="document.cargo.cargo_receiver"></select></td>
             </tr>
             <tr>
-                <th><label for="producer"><wicket:message key="document.cargo.producer"/><b class="blue">*</b>:</label></th>
-                <td><select id="producer" wicket:id="document.cargo.producer"></select></td>
+                <th><label for="cargo_producer"><wicket:message key="document.cargo.cargo_producer"/><b class="blue">*</b>:</label></th>
+                <td><select id="cargo_producer" wicket:id="document.cargo.cargo_producer"></select></td>
             </tr>
             <tr>
                 <th><label for="passingBorderPoint"><wicket:message key="document.cargo.passingBorderPoint"/><b class="blue">*</b>:</label></th>
@@ -71,7 +71,7 @@
                     <td><input wicket:id="document.cargo.count" type="text"/></td>
                     <td><select wicket:id="document.cargo.unit_type"></select></td>
                     <td><input wicket:id="document.cargo.certificate_detail" type="text"/></td>
-                    <td><div style="width:100px"><input style="width:80px" wicket:id="document.cargo.certificate_date" type="text" /></div></td>
+                    <td><div style="width:102px"><input style="width:80px" wicket:id="document.cargo.certificate_date" type="text" /></div></td>
                     <td><a href="#" wicket:id="document.cargo.delete"><wicket:message key="document.cargo.delete"/></a></td>
                 </tr>
                 </tbody>
@@ -87,7 +87,7 @@
 
         <div class="line"><img src="images/spacer.gif" style="width:1px; height:1px" width="1px" height="1px" alt=""></div>
         <input type="submit" class="btnBig" wicket:message="value:document.cargo.save" value="Save"/>
-        <input type="reset" class="btnMiddle" wicket:message="value:document.cargo.cancel" value="Cancel"/>
+        <input type="reset" class="btnMiddle" wicket:message="value:document.cargo.cancel" value="Cancel" onclick="history.back()"/>
     </form>
 </wicket:extend>
 </body>

@@ -3,10 +3,10 @@ package org.vetcontrol.web.template;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
+import org.apache.wicket.authorization.strategies.role.IRoleCheckingStrategy;
 import org.apache.wicket.authorization.strategies.role.Roles;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
@@ -113,7 +113,7 @@ public abstract class TemplatePage extends WebPage {
     /**
      * Боковая панель с меню, которое устанавливается в конфигурационном файле.
      */
-    public class TemplateMenu extends Fragment {
+    private class TemplateMenu extends Fragment {
 
         private String tagId;
 
@@ -210,5 +210,9 @@ public abstract class TemplatePage extends WebPage {
      */
     protected List<ToolbarButton> getToolbarButtons(String id) {
         return null;
+    }
+
+    protected boolean hasAnyRole(String... roles){
+        return ((IRoleCheckingStrategy) getApplication()).hasAnyRole(new Roles(roles));
     }
 }
