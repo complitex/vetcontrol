@@ -33,6 +33,8 @@ import javax.ejb.EJB;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.markup.html.panel.Panel;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -178,9 +180,12 @@ public class UserList extends TemplatePage {
         });
 
         //Панель ссылок для постраничной навигации
-        PagingNavigator pagingNavigator = new PagingNavigator("navigator", userDataView);
+        Panel navigator = new EmptyPanel("navigator");
+        if (userDataView.getPageCount() > 1) {
+            navigator = new PagingNavigator("navigator", userDataView);
+        }
 
-        add(pagingNavigator);
+        add(navigator);
     }
 
     /**
