@@ -3,6 +3,7 @@ package org.vetcontrol.document.web.pages;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.authorization.UnauthorizedInstantiationException;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
@@ -115,6 +116,15 @@ public class DocumentCargoEdit extends FormTemplatePage{
         //Форма
         final Form form = new Form<DocumentCargo>("doc_cargo_edit_form", documentCargoModel){
             @Override
+            protected void onValidate() {
+                for (Cargo c : getModelObject().getCargos()){
+                    if (c.getCargoType() == null){
+                        error(getString("document.cargo.edit.message.cargo_type.not_found.error"));                        
+                    }
+                }
+            }
+
+            @Override
             protected void onSubmit() {
                 try {
                     documentCargoBean.save(getModelObject());
@@ -131,6 +141,15 @@ public class DocumentCargoEdit extends FormTemplatePage{
             }
         };
         add(form);
+
+        Button cancel = new Button("cancel"){
+            @Override
+            public void onSubmit() {
+                setResponsePage(DocumentCargoList.class);
+            }
+        };
+        cancel.setDefaultFormProcessing(false);
+        form.add(cancel);
 
         //Тип движения груза
         addDropDownChoice(form, "document.cargo.movement_type", MovementType.class, documentCargoModel, "movementType");
@@ -264,8 +283,38 @@ public class DocumentCargoEdit extends FormTemplatePage{
     }
 
     private void addCargo(final ListItem<Cargo> item){
-        //Тип груза
-        final DropDownChoice<CargoType> ddcCargoType = addDropDownChoice(item, "document.cargo.cargo_type", CargoType.class,item.getModelObject(), "cargoType");
+        //УКТЗЕД и Тип груза
+        CargoType ct = item.getModelObject().getCargoType();
+        final TextField<String> cargoTypeCode = new TextField<String>("document.cargo.cargo_type_code",
+                new Model<String>(ct != null ? ct.getCode() : ""));
+        item.add(cargoTypeCode);
+
+        final TextField<String> cargoType = new TextField<String>("document.cargo.cargo_type_name",
+                new Model<String>(ct != null ? ct.getDisplayName(getLocale(), localeDAO.systemLocale()) : ""));
+        cargoType.setEnabled(false);
+        cargoType.setRequired(true);
+        cargoType.setOutputMarkupId(true);
+        item.add(cargoType);
+
+        cargoTypeCode.add(new AjaxFormComponentUpdatingBehavior("onchange"){
+             @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                 CargoType ct = null;
+                 try {
+                     ct = documentCargoBean.getCargoType(cargoTypeCode.getModelObject());
+                     item.getModelObject().setCargoType(ct);
+                 } catch (Exception e) {
+                     getSession().error("Ошибка загрузки типа груза для кода: " + cargoTypeCode.getModelObject());
+                     log.error("Ошибка загрузки типа груза для кода: " + cargoTypeCode.getModelObject());
+                 }
+                 cargoType.setModelObject(ct != null
+                         ? ct.getDisplayName(getLocale(), localeDAO.systemLocale())
+                         : getString("document.cargo.cargo_type.not_found"));
+
+                 target.addComponent(cargoType);
+             }
+        });
+
         //Единицы измерения
         addDropDownChoice(item, "document.cargo.unit_type", UnitType.class, item.getModelObject(), "unitType");
 
