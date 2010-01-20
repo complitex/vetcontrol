@@ -8,7 +8,6 @@
         <class>org.vetcontrol.entity.RegisteredProducts</class>
         <class>org.vetcontrol.entity.CargoProducer</class>
         <class>org.vetcontrol.entity.StringCulture</class>
-        <class>org.vetcontrol.entity.CargoMode</class>
         <class>org.vetcontrol.entity.CargoType</class>
         <class>org.vetcontrol.entity.UnitType</class>
         <class>org.vetcontrol.entity.User</class>
