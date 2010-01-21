@@ -20,8 +20,6 @@ import java.beans.IntrospectionException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
-import org.apache.wicket.authorization.strategies.role.IRoleCheckingStrategy;
-import org.apache.wicket.authorization.strategies.role.Roles;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilterStateLocator;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
@@ -37,7 +35,7 @@ import org.vetcontrol.web.security.SecurityRoles;
  */
 @AuthorizeInstantiation(SecurityRoles.INFORMATION_VIEW)
 public class BookPage extends FormTemplatePage {
-    
+
     public class DataProvider extends SortableDataProvider<Serializable> implements IFilterStateLocator {
 
         private Serializable filterBean;
@@ -52,6 +50,7 @@ public class BookPage extends FormTemplatePage {
                     getSort().getProperty());
             preferences.putPreference(PreferenceType.SORT_ORDER, filterBean.getClass().getSimpleName() + SORT_ORDER_KEY_SUFFIX,
                     Boolean.valueOf(getSort().isAscending()));
+            preferences.putPreference(PreferenceType.FILTER, filterBean.getClass().getSimpleName() + FILTER_KEY_SUFFIX, filterBean);
 
             return fasade.getContent(filterBean, first, count, getSort().getProperty(), getSort().isAscending(), BookPage.this.getLocale()).iterator();
         }
@@ -113,7 +112,6 @@ public class BookPage extends FormTemplatePage {
     public static final String PAGE_NUMBER_KEY_SUFFIX = "_PAGING";
     public static final String SORT_PROPERTY_KEY_SUFFIX = "_SORT_PROPERTY";
     public static final String SORT_ORDER_KEY_SUFFIX = "_SORT_ORDER";
-    private DataProvider dataProvider;
     private UIPreferences preferences;
     private String bookType;
 
@@ -127,52 +125,19 @@ public class BookPage extends FormTemplatePage {
         Class bookClass = getBookClass();
         preferences = getPreferences();
 
-        dataProvider = new DataProvider();
+        DataProvider dataProvider = new DataProvider();
         dataProvider.init(bookClass, "id", true);
         dataProvider.initSize();
 
-        //TODO: remove after review
-        /*
-        Panel bookContent = new EmptyPanel("bookContent");
-        WebMarkupContainer emptyContent = new WebMarkupContainer("emptyContent");
-         */
+        BookContentControl bookContent = new BookContentControl("bookContent", dataProvider, bookClass, fasade, localeDAO.systemLocale(), preferences) {
 
-        /*if (dataProvider.size() != 0) {*/
-            BookContentControl bookContent = new BookContentControl("bookContent", dataProvider,
-                    bookClass,
-                    fasade,
-                    localeDAO.systemLocale(), preferences) {
+            @Override
+            public void selected(Serializable obj) {
+                goToEditPage(obj);
+            }
+        };
 
-                @Override
-                public void selected(Serializable obj) {
-                    goToEditPage(obj);
-                }
-            };
-            /*emptyContent.setVisible(false);
-        }
-             */
         add(bookContent);
-        /*add(emptyContent);*/
-
-
-        //TODO: remove after review
-        /*
-        final Form form = new Form("form");
-        add(form);
-
-        form.add(new SubmitLink("new") {
-
-        @Override
-        public void onSubmit() {
-        try {
-        final Serializable entry = (Serializable) getBookClass().newInstance();
-        goToEditPage(entry);
-        } catch (Exception e) {
-        e.printStackTrace();
-        }
-        }
-        });
-         */
     }
 
     private void goToEditPage(Serializable entry) {
@@ -187,8 +152,7 @@ public class BookPage extends FormTemplatePage {
 
     @Override
     protected List<ToolbarButton> getToolbarButtons(String id) {
-        IRoleCheckingStrategy application = (IRoleCheckingStrategy) getApplication();
-        if (application.hasAnyRole(new Roles(SecurityRoles.INFORMATION_EDIT))) {
+        if (hasAnyRole(SecurityRoles.INFORMATION_EDIT)) {
             List<ToolbarButton> toolbarButtons = new ArrayList<ToolbarButton>();
             toolbarButtons.add(new AddItemButton(id) {
 
@@ -202,7 +166,6 @@ public class BookPage extends FormTemplatePage {
                     }
                 }
             });
-
             return toolbarButtons;
         } else {
             return null;
