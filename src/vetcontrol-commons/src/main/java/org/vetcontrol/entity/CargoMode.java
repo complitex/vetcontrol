@@ -4,14 +4,19 @@
  */
 package org.vetcontrol.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.vetcontrol.util.book.entity.annotation.BookReference;
+import org.vetcontrol.util.book.entity.annotation.MappedProperty;
 
 /**
  * 2.4.3.12 Справочник видов грузов
@@ -68,6 +73,19 @@ public class CargoMode extends Localizable {
      */
     public void setUnitType(UnitType unitType) {
         this.unitType = unitType;
+    }
+
+    private List<StringCulture> names = new ArrayList<StringCulture>();
+
+    @Transient
+    @MappedProperty("name")
+    @Column(length = 20, nullable = false)
+    public List<StringCulture> getNames() {
+        return names;
+    }
+
+    public void setNames(List<StringCulture> names) {
+        this.names = names;
     }
 
 
