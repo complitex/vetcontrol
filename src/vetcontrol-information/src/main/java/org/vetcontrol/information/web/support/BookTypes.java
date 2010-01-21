@@ -29,6 +29,7 @@ public class BookTypes {
                 MovementType.class,
                 CargoProducer.class,
                 UnitType.class,
+                CargoMode.class,
                 CargoType.class,                
                 Job.class,
                 Prohibition.class,
