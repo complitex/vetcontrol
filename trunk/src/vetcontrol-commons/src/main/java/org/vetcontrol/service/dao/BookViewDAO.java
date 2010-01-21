@@ -309,8 +309,16 @@ public class BookViewDAO implements IBookViewDAO {
                 if (isPrimitive) {
                     Object propValue = BeanPropertyUtil.getPropertyValue(example, p.getName());
                     if (propValue != null) {
-                        query.append(" AND a.").append(p.getName()).append(" like :").append(p.getName());
-                        queryParameters.put(p.getName(), "%" + propValue + "%");
+                        query.append(" AND a.").append(p.getName());
+
+                        if (!Date.class.isAssignableFrom(p.getType())) {
+                            query.append(" like :");
+                            queryParameters.put(p.getName(), "%" + propValue + "%");
+                        }else{
+                            query.append(" = :");
+                            queryParameters.put(p.getName(), propValue);
+                        }
+                        query.append(p.getName());
                     }
                 }
             }
@@ -321,7 +329,7 @@ public class BookViewDAO implements IBookViewDAO {
             if (p.isBookReference()) {
                 Object propValue = BeanPropertyUtil.getPropertyValue(example, p.getName());
                 if (propValue != null) {
-                    query.append(" AND a.").append(p.getName()).append(" = ").append(":").append(p.getName());
+                    query.append(" AND a.").append(p.getName()).append(" = :").append(p.getName());
                     queryParameters.put(p.getName(), propValue);
                 }
             }
