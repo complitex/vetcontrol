@@ -6,7 +6,7 @@ INSERT INTO `stringculture` VALUES (25,'en','автомобиль'),(25,'ru','а
 
 INSERT INTO `unit_type` VALUES (1,43),(2,44),(3,45),(4,46),(5,47),(6,53);
 
-INSERT INTO `cargo_type` VALUES (1,48,'111',0),(2,49,'222',0),(3,50,'333',0);
+INSERT INTO `cargo_type` VALUES (1,48,'111'),(2,49,'222'),(3,50,'333');
 
 INSERT INTO `cargo_receiver` VALUES (1,30),(2,31),(3,32);
 
