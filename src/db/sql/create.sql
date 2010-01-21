@@ -209,7 +209,6 @@ CREATE TABLE  `cargo_type` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
     `ukt_zed_code` VARCHAR(10) NOT NULL,
-    `controled` tinyint(1) NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `code` (`ukt_zed_code`),
     KEY `FK_cargo_type_name` (`name`),
