@@ -14,7 +14,8 @@ import org.hibernate.annotations.FetchMode;
 import org.vetcontrol.util.book.entity.annotation.BookReference;
 
 /**
- *
+ * 2.4.3.12 Справочник видов грузов
+ * 
  * @author Artem
  */
 @Entity
