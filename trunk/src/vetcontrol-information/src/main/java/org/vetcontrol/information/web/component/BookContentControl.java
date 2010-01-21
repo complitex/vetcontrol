@@ -9,15 +9,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import org.apache.wicket.authorization.strategies.role.IRoleCheckingStrategy;
-import org.apache.wicket.authorization.strategies.role.Roles;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
+import org.apache.wicket.Component;
+import org.apache.wicket.authorization.strategies.role.metadata.MetaDataRoleAuthorizationStrategy;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.HeadersToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterForm;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterToolbar;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.GoAndClearFilter;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilteredColumn;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.link.Link;
@@ -25,7 +24,6 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.information.service.fasade.pages.BookPageFasade;
 import org.vetcontrol.util.book.BeanPropertyUtil;
@@ -44,18 +42,89 @@ import org.vetcontrol.web.security.SecurityRoles;
  */
 public abstract class BookContentControl extends Panel {
 
+    private class ModifyColumnFilter extends Panel {
+
+        public ModifyColumnFilter(String id) {
+            super(id);
+            Button goSearch = new Button("filter");
+            add(goSearch);
+        }
+    }
+
+    private class ModifyColumnHeader extends Panel{
+
+        public ModifyColumnHeader(String id, final Class bookClass) {
+            super(id);
+            Button clear = new Button("header") {
+
+                @Override
+                public void onSubmit() {
+                    try {
+                        Object filterBean = bookClass.newInstance();
+                        getForm().setDefaultModelObject(filterBean);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            };
+            add(clear);
+        }
+    }
+
+    private class ModifyColumn implements IFilteredColumn, IColumn {
+        
+        private Class bookClass;
+
+        public ModifyColumn(Class bookClass) {
+            this.bookClass = bookClass;
+        }
+
+        @Override
+        public void populateItem(Item cellItem, String componentId, IModel rowModel) {
+            cellItem.add(new EditPanel(componentId, rowModel));
+        }
+
+        @Override
+        public Component getFilter(String componentId, FilterForm form) {
+            Panel filter = new ModifyColumnFilter(componentId);
+            return filter;
+        }
+
+        @Override
+        public Component getHeader(String componentId) {
+            Panel header = new ModifyColumnHeader(componentId, bookClass);
+            return header;
+        }
+
+        @Override
+        public String getSortProperty() {
+            return null;
+        }
+
+        @Override
+        public boolean isSortable() {
+            return false;
+        }
+
+        @Override
+        public void detach() {
+        }
+    }
+
     private class EditPanel extends Panel {
 
         public EditPanel(String id, final IModel<Serializable> model) {
             super(id, model);
 
-            add(new Link("edit") {
+            Link editLink = new Link("edit") {
 
                 @Override
                 public void onClick() {
                     selected(model.getObject());
                 }
-            });
+            };
+            MetaDataRoleAuthorizationStrategy.authorize(editLink, ENABLE, SecurityRoles.INFORMATION_EDIT);
+            add(editLink);
         }
     }
     private Panel navigator;
@@ -71,16 +140,8 @@ public abstract class BookContentControl extends Panel {
         for (Property prop : BeanPropertyUtil.getProperties(bookClass)) {
             columns.add(new BookPropertyColumn<Serializable>(this, new DisplayPropertyLocalizableModel(prop, this), prop, fasade, systemLocale));
         }
-        IRoleCheckingStrategy application = (IRoleCheckingStrategy) getApplication();
-        if (application.hasAnyRole(new Roles(SecurityRoles.INFORMATION_EDIT))) {
-            columns.add(new AbstractColumn(new ResourceModel("book.edit.header")) {
+        columns.add(new ModifyColumn(bookClass));
 
-                @Override
-                public void populateItem(Item cellItem, String componentId, IModel rowModel) {
-                    cellItem.add(new EditPanel(componentId, rowModel));
-                }
-            });
-        }
         final DataTable table = new DataTable("table", columns.toArray(new IColumn[columns.size()]), dataProvider, Constants.ROWS_PER_PAGE) {
 
             @Override
@@ -91,7 +152,7 @@ public abstract class BookContentControl extends Panel {
         //retrieve table page from preferences.
         Integer page = preferences.getPreference(UIPreferences.PreferenceType.PAGE_NUMBER, bookClass.getSimpleName() + BookPage.PAGE_NUMBER_KEY_SUFFIX,
                 Integer.class);
-        if (page != null) {
+        if (page != null && page <= table .getPageCount()) {
             table.setCurrentPage(page);
         }
 
@@ -104,7 +165,6 @@ public abstract class BookContentControl extends Panel {
             @Override
             protected void onSubmit() {
                 dataProvider.initSize();
-                super.onSubmit();
                 changeNavigator();
             }
 
@@ -120,32 +180,7 @@ public abstract class BookContentControl extends Panel {
             }
         };
 
-        GoAndClearFilter goAndClearFilter = new GoAndClearFilter("goAndClearFilter", filterForm, new ResourceModel("book.filter.button.go"),
-                new ResourceModel("book.filter.button.clear")) {
-
-            @Override
-            protected void onGoSubmit(Button button) {
-                //save filter bean in preferences.
-                Object filterBean = button.getForm().getModelObject();
-                preferences.putPreference(UIPreferences.PreferenceType.FILTER, filterBean.getClass().getSimpleName() + BookPage.FILTER_KEY_SUFFIX,
-                        filterBean);
-            }
-
-            @Override
-            protected void onClearSubmit(Button button) {
-                try {
-                    Object filterBean = bookClass.newInstance();
-                    button.getForm().setDefaultModelObject(filterBean);
-                    preferences.putPreference(UIPreferences.PreferenceType.FILTER, filterBean.getClass().getSimpleName() + BookPage.FILTER_KEY_SUFFIX,
-                            filterBean);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        };
-        filterForm.add(goAndClearFilter);
         table.addTopToolbar(new FilterToolbar(table, filterForm, dataProvider));
-        table.setOutputMarkupId(true);
 
         filterForm.add(navigator);
         filterForm.add(table);
