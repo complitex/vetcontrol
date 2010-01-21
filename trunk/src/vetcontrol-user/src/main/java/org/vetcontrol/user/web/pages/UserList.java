@@ -163,7 +163,7 @@ public class UserList extends TemplatePage {
 
         //retrieve page number from preferences.
         Integer page = preferences.getPreference(PreferenceType.PAGE_NUMBER, PAGE_NUMBER_KEY, Integer.class);
-        if(page != null && page < userDataView.getPageCount()){
+        if(page != null && page <= userDataView.getPageCount()){
             userDataView.setCurrentPage(page);
         }
 
