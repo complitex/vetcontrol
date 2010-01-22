@@ -11,6 +11,7 @@ package org.vetcontrol.information.util.web;
  */
 public class Constants {
 
+    @Deprecated
     public static final int ROWS_PER_PAGE = 10;
 
     public static final int TEXT_FIELD_MAX_LENGTH = 40;
