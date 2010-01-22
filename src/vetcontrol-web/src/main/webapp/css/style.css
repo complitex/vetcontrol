@@ -155,15 +155,21 @@ input.btnMiddle {
 
 .blue { color: #007AAE; }
 
-.pageBar { float:left; margin-left:-5px; margin-right:-5px;  margin-bottom: 5px;}
+.PageNavigator{
+    margin-top: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+.pageBar { float:left}
 .pageBar td.off { background:url('/images/pageNavOff.gif') no-repeat #EBEEF0; width:23px; height:23px; text-align: center; font-size: 12px; }
 .pageBar td.off a, .pageBar td.off a:visited { font-size: 12px; color: #273540; }
 .pageBar td.on { background:url('/images/pageNavOn.gif') no-repeat #C4E7F5; width:23px; height:23px; text-align: center; font-size: 12px; }
-.pageBar td input { font-size: 12px; width: 30px; text-align: center;}
-.pageBar td img { background: #C4E7F5;}
-.pageBarRight { float:right; margin-left:-5px; margin-right:-5px; margin-bottom: 5px;}
+/*.pageBar td input { font-size: 12px; width: 30px; text-align: center;}*/
+/*.pageBar td img { background: #C4E7F5;}*/
+.pageBarRight { float:right}
 .pageBarRight td { font-size: 12px; color: #6E7D88; }
-.pageBarRight td select { font-size: 12px; }
+/*.pageBarRight td select { font-size: 12px; }*/
 
 /* selected left menu item style */
 .SelectedMenuItem{
