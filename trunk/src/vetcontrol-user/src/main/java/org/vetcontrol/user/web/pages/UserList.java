@@ -33,8 +33,6 @@ import javax.ejb.EJB;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
-import org.apache.wicket.markup.html.panel.Panel;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -51,14 +49,11 @@ public class UserList extends TemplatePage {
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
     private UIPreferences preferences;
-    private final static int ITEMS_ON_PAGE = 13;
     private static final String SORT_PROPERTY_KEY = UserList.class.getSimpleName() + "_SORT_PROPERTY";
     private static final String SORT_ORDER_KEY = UserList.class.getSimpleName() + "_SORT_ORDER";
     private static final String FILTER_KEY = UserList.class.getSimpleName() + "_FILTER";
     private static final String PAGE_NUMBER_KEY = UserList.class.getSimpleName() + "_PAGE_NUMBER";
-    
     private DataView<User> userDataView;
-    private Panel navigator;
 
     public UserList() {
         super();
@@ -68,26 +63,13 @@ public class UserList extends TemplatePage {
 
         //Форма фильтра по ключевому слову
         String filter = preferences.getPreference(PreferenceType.FILTER, FILTER_KEY, String.class);
-        
-        final Form<String> filterForm = new Form<String>("filter_form", new Model<String>(filter)){
+
+        final Form<String> filterForm = new Form<String>("filter_form", new Model<String>(filter)) {
 
             @Override
             protected void onSubmit() {
                 super.onSubmit();
-                changeNavigator();
             }
-
-            private void changeNavigator() {
-                Panel newNavigator = null;
-                if (userDataView.getPageCount() > 1) {
-                    newNavigator = new PagingNavigator("navigator", userDataView);
-                } else {
-                    newNavigator = new EmptyPanel("navigator");
-                }
-                navigator.replaceWith(newNavigator);
-                navigator = newNavigator;
-            }
-
         };
         add(filterForm);
         filterForm.add(new TextField<String>("filter_value", filterForm.getModel()));
@@ -102,7 +84,7 @@ public class UserList extends TemplatePage {
                 preferences.putPreference(PreferenceType.SORT_ORDER, SORT_ORDER_KEY, sortParam.isAscending());
 
                 UserBean.OrderBy order = UserBean.OrderBy.valueOf(sortParam.getProperty());
-                
+
                 String filter = filterForm.getModelObject();
                 preferences.putPreference(UIPreferences.PreferenceType.FILTER, FILTER_KEY, filter);
 
@@ -138,7 +120,7 @@ public class UserList extends TemplatePage {
         userSort.setSort(sortProp, asc);
 
         //Таблица пользователей
-        userDataView = new DataView<User>("users", userSort, ITEMS_ON_PAGE) {
+        userDataView = new DataView<User>("users", userSort, 1) {
 
             @Override
             protected void populateItem(Item<User> userItem) {
@@ -159,13 +141,6 @@ public class UserList extends TemplatePage {
                 userItem.add(new Label("groups", getGroups(user)));
             }
         };
-        add(userDataView);
-
-        //retrieve page number from preferences.
-        Integer page = preferences.getPreference(PreferenceType.PAGE_NUMBER, PAGE_NUMBER_KEY, Integer.class);
-        if(page != null && page <= userDataView.getPageCount()){
-            userDataView.setCurrentPage(page);
-        }
 
         //Ссылки для активации сортировки по полям
         add(new OrderByBorder("order_last_name", "LAST_NAME", userSort) {
@@ -198,17 +173,9 @@ public class UserList extends TemplatePage {
                 userDataView.setCurrentPage(0);
             }
         });
-        initNavigator();
 
-        add(navigator);
-    }
-
-    private void initNavigator() {
-        //Панель ссылок для постраничной навигации
-        navigator = new EmptyPanel("navigator");
-        if (userDataView.getPageCount() > 1) {
-            navigator = new PagingNavigator("navigator", userDataView);
-        }
+        add(new PagingNavigator("navigator", userDataView, "itemsPerPage", preferences, PAGE_NUMBER_KEY));
+        add(userDataView);
     }
 
     /**
@@ -230,13 +197,6 @@ public class UserList extends TemplatePage {
             }
             sb.append(", ");
         }
-    }
-
-    @Override
-    protected void onAfterRender() {
-        super.onAfterRender();
-        //save page number preference.
-        preferences.putPreference(PreferenceType.PAGE_NUMBER, PAGE_NUMBER_KEY, userDataView.getCurrentPage());
     }
 
     @Override
