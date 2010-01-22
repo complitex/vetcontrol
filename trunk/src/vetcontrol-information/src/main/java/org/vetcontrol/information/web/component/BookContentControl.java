@@ -20,14 +20,12 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilt
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.information.service.fasade.pages.BookPageFasade;
 import org.vetcontrol.util.book.BeanPropertyUtil;
-import org.vetcontrol.information.util.web.Constants;
 import org.vetcontrol.util.book.Property;
 import org.vetcontrol.information.web.model.DisplayBookClassModel;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
@@ -51,7 +49,7 @@ public abstract class BookContentControl extends Panel {
         }
     }
 
-    private class ModifyColumnHeader extends Panel{
+    private class ModifyColumnHeader extends Panel {
 
         public ModifyColumnHeader(String id, final Class bookClass) {
             super(id);
@@ -72,7 +70,7 @@ public abstract class BookContentControl extends Panel {
     }
 
     private class ModifyColumn implements IFilteredColumn, IColumn {
-        
+
         private Class bookClass;
 
         public ModifyColumn(Class bookClass) {
@@ -127,7 +125,6 @@ public abstract class BookContentControl extends Panel {
             add(editLink);
         }
     }
-    private Panel navigator;
 
     public BookContentControl(String id, final DataProvider dataProvider, final Class bookClass, BookPageFasade fasade,
             Locale systemLocale, final UIPreferences preferences) throws IntrospectionException {
@@ -142,56 +139,22 @@ public abstract class BookContentControl extends Panel {
         }
         columns.add(new ModifyColumn(bookClass));
 
-        final DataTable table = new DataTable("table", columns.toArray(new IColumn[columns.size()]), dataProvider, Constants.ROWS_PER_PAGE) {
-
-            @Override
-            protected void onPageChanged() {
-                preferences.putPreference(UIPreferences.PreferenceType.PAGE_NUMBER, bookClass.getSimpleName() + BookPage.PAGE_NUMBER_KEY_SUFFIX, getCurrentPage());
-            }
-        };
-        //retrieve table page from preferences.
-        Integer page = preferences.getPreference(UIPreferences.PreferenceType.PAGE_NUMBER, bookClass.getSimpleName() + BookPage.PAGE_NUMBER_KEY_SUFFIX,
-                Integer.class);
-        if (page != null && page <= table .getPageCount()) {
-            table.setCurrentPage(page);
-        }
+        final DataTable table = new DataTable("table", columns.toArray(new IColumn[columns.size()]), dataProvider, 1) ;
 
         table.addTopToolbar(new HeadersToolbar(table, dataProvider));
-
-        initNavigator(table);
 
         final FilterForm filterForm = new FilterForm("filterForm", dataProvider) {
 
             @Override
             protected void onSubmit() {
                 dataProvider.initSize();
-                changeNavigator();
-            }
-
-            private void changeNavigator() {
-                Panel newNavigator = null;
-                if (table.getPageCount() > 1) {
-                    newNavigator = new PagingNavigator("navigator", table);
-                } else {
-                    newNavigator = new EmptyPanel("navigator");
-                }
-                navigator.replaceWith(newNavigator);
-                navigator = newNavigator;
             }
         };
 
         table.addTopToolbar(new FilterToolbar(table, filterForm, dataProvider));
-
-        filterForm.add(navigator);
         filterForm.add(table);
         add(filterForm);
-    }
-
-    private void initNavigator(final DataTable table) {
-        navigator = new EmptyPanel("navigator");
-        if (table.getPageCount() > 1) {
-            navigator = new PagingNavigator("navigator", table);
-        }
+        add(new PagingNavigator("navigator", table, "rowsPerPage", preferences, bookClass.getSimpleName() + BookPage.PAGE_NUMBER_KEY_SUFFIX));
     }
 
     public abstract void selected(Serializable obj);
