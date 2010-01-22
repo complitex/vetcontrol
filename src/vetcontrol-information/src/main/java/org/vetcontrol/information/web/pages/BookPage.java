@@ -13,7 +13,6 @@ import org.vetcontrol.information.service.fasade.pages.BookPageFasade;
 import org.vetcontrol.information.web.component.BookContentControl;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.web.component.toolbar.ToolbarButton;
-import org.vetcontrol.web.template.FormTemplatePage;
 
 import javax.ejb.EJB;
 import java.beans.IntrospectionException;
@@ -28,13 +27,14 @@ import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UIPreferences.PreferenceType;
 import org.vetcontrol.web.component.toolbar.AddItemButton;
 import org.vetcontrol.web.security.SecurityRoles;
+import org.vetcontrol.web.template.TemplatePage;
 
 /**
  *
  * @author Artem
  */
 @AuthorizeInstantiation(SecurityRoles.INFORMATION_VIEW)
-public class BookPage extends FormTemplatePage {
+public class BookPage extends TemplatePage {
 
     public class DataProvider extends SortableDataProvider<Serializable> implements IFilterStateLocator {
 
