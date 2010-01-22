@@ -5,9 +5,6 @@
 
 package org.vetcontrol.information.web.pages;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
@@ -17,6 +14,8 @@ import org.vetcontrol.information.web.support.BookTypes;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.ITemplateLink;
 import org.vetcontrol.web.template.ITemplateMenu;
+
+import java.util.*;
 
 /**
  *
@@ -58,6 +57,13 @@ public class BookMenu implements ITemplateMenu {
                     return bookType.getSimpleName();
                 }
 
+            });
+            Collections.sort(links, new Comparator<ITemplateLink>(){
+
+                @Override
+                public int compare(ITemplateLink o1, ITemplateLink o2) {
+                    return o1.getLabel(locale).compareTo(o2.getLabel(locale));
+                }
             });
         }
 

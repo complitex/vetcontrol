@@ -35,28 +35,28 @@ public abstract class Localizable implements Serializable {
         this.name = name;
     }
 
-    private  Map<String, StringCulture> stringCultureMap;
+    private  Map<String, StringCulture> namesMap;
 
     @ValidProperty(false)
     @OneToMany(fetch = FetchType.EAGER)
     @MapKeyColumn(name = "locale")
     @JoinColumn(name = "id", referencedColumnName = "name")
-    public Map<String, StringCulture> getStringCultureMap() {
-        return stringCultureMap;
+    public Map<String, StringCulture> getNamesMap() {
+        return namesMap;
     }
 
-    public void setStringCultureMap(Map<String, StringCulture> stringCultureMap) {
-        this.stringCultureMap = stringCultureMap;
+    public void setNamesMap(Map<String, StringCulture> namesMap) {
+        this.namesMap = namesMap;
     }
 
     @Transient
     public String getDisplayName(java.util.Locale current, java.util.Locale system){
         StringCulture stringCulture = null;
-        if ((stringCulture = stringCultureMap.get(current.getLanguage())) != null
+        if ((stringCulture = namesMap.get(current.getLanguage())) != null
                 && stringCulture.getValue() != null
                 && !stringCulture.getValue().isEmpty()){
             return stringCulture.getValue();
-        }else if((stringCulture = stringCultureMap.get(system.getLanguage())) != null){
+        }else if((stringCulture = namesMap.get(system.getLanguage())) != null){
             return stringCulture.getValue();
         }
         return "";

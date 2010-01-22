@@ -1,4 +1,4 @@
-package org.vetcontrol.web.security;
+package org.vetcontrol.entity;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru

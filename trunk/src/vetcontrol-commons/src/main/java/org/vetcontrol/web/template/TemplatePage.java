@@ -87,18 +87,12 @@ public abstract class TemplatePage extends WebPage {
             protected void populateItem(ListItem<ITemplateMenu> item) {
                 item.add(new TemplateMenu("menu_placeholder", "menu", this, item.getModelObject()));
             }
-        });
+        });                  
 
-        String userdetails = "[Гость]";
-        try {
-            final User user = userProfileBean.getCurrentUser();
-            userdetails = user.getLastName() + " " + user.getFirstName() + " " + user.getMiddleName()
-                    + " [" + user.getLogin() + "]";
-        } catch (Exception e) {
-            log.warn("Пользователь не авторизован", e);
-        }
+        User user = userProfileBean.getCurrentUser();
 
-        add(new Label("userdetails", userdetails));
+        add(new Label("current_user_fullname", user.getFullName()));
+        add(new Label("current_user_department", user.getDepartment().getDisplayName(getLocale(), localeDAO.systemLocale())));
 
         add(new Form("exit") {
 
@@ -206,7 +200,8 @@ public abstract class TemplatePage extends WebPage {
 
     /**
      * Subclass can override method in order to specify custom page toolbar buttons.
-     * @return
+     * @param id Component id
+     * @return List of ToolbarButton to add to Template
      */
     protected List<ToolbarButton> getToolbarButtons(String id) {
         return null;

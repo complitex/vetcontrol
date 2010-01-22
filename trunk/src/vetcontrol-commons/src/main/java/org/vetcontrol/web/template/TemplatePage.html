@@ -14,11 +14,14 @@
                     <div id="LoginForm">
                         <table border="0" cellspacing="0" cellpadding="0" >
                             <tr>
-                                <td><span wicket:id="localePicker"></span></td>
-                                <td><span wicket:id="userdetails"></span></td>
+                                <td>
+                                    <span wicket:id="current_user_fullname"></span><br/>
+                                    <b wicket:id="current_user_department"></b>                                    
+                                </td>
                                 <td>
                                     <form wicket:id="exit" action="">
-                                        <input type="submit" value="Выход" name="" class="buttonLogin"/>
+                                        <input type="submit" value="Выход" name="" class="buttonLogin"
+                                               tabindex="1000" onkeypress="return false;"/>
                                     </form>
                                 </td>
                             </tr>
@@ -40,6 +43,9 @@
                         <span wicket:id="pagePart">
                             <span wicket:id="pageToolbarButton"></span>
                         </span>
+                    </div>
+                    <div style="float:right;">
+                        <span wicket:id="localePicker"></span>
                     </div>
 
                 </td>

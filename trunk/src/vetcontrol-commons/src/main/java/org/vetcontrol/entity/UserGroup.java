@@ -16,8 +16,9 @@ public class UserGroup implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "usergroup", nullable = false)
-    private String userGroup;
+    private SecurityGroup securityGroup;
 
     @ManyToOne
     @JoinColumn(name = "login", referencedColumnName = "login", nullable = false)
@@ -31,12 +32,12 @@ public class UserGroup implements Serializable {
         this.id = id;
     }
 
-    public String getUserGroup() {
-        return userGroup;
+    public SecurityGroup getSecurityGroup() {
+        return securityGroup;
     }
 
-    public void setUserGroup(String userGroup) {
-        this.userGroup = userGroup;
+    public void setSecurityGroup(SecurityGroup securityGroup) {
+        this.securityGroup = securityGroup;
     }
 
     public User getUser() {
@@ -51,8 +52,8 @@ public class UserGroup implements Serializable {
     public boolean equals(Object obj) {
         if (obj instanceof UserGroup){
             UserGroup ug = (UserGroup) obj;
-            if (ug.getUser() != null && user != null && user.getLogin()!= null && userGroup != null){
-                return user.getLogin().equals(ug.getUser().getLogin()) && userGroup.equals(ug.getUserGroup());               
+            if (ug.getUser() != null && user != null && user.getLogin()!= null && securityGroup != null){
+                return user.getLogin().equals(ug.getUser().getLogin()) && securityGroup.equals(ug.getSecurityGroup());
             }
         }
         return super.equals(obj);
@@ -63,7 +64,7 @@ public class UserGroup implements Serializable {
         return new StringBuilder()
                 .append("[hash: ").append(Integer.toHexString(hashCode()))
                 .append(", id: ").append(id)
-                .append(", userGroup: ").append(userGroup).append("]")
+                .append(", userGroup: ").append(securityGroup).append("]")
                 .toString();
     }
 }

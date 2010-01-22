@@ -18,12 +18,15 @@ CREATE TABLE  `user` (
   `first_name` varchar(45) DEFAULT NULL,
   `middle_name` varchar(45) DEFAULT NULL,
   `last_name` varchar(45) DEFAULT NULL,
+   `job_id` bigint(20) DEFAULT NULL,
   `department_id` bigint(20) DEFAULT NULL,
   `locale` VARCHAR(2) NULL,
   `page_size` int(3) NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_login` (`login`),
+  KEY `fk_job` (`job_id`),
   KEY `fk_user_department` (`department_id`),
+  CONSTRAINT `fk_job` FOREIGN KEY (`job_id`) REFERENCES `job` (`id`),
   CONSTRAINT `fk_user_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
