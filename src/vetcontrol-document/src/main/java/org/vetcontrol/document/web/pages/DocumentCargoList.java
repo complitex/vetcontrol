@@ -41,7 +41,7 @@ import static org.vetcontrol.web.security.SecurityRoles.*;
  */
 @AuthorizeInstantiation({DOCUMENT_CREATE, DOCUMENT_DEP_VIEW, DOCUMENT_DEP_CHILD_VIEW})
 public class DocumentCargoList extends TemplatePage{
-    private final static int ITEMS_ON_PAGE = 13;
+    private static final String PAGE_NUMBER_KEY = DocumentCargoList.class.getSimpleName()+"_PAGE_NUMBER";
 
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
@@ -139,7 +139,7 @@ public class DocumentCargoList extends TemplatePage{
         dataProvider.setSort(OrderBy.ID.name(), true);
 
         //Таблица документов
-        DataView<DocumentCargo> dataView = new DataView<DocumentCargo>("documents", dataProvider, ITEMS_ON_PAGE){
+        DataView<DocumentCargo> dataView = new DataView<DocumentCargo>("documents", dataProvider, 1){
 
             @Override
             protected void populateItem(Item<DocumentCargo> item) {
@@ -174,7 +174,7 @@ public class DocumentCargoList extends TemplatePage{
         addOrderByBorder(filterForm, "order_created", OrderBy.CREATED.name(), dataProvider, dataView);
 
         //Панель ссылок для постраничной навигации        
-        filterForm.add(new PagingNavigator("navigator", dataView));
+        filterForm.add(new PagingNavigator("navigator", dataView, "itemsPerPage", getPreferences(), PAGE_NUMBER_KEY));
 
         filterForm.add(dataView);
         add(filterForm);
