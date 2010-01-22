@@ -7,6 +7,8 @@ import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.authorization.UnauthorizedInstantiationException;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.datetime.StyleDateConverter;
+import org.apache.wicket.datetime.markup.html.basic.DateLabel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
@@ -246,10 +248,42 @@ public class DocumentCargoEdit extends FormTemplatePage{
                 new PropertyModel<String>(documentCargoModel, "detentionDetails"));        
         form.add(detentionDetails);
 
+        boolean visible = id != null;
+
         //Примечания
         TextArea details = new TextArea<String>("document.cargo.details",
                 new PropertyModel<String>(documentCargoModel, "details"));
         form.add(details);
+
+        //Автор
+        Label l_creator = new Label("l_creator", getString("document.cargo.creator")+":");
+        l_creator.setVisible(visible);
+        form.add(l_creator);
+
+        Label creator = new Label("creator", visible ? dc.getCreator().getFullName() : "");
+        creator.setVisible(visible);
+        form.add(creator);
+
+        //Подразделение
+        Label l_department = new Label("l_department", getString("document.cargo.department")+":");
+        l_department.setVisible(visible);
+        form.add(l_department);
+
+        Label department = new Label("department", visible ? dc.getCreator().getDepartment()
+                .getDisplayName(getLocale(), localeDAO.systemLocale()) : "");
+        department.setVisible(visible);
+        form.add(department);
+
+        //Дата создания
+        Label l_created = new Label("l_created", getString("document.cargo.created")+":");
+        l_created.setVisible(visible);
+        form.add(l_created);
+
+        DateLabel created = new DateLabel("created", new Model<Date>(
+                visible ? documentCargoModel.getObject().getCreated() : new Date()),
+                new StyleDateConverter(true));
+        created.setVisible(visible);
+        form.add(created);
     }
 
     private <T extends Localizable> DropDownChoice<T> addDropDownChoice(WebMarkupContainer container, String id, Class<T> bookClass, Object model, String property){
@@ -267,7 +301,7 @@ public class DocumentCargoEdit extends FormTemplatePage{
 
                     @Override
                     public Object getDisplayValue(T object) {
-                        return object.getDisplayName(getLocale(), localeDAO.systemLocale());                        
+                        return object.getDisplayName(getLocale(), localeDAO.systemLocale());
                     }
 
                     @Override

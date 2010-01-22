@@ -71,7 +71,7 @@ public class Department extends Localizable{
     public String toString() {
         return new StringBuilder().append("[hash: ").append(Integer.toHexString(hashCode()))
                 .append(", id: ").append(getId())
-                .append(", stringCultureMap: ").append(getStringCultureMap())
+                .append(", stringCultureMap: ").append(getNamesMap())
                 .append("]").toString();
     }
 }

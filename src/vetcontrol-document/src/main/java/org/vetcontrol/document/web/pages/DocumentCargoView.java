@@ -112,6 +112,7 @@ public class DocumentCargoView extends TemplatePage{
         add(new Label("document.cargo.details", dc.getDetails()));
         add(new Label("document.cargo.creator_name", dc.getCreator().getFullName()));
         add(new Label("document.cargo.department", dc.getCreator().getDepartment().getDisplayName(getLocale(), system)));
+        add(new DateLabel("document.cargo.created", new Model<Date>(dc.getCreated()), new StyleDateConverter(true)));
 
         ListView<Cargo> dataView = new ListView<Cargo>("document.cargo.cargo_list", dc.getCargos()){
 

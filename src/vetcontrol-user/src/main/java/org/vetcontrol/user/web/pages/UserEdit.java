@@ -6,26 +6,27 @@ import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInst
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vetcontrol.entity.Department;
-import org.vetcontrol.entity.User;
-import org.vetcontrol.entity.UserGroup;
+import org.vetcontrol.entity.*;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.user.service.UserBean;
-import org.vetcontrol.util.book.BeanPropertyUtil;
-import org.vetcontrol.web.security.SecurityGroup;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.security.SecurityWebListener;
 import org.vetcontrol.web.template.FormTemplatePage;
 
 import javax.ejb.EJB;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static org.vetcontrol.entity.SecurityGroup.*;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -56,6 +57,7 @@ public class UserEdit extends FormTemplatePage {
 
     private void init(final Long id){
         add(new Label("title", getString("user.edit.title")));
+        add(new Label("header", getString("user.edit.title")));
 
         add(new FeedbackPanel("messages"));
 
@@ -88,7 +90,7 @@ public class UserEdit extends FormTemplatePage {
                     user.setPassword(DigestUtils.md5Hex(user.getLogin()));
                     if (userBean.containsLogin(user.getLogin())){
                         log.warn("Пользователь с логином: " + user.getLogin() + " уже существует");
-                        error(getString("user.edit.contain_login"));
+                        getSession().error(getString("user.edit.contain_login"));
                         return;
                     }
                 }else if(user.getChangePassword() != null && !user.getChangePassword().isEmpty()){
@@ -100,18 +102,20 @@ public class UserEdit extends FormTemplatePage {
 
                     userBean.save(user);
                     log.info("Пользователь сохранен: " + user);
-                    info(getString("user.info.saved"));
+                    getSession().info(getString("user.info.saved"));
 
                     if (toLogout){
                         if (logout(user.getLogin())){
                             log.info("Текущая сессия пользователя деактивирована: " + user);
-                            info(getString("user.info.logoff"));
+                            getSession().info(getString("user.info.logoff"));
                         }
                     }
                 } catch (Exception e) {
                     log.error("Ошибка сохранения пользователя в базу данных");
-                    error(getString("user.info.error.saved"));
+                    getSession().error(getString("user.info.error.saved"));
                 }
+
+                setResponsePage(UserList.class);
             }
 
         };
@@ -143,6 +147,29 @@ public class UserEdit extends FormTemplatePage {
         form.add(new RequiredTextField<String>("user.first_name", new PropertyModel<String>(userModel, "firstName")));
         form.add(new RequiredTextField<String>("user.middle_name", new PropertyModel<String>(userModel, "middleName")));
 
+        //Job drop down menu
+        List<Job> jobs = null;
+        try {
+            jobs = userBean.getJobs();
+        } catch (Exception e) {
+            log.error("Ошибка загрузки списка должностей",e);
+        }
+        DropDownChoice ddcJob = new DropDownChoice<Job>("user.job",
+                new PropertyModel<Job>(userModel, "job"),
+                jobs, new IChoiceRenderer<Job>() {
+                    @Override
+                    public Object getDisplayValue(Job job) {
+                        return job.getDisplayName(getLocale(), localeDAO.systemLocale());
+                    }
+
+                    @Override
+                    public String getIdValue(Job job, int index) {
+                        return String.valueOf(job.getId());
+                    }
+                });
+                
+        form.add(ddcJob);
+
         //Department drop down menu
         List<Department> departments = null;
         try {
@@ -150,11 +177,12 @@ public class UserEdit extends FormTemplatePage {
         } catch (Exception e) {
             log.error("Ошибка загрузки списка структурных единиц",e);
         }
-        DropDownChoice dropDownChoice = new DropDownChoice<Department>("user.department", new PropertyModel<Department>(userModel, "department"),
+        DropDownChoice ddcDepartment = new DropDownChoice<Department>("user.department",
+                new PropertyModel<Department>(userModel, "department"),
                 departments, new IChoiceRenderer<Department>() {
                     @Override
                     public Object getDisplayValue(Department department) {
-                        return BeanPropertyUtil.getLocalizablePropertyAsString(department.getNames(), localeDAO.systemLocale(), null);
+                        return department.getDisplayName(getLocale(), localeDAO.systemLocale());
                     }
 
                     @Override
@@ -163,51 +191,46 @@ public class UserEdit extends FormTemplatePage {
                     }
                 });
 
-        dropDownChoice.setRequired(true);
+        ddcDepartment.setRequired(true);
 
-        form.add(dropDownChoice);
+        form.add(ddcDepartment);
 
         //User groups checkbox select
-        final LoadableDetachableModel<List<UserGroup>> userGroupModel = new LoadableDetachableModel<List<UserGroup>>(){
-            @Override
-            protected List<UserGroup> load() {
-                List<UserGroup> userGroupChoises = new ArrayList<UserGroup>();
 
-                for (SecurityGroup securityGroup : SecurityGroup.values()){
-                    boolean hasGroup = false;
+        Map<SecurityGroup, IModel<UserGroup>> userGroupsMap = new HashMap<SecurityGroup, IModel<UserGroup>>();
 
-                    for (UserGroup userGroup : userModel.getObject().getUserGroups()){
-                        if (userGroup.getUserGroup().equals(securityGroup.name())){
-                            userGroupChoises.add(userGroup);
-                            hasGroup = true;
-                            break;
-                        }
-                    }
+        for (SecurityGroup securityGroup : SecurityGroup.values()){
+            boolean hasGroup = false;
 
-                    if (!hasGroup){
-                        UserGroup userGroup = new UserGroup();
-                        userGroup.setUserGroup(securityGroup.name());
-                        userGroupChoises.add(userGroup);
-                    }
+            for (UserGroup userGroup : userModel.getObject().getUserGroups()){
+                if (userGroup.getSecurityGroup().equals(securityGroup)){
+                    userGroupsMap.put(userGroup.getSecurityGroup(), new Model<UserGroup>(userGroup));
+                    hasGroup = true;
+                    break;
                 }
-
-                return userGroupChoises;
             }
-        };
 
-        form.add(new CheckBoxMultipleChoice<UserGroup>("usergroups",
-                new PropertyModel<Collection<UserGroup>>(userModel, "userGroups"),
-                userGroupModel, new IChoiceRenderer<UserGroup>(){
-                    @Override
-                    public Object getDisplayValue(UserGroup userGroup) {
-                        return getString(userGroup.getUserGroup());
-                    }
+            if (!hasGroup){
+                UserGroup userGroup = new UserGroup();
+                userGroup.setSecurityGroup(securityGroup);
+                userGroupsMap.put(userGroup.getSecurityGroup(), new Model<UserGroup>(userGroup));
+            }
+        }
 
-                    @Override
-                    public String getIdValue(UserGroup userGroup, int index) {
-                        return userGroup.getUserGroup();
-                    }
-                }));
+        CheckGroup<UserGroup> usergroups = new CheckGroup<UserGroup>("usergroups",
+                new PropertyModel<Collection<UserGroup>>(userModel, "userGroups"));
+        
+        usergroups.add(new Check<UserGroup>("ADMINISTRATORS", userGroupsMap.get(ADMINISTRATORS)));
+        usergroups.add(new Check<UserGroup>("DEPARTMENT_OFFICERS", userGroupsMap.get(DEPARTMENT_OFFICERS)));
+        usergroups.add(new Check<UserGroup>("LOCAL_OFFICERS", userGroupsMap.get(LOCAL_OFFICERS)));
+        usergroups.add(new Check<UserGroup>("LOCAL_OFFICERS_EDIT", userGroupsMap.get(LOCAL_OFFICERS_EDIT)));
+        usergroups.add(new Check<UserGroup>("LOCAL_OFFICERS_DEP_VIEW", userGroupsMap.get(LOCAL_OFFICERS_DEP_VIEW)));
+        usergroups.add(new Check<UserGroup>("LOCAL_OFFICERS_DEP_EDIT", userGroupsMap.get(LOCAL_OFFICERS_DEP_EDIT)));
+        usergroups.add(new Check<UserGroup>("LOCAL_OFFICERS_DEP_CHILD_VIEW", userGroupsMap.get(LOCAL_OFFICERS_DEP_CHILD_VIEW)));
+        usergroups.add(new Check<UserGroup>("LOCAL_OFFICERS_DEP_CHILD_EDIT", userGroupsMap.get(LOCAL_OFFICERS_DEP_CHILD_EDIT)));
+        usergroups.add(new Check<UserGroup>("MOBILE_OFFICERS", userGroupsMap.get(MOBILE_OFFICERS)));
+
+        form.add(usergroups);
     }
 
     /**

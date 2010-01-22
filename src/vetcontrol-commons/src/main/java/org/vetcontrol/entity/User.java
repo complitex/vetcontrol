@@ -18,29 +18,41 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
     @Column(name = "login", length = 32, unique = true, nullable = false)
     private String login;
+
     @Column(name = "_password", length = 32, nullable = false)
     private String password;
+
     @Transient
     private String changePassword;
+
     @Column(name = "first_name", length = 45)
     private String firstName;
+
     @Column(name = "middle_name", length = 45)
     private String middleName;
+
     @Column(name = "last_name", length = 45)
     private String lastName;
+
+    @ManyToOne
+    @JoinColumn(name = "job_id")
+    private Job job;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserGroup> userGroups = new ArrayList<UserGroup>();
-
-    @Column(name = "locale", length = 2)
-    private String locale;
-    @Column(name = "page_size")
-    private Integer pageSize;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "department_id", nullable = true)
     private Department department;
+
+    @Column(name = "locale", length = 2)
+    private String locale;
+
+    @Column(name = "page_size")
+    private Integer pageSize;
 
     public Long getId() {
         return id;
@@ -96,6 +108,14 @@ public class User implements Serializable {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public Job getJob() {
+        return job;
+    }
+
+    public void setJob(Job job) {
+        this.job = job;
     }
 
     public List<UserGroup> getUserGroups() {

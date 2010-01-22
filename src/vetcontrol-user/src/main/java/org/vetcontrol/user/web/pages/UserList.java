@@ -10,6 +10,9 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.IModel;
@@ -22,7 +25,6 @@ import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UIPreferences.PreferenceType;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.user.service.UserBean;
-import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.web.component.paging.PagingNavigator;
 import org.vetcontrol.web.component.toolbar.AddUserButton;
 import org.vetcontrol.web.component.toolbar.ToolbarButton;
@@ -60,6 +62,8 @@ public class UserList extends TemplatePage {
         preferences = getPreferences();
 
         add(new Label("title", getString("user.list.title")));
+
+        add(new FeedbackPanel("messages"));
 
         //Форма фильтра по ключевому слову
         String filter = preferences.getPreference(PreferenceType.FILTER, FILTER_KEY, String.class);
@@ -128,12 +132,12 @@ public class UserList extends TemplatePage {
                 userItem.add(new Label("last_name", user.getLastName()));
                 userItem.add(new Label("first_name", user.getFirstName()));
                 userItem.add(new Label("middle_name", user.getMiddleName()));
-                if (user.getDepartment() != null) {
-                    userItem.add(new Label("department",
-                            BeanPropertyUtil.getLocalizablePropertyAsString(user.getDepartment().getNames(), localeDAO.systemLocale(), null)));
-                } else {
-                    userItem.add(new Label("department", "DEVELOPMENT"));
+                if (user.getJob() != null){
+                    userItem.add(new Label("job", user.getJob().getDisplayName(getLocale(), localeDAO.systemLocale())));
+                }else{
+                    userItem.add(new Label("job",""));                                        
                 }
+                userItem.add(new Label("department", user.getDepartment().getDisplayName(getLocale(), localeDAO.systemLocale())));
                 Link<UserEdit> edit = new BookmarkablePageLink<UserEdit>("edit", UserEdit.class,
                         new PageParameters("user_id=" + user.getId()));
                 edit.add(new Label("login", user.getLogin()));
@@ -156,6 +160,12 @@ public class UserList extends TemplatePage {
             }
         });
         add(new OrderByBorder("order_middle_name", "MIDDLE_NAME", userSort) {
+
+            protected void onSortChanged() {
+                userDataView.setCurrentPage(0);
+            }
+        });
+        add(new OrderByBorder("order_job", "JOB", userSort) {
 
             protected void onSortChanged() {
                 userDataView.setCurrentPage(0);
@@ -191,7 +201,7 @@ public class UserList extends TemplatePage {
         StringBuilder sb = new StringBuilder();
 
         for (Iterator<UserGroup> it = user.getUserGroups().iterator();;) {
-            sb.append(getString(it.next().getUserGroup()));
+            sb.append(getString(it.next().getSecurityGroup().name()));
             if (!it.hasNext()) {
                 return sb.toString();
             }

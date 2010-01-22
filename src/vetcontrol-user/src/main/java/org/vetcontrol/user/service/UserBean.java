@@ -1,13 +1,12 @@
 package org.vetcontrol.user.service;
 
 import org.vetcontrol.entity.Department;
+import org.vetcontrol.entity.Job;
 import org.vetcontrol.entity.User;
 import org.vetcontrol.entity.UserGroup;
-import org.vetcontrol.service.dao.IBookViewDAO;
 import org.vetcontrol.web.security.SecurityRoles;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -25,21 +24,19 @@ public class UserBean {
 
     public static enum OrderBy {
 
-        LOGIN, FIRST_NAME, LAST_NAME, MIDDLE_NAME, DEPARTMENT
+        LOGIN, FIRST_NAME, LAST_NAME, MIDDLE_NAME, JOB, DEPARTMENT
     }
     @PersistenceContext
     private EntityManager entityManager;
-    @EJB(beanName = "BookViewDAO")
-    private IBookViewDAO bookViewDAO;
 
     public List<User> getUsers(int first, int count, OrderBy orderBy, boolean asc, String filter, Locale locale) {
-        String select = "SELECT DISTINCT u FROM User u, StringCulture sc LEFT JOIN FETCH u.department d ";
+        String select = "SELECT DISTINCT u FROM User u left join u.department.namesMap dn left join u.job.namesMap jn ";
 
-        String where = " WHERE d.name = sc.id.id AND sc.id.locale = :locale ";
+        String where = "";
         if (filter != null) {
-            where += "AND (upper(u.login) like :filter or upper(u.firstName) like :filter "
+            where += "WHERE upper(u.login) like :filter or upper(u.firstName) like :filter "
                     + "or upper(u.lastName) like :filter or upper(u.middleName) like :filter "
-                    + "or d.name IN (SELECT sc2.id.id FROM StringCulture sc2 WHERE upper(sc2.value) like :filter))";
+                    + "or upper(dn.value) like :filter or upper(jn.value) like :filter";
         }
 
         String order = "";
@@ -56,33 +53,31 @@ public class UserBean {
             case MIDDLE_NAME:
                 order = " order by u.middleName";
                 break;
+            case JOB:
+                order = " order by jn.value";
+                break;
             case DEPARTMENT:
-                order = " order by sc.value";
+                order = " order by dn.value";
                 break;
         }
 
         TypedQuery<User> query = entityManager.createQuery(select + where + order + (asc ? " asc" : " desc"), User.class);
-
-        query.setParameter("locale", locale.getLanguage());
+                
         if (filter != null) {
             query.setParameter("filter", "%" + filter.toUpperCase() + "%");
         }
 
-        List<User> users = query.setFirstResult(first).setMaxResults(count).getResultList();
-
-        //add localization support
-        bookViewDAO.addLocalizationSupport(users);
-        return users;
+        return query.setFirstResult(first).setMaxResults(count).getResultList();
     }
 
     public Long getUserCount(String filter) {
-        String select = "SELECT COUNT(DISTINCT u) FROM User u LEFT JOIN u.department d ";
+        String select = "SELECT COUNT(DISTINCT u) FROM User u left join u.department.namesMap dn left join u.job.namesMap jn ";
 
         String where = "";
         if (filter != null) {
             where += "WHERE upper(u.login) like :filter or upper(u.firstName) like :filter "
                     + "or upper(u.lastName) like :filter or upper(u.middleName) like :filter "
-                    + "or d.name IN (SELECT sc2.id.id FROM StringCulture sc2 WHERE upper(sc2.value) like :filter))";
+                    + "or upper(dn.value) like :filter or upper(jn.value) like :filter";
         }
 
         TypedQuery<Long> query = entityManager.createQuery(select + where, Long.class);
@@ -99,7 +94,11 @@ public class UserBean {
     }
 
     public List<Department> getDepartments() {
-        return bookViewDAO.getContent(Department.class);
+        return entityManager.createQuery("from Department", Department.class).getResultList();
+    }
+
+    public List<Job> getJobs(){
+        return entityManager.createQuery("from Job", Job.class).getResultList();
     }
 
     public boolean isUserAuthChanged(User localUser) {
@@ -128,7 +127,7 @@ public class UserBean {
             for (UserGroup db : currentUser.getUserGroups()) {
                 boolean delete = true;
                 for (UserGroup model : user.getUserGroups()) {
-                    if (model.getUserGroup().equals(db.getUserGroup())) {
+                    if (model.getSecurityGroup().equals(db.getSecurityGroup())) {
                         delete = false;
                         break;
                     }

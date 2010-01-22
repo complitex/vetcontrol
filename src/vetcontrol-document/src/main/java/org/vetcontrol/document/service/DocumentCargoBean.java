@@ -128,7 +128,7 @@ public class DocumentCargoBean {
     }
 
     private String getSelectLocaleFilter(String entity){
-        return " left join dc." + entity + ".stringCultureMap as m_"+entity;
+        return " left join dc." + entity + ".namesMap as m_"+entity;
     }
 
     private String getWhereLocaleFilter(String entity, Locale currentLocale, Locale systemLocale){
@@ -195,17 +195,14 @@ public class DocumentCargoBean {
 
             if (filter.getCargoSenderName() != null){
                 where += " and upper(m_cargoSender.value) like :cargoSenderName";
-                where += getWhereLocaleFilter("cargoSender", filter.getCurrentLocale(), filter.getSystemLocale());
             }
 
             if (filter.getCargoReceiverName() != null){
                 where += " and upper(m_cargoReceiver.value) like :cargoReceiverName";
-                where += getWhereLocaleFilter("cargoReceiver", filter.getCurrentLocale(), filter.getSystemLocale());
             }
 
             if (filter.getCargoProducerName() != null){
-                where += " and upper(m_cargoProducer.value) like :cargoProducerName";
-                where += getWhereLocaleFilter("cargoProducer", filter.getCurrentLocale(), filter.getSystemLocale());
+                where += " and upper(m_cargoProducer.value) like :cargoProducerName";                
             }
 
             if (filter.getDetentionDetails() != null){
@@ -217,11 +214,11 @@ public class DocumentCargoBean {
             }
 
             if (filter.getCreated() != null){
-                where += " and dc.created >= :created";
+                where += " and dc.created between :created and :created_end_day";
             }
 
             if (filter.getId() != null){
-                where += " and dc.id >= :id";
+                where += " and dc.id = :id";
             }
         }
 
@@ -241,7 +238,10 @@ public class DocumentCargoBean {
             addParameter(query, "cargoProducerName", filter.getCargoProducerName());
             addParameter(query, "detentionDetails", filter.getDetentionDetails());
             addParameter(query, "details", filter.getDetails());
-            addParameter(query, "created", filter.getCreated());
+            if (filter.getCreated() != null){
+                query.setParameter("created", filter.getCreated());
+                query.setParameter("created_end_day", DateUtil.getEndOfDay(filter.getCreated()));
+            }
         }
     }
 
