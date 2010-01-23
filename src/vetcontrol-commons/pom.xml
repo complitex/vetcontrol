@@ -39,6 +39,13 @@
         </dependency>
 
         <dependency>
+            <groupId>org.wicketstuff</groupId>
+            <artifactId>wicket-contrib-javaee</artifactId>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/wicket-contrib-javaee-1.1.jar</systemPath>
+        </dependency>
+
+        <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
             <scope>provided</scope>

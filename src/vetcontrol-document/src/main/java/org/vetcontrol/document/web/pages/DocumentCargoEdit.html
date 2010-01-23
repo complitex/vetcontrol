@@ -70,7 +70,6 @@
                 <thead>
                 <tr>
                     <th  class="center"><wicket:message key="document.cargo.cargo_type_code"/></th>
-                    <th  class="center"><wicket:message key="document.cargo.cargo_type_name"/></th> 
                     <th  class="center"><wicket:message key="document.cargo.count"/></th>
                     <th  class="center"><wicket:message key="document.cargo.unit_type"/></th>                    
                     <th  class="center"><wicket:message key="document.cargo.certificate_detail"/></th>
@@ -79,9 +78,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr wicket:id="document.cargo.cargo_list">
-                    <td><input wicket:id="document.cargo.cargo_type_code"/></td>
-                    <td><input wicket:id="document.cargo.cargo_type_name"/></td>
+                <tr wicket:id="document.cargo.cargo_list">                    
+                    <td><span wicket:id="document.cargo.cargo_type"></span></td>
                     <td><input wicket:id="document.cargo.count" type="text"/></td>
                     <td><select wicket:id="document.cargo.unit_type"></select></td>
                     <td><input wicket:id="document.cargo.certificate_detail" type="text"/></td>
