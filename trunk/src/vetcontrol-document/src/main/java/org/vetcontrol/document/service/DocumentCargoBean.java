@@ -5,7 +5,9 @@ import org.vetcontrol.entity.DocumentCargo;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.service.dao.IBookViewDAO;
 import org.vetcontrol.util.DateUtil;
+import org.vetcontrol.web.security.SecurityRoles;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -20,6 +22,7 @@ import java.util.Locale;
  *         Date: 12.01.2010 18:22:06
  */
 @Stateless
+@RolesAllowed({SecurityRoles.DOCUMENT_CREATE, SecurityRoles.DOCUMENT_EDIT, SecurityRoles.DOCUMENT_DEP_VIEW})
 public class DocumentCargoBean {
     public static enum OrderBy{
         ID, MOVEMENT_TYPE, VECHICLE_TYPE, VECHICLE_DETAILS, CARGO_RECEIVER, CARGO_SENDER, CARGO_PRODUCER, CREATED

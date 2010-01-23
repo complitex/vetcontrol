@@ -4,12 +4,13 @@
  */
 package org.vetcontrol.service;
 
+import org.vetcontrol.entity.User;
+
+import javax.naming.InitialContext;
 import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
-import javax.naming.InitialContext;
-import org.vetcontrol.entity.User;
 
 /**
  * Class represents user preferences.
@@ -100,6 +101,9 @@ public class UIPreferences implements Serializable {
     }
 
     private void saveToDBIfNecessary(PreferenceType type, Object value) {
+        //FIX VC-8
+        currentUser = getUserProfileBean().getCurrentUser();
+
         initCurrentUser();
         switch (type) {
             case LOCALE:
