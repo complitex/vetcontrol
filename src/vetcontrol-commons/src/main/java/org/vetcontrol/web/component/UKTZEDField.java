@@ -3,6 +3,7 @@ package org.vetcontrol.web.component;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AbstractAutoCompleteTextRenderer;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteSettings;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteTextField;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -40,12 +41,28 @@ public class UKTZEDField extends Panel {
 
         final Locale system = localeDAO.systemLocale();
 
-        AutoCompleteSettings autoCompleteSettings = new AutoCompleteSettings();
-        autoCompleteSettings.setAdjustInputWidth(false);
+        AutoCompleteSettings settings = new AutoCompleteSettings();
+        settings.setAdjustInputWidth(false);
+
+        AbstractAutoCompleteTextRenderer<String> renderer = new AbstractAutoCompleteTextRenderer<String>(){
+
+            @Override
+            protected String getTextValue(String object) {
+                return object;
+            }
+
+            @Override
+            protected CharSequence getOnSelectJavascriptExpression(String item) {
+
+                return  "input.replace('\\t', '                                                                 \\t');";
+            }
+        };
 
         final AutoCompleteTextField<String> uktzed = new AutoCompleteTextField<String>("uktzed",
                 new Model<String>(model.getObject() != null ? model.getObject().getCode() : ""),
-                autoCompleteSettings){
+                String.class,
+                renderer,
+                settings){
 
             @Override
             protected Iterator<String> getChoices(String input) {
@@ -64,14 +81,16 @@ public class UKTZEDField extends Panel {
 
         final AutoCompleteTextField<String> name = new AutoCompleteTextField<String>("name",
                 new Model<String>(model.getObject() != null ? model.getObject().getDisplayName(getLocale(), system) : ""),
-                autoCompleteSettings){
+                String.class,
+                renderer,
+                settings){
 
             @Override
             protected Iterator<String> getChoices(String input) {
                 List<CargoType> cargoTypes = cargoTypeBean.getCargoTypesByName(input, MAX_ITEM);
                 List<String> choices = new ArrayList<String>();
                 for (CargoType ct : cargoTypes){
-                    choices.add(ct.getCode() + "\t" + ct.getDisplayName(getLocale(), system));
+                    choices.add(ct.getDisplayName(getLocale(), system) + "\t" + ct.getCode());
                 }
 
                 return choices.iterator();
@@ -117,7 +136,7 @@ public class UKTZEDField extends Panel {
                 if (input == null) return;
 
                 if (input.indexOf('\t') > -1){
-                    String code = input.substring(0, input.indexOf('\t'));
+                    String code = input.substring(input.indexOf('\t')).trim();
 
                     CargoType cargoType = cargoTypeBean.getCargoType(code);
                     model.setObject(cargoType);
