@@ -3,7 +3,6 @@ package org.vetcontrol.document.web.pages;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.authorization.UnauthorizedInstantiationException;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
@@ -15,6 +14,7 @@ import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.odlabs.wiquery.ui.datepicker.DatePicker;
@@ -22,8 +22,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.document.service.DocumentCargoBean;
 import org.vetcontrol.entity.*;
+import org.vetcontrol.service.CargoTypeBean;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
+import org.vetcontrol.web.component.UKTZEDField;
 import org.vetcontrol.web.template.FormTemplatePage;
 
 import javax.ejb.EJB;
@@ -41,10 +43,13 @@ public class DocumentCargoEdit extends FormTemplatePage{
     private static final Logger log = LoggerFactory.getLogger(DocumentCargoEdit.class);
 
     @EJB(name = "DocumentBean")
-    DocumentCargoBean documentCargoBean;
+    private DocumentCargoBean documentCargoBean;
 
     @EJB(name = "UserProfileBean")
-    UserProfileBean userProfileBean;
+    private UserProfileBean userProfileBean;
+
+    @EJB(name = "CargoTypeBean")
+    private CargoTypeBean cargoTypeBean;
 
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
@@ -295,7 +300,7 @@ public class DocumentCargoEdit extends FormTemplatePage{
             log.error("Ошибка загрузки списка справочников: " + bookClass, e);
         }
 
-        DropDownChoice<T> ddcMovementTypes = new DropDownChoice<T>(id,
+        DropDownChoice<T> ddc = new DropDownChoice<T>(id,
                 new PropertyModel<T>(model, property), list,
                 new IChoiceRenderer<T>(){
 
@@ -310,63 +315,60 @@ public class DocumentCargoEdit extends FormTemplatePage{
                     }
                 });
 
-        ddcMovementTypes.setRequired(true);
-        container.add(ddcMovementTypes);
+        ddc.setRequired(true);
+        container.add(ddc);
 
-        return ddcMovementTypes;
+        return ddc;
     }
 
     private void addCargo(final ListItem<Cargo> item){
-        //УКТЗЕД и Тип груза
-        CargoType ct = item.getModelObject().getCargoType();
-        final TextField<String> cargoTypeCode = new TextField<String>("document.cargo.cargo_type_code",
-                new Model<String>(ct != null ? ct.getCode() : ""));
-        item.add(cargoTypeCode);
-
-        final TextField<String> cargoType = new TextField<String>("document.cargo.cargo_type_name",
-                new Model<String>(ct != null ? ct.getDisplayName(getLocale(), localeDAO.systemLocale()) : ""));
-        cargoType.setEnabled(false);
-        cargoType.setRequired(true);
-        cargoType.setOutputMarkupId(true);
-        item.add(cargoType);
-
-        cargoTypeCode.add(new AjaxFormComponentUpdatingBehavior("onchange"){
-             @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                 CargoType ct = null;
-                 try {
-                     ct = documentCargoBean.getCargoType(cargoTypeCode.getModelObject());
-                     item.getModelObject().setCargoType(ct);
-                 } catch (Exception e) {
-                     getSession().error("Ошибка загрузки типа груза для кода: " + cargoTypeCode.getModelObject());
-                     log.error("Ошибка загрузки типа груза для кода: " + cargoTypeCode.getModelObject());
-                 }
-                 cargoType.setModelObject(ct != null
-                         ? ct.getDisplayName(getLocale(), localeDAO.systemLocale())
-                         : getString("document.cargo.cargo_type.not_found"));
-
-                 target.addComponent(cargoType);
-             }
-        });
-
         //Единицы измерения
-        addDropDownChoice(item, "document.cargo.unit_type", UnitType.class, item.getModelObject(), "unitType");
+        LoadableDetachableModel<List<UnitType>> unitTypesModel = new LoadableDetachableModel<List<UnitType>>(){
+
+            @Override
+            protected List<UnitType> load() {
+                return cargoTypeBean.getUnitTypes(item.getModelObject().getCargoType());
+            }
+        };
+
+        DropDownChoice<UnitType> ddcUnitTypes = new DropDownChoice<UnitType>("document.cargo.unit_type",
+                new PropertyModel<UnitType>(item.getModelObject(), "unitType"), unitTypesModel,
+                new IChoiceRenderer<UnitType>(){
+
+                    @Override
+                    public Object getDisplayValue(UnitType object) {
+                        return object.getDisplayName(getLocale(), localeDAO.systemLocale());
+                    }
+
+                    @Override
+                    public String getIdValue(UnitType object, int index) {
+                        return String.valueOf(object.getId());
+                    }
+                });
+
+        ddcUnitTypes.setRequired(true);
+        ddcUnitTypes.setOutputMarkupId(true);
+        item.add(ddcUnitTypes);
+
+        //УКТЗЕД и Тип груза
+        item.add(new UKTZEDField("document.cargo.cargo_type", new PropertyModel<CargoType>(item.getModel(), "cargoType"),
+                ddcUnitTypes));
 
         //Количество
         TextField<Integer> count = new TextField<Integer>("document.cargo.count",
-                new PropertyModel<Integer>(item.getModelObject(), "count"));
+                new PropertyModel<Integer>(item.getModel(), "count"));
         count.setRequired(true);
         item.add(count);
 
         //Реквизиты сертификата
         TextField<String> certificateDetails = new TextField<String>("document.cargo.certificate_detail",
-                new PropertyModel<String>(item.getModelObject(), "certificateDetails"));
+                new PropertyModel<String>(item.getModel(), "certificateDetails"));
         certificateDetails.setRequired(true);
         item.add(certificateDetails);
 
         //Дата сертификата
         DatePicker<Date> certificateDate = new DatePicker<Date>("document.cargo.certificate_date",
-                new PropertyModel<Date>(item.getModelObject(), "certificateDate"));
+                new PropertyModel<Date>(item.getModel(), "certificateDate"));
         certificateDate.setButtonImage("images/calendar.gif");
         certificateDate.setButtonImageOnly(true);
         certificateDate.setShowOn(DatePicker.ShowOnEnum.BOTH);

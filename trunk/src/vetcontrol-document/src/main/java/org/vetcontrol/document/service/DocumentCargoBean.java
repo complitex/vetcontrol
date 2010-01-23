@@ -1,7 +1,6 @@
 package org.vetcontrol.document.service;
 
 import org.vetcontrol.entity.Cargo;
-import org.vetcontrol.entity.CargoType;
 import org.vetcontrol.entity.DocumentCargo;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.service.dao.IBookViewDAO;
@@ -9,7 +8,10 @@ import org.vetcontrol.util.DateUtil;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Locale;
 
@@ -71,7 +73,7 @@ public class DocumentCargoBean {
       
 
     public Long getDocumentCargosSize(DocumentCargoFilter filter){
-        Query query = entityManager.createQuery("select count(dc) from DocumentCargo dc "
+        Query query = entityManager.createQuery("select count(distinct(dc)) from DocumentCargo dc "
                 + getJoin(filter, null)
                 + getWhere(filter));
         setParameters(filter, query);
@@ -80,7 +82,7 @@ public class DocumentCargoBean {
     }
                                                                       
     public List<DocumentCargo> getDocumentCargos(DocumentCargoFilter filter, int first, int count, OrderBy orderBy, boolean asc){
-        String select = "select dc from DocumentCargo dc " + getJoin(filter, orderBy);
+        String select = "select distinct(dc) from DocumentCargo dc " + getJoin(filter, orderBy);
         String where = getWhere(filter);
 
         String order = "";
@@ -257,14 +259,6 @@ public class DocumentCargoBean {
         return entityManager.createQuery("from " + _class.getSimpleName(), _class).getResultList();
     }
 
-    public CargoType getCargoType(String code){
-        try {
-            return entityManager.createQuery("from CargoType ct where ct.code = :code", CargoType.class)
-                    .setParameter("code", code)
-                    .getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
+   
 
 }

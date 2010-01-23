@@ -3,7 +3,9 @@ package org.vetcontrol.web.template;
 import org.apache.wicket.Request;
 import org.apache.wicket.Response;
 import org.apache.wicket.Session;
+import org.odlabs.wiquery.core.commons.WiQueryInstantiationListener;
 import org.vetcontrol.web.security.ServeltAuthWebApplication;
+import org.wicketstuff.javaee.injection.JavaEEComponentInjector;
 
 import java.io.InputStream;
 
@@ -21,6 +23,9 @@ public abstract class TemplateWebApplication extends ServeltAuthWebApplication {
     @Override
     protected void init() {
         super.init();
+
+        addComponentInstantiationListener(new WiQueryInstantiationListener());
+        addComponentInstantiationListener(new JavaEEComponentInjector(this));
 
         InputStream inputStream = getServletContext().getResourceAsStream(templatePath);
         if (inputStream != null) {
