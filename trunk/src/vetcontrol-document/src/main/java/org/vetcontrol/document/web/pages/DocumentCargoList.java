@@ -20,6 +20,7 @@ import org.odlabs.wiquery.ui.datepicker.DatePicker;
 import org.vetcontrol.document.service.DocumentCargoBean;
 import org.vetcontrol.document.service.DocumentCargoFilter;
 import org.vetcontrol.entity.*;
+import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.web.component.BookmarkablePageLinkPanel;
@@ -42,6 +43,9 @@ import static org.vetcontrol.web.security.SecurityRoles.*;
 @AuthorizeInstantiation({DOCUMENT_CREATE, DOCUMENT_DEP_VIEW, DOCUMENT_DEP_CHILD_VIEW})
 public class DocumentCargoList extends TemplatePage{
     private static final String PAGE_NUMBER_KEY = DocumentCargoList.class.getSimpleName()+"_PAGE_NUMBER";
+    private static final String SORT_PROPERTY_KEY = DocumentCargoList.class.getSimpleName() + "_SORT_PROPERTY";
+    private static final String SORT_ORDER_KEY = DocumentCargoList.class.getSimpleName() + "_SORT_ORDER";
+    private static final String FILTER_KEY = DocumentCargoList.class.getSimpleName() + "_FILTER";
 
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
@@ -62,8 +66,16 @@ public class DocumentCargoList extends TemplatePage{
 
         add(new FeedbackPanel("messages"));
 
+        final UIPreferences preferences = getPreferences();
+
         //Фильтр
-        final IModel<DocumentCargoFilter> filter = new CompoundPropertyModel<DocumentCargoFilter>(newDocumentCargoFilter());
+        DocumentCargoFilter filterObject = preferences.getPreference(UIPreferences.PreferenceType.FILTER,
+                FILTER_KEY, DocumentCargoFilter.class);
+        if (filterObject == null){
+            filterObject = newDocumentCargoFilter();
+        }
+
+        final IModel<DocumentCargoFilter> filter = new CompoundPropertyModel<DocumentCargoFilter>(filterObject);
         final Form<DocumentCargoFilter> filterForm = new Form<DocumentCargoFilter>("filter_form", filter);
 
         Button filter_reset = new Button("filter_reset"){
@@ -123,6 +135,10 @@ public class DocumentCargoList extends TemplatePage{
                 DocumentCargoBean.OrderBy sort = OrderBy.valueOf(getSort().getProperty());
                 boolean asc = getSort().isAscending();
 
+                preferences.putPreference(UIPreferences.PreferenceType.SORT_PROPERTY, SORT_PROPERTY_KEY, getSort().getProperty());
+                preferences.putPreference(UIPreferences.PreferenceType.SORT_ORDER, SORT_ORDER_KEY, asc);
+                preferences.putPreference(UIPreferences.PreferenceType.FILTER, FILTER_KEY, filter.getObject());
+
                 return documentCargoBean.getDocumentCargos(filter.getObject(), first, count, sort, asc).iterator();
             }
 
@@ -136,7 +152,11 @@ public class DocumentCargoList extends TemplatePage{
                 return new Model<DocumentCargo>(object);
             }
         };
-        dataProvider.setSort(OrderBy.ID.name(), true);
+        String sortPropertyFromPreferences = preferences.getPreference(UIPreferences.PreferenceType.SORT_PROPERTY, SORT_PROPERTY_KEY, String.class);
+        Boolean sortOrderFromPreferences = preferences.getPreference(UIPreferences.PreferenceType.SORT_ORDER, SORT_ORDER_KEY, Boolean.class);
+        String sortProp = sortPropertyFromPreferences != null ? sortPropertyFromPreferences : OrderBy.ID.name();
+        boolean asc = sortOrderFromPreferences != null ? sortOrderFromPreferences : true;
+        dataProvider.setSort(sortProp, asc);
 
         //Таблица документов
         DataView<DocumentCargo> dataView = new DataView<DocumentCargo>("documents", dataProvider, 1){
