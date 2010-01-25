@@ -35,6 +35,7 @@ import javax.ejb.EJB;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.wicket.model.ResourceModel;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -61,7 +62,7 @@ public class UserList extends TemplatePage {
         super();
         preferences = getPreferences();
 
-        add(new Label("title", getString("user.list.title")));
+        add(new Label("title", new ResourceModel("user.list.title")));
 
         add(new FeedbackPanel("messages"));
 

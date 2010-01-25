@@ -31,6 +31,9 @@ import org.vetcontrol.web.template.FormTemplatePage;
 import javax.ejb.EJB;
 import java.util.Date;
 import java.util.List;
+import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
 
 import static org.vetcontrol.web.security.SecurityRoles.*;
 
@@ -109,10 +112,15 @@ public class DocumentCargoEdit extends FormTemplatePage{
         }
 
         //Заголовок
-        String title = (id != null)
+        IModel title = new AbstractReadOnlyModel<String>() {
+
+            @Override
+            public String getObject() {
+                return (id != null)
                 ? getString("document.cargo.edit.title.edit") + id
                 : getString("document.cargo.edit.title.create");
-
+            }
+        };
         add(new Label("title", title));
         add(new Label("header", title));
 
@@ -261,7 +269,7 @@ public class DocumentCargoEdit extends FormTemplatePage{
         form.add(details);
 
         //Автор
-        Label l_creator = new Label("l_creator", getString("document.cargo.creator")+":");
+        Label l_creator = new Label("l_creator", new ResourceModel("document.cargo.creator"));
         l_creator.setVisible(visible);
         form.add(l_creator);
 
@@ -270,7 +278,7 @@ public class DocumentCargoEdit extends FormTemplatePage{
         form.add(creator);
 
         //Подразделение
-        Label l_department = new Label("l_department", getString("document.cargo.department")+":");
+        Label l_department = new Label("l_department", new ResourceModel("document.cargo.department"));
         l_department.setVisible(visible);
         form.add(l_department);
 
@@ -280,7 +288,7 @@ public class DocumentCargoEdit extends FormTemplatePage{
         form.add(department);
 
         //Дата создания
-        Label l_created = new Label("l_created", getString("document.cargo.created")+":");
+        Label l_created = new Label("l_created", new ResourceModel("document.cargo.created"));
         l_created.setVisible(visible);
         form.add(l_created);
 

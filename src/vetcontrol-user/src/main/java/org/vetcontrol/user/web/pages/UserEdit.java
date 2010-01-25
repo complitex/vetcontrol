@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.wicket.model.ResourceModel;
 
 import static org.vetcontrol.entity.SecurityGroup.*;
 
@@ -56,8 +57,8 @@ public class UserEdit extends FormTemplatePage {
     }
 
     private void init(final Long id){
-        add(new Label("title", getString("user.edit.title")));
-        add(new Label("header", getString("user.edit.title")));
+        add(new Label("title", new ResourceModel("user.edit.title")));
+        add(new Label("header", new ResourceModel("user.edit.title")));
 
         add(new FeedbackPanel("messages"));
 
