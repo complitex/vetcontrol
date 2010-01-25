@@ -9,7 +9,8 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.model.IWrapModel;
+import org.apache.wicket.model.ResourceModel;
 
 /**
  *
@@ -21,7 +22,7 @@ public abstract class ToolbarButton extends Panel {
         super(id);
 
         Link link = addLink();
-        Image image = addImage(imageSrc, new StringResourceModel(titleKey, this, null).getObject());
+        Image image = addImage(imageSrc, new ResourceModel(titleKey).wrapOnAssignment(this));
         link.add(image);
 
         add(link);
@@ -39,13 +40,13 @@ public abstract class ToolbarButton extends Panel {
         };
     }
 
-    protected Image addImage(ResourceReference imageSrc, final String title) {
+    protected Image addImage(ResourceReference imageSrc, final IWrapModel<String> title) {
         return new Image("image", imageSrc) {
 
             @Override
             protected void onComponentTag(ComponentTag tag) {
                 super.onComponentTag(tag);
-                tag.put("title", title);
+                tag.put("title", title.getObject());
             }
         };
     }
