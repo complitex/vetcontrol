@@ -22,7 +22,9 @@ import java.util.Iterator;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilterStateLocator;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.vetcontrol.information.web.model.DisplayBookClassModel;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UIPreferences.PreferenceType;
 import org.vetcontrol.web.component.toolbar.AddItemButton;
@@ -128,6 +130,9 @@ public class BookPage extends TemplatePage {
         DataProvider dataProvider = new DataProvider();
         dataProvider.init(bookClass, "id", true);
         dataProvider.initSize();
+
+        //title
+        add(new Label("title", new DisplayBookClassModel(bookClass)));
 
         BookContentControl bookContent = new BookContentControl("bookContent", dataProvider, bookClass, fasade, localeDAO.systemLocale(), preferences) {
 
