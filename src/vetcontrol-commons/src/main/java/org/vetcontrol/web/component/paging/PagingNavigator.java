@@ -40,6 +40,7 @@ public class PagingNavigator extends Panel {
     private IPageable pageable;
     private WebMarkupContainer pageBar;
     private Form newPageForm;
+    private WebMarkupContainer allPagesRegion;
     private PropertyModel<Integer> rowsPerPagePropertyModel;
     private UIPreferences preferences;
     private String pageNumberPreferenceKey;
@@ -182,6 +183,18 @@ public class PagingNavigator extends Panel {
         pageSizeForm.add(pageSize);
         pageNavigator.add(pageSizeForm);
 
+        //all pages region
+        allPagesRegion = new WebMarkupContainer("allPagesRegion");
+        Label allPages = new Label("allPages", new AbstractReadOnlyModel<Integer>() {
+
+            @Override
+            public Integer getObject() {
+                return pageable.getPageCount();
+            }
+        });
+        allPagesRegion.add(allPages);
+        pageNavigator.add(allPagesRegion);
+
         add(pageNavigator);
     }
 
@@ -239,6 +252,7 @@ public class PagingNavigator extends Panel {
         boolean visisble = pageable.getPageCount() <= 1 ? false : true;
         pageBar.setVisible(visisble);
         newPageForm.setVisible(visisble);
+        allPagesRegion.setVisible(visisble);
 
         super.onBeforeRender();
     }
