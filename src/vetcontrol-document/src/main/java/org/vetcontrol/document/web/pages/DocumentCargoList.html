@@ -42,7 +42,7 @@
                     <th class="center" wicket:id="order_cargoProducer"><wicket:message key="document.cargo.cargo_producer"/></th>
                     <th class="center" wicket:id="order_created"><wicket:message key="document.cargo.date_created"/></th>
                     <th class="center">
-                        <input class="btnSmall"  wicket:id="filter_reset" type="submit" value="Все"/>
+                        <input class="btnSmall"  wicket:id="filter_reset" type="submit" wicket:message="value:document.cargo.filter.clear"/>
                     </th>
                 </tr>
                 <tr>
@@ -59,7 +59,7 @@
                         </div>
                     </th>
                     <th class="center">
-                        <input class="btnSmall default" type="submit" value="Найти" tabindex="0" />
+                        <input class="btnSmall default" type="submit" wicket:message="value:document.cargo.filter.go" tabindex="0" />
                     </th>
                 </tr>
                 </thead>
