@@ -18,6 +18,8 @@ import java.beans.IntrospectionException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.ResourceModel;
 import org.vetcontrol.information.service.fasade.pages.AddUpdateBookEntryPageFasade;
 import org.vetcontrol.web.security.SecurityRoles;
 
@@ -44,6 +46,9 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
         if (bookEntry == null) {
             throw new IllegalArgumentException("selected book entry may not be null");
         }
+
+        //title
+        add(new Label("title", new ResourceModel("page.title")));
 
         //messages
         add(new FeedbackPanel("messages"));
