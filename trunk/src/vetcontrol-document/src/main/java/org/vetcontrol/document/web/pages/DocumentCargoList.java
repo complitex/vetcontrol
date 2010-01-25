@@ -32,6 +32,7 @@ import org.vetcontrol.web.template.TemplatePage;
 import javax.ejb.EJB;
 import java.util.*;
 import java.util.Locale;
+import org.apache.wicket.model.ResourceModel;
 
 import static org.vetcontrol.document.service.DocumentCargoBean.OrderBy;
 import static org.vetcontrol.web.security.SecurityRoles.*;
@@ -61,8 +62,8 @@ public class DocumentCargoList extends TemplatePage{
 
         final Locale systemLocale = localeDAO.systemLocale();
 
-        add(new Label("title", getString("document.cargo.list.title")));
-        add(new Label("header", getString("document.cargo.list.title")));
+        add(new Label("title", new ResourceModel("document.cargo.list.title")));
+        add(new Label("header", new ResourceModel("document.cargo.list.title")));
 
         add(new FeedbackPanel("messages"));
 
