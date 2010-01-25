@@ -37,7 +37,7 @@ public class BookMenu implements ITemplateMenu {
 
                 @Override
                 public String getLabel(Locale locale) {
-                    return new DisplayBookClassModel(bookType, locale).getObject();
+                    return new DisplayBookClassModel(bookType).getObject();
                 }
 
                 @Override

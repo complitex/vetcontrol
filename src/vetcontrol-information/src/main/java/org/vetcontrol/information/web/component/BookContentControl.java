@@ -130,7 +130,7 @@ public abstract class BookContentControl extends Panel {
             Locale systemLocale, final UIPreferences preferences) throws IntrospectionException {
         super(id);
 
-        add(new Label("bookName", new DisplayBookClassModel(bookClass, getLocale())));
+        add(new Label("bookName", new DisplayBookClassModel(bookClass)));
 
         List<IColumn<Serializable>> columns = new ArrayList<IColumn<Serializable>>();
 

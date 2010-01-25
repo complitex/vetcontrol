@@ -2,10 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.vetcontrol.information.web.model;
 
-import java.util.Locale;
+import org.apache.wicket.Session;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.vetcontrol.information.util.web.ResourceUtil;
 
@@ -14,13 +13,11 @@ import org.vetcontrol.information.util.web.ResourceUtil;
  * @author Artem
  */
 public class DisplayBookClassModel extends AbstractReadOnlyModel<String> {
-    
-    private Class bookType;
-    private Locale locale;
 
-    public DisplayBookClassModel(Class bookType, Locale locale) {
+    private Class bookType;
+
+    public DisplayBookClassModel(Class bookType) {
         this.bookType = bookType;
-        this.locale = locale;
     }
 
     @Override
@@ -43,7 +40,7 @@ public class DisplayBookClassModel extends AbstractReadOnlyModel<String> {
         return bookType.getSimpleName();
     }
 
-     private String attempt(String key) {
-        return ResourceUtil.getString(ResourceUtil.BOOK_NAMES_BUNDLE, key, locale);
-     }
+    private String attempt(String key) {
+        return ResourceUtil.getString(ResourceUtil.BOOK_NAMES_BUNDLE, key, Session.get().getLocale());
+    }
 }
