@@ -48,7 +48,7 @@ public abstract class ServeltAuthWebApplication extends WebApplication
             WebRequestCycle webRequestCycle = (WebRequestCycle) RequestCycle.get();
 			if (webRequestCycle.getWebRequest().getHttpServletRequest().getUserPrincipal() == null){
                 
-				throw new RedirectToUrlException("/login.html");
+				throw new RedirectToUrlException("/login.jsp");
 			}
 			else{
 				throw new UnauthorizedInstantiationException(component.getClass());
