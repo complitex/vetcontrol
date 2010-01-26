@@ -53,7 +53,7 @@ public class BookChoiceRenderer extends ChoiceRenderer<Object> {
                 return id.toString();
             } catch (Exception e) {
                 //TODO: remove it after testing.
-//                    throw new RuntimeException(e);
+                    throw new RuntimeException(e);
             }
         }
 

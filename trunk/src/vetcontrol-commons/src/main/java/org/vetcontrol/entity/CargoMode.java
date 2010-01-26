@@ -17,7 +17,6 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.vetcontrol.util.book.entity.annotation.BookReference;
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
-import org.vetcontrol.util.book.entity.annotation.ValidProperty;
 
 /**
  * 2.4.3.12 Справочник видов грузов
@@ -27,16 +26,41 @@ import org.vetcontrol.util.book.entity.annotation.ValidProperty;
 @Entity
 @Table(name = "cargo_mode")
 public class CargoMode extends Localizable {
-     private String code;
+//     private String code;
+//
+//    @Column(name = "ukt_zed_code", nullable = false, length = 10)
+//    public String getCode() {
+//        return code;
+//    }
+//
+//    public void setCode(String code) {
+//        this.code = code;
+//    }
 
-    @Column(name = "ukt_zed_code", nullable = false, length = 10)
-    public String getCode() {
-        return code;
+    private CargoType cargoType;
+
+    /**
+     * Get the value of cargoType
+     *
+     * @return the value of cargoType
+     */
+    @BookReference(referencedProperty = "code")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "cargo_type", nullable = false)
+    public CargoType getCargoType() {
+        return cargoType;
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }         
+    /**
+     * Set the value of cargoType
+     *
+     * @param cargoType new value of cargoType
+     */
+    public void setCargoType(CargoType cargoType) {
+        this.cargoType = cargoType;
+    }
+
 
     private UnitType unitType;
 

@@ -5,6 +5,7 @@
 package org.vetcontrol.util.book;
 
 import java.io.Serializable;
+import org.vetcontrol.util.book.entity.annotation.UIType;
 
 /**
  *
@@ -221,6 +222,26 @@ public class Property implements Serializable, Cloneable {
      */
     public void setLocalizationForeignKeyProperty(String localizationForeignKeyProperty) {
         this.localizationForeignKeyProperty = localizationForeignKeyProperty;
+    }
+
+    protected UIType uiType;
+
+    /**
+     * Get the value of uiType
+     *
+     * @return the value of uiType
+     */
+    public UIType getUiType() {
+        return uiType;
+    }
+
+    /**
+     * Set the value of uiType
+     *
+     * @param uiType new value of uiType
+     */
+    public void setUiType(UIType uiType) {
+        this.uiType = uiType;
     }
 
 

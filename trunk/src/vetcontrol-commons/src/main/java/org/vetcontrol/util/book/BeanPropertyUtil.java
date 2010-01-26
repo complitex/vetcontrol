@@ -26,6 +26,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.text.DateFormat;
 import java.util.*;
+import org.vetcontrol.util.book.entity.annotation.UIType;
 
 /**
  *
@@ -101,8 +102,12 @@ public class BeanPropertyUtil {
 
                         if (annotation.annotationType().equals(BookReference.class)) {
                             property.setBookReference(true);
-                            String referencedField = ((BookReference) annotation).referencedProperty();
+                            BookReference bookReference = (BookReference) annotation;
+                            String referencedField = bookReference.referencedProperty();
                             property.setReferencedField(referencedField);
+
+                            UIType uIType = bookReference.uiType();
+                            property.setUiType(uIType);
                         }
 
                         if (annotation.annotationType().equals(JoinColumn.class)) {
