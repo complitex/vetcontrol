@@ -159,7 +159,7 @@ INSERT INTO `unit_type` VALUES (1,43),(2,44),(3,45),(4,46),(5,47),(6,53);
 
 INSERT INTO `cargo_type` VALUES (1,48,'2602000000'),(2,49,'2603000000'),(3,50,'2605000000');
 
-INSERT INTO `cargo_mode` VALUES (1,62,'2602000000',1), (2,63,'2602000000',2), (3,64,'2602000000',3);
+INSERT INTO `cargo_mode` VALUES (1,62,1,1), (2,63,1,2), (3,64,1,3);
 
 INSERT INTO `cargo_receiver` VALUES (1,30),(2,31),(3,32);
 
