@@ -14,9 +14,7 @@ import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.*;
 import org.odlabs.wiquery.ui.datepicker.DatePicker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +29,6 @@ import org.vetcontrol.web.template.FormTemplatePage;
 import javax.ejb.EJB;
 import java.util.Date;
 import java.util.List;
-import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
 
 import static org.vetcontrol.web.security.SecurityRoles.*;
 
@@ -331,13 +326,7 @@ public class DocumentCargoEdit extends FormTemplatePage{
 
     private void addCargo(final ListItem<Cargo> item){
         //Единицы измерения
-        LoadableDetachableModel<List<UnitType>> unitTypesModel = new LoadableDetachableModel<List<UnitType>>(){
-
-            @Override
-            protected List<UnitType> load() {
-                return cargoTypeBean.getUnitTypes(item.getModelObject().getCargoType());
-            }
-        };
+        List<UnitType> unitTypesModel = cargoTypeBean.getUnitTypes(item.getModelObject().getCargoType());
 
         DropDownChoice<UnitType> ddcUnitTypes = new DropDownChoice<UnitType>("document.cargo.unit_type",
                 new PropertyModel<UnitType>(item.getModelObject(), "unitType"), unitTypesModel,
