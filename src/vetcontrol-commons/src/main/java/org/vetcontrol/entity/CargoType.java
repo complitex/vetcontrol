@@ -30,7 +30,7 @@ public class CargoType extends Localizable{
 
     @Transient
     @MappedProperty("name")
-    @Column(length = 20, nullable = false)
+    @Column(length = 500, nullable = false)
     public List<StringCulture> getNames() {
         return names;
     }
