@@ -32,6 +32,7 @@ import javax.ejb.EJB;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -52,8 +53,11 @@ public abstract class TemplatePage extends WebPage {
         add(JavascriptPackageResource.getHeaderContribution(CoreJavaScriptResourceReference.get()));
         add(JavascriptPackageResource.getHeaderContribution(TemplatePage.class, "TemplatePage.js"));
 
+        Locale system = localeDAO.systemLocale();
+
+
         //locale picker
-        add(new LocalePicker("localePicker", localeDAO.all(), localeDAO.systemLocale(), getPreferences()));
+        add(new LocalePicker("localePicker", localeDAO.all(), system, getPreferences()));
 
         //toolbar
         WebMarkupContainer toolbar = new WebMarkupContainer("toolbar");
@@ -91,8 +95,10 @@ public abstract class TemplatePage extends WebPage {
 
         User user = userProfileBean.getCurrentUser();
 
-        add(new Label("current_user_fullname", user.getFullName()));
-        add(new Label("current_user_department", user.getDepartment().getDisplayName(getLocale(), localeDAO.systemLocale())));
+
+        add(new Label("current_user_fullname", user.getFullName()
+                + (user.getJob() != null ? ", " + user.getJob().getDisplayName(getLocale(), system) : "")));
+        add(new Label("current_user_department", user.getDepartment().getDisplayName(getLocale(), system)));
 
         add(new Form("exit") {
 
