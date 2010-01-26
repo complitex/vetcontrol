@@ -157,23 +157,23 @@ INSERT INTO `stringculture` VALUES (34,'en','автомобиль'),(34,'ru','а
 
 UPDATE `generator` SET `generatorValue` = 73 WHERE `generatorName` = 'books';
 
-INSERT INTO `unit_type` VALUES (1,43),(2,44),(3,45),(4,46),(5,47),(6,53);
+INSERT INTO `unit_type` VALUES (1,52),(2,53),(3,54),(4,55),(5,56),(6,62);
 
-INSERT INTO `cargo_type` VALUES (1,48,'2602000000'),(2,49,'2603000000'),(3,50,'2605000000');
+INSERT INTO `cargo_type` VALUES (1,57,'2602000000'),(2,58,'2603000000'),(3,59,'2605000000');
 
-INSERT INTO `cargo_mode` VALUES (1,62,1,1), (2,63,1,2), (3,64,1,3);
+INSERT INTO `cargo_mode` VALUES (1,71,1,1), (2,72,1,2), (3,73,1,3);
 
-INSERT INTO `cargo_receiver` VALUES (1,30),(2,31),(3,32);
+INSERT INTO `cargo_receiver` VALUES (1,39),(2,40),(3,41);
 
-INSERT INTO `cargo_sender` VALUES (1,33),(2,34),(3,35);
+INSERT INTO `cargo_sender` VALUES (1,42),(2,43),(3,44);
 
-INSERT INTO `movement_type` VALUES (1,36),(2,37),(3,38),(4,39);
+INSERT INTO `movement_type` VALUES (1,45),(2,46),(3,47),(4,48);
 
-INSERT INTO `passing_border_point` VALUES (1,59),(2,60),(3,61);
+INSERT INTO `passing_border_point` VALUES (1,68),(2,69),(3,70);
 
-INSERT INTO `cargo_producer` VALUES (1,40),(2,41),(3,42);
+INSERT INTO `cargo_producer` VALUES (1,49),(2,50),(3,51);
 
-INSERT INTO `vehicletypes` VALUES (1,25),(2,26),(3,27),(4,28),(5,29);
+INSERT INTO `vehicletypes` VALUES (1,34),(2,35),(3,36),(4,37),(5,38);
 
 INSERT INTO `document_cargo` VALUES (1,2,'2010-01-15 17:59:09',NULL,1,1, 'транспорт 1',1,2,3,1,'примечание 3','задержан 2');
 
