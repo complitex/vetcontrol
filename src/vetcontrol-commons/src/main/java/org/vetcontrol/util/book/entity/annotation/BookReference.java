@@ -18,6 +18,14 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface BookReference {
 
-    String referencedProperty() default "";
+    String referencedProperty();
+
+    UIType uiType() default UIType.SELECT;
+
+    /**
+     * Not used.
+     * @return
+     */
+    String pattern() default "";
 
 }

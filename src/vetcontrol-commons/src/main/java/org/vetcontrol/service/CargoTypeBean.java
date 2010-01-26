@@ -45,8 +45,8 @@ public class CargoTypeBean {
     }
 
     public List<UnitType> getUnitTypes(CargoType cargoType){
-        return entityManager.createQuery("select ut from CargoType ct, CargoMode cm left join cm.unitType ut " +
-                "where ct = :cargoType and ct.code = cm.code", UnitType.class)
+        return entityManager.createQuery("select ut from CargoMode cm left join cm.unitType ut " +
+                "where cm.cargoType = :cargoType", UnitType.class)
                 .setParameter("cargoType", cargoType)
                 .getResultList();
     }
