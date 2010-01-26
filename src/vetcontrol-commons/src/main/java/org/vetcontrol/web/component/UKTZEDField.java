@@ -155,10 +155,14 @@ public class UKTZEDField extends Panel {
                     for (Component component : ajaxUpdate){
                         target.addComponent(component);
                     }
+                }else{
+                    String code = uktzed.getModelObject();
+                    if (code != null){
+                        uktzed.setModelObject(code.trim());
+                        target.addComponent(uktzed);
+                    }
                 }
             }
         });
-
     }
-
 }
