@@ -6,6 +6,7 @@ import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AbstractAutoCompleteTextRenderer;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteSettings;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteTextField;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -28,7 +29,7 @@ import java.util.Locale;
 public class UKTZEDField extends Panel {
     private static final Logger log = LoggerFactory.getLogger(UKTZEDField.class);
 
-    private final static int MAX_ITEM = 5;
+    private final static int MAX_ITEM = 10;
 
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
@@ -47,8 +48,16 @@ public class UKTZEDField extends Panel {
         AbstractAutoCompleteTextRenderer<String> renderer = new AbstractAutoCompleteTextRenderer<String>(){
 
             @Override
-            protected String getTextValue(String object) {
-                return object;
+            protected String getTextValue(String s) {
+                if (s!= null){
+                    if (s.length() > 120){
+                        s = s.substring(0,120) + "...";                        
+                    }
+
+                    return s;
+                }
+                return "";
+
             }
 
             @Override
@@ -90,10 +99,21 @@ public class UKTZEDField extends Panel {
                 List<CargoType> cargoTypes = cargoTypeBean.getCargoTypesByName(input, MAX_ITEM);
                 List<String> choices = new ArrayList<String>();
                 for (CargoType ct : cargoTypes){
-                    choices.add(ct.getDisplayName(getLocale(), system) + "\t" + ct.getCode());
+                    String s = ct.getDisplayName(getLocale(), system);
+
+                    if (s != null){
+                        s = s.replaceAll("\t"," ");
+                    }
+                    choices.add(s + "\t" + ct.getCode());
                 }
 
                 return choices.iterator();
+            }
+
+            @Override
+            protected void onComponentTag(ComponentTag tag) {
+                super.onComponentTag(tag);
+                tag.put("title", getModelValue());
             }
         };
         name.setOutputMarkupId(true);
@@ -107,7 +127,7 @@ public class UKTZEDField extends Panel {
 
                 if (input == null) return;
 
-                String code = input.indexOf('\t') > -1 ?  input.substring(0, input.indexOf('\t')) : input;
+                String code = input.indexOf('\t') > -1 ?  input.substring(0, input.indexOf('\t')).trim() : input;
 
                 CargoType cargoType = cargoTypeBean.getCargoType(code);
                 model.setObject(cargoType);
