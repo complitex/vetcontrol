@@ -324,12 +324,25 @@ public class DocumentCargoEdit extends FormTemplatePage{
         return ddc;
     }
 
-    private void addCargo(final ListItem<Cargo> item){
-        //Единицы измерения
-        List<UnitType> unitTypesModel = cargoTypeBean.getUnitTypes(item.getModelObject().getCargoType());
+    private class UnitTypeModel extends LoadableDetachableModel<List<UnitType>>{
+        private Cargo cargo;
+
+        private UnitTypeModel(Cargo cargo) {
+            this.cargo = cargo;
+        }
+
+        @Override
+        protected List<UnitType> load() {
+            return cargoTypeBean.getUnitTypes(cargo.getCargoType());
+        }
+    }
+
+    private void addCargo(ListItem<Cargo> item){
+        //Единицы измерения        
+        UnitTypeModel unitTypeModel = new UnitTypeModel(item.getModelObject());
 
         DropDownChoice<UnitType> ddcUnitTypes = new DropDownChoice<UnitType>("document.cargo.unit_type",
-                new PropertyModel<UnitType>(item.getModelObject(), "unitType"), unitTypesModel,
+                new PropertyModel<UnitType>(item.getModelObject(), "unitType"), unitTypeModel,
                 new IChoiceRenderer<UnitType>(){
 
                     @Override
