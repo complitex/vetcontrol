@@ -26,30 +26,30 @@ public class LocaleDAO implements ILocaleDAO {
 
     @Override
     public List<Locale> all() {
-        List<org.vetcontrol.entity.Locale> all = em.createQuery("select l from Locale l").getResultList();
-        return convertAll(all);
+//        List<org.vetcontrol.entity.Locale> all = em.createQuery("select l from Locale l").getResultList();
+//        return convertAll(all);
 
         //TODO: to sort out server start problem!!!
-//        CriteriaBuilder cb = em.getCriteriaBuilder();
-//        CriteriaQuery<org.vetcontrol.entity.Locale> cq = cb.createQuery(org.vetcontrol.entity.Locale.class);
-//        Root<org.vetcontrol.entity.Locale> root = cq.from(org.vetcontrol.entity.Locale.class);
-//        cq.select(root);
-//        return convertAll(em.createQuery(cq).getResultList());
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<org.vetcontrol.entity.Locale> cq = cb.createQuery(org.vetcontrol.entity.Locale.class);
+        Root<org.vetcontrol.entity.Locale> root = cq.from(org.vetcontrol.entity.Locale.class);
+        cq.select(root);
+        return convertAll(em.createQuery(cq).getResultList());
     }
 
     @Override
     public Locale systemLocale() {
-        org.vetcontrol.entity.Locale locale = em.createQuery("select l from Locale l where l.system is true", org.vetcontrol.entity.Locale.class).
-                getSingleResult();
-        return convertLocale(locale);
+//        org.vetcontrol.entity.Locale locale = em.createQuery("select l from Locale l where l.system is true", org.vetcontrol.entity.Locale.class).
+//                getSingleResult();
+//        return convertLocale(locale);
 
         //TODO: to sort out server start problem!!!
-//        CriteriaBuilder cb = em.getCriteriaBuilder();
-//        CriteriaQuery<org.vetcontrol.entity.Locale> cq = cb.createQuery(org.vetcontrol.entity.Locale.class);
-//        Root<org.vetcontrol.entity.Locale> root = cq.from(org.vetcontrol.entity.Locale.class);
-//        cq.where(cb.equal(root.get("system"), true));
-//        cq.select(root);
-//        return convertLocale(em.createQuery(cq).getSingleResult());
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<org.vetcontrol.entity.Locale> cq = cb.createQuery(org.vetcontrol.entity.Locale.class);
+        Root<org.vetcontrol.entity.Locale> root = cq.from(org.vetcontrol.entity.Locale.class);
+        cq.where(cb.equal(root.get("system"), true));
+        cq.select(root);
+        return convertLocale(em.createQuery(cq).getSingleResult());
     }
 
     private Locale convertLocale(org.vetcontrol.entity.Locale l){
