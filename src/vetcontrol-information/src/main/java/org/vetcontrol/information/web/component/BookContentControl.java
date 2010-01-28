@@ -32,6 +32,7 @@ import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 import org.vetcontrol.information.web.pages.BookPage;
 import org.vetcontrol.information.web.pages.BookPage.DataProvider;
 import org.vetcontrol.service.dao.IBookViewDAO;
+import org.vetcontrol.web.component.datatable.ArrowHeadersToolbar;
 import org.vetcontrol.web.component.paging.PagingNavigator;
 import org.vetcontrol.web.security.SecurityRoles;
 
@@ -145,7 +146,7 @@ public abstract class BookContentControl extends Panel {
 
         final DataTable table = new DataTable("table", columns.toArray(new IColumn[columns.size()]), dataProvider, 1) ;
 
-        table.addTopToolbar(new HeadersToolbar(table, dataProvider));
+        table.addTopToolbar(new ArrowHeadersToolbar(table, dataProvider));
 
         final FilterForm filterForm = new FilterForm("filterForm", dataProvider) {
 
