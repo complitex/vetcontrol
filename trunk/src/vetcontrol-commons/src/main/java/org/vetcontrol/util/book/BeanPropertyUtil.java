@@ -26,6 +26,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.text.DateFormat;
 import java.util.*;
+import org.apache.wicket.util.string.interpolator.VariableInterpolator;
 import org.vetcontrol.util.book.entity.annotation.UIType;
 
 /**
@@ -78,8 +79,8 @@ public class BeanPropertyUtil {
                 } else {
                     property.setWritable(true);
                     for (Annotation annotation : prop.getReadMethod().getAnnotations()) {
-                        if (annotation.annotationType().equals(ValidProperty.class)){
-                            validProperty = ((ValidProperty)annotation).value();                            
+                        if (annotation.annotationType().equals(ValidProperty.class)) {
+                            validProperty = ((ValidProperty) annotation).value();
                         }
 
                         if (annotation.annotationType().equals(Id.class)) {
@@ -108,6 +109,9 @@ public class BeanPropertyUtil {
 
                             UIType uIType = bookReference.uiType();
                             property.setUiType(uIType);
+
+                            String pattern = bookReference.pattern();
+                            property.setBookReferencePattern(pattern);
                         }
 
                         if (annotation.annotationType().equals(JoinColumn.class)) {
@@ -236,31 +240,34 @@ public class BeanPropertyUtil {
         throw new RuntimeException("Property '" + propertyName + "' was not found in type " + target.getClass());
     }
 
-    public static String getPropertyAsString(Object propertyValue, Property property, Locale systemLocale) throws IntrospectionException {
-        String asString = "";
+    public static String getPropertyAsString(Object propertyValue, Property property, Locale systemLocale) {
         if (propertyValue != null) {
             if (Date.class.isAssignableFrom(property.getType())) {
                 DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Session.get().getLocale());
-                asString = dateFormat.format((Date) propertyValue);
+                return dateFormat.format((Date) propertyValue);
             } else if (property.isLocalizable()) {
-                asString = getLocalizablePropertyAsString((List<StringCulture>) propertyValue, systemLocale, asString);
+                return getLocalizablePropertyAsString((List<StringCulture>) propertyValue, systemLocale, "");
             } else if (property.isBookReference()) {
-                Object referencedBook = propertyValue;
-                String referencedField = property.getReferencedField();
-                Object value = null;
-                try {
-                    value = BeanPropertyUtil.getPropertyValue(referencedBook, referencedField);
-                } catch (Exception e) {
-                    //TODO: remove it after testing.
-                    throw new RuntimeException(e);
-                }
-                asString = getPropertyAsString(value, getPropertyByName(referencedBook.getClass(), referencedField), systemLocale);
+//                if (property.getUiType().equals(UIType.AUTO_COMPLETE) && !Strings.isEmpty(property.getBookReferencePattern())) {
+//                    return applyPattern(property.getBookReferencePattern(), propertyValue, systemLocale);
+//                } else {
+                    Object referencedBook = propertyValue;
+                    String referencedField = property.getReferencedField();
+                    Object value = null;
+                    try {
+                        value = getPropertyValue(referencedBook, referencedField);
+                    } catch (Exception e) {
+                        //TODO: remove it after testing.
+                        throw new RuntimeException(e);
+                    }
+                    return getPropertyAsString(value, getPropertyByName(referencedBook.getClass(), referencedField), systemLocale);
+//                }
 
             } else {
-                asString = propertyValue.toString();
+                return propertyValue.toString();
             }
         }
-        return asString;
+        return "";
     }
 
     public static String getLocalizablePropertyAsString(List<StringCulture> propertyValue, Locale systemLocale, String defaultValue) {
@@ -299,23 +306,48 @@ public class BeanPropertyUtil {
         return asString;
     }
 
-    public static Property getPropertyByName(Class beanClass, String propertyName) throws IntrospectionException {
-        for (Property prop : getProperties(beanClass)) {
-            if (prop.getName().equals(propertyName)) {
-                return prop;
+    public static Property getPropertyByName(Class beanClass, String propertyName) {
+        try {
+            for (Property prop : getProperties(beanClass)) {
+                if (prop.getName().equals(propertyName)) {
+                    return prop;
+                }
             }
+            return null;
+        } catch (IntrospectionException e) {
+            //TODO: remove it after tests.
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
     public static void setPropertyValue(Object target, String propertyName, Object value) throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         BeanInfo beanInfo = Introspector.getBeanInfo(target.getClass());
         PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
+        boolean isFound = false;
         for (PropertyDescriptor prop : props) {
             if (prop.getName().equals(propertyName)) {
+                isFound = true;
                 prop.getWriteMethod().invoke(target, value);
             }
         }
-        throw new RuntimeException("Property '" + propertyName + "' was not found in type " + target.getClass());
+        if (!isFound) {
+            throw new RuntimeException("Property '" + propertyName + "' was not found in type " + target.getClass());
+        }
+    }
+
+    public static <T> String applyPattern(String pattern, final T book, final Locale systemLocale) {
+        return new VariableInterpolator(pattern, true) {
+
+            @Override
+            protected String getValue(String variableName) {
+                try {
+                    Object propertyValue = getPropertyValue(book, variableName);
+                    return getPropertyAsString(propertyValue, getPropertyByName(book.getClass(), variableName), systemLocale);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+        }.toString();
     }
 }

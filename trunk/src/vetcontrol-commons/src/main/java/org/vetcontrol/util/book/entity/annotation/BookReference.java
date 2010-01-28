@@ -22,10 +22,6 @@ public @interface BookReference {
 
     UIType uiType() default UIType.SELECT;
 
-    /**
-     * Not used.
-     * @return
-     */
     String pattern() default "";
 
 }

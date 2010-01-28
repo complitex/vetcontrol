@@ -8,6 +8,7 @@ import java.beans.IntrospectionException;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import javax.ejb.EJB;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.FormComponentPanel;
@@ -24,6 +25,7 @@ import org.vetcontrol.information.service.fasade.pages.AddUpdateBookEntryPageFas
 import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.util.book.Property;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
+import org.vetcontrol.service.dao.IBookViewDAO;
 
 /**
  *
@@ -33,12 +35,15 @@ public abstract class BookEntryFormControl extends FormComponentPanel {
 
     private static final Logger log = LoggerFactory.getLogger(BookEntryFormControl.class);
 
-    public BookEntryFormControl(String id, final IModel model, final Locale systemLocale, final AddUpdateBookEntryPageFasade fasade) throws IntrospectionException {
+    @EJB(name = "BookViewDAO")
+    private IBookViewDAO bookViewDAO;
+
+    public BookEntryFormControl(String id, final IModel model, final Locale systemLocale) throws IntrospectionException {
         super(id, model);
 
         List<Property> filtered = BeanPropertyUtil.getProperties(model.getObject().getClass());
 
-        add(new ListView<Property>("bookFields", filtered) {
+        ListView<Property> fields = new ListView<Property>("bookFields", filtered) {
 
             @Override
             protected void populateItem(ListItem<Property> item) {
@@ -54,6 +59,7 @@ public abstract class BookEntryFormControl extends FormComponentPanel {
                 boolean isDate = false;
                 boolean isLocalizableText = false;
                 boolean isSelectable = false;
+                boolean isAutoComplete = false;
                 boolean isBoolean = false;
 
                 if (prop.getType().equals(String.class) || prop.getType().equals(int.class) || prop.getType().equals(Integer.class)
@@ -64,8 +70,15 @@ public abstract class BookEntryFormControl extends FormComponentPanel {
                 } else if (prop.isLocalizable()) {
                     isLocalizableText = true;
                 } else if (prop.isBookReference()) {
-                    isSelectable = true;
-                } else if(prop.getType().equals(boolean.class) || prop.getType().equals(Boolean.class)){
+                    switch (prop.getUiType()) {
+                        case SELECT:
+                            isSelectable = true;
+                            break;
+                        case AUTO_COMPLETE:
+                            isAutoComplete = true;
+                            break;
+                    }
+                } else if (prop.getType().equals(boolean.class) || prop.getType().equals(Boolean.class)) {
                     isBoolean = true;
                 }
 
@@ -75,6 +88,7 @@ public abstract class BookEntryFormControl extends FormComponentPanel {
                 Panel textPanel = new EmptyPanel("textPanel");
                 Panel localizableTextPanel = new EmptyPanel("localizableTextPanel");
                 Panel selectablePanel = new EmptyPanel("selectablePanel");
+                Panel autoCompleteSelectPanel = new EmptyPanel("autoCompleteSelectPanel");
                 Panel booleanPanel = new EmptyPanel("booleanPanel");
 
                 //choose what panel is editable:
@@ -85,8 +99,10 @@ public abstract class BookEntryFormControl extends FormComponentPanel {
                 } else if (isDate) {
                     datePanel = new DatePanel("datePanel", m, prop);
                 } else if (isSelectable) {
-                    selectablePanel = new SelectPanel("selectablePanel", m, prop, fasade.getAll(prop.getType()), systemLocale);
-                } else if(isBoolean){
+                    selectablePanel = new SelectPanel("selectablePanel", m, prop, bookViewDAO.getContent(prop.getType()), systemLocale);
+                } else if (isAutoComplete) {
+                    autoCompleteSelectPanel = new AutoCompleteSelectPanel("autoCompleteSelectPanel", m, prop);
+                } else if (isBoolean) {
                     booleanPanel = new BooleanPanel("booleanPanel", m, prop);
                 }
 
@@ -94,9 +110,12 @@ public abstract class BookEntryFormControl extends FormComponentPanel {
                 item.add(textPanel);
                 item.add(localizableTextPanel);
                 item.add(selectablePanel);
+                item.add(autoCompleteSelectPanel);
                 item.add(booleanPanel);
             }
-        });
+        };
+        fields.setReuseItems(true);
+        add(fields);
 
         add(
                 new SubmitLink("saveOrUpdateBook") {

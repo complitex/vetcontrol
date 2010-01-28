@@ -32,6 +32,7 @@ public class BookPageFasade extends AbstractFasade {
         return bookDAO.size(example);
     }
 
+    @Deprecated
     public <T> List<T> getAll(Class<T> bookType) {
         try {
             return bookDAO.getContent(bookType);

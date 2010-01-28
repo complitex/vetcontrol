@@ -17,6 +17,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.vetcontrol.util.book.entity.annotation.BookReference;
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
+import org.vetcontrol.util.book.entity.annotation.UIType;
 
 /**
  * 2.4.3.12 Справочник видов грузов
@@ -44,7 +45,7 @@ public class CargoMode extends Localizable {
      *
      * @return the value of cargoType
      */
-    @BookReference(referencedProperty = "code")
+    @BookReference(referencedProperty = "code", uiType = UIType.AUTO_COMPLETE, pattern = "${code}   ${names}")
     @ManyToOne(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "cargo_type", nullable = false)
@@ -60,8 +61,6 @@ public class CargoMode extends Localizable {
     public void setCargoType(CargoType cargoType) {
         this.cargoType = cargoType;
     }
-
-
     private UnitType unitType;
 
     /**
@@ -85,7 +84,6 @@ public class CargoMode extends Localizable {
     public void setUnitType(UnitType unitType) {
         this.unitType = unitType;
     }
-
     private List<StringCulture> names = new ArrayList<StringCulture>();
 
     @Transient
@@ -98,6 +96,4 @@ public class CargoMode extends Localizable {
     public void setNames(List<StringCulture> names) {
         this.names = names;
     }
-
-
 }
