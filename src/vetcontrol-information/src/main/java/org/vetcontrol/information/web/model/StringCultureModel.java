@@ -14,7 +14,7 @@ import org.vetcontrol.entity.StringCultureId;
  *
  * @author Artem
  */
-public class StringCultureModel implements IModel {
+public class StringCultureModel implements IModel<String> {
 
     private IModel model;
 
@@ -23,7 +23,7 @@ public class StringCultureModel implements IModel {
     }
 
     @Override
-    public Object getObject() {
+    public String getObject() {
         List<StringCulture> strings = (List<StringCulture>) model.getObject();
         if (strings.isEmpty()) {
             return "";
@@ -32,9 +32,8 @@ public class StringCultureModel implements IModel {
     }
 
     @Override
-    public void setObject(Object object) {
-        String value = (String) object;
-        List<StringCulture> strings = Arrays.asList(new StringCulture(new StringCultureId(), value));
+    public void setObject(String object) {
+        List<StringCulture> strings = Arrays.asList(new StringCulture(new StringCultureId(), object));
         model.setObject(strings);
     }
 

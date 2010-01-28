@@ -244,6 +244,25 @@ public class Property implements Serializable, Cloneable {
         this.uiType = uiType;
     }
 
+    protected String bookReferencePattern;
+
+    /**
+     * Get the value of bookReferencePattern
+     *
+     * @return the value of bookReferencePattern
+     */
+    public String getBookReferencePattern() {
+        return bookReferencePattern;
+    }
+
+    /**
+     * Set the value of bookReferencePattern
+     *
+     * @param bookReferencePattern new value of bookReferencePattern
+     */
+    public void setBookReferencePattern(String bookReferencePattern) {
+        this.bookReferencePattern = bookReferencePattern;
+    }
 
     @Override
     public Property clone() {

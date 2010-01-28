@@ -21,12 +21,16 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.lang.PropertyResolver;
+import org.apache.wicket.util.string.Strings;
 import org.vetcontrol.information.service.fasade.pages.BookPageFasade;
 import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.information.util.web.Constants;
 import org.vetcontrol.information.util.web.ResourceUtil;
+import org.vetcontrol.information.web.model.AutoCompleteBookReferenceModel;
 import org.vetcontrol.util.book.Property;
 import org.vetcontrol.information.web.model.StringCultureModel;
+import org.vetcontrol.service.dao.IBookViewDAO;
+import org.vetcontrol.util.book.entity.annotation.UIType;
 
 /**
  *
@@ -36,15 +40,15 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
 
     private Property property;
     private Locale systemLocale;
-    private BookPageFasade fasade;
     private Component component;
+    private final IBookViewDAO bookViewDAO;
 
-    public BookPropertyColumn(Component component, IModel<String> displayModel, Property property, BookPageFasade fasade, Locale systemLocale) {
+    public BookPropertyColumn(Component component, IModel<String> displayModel, Property property, IBookViewDAO bookViewDAO, Locale systemLocale) {
         super(displayModel, property.getName(), property.getName());
         this.component = component;
         this.property = property;
         this.systemLocale = systemLocale;
-        this.fasade = fasade;
+        this.bookViewDAO = bookViewDAO;
     }
 
     @Override
@@ -54,23 +58,25 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
         String asString = "";
         if (property.getType().equals(boolean.class) || property.getType().equals(Boolean.class)) {
             asString = ResourceUtil.getString(String.valueOf(propertyValue), component);
+        } else if (property.isBookReference() && property.getUiType().equals(UIType.AUTO_COMPLETE)
+                && !Strings.isEmpty(property.getBookReferencePattern())) {
+            asString = BeanPropertyUtil.applyPattern(property.getBookReferencePattern(), propertyValue, systemLocale);
         } else {
-            try {
-                asString = BeanPropertyUtil.getPropertyAsString(propertyValue, property, systemLocale);
-            } catch (Exception e) {
-                //TODO: remove it after testing.
-                throw new RuntimeException(e);
-            }
+            asString = BeanPropertyUtil.getPropertyAsString(propertyValue, property, systemLocale);
         }
 
         String value = asString;
         String title = null;
         if (value.length() > Constants.TEXT_LIMIT) {
             title = value;
+            //Show overall text as title
+            /*
             if (title.length() > Constants.TITLE_LIMIT) {
-                title = title.substring(0, Constants.TITLE_LIMIT);
-                title += Constants.CONTINUE;
+            title = title.substring(0, Constants.TITLE_LIMIT);
+            title += Constants.CONTINUE;
             }
+             */
+
             value = value.substring(0, Constants.TEXT_LIMIT);
             value += Constants.CONTINUE;
         }
@@ -91,9 +97,17 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
                     form);
             return filter;
         } else if (property.isBookReference()) {
-            return new ChoiceFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form,
-                    fasade.getAll(property.getType()),
-                    new BookChoiceRenderer(property, systemLocale), false);
+            if (property.getUiType().equals(UIType.SELECT)) {
+                return new ChoiceFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form,
+                        bookViewDAO.getContent(property.getType()),
+                        new BookChoiceRenderer(property, systemLocale), false);
+            } else if (property.getUiType().equals(UIType.AUTO_COMPLETE)) {
+                return new TextFilter(componentId,
+                        new AutoCompleteBookReferenceModel(property, new PropertyModel(form.getDefaultModel(), getPropertyExpression())), form);
+            } else {
+                //TODO: remove after tests.
+                throw new RuntimeException("Not real case.");
+            }
         } else if (Date.class.isAssignableFrom(property.getType())) {
             DateFilter filter = new DateFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form);
             return filter;

@@ -28,6 +28,7 @@ public class AddUpdateBookEntryPageFasade extends AbstractFasade {
         bookDAO.saveOrUpdate(bookEntry);
     }
 
+    @Deprecated
     public <T> List<T> getAll(Class<T> bookType) {
         try {
             return bookDAO.getContent(bookType);

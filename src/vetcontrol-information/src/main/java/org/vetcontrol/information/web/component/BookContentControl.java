@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import javax.ejb.EJB;
 import org.apache.wicket.Component;
 import org.apache.wicket.authorization.strategies.role.metadata.MetaDataRoleAuthorizationStrategy;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
@@ -24,13 +25,13 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.vetcontrol.service.UIPreferences;
-import org.vetcontrol.information.service.fasade.pages.BookPageFasade;
 import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.util.book.Property;
 import org.vetcontrol.information.web.model.DisplayBookClassModel;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 import org.vetcontrol.information.web.pages.BookPage;
 import org.vetcontrol.information.web.pages.BookPage.DataProvider;
+import org.vetcontrol.service.dao.IBookViewDAO;
 import org.vetcontrol.web.component.paging.PagingNavigator;
 import org.vetcontrol.web.security.SecurityRoles;
 
@@ -126,8 +127,11 @@ public abstract class BookContentControl extends Panel {
         }
     }
 
-    public BookContentControl(String id, final DataProvider dataProvider, final Class bookClass, BookPageFasade fasade,
-            Locale systemLocale, final UIPreferences preferences) throws IntrospectionException {
+    @EJB(name = "BookViewDAO")
+    private IBookViewDAO bookViewDAO;
+
+    public BookContentControl(String id, final DataProvider dataProvider, final Class bookClass, Locale systemLocale,
+            final UIPreferences preferences) throws IntrospectionException {
         super(id);
 
         add(new Label("bookName", new DisplayBookClassModel(bookClass)));
@@ -135,7 +139,7 @@ public abstract class BookContentControl extends Panel {
         List<IColumn<Serializable>> columns = new ArrayList<IColumn<Serializable>>();
 
         for (Property prop : BeanPropertyUtil.getProperties(bookClass)) {
-            columns.add(new BookPropertyColumn<Serializable>(this, new DisplayPropertyLocalizableModel(prop, this), prop, fasade, systemLocale));
+            columns.add(new BookPropertyColumn<Serializable>(this, new DisplayPropertyLocalizableModel(prop, this), prop, bookViewDAO, systemLocale));
         }
         columns.add(new ModifyColumn(bookClass));
 

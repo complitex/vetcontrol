@@ -59,7 +59,7 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
 
         BeanPropertyUtil.addLocalization(bookEntry, localeDAO.all());
 
-        form.add(new BookEntryFormControl("book", new Model(bookEntry), localeDAO.systemLocale(), fasade) {
+        form.add(new BookEntryFormControl("book", new Model(bookEntry), localeDAO.systemLocale()) {
 
             @Override
             public void saveOrUpdate() {

@@ -121,28 +121,31 @@ public class BookPage extends TemplatePage {
         init(params.getString(BOOK_TYPE));
     }
 
-    public void init(String bookType) throws IntrospectionException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+    public void init(String bookType) {
+        try {
+            this.bookType = bookType;
+            Class bookClass = getBookClass();
+            preferences = getPreferences();
 
-        this.bookType = bookType;
-        Class bookClass = getBookClass();
-        preferences = getPreferences();
+            DataProvider dataProvider = new DataProvider();
+            dataProvider.init(bookClass, "id", true);
+            dataProvider.initSize();
 
-        DataProvider dataProvider = new DataProvider();
-        dataProvider.init(bookClass, "id", true);
-        dataProvider.initSize();
+            //title
+            add(new Label("title", new DisplayBookClassModel(bookClass)));
 
-        //title
-        add(new Label("title", new DisplayBookClassModel(bookClass)));
+            BookContentControl bookContent = new BookContentControl("bookContent", dataProvider, bookClass, localeDAO.systemLocale(), preferences) {
 
-        BookContentControl bookContent = new BookContentControl("bookContent", dataProvider, bookClass, fasade, localeDAO.systemLocale(), preferences) {
+                @Override
+                public void selected(Serializable obj) {
+                    goToEditPage(obj);
+                }
+            };
 
-            @Override
-            public void selected(Serializable obj) {
-                goToEditPage(obj);
-            }
-        };
-
-        add(bookContent);
+            add(bookContent);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void goToEditPage(Serializable entry) {

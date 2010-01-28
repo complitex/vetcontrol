@@ -8,6 +8,7 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.hibernate.type.Type;
 import org.vetcontrol.entity.StringCulture;
 import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.util.book.Property;
+import org.vetcontrol.util.book.entity.annotation.UIType;
 import org.vetcontrol.util.book.service.HibernateSessionTransformer;
 import org.vetcontrol.web.security.SecurityRoles;
 
@@ -39,7 +41,7 @@ import org.vetcontrol.web.security.SecurityRoles;
  *
  * @author Artem
  */
-@Stateless
+@Stateless(name = "BookViewDAO")
 @RolesAllowed(SecurityRoles.INFORMATION_VIEW)
 public class BookViewDAO implements IBookViewDAO {
 
@@ -232,6 +234,25 @@ public class BookViewDAO implements IBookViewDAO {
         return query;
     }
 
+    private <T> boolean isAutoCompleteBookReferenceExist(T example) throws IntrospectionException {
+        for (Property prop : BeanPropertyUtil.getProperties(example.getClass())) {
+            if (prop.isBookReference() && prop.getUiType().equals(UIType.AUTO_COMPLETE)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private <T> List<Property> getAutoCompleteBookReferences(T example) throws IntrospectionException {
+        List<Property> result = new ArrayList<Property>();
+        for (Property prop : BeanPropertyUtil.getProperties(example.getClass())) {
+            if (prop.isBookReference() && prop.getUiType().equals(UIType.AUTO_COMPLETE)) {
+                result.add(prop);
+            }
+        }
+        return result.isEmpty() ? null : result;
+    }
+
     private <T> QueryWithParameters createQuery(T example, String sortProperty, Boolean isAscending, Locale locale, boolean size) throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Class bookType = example.getClass();
         Property sortProp = BeanPropertyUtil.getPropertyByName(bookType, sortProperty);
@@ -261,6 +282,13 @@ public class BookViewDAO implements IBookViewDAO {
                         //simple property
                     }
                     query.append("LEFT JOIN a.").append(sortProp.getName()).append(" as ").append(sortProp.getName()).append(" ");
+                } else if (isAutoCompleteBookReferenceExist(example)) {
+                    List<Property> autoCompleteBookReferences = getAutoCompleteBookReferences(example);
+                    for (Property prop : autoCompleteBookReferences) {
+                        if (!prop.getName().equalsIgnoreCase(sortProp.getName())) {
+                            query.append(" LEFT JOIN a.").append(prop.getName()).append(" as ").append(prop.getName()).append(" ");
+                        }
+                    }
                 } else {
                     // simple property
                 }
@@ -314,7 +342,7 @@ public class BookViewDAO implements IBookViewDAO {
                         if (!Date.class.isAssignableFrom(p.getType())) {
                             query.append(" like :");
                             queryParameters.put(p.getName(), "%" + propValue + "%");
-                        }else{
+                        } else {
                             query.append(" = :");
                             queryParameters.put(p.getName(), propValue);
                         }
@@ -329,8 +357,44 @@ public class BookViewDAO implements IBookViewDAO {
             if (p.isBookReference()) {
                 Object propValue = BeanPropertyUtil.getPropertyValue(example, p.getName());
                 if (propValue != null) {
-                    query.append(" AND a.").append(p.getName()).append(" = :").append(p.getName());
-                    queryParameters.put(p.getName(), propValue);
+                    if (p.getUiType().equals(UIType.SELECT)) {
+                        query.append(" AND a.").append(p.getName()).append(" = :").append(p.getName());
+                        queryParameters.put(p.getName(), propValue);
+                    } else if (p.getUiType().equals(UIType.AUTO_COMPLETE)) {
+                        Property referencedProperty = BeanPropertyUtil.getPropertyByName(p.getType(), p.getReferencedField());
+                        Object referencedPropertyValue = BeanPropertyUtil.getPropertyValue(propValue, referencedProperty.getName());
+                        if (referencedPropertyValue != null) {
+                            if (referencedProperty.isLocalizable()) {
+                                //TODO: need to implement
+//                                throw new UnsupportedOperationException("Need to implement.");
+
+                                String localizationForeignKeyProp = referencedProperty.getLocalizationForeignKeyProperty();
+                                List<StringCulture> strings = (List<StringCulture>) BeanPropertyUtil.getPropertyValue(example,
+                                        referencedProperty.getName());
+                                if (strings != null && !strings.isEmpty()) {
+                                    String value = strings.get(0).getValue();
+                                    if (!Strings.isEmpty(value)) {
+                                        String alias = "sc_" + p.getName();
+                                        String queryParam = alias + "_VALUE";
+                                        StringBuilder subquery = new StringBuilder();
+                                        subquery.append("SELECT ").append(alias).append(".id.id FROM ").append(StringCulture.class.getSimpleName()).
+                                                append(" as ").append(alias).append(" WHERE ").append(alias).append(".value like :").append(queryParam);
+                                        queryParameters.put(queryParam, "%" + value + "%");
+
+                                        query.append(" AND a.").append(p.getName()).append(".").append(localizationForeignKeyProp).append(" IN (").
+                                                append(subquery).append(")");
+                                    }
+                                }
+                            } else if (!referencedProperty.isBookReference()) {
+                                //simple property
+                                query.append(" AND ").append(p.getName()).append(".").append(referencedProperty.getName());
+                                String queryParam = p.getName() + "_" + referencedProperty.getName();
+                                query.append(" like :").append(queryParam);
+                                queryParameters.put(queryParam, "%" + referencedPropertyValue + "%");
+                            }
+                        }
+
+                    }
                 }
             }
         }
@@ -344,11 +408,11 @@ public class BookViewDAO implements IBookViewDAO {
                     String value = strings.get(0).getValue();
                     if (!Strings.isEmpty(value)) {
                         String alias = "sc_" + p.getName();
-                        String valueParameter = alias + "_VALUE";
+                        String queryParam = alias + "_VALUE";
                         StringBuilder subquery = new StringBuilder();
                         subquery.append("SELECT ").append(alias).append(".id.id FROM ").append(StringCulture.class.getSimpleName()).
-                                append(" as ").append(alias).append(" WHERE ").append(alias).append(".value like :").append(valueParameter);
-                        queryParameters.put(valueParameter, "%" + value + "%");
+                                append(" as ").append(alias).append(" WHERE ").append(alias).append(".value like :").append(queryParam);
+                        queryParameters.put(queryParam, "%" + value + "%");
 
                         query.append(" AND a.").append(localizationForeignKeyProp).append(" IN (").
                                 append(subquery).append(")");
