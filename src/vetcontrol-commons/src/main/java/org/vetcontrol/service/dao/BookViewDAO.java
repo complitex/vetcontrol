@@ -234,25 +234,6 @@ public class BookViewDAO implements IBookViewDAO {
         return query;
     }
 
-    private <T> boolean isAutoCompleteBookReferenceExist(T example) throws IntrospectionException {
-        for (Property prop : BeanPropertyUtil.getProperties(example.getClass())) {
-            if (prop.isBookReference() && prop.getUiType().equals(UIType.AUTO_COMPLETE)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private <T> List<Property> getAutoCompleteBookReferences(T example) throws IntrospectionException {
-        List<Property> result = new ArrayList<Property>();
-        for (Property prop : BeanPropertyUtil.getProperties(example.getClass())) {
-            if (prop.isBookReference() && prop.getUiType().equals(UIType.AUTO_COMPLETE)) {
-                result.add(prop);
-            }
-        }
-        return result.isEmpty() ? null : result;
-    }
-
     private <T> QueryWithParameters createQuery(T example, String sortProperty, Boolean isAscending, Locale locale, boolean size) throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Class bookType = example.getClass();
         Property sortProp = BeanPropertyUtil.getPropertyByName(bookType, sortProperty);
@@ -282,13 +263,6 @@ public class BookViewDAO implements IBookViewDAO {
                         //simple property
                     }
                     query.append("LEFT JOIN a.").append(sortProp.getName()).append(" as ").append(sortProp.getName()).append(" ");
-                } else if (isAutoCompleteBookReferenceExist(example)) {
-                    List<Property> autoCompleteBookReferences = getAutoCompleteBookReferences(example);
-                    for (Property prop : autoCompleteBookReferences) {
-                        if (!prop.getName().equalsIgnoreCase(sortProp.getName())) {
-                            query.append(" LEFT JOIN a.").append(prop.getName()).append(" as ").append(prop.getName()).append(" ");
-                        }
-                    }
                 } else {
                     // simple property
                 }
@@ -387,7 +361,7 @@ public class BookViewDAO implements IBookViewDAO {
                                 }
                             } else if (!referencedProperty.isBookReference()) {
                                 //simple property
-                                query.append(" AND ").append(p.getName()).append(".").append(referencedProperty.getName());
+                                query.append(" AND a.").append(p.getName()).append(".").append(referencedProperty.getName());
                                 String queryParam = p.getName() + "_" + referencedProperty.getName();
                                 query.append(" like :").append(queryParam);
                                 queryParameters.put(queryParam, "%" + referencedPropertyValue + "%");
