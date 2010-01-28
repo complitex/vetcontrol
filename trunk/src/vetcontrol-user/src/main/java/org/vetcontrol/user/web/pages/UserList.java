@@ -36,6 +36,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.wicket.model.ResourceModel;
+import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -148,37 +149,37 @@ public class UserList extends TemplatePage {
         };
 
         //Ссылки для активации сортировки по полям
-        add(new OrderByBorder("order_last_name", "LAST_NAME", userSort) {
+        add(new ArrowOrderByBorder("order_last_name", "LAST_NAME", userSort) {
 
             protected void onSortChanged() {
                 userDataView.setCurrentPage(0);
             }
         });
-        add(new OrderByBorder("order_first_name", "FIRST_NAME", userSort) {
+        add(new ArrowOrderByBorder("order_first_name", "FIRST_NAME", userSort) {
 
             protected void onSortChanged() {
                 userDataView.setCurrentPage(0);
             }
         });
-        add(new OrderByBorder("order_middle_name", "MIDDLE_NAME", userSort) {
+        add(new ArrowOrderByBorder("order_middle_name", "MIDDLE_NAME", userSort) {
 
             protected void onSortChanged() {
                 userDataView.setCurrentPage(0);
             }
         });
-        add(new OrderByBorder("order_job", "JOB", userSort) {
+        add(new ArrowOrderByBorder("order_job", "JOB", userSort) {
 
             protected void onSortChanged() {
                 userDataView.setCurrentPage(0);
             }
         });
-        add(new OrderByBorder("order_department", "DEPARTMENT", userSort) {
+        add(new ArrowOrderByBorder("order_department", "DEPARTMENT", userSort) {
 
             protected void onSortChanged() {
                 userDataView.setCurrentPage(0);
             }
         });
-        add(new OrderByBorder("order_login", "LOGIN", userSort) {
+        add(new ArrowOrderByBorder("order_login", "LOGIN", userSort) {
 
             protected void onSortChanged() {
                 userDataView.setCurrentPage(0);

@@ -33,6 +33,7 @@ import javax.ejb.EJB;
 import java.util.*;
 import java.util.Locale;
 import org.apache.wicket.model.ResourceModel;
+import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
 
 import static org.vetcontrol.document.service.DocumentCargoBean.OrderBy;
 import static org.vetcontrol.web.security.SecurityRoles.*;
@@ -202,7 +203,7 @@ public class DocumentCargoList extends TemplatePage{
     }
 
     private void addOrderByBorder(MarkupContainer container, String id, String property, ISortStateLocator stateLocator, final DataView dateView){
-        container.add(new OrderByBorder(id, property, stateLocator) {
+        container.add(new ArrowOrderByBorder(id, property, stateLocator) {
 
             @Override
             protected void onSortChanged() {
