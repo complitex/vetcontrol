@@ -42,18 +42,15 @@ import static org.vetcontrol.web.security.SecurityRoles.*;
  *         Date: 12.01.2010 15:44:20
  */
 @AuthorizeInstantiation({DOCUMENT_CREATE, DOCUMENT_DEP_EDIT, DOCUMENT_DEP_CHILD_EDIT})
-public class DocumentCargoEdit extends FormTemplatePage{
-    private static final Logger log = LoggerFactory.getLogger(DocumentCargoEdit.class);
+public class DocumentCargoEdit extends FormTemplatePage {
 
+    private static final Logger log = LoggerFactory.getLogger(DocumentCargoEdit.class);
     @EJB(name = "DocumentBean")
     private DocumentCargoBean documentCargoBean;
-
     @EJB(name = "UserProfileBean")
     private UserProfileBean userProfileBean;
-
     @EJB(name = "CargoTypeBean")
     private CargoTypeBean cargoTypeBean;
-
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
 
@@ -65,12 +62,12 @@ public class DocumentCargoEdit extends FormTemplatePage{
         init(null);
     }
 
-    public DocumentCargoEdit(final PageParameters parameters){
+    public DocumentCargoEdit(final PageParameters parameters) {
         super();
-        init(parameters.getAsLong("document_cargo_id"));        
+        init(parameters.getAsLong("document_cargo_id"));
     }
 
-    private void init(final Long id){
+    private void init(final Long id) {
         //Модель данных
         DocumentCargo dc;
         try {
@@ -88,31 +85,31 @@ public class DocumentCargoEdit extends FormTemplatePage{
         //Проверка доступа к данным        
         User currentUser = userProfileBean.getCurrentUser();
 
-        if (id == null && !hasAnyRole(DOCUMENT_CREATE)){
+        if (id == null && !hasAnyRole(DOCUMENT_CREATE)) {
             log.error("Пользователю запрещен доступ на создание карточки на груз: " + currentUser.toString());
             logBean.error(DOCUMENT, CREATE, DocumentCargoEdit.class, DocumentCargo.class, "Доступ запрещен");
             throw new UnauthorizedInstantiationException(DocumentCargoEdit.class);
         }
 
-        if (id != null){
+        if (id != null) {
             boolean authorized = hasAnyRole(DOCUMENT_EDIT)
                     && currentUser.getId().equals(dc.getCreator().getId());
 
-            if (!authorized && hasAnyRole(DOCUMENT_DEP_EDIT)){
+            if (!authorized && hasAnyRole(DOCUMENT_DEP_EDIT)) {
                 authorized = currentUser.getDepartment().getId().equals(dc.getCreator().getDepartment().getId());
             }
 
-            if (!authorized && hasAnyRole(DOCUMENT_DEP_CHILD_EDIT)){
-                for(Department d = dc.getCreator().getDepartment(); d != null; d = d.getParent()){
-                    if (d.getId().equals(currentUser.getDepartment().getId())){
+            if (!authorized && hasAnyRole(DOCUMENT_DEP_CHILD_EDIT)) {
+                for (Department d = dc.getCreator().getDepartment(); d != null; d = d.getParent()) {
+                    if (d.getId().equals(currentUser.getDepartment().getId())) {
                         authorized = true;
                         break;
                     }
                 }
             }
 
-            if (!authorized){
-                log.error("Пользователю запрещен доступ редактирование карточки на груз id = " + id +  ": "
+            if (!authorized) {
+                log.error("Пользователю запрещен доступ редактирование карточки на груз id = " + id + ": "
                         + currentUser.toString());
                 logBean.error(DOCUMENT, EDIT, DocumentCargoEdit.class, DocumentCargo.class,
                         "Доступ запрещен. ID: " + id);
@@ -126,8 +123,8 @@ public class DocumentCargoEdit extends FormTemplatePage{
             @Override
             public String getObject() {
                 return (id != null)
-                ? getString("document.cargo.edit.title.edit") + id
-                : getString("document.cargo.edit.title.create");
+                        ? getString("document.cargo.edit.title.edit") + id
+                        : getString("document.cargo.edit.title.create");
             }
         };
         add(new Label("title", title));
@@ -138,12 +135,13 @@ public class DocumentCargoEdit extends FormTemplatePage{
         final Model<DocumentCargo> documentCargoModel = new Model<DocumentCargo>(dc);
 
         //Форма
-        final Form form = new Form<DocumentCargo>("doc_cargo_edit_form", documentCargoModel){
+        final Form form = new Form<DocumentCargo>("doc_cargo_edit_form", documentCargoModel) {
+
             @Override
             protected void onValidate() {
-                for (Cargo c : getModelObject().getCargos()){
-                    if (c.getCargoType() == null){
-                        error(getString("document.cargo.edit.message.cargo_type.not_found.error"));                        
+                for (Cargo c : getModelObject().getCargos()) {
+                    if (c.getCargoType() == null) {
+                        error(getString("document.cargo.edit.message.cargo_type.not_found.error"));
                     }
                 }
             }
@@ -153,9 +151,9 @@ public class DocumentCargoEdit extends FormTemplatePage{
                 try {
                     documentCargoBean.save(getModelObject());
                     setResponsePage(DocumentCargoList.class);
-                    if (id == null){
+                    if (id == null) {
                         getSession().info(getString("document.cargo.edit.message.added", getModel()));
-                    }else{
+                    } else {
                         getSession().info(getString("document.cargo.edit.message.saved", getModel()));
                     }
 
@@ -173,7 +171,8 @@ public class DocumentCargoEdit extends FormTemplatePage{
         };
         add(form);
 
-        Button cancel = new Button("cancel"){
+        Button cancel = new Button("cancel") {
+
             @Override
             public void onSubmit() {
                 setResponsePage(DocumentCargoList.class);
@@ -199,8 +198,28 @@ public class DocumentCargoEdit extends FormTemplatePage{
         cargoContainer.setOutputMarkupId(true);
         form.add(cargoContainer);
 
+        //Добавить груз
+        final AjaxSubmitLink addCargoLink = new AjaxSubmitLink("document.cargo.cargo.add", form) {
+
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                Cargo cargo = new Cargo();
+                cargo.setDocumentCargo(documentCargoModel.getObject());
+                documentCargoModel.getObject().getCargos().add(cargo);
+                target.addComponent(cargoContainer);
+
+                String setFocusOnNewCargo = "newCargoFirstInputId = $('.table_input tbody tr:last input[type=\"text\"]:first').attr('id');"
+                        + "Wicket.Focus.setFocusOnId(newCargoFirstInputId);";
+                target.appendJavascript(setFocusOnNewCargo);
+            }
+        };
+        addCargoLink.setDefaultFormProcessing(false);
+        cargoContainer.add(addCargoLink);
+
+
         final ListView cargoListView = new ListView<Cargo>("document.cargo.cargo_list",
-                new PropertyModel<List<Cargo>>(documentCargoModel.getObject(), "cargos")){
+                new PropertyModel<List<Cargo>>(documentCargoModel.getObject(), "cargos")) {
+
             @Override
             protected void populateItem(final ListItem<Cargo> item) {
                 addCargo(item);
@@ -211,12 +230,13 @@ public class DocumentCargoEdit extends FormTemplatePage{
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                         int last_index = documentCargoModel.getObject().getCargos().size() - 1;
-                        @SuppressWarnings({"unchecked"}) ListItem<Cargo> item = (ListItem) getParent();
+                        @SuppressWarnings({"unchecked"})
+                        ListItem<Cargo> item = (ListItem) getParent();
 
                         //Copy childs from next list item and remove last 
-                        for (int index = item.getIndex(); index < last_index; index++){
-                            ListItem li = (ListItem)item.getParent().get(index);
-                            ListItem li_next = (ListItem)item.getParent().get(index + 1);
+                        for (int index = item.getIndex(); index < last_index; index++) {
+                            ListItem li = (ListItem) item.getParent().get(index);
+                            ListItem li_next = (ListItem) item.getParent().get(index + 1);
 
                             li.removeAll();
                             //noinspection unchecked
@@ -224,7 +244,7 @@ public class DocumentCargoEdit extends FormTemplatePage{
 
                             int size = li_next.size();
                             Component[] childs = new Component[size];
-                            for (int i = 0; i < size; i++){
+                            for (int i = 0; i < size; i++) {
                                 childs[i] = li_next.get(i);
                             }
                             li.add(childs);
@@ -234,6 +254,7 @@ public class DocumentCargoEdit extends FormTemplatePage{
                         item.getParent().get(last_index).remove();
 
                         target.addComponent(cargoContainer);
+                        target.focusComponent(addCargoLink);
                     }
                 };
                 deleteLink.setDefaultFormProcessing(false);
@@ -241,24 +262,8 @@ public class DocumentCargoEdit extends FormTemplatePage{
                 item.add(deleteLink);
             }
         };
-
-        //Добавить груз
         cargoListView.setReuseItems(true);
         cargoContainer.add(cargoListView);
-
-        AjaxSubmitLink addCargoLink = new AjaxSubmitLink("document.cargo.cargo.add", form){
-
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                Cargo cargo = new Cargo();
-                cargo.setDocumentCargo(documentCargoModel.getObject());
-                documentCargoModel.getObject().getCargos().add(cargo);
-                target.addComponent(cargoContainer);
-            }
-        };
-        addCargoLink.setDefaultFormProcessing(false);
-
-        cargoContainer.add(addCargoLink);
 
         //Отравитель
         addDropDownChoice(form, "document.cargo.cargo_sender", CargoSender.class, documentCargoModel, "cargoSender");
@@ -274,7 +279,7 @@ public class DocumentCargoEdit extends FormTemplatePage{
 
         //Реквизиты акта задержания груза
         TextField detentionDetails = new TextField<String>("document.cargo.detention_details",
-                new PropertyModel<String>(documentCargoModel, "detentionDetails"));        
+                new PropertyModel<String>(documentCargoModel, "detentionDetails"));
         form.add(detentionDetails);
 
         boolean visible = id != null;
@@ -298,8 +303,7 @@ public class DocumentCargoEdit extends FormTemplatePage{
         l_department.setVisible(visible);
         form.add(l_department);
 
-        Label department = new Label("department", visible ? dc.getCreator().getDepartment()
-                .getDisplayName(getLocale(), localeDAO.systemLocale()) : "");
+        Label department = new Label("department", visible ? dc.getCreator().getDepartment().getDisplayName(getLocale(), localeDAO.systemLocale()) : "");
         department.setVisible(visible);
         form.add(department);
 
@@ -327,7 +331,7 @@ public class DocumentCargoEdit extends FormTemplatePage{
 
         DropDownChoice<T> ddc = new DropDownChoice<T>(id,
                 new PropertyModel<T>(model, property), list,
-                new IChoiceRenderer<T>(){
+                new IChoiceRenderer<T>() {
 
                     @Override
                     public Object getDisplayValue(T object) {
@@ -346,7 +350,8 @@ public class DocumentCargoEdit extends FormTemplatePage{
         return ddc;
     }
 
-    private class UnitTypeModel extends LoadableDetachableModel<List<UnitType>>{
+    private class UnitTypeModel extends LoadableDetachableModel<List<UnitType>> {
+
         private Cargo cargo;
 
         private UnitTypeModel(Cargo cargo) {
@@ -359,13 +364,13 @@ public class DocumentCargoEdit extends FormTemplatePage{
         }
     }
 
-    private void addCargo(ListItem<Cargo> item){
+    private void addCargo(ListItem<Cargo> item) {
         //Единицы измерения        
         UnitTypeModel unitTypeModel = new UnitTypeModel(item.getModelObject());
 
         DropDownChoice<UnitType> ddcUnitTypes = new DropDownChoice<UnitType>("document.cargo.unit_type",
                 new PropertyModel<UnitType>(item.getModelObject(), "unitType"), unitTypeModel,
-                new IChoiceRenderer<UnitType>(){
+                new IChoiceRenderer<UnitType>() {
 
                     @Override
                     public Object getDisplayValue(UnitType object) {
@@ -407,5 +412,4 @@ public class DocumentCargoEdit extends FormTemplatePage{
         certificateDate.setRequired(true);
         item.add(certificateDate);
     }
-
 }
