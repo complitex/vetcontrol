@@ -15,7 +15,6 @@ import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.web.component.toolbar.ToolbarButton;
 
 import javax.ejb.EJB;
-import java.beans.IntrospectionException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -117,7 +116,7 @@ public class BookPage extends TemplatePage {
     private UIPreferences preferences;
     private String bookType;
 
-    public BookPage(PageParameters params) throws IntrospectionException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+    public BookPage(PageParameters params) {
         init(params.getString(BOOK_TYPE));
     }
 
