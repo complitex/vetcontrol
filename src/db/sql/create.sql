@@ -372,6 +372,29 @@ CREATE TABLE `document_cargo` (
   CONSTRAINT `FK_passing_border_point` FOREIGN KEY (`passing_border_point_id`) REFERENCES `passing_border_point` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `log`;
+CREATE TABLE  `log` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `date` datetime DEFAULT NULL,
+  `user_id` bigint(20) DEFAULT NULL,
+  `controller_class` varchar(255) DEFAULT NULL,
+  `model_class` varchar(255) DEFAULT NULL,
+  `event` varchar(255) DEFAULT NULL,
+  `module` varchar(255) DEFAULT NULL,       
+  `status` varchar(255) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK1A3442BC5F099` (`user_id`),
+  KEY `Index_date` (`date`),
+  KEY `Index_controller_class` (`controller_class`),
+  KEY `Index_model_class` (`model_class`),
+  KEY `Index_event` (`event`),
+  KEY `Index_module` (`module`),
+  KEY `Index_status` (`status`),
+  KEY `Index_description` (`description`),
+  CONSTRAINT `FK1A3442BC5F099` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;

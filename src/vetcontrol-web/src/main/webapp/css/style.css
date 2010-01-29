@@ -60,7 +60,7 @@ text-decoration:none;
 
 /*#LeftBlock h2 a:hover { color: #0090CD; text-decoration: none;}*/
 .LeftBlock .bottom { background:url('/images/leftBlock-bottom.gif') no-repeat bottom; padding: 2px 2px 4px 2px;}
-.LeftBlock .content { height:100px; overflow: auto; padding: 0px 10px 0px 10px; font-size: 11px;}
+.LeftBlock .content { overflow: auto; padding: 0px 10px 0px 10px; font-size: 11px;}
 .LeftBlock .content p { padding: 0px 0px 8px 0px; margin: 0px; font-size: 11px;}
 .LeftBlock .content ul { margin: 0px; padding: 0px; width:92%;}
 .LeftBlock .content ul li { margin: 0px; padding: 2px 0px 3px 0px; list-style-type: none; font-size: 12px; border-bottom: 1px solid #ECEFF1; }

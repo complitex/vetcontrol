@@ -73,4 +73,10 @@
         <group-name>ADMINISTRATORS</group-name>
         <group-name>LOCAL_OFFICERS_DEP_CHILD_EDIT</group-name>
     </security-role-mapping>
+
+    <!--LOGGING-->
+    <security-role-mapping>
+        <role-name>LOGGING_VIEW</role-name>
+        <group-name>ADMINISTRATORS</group-name>
+    </security-role-mapping>
 </sun-web-app>

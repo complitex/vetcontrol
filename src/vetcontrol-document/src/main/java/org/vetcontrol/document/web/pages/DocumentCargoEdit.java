@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.vetcontrol.document.service.DocumentCargoBean;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.CargoTypeBean;
+import org.vetcontrol.service.LogBean;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.web.component.UKTZEDField;
@@ -30,6 +31,10 @@ import javax.ejb.EJB;
 import java.util.Date;
 import java.util.List;
 
+import static org.vetcontrol.entity.Log.EVENT.CREATE;
+import static org.vetcontrol.entity.Log.EVENT.EDIT;
+import static org.vetcontrol.entity.Log.EVENT.VIEW;
+import static org.vetcontrol.entity.Log.MODULE.DOCUMENT;
 import static org.vetcontrol.web.security.SecurityRoles.*;
 
 /**
@@ -52,6 +57,9 @@ public class DocumentCargoEdit extends FormTemplatePage{
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
 
+    @EJB(name = "LogBean")
+    private LogBean logBean;
+
     public DocumentCargoEdit() {
         super();
         init(null);
@@ -70,6 +78,9 @@ public class DocumentCargoEdit extends FormTemplatePage{
         } catch (Exception e) {
             log.error("Карточка на груз по id = " + id + " не найдена", e);
             getSession().error("Карточка на груз №" + id + " не найдена");
+            logBean.error(DOCUMENT, EDIT, DocumentCargoEdit.class, DocumentCargo.class,
+                    "Карточка не найдена. ID: " + id);
+
             setResponsePage(DocumentCargoList.class);
             return;
         }
@@ -79,6 +90,7 @@ public class DocumentCargoEdit extends FormTemplatePage{
 
         if (id == null && !hasAnyRole(DOCUMENT_CREATE)){
             log.error("Пользователю запрещен доступ на создание карточки на груз: " + currentUser.toString());
+            logBean.error(DOCUMENT, CREATE, DocumentCargoEdit.class, DocumentCargo.class, "Доступ запрещен");
             throw new UnauthorizedInstantiationException(DocumentCargoEdit.class);
         }
 
@@ -102,6 +114,8 @@ public class DocumentCargoEdit extends FormTemplatePage{
             if (!authorized){
                 log.error("Пользователю запрещен доступ редактирование карточки на груз id = " + id +  ": "
                         + currentUser.toString());
+                logBean.error(DOCUMENT, EDIT, DocumentCargoEdit.class, DocumentCargo.class,
+                        "Доступ запрещен. ID: " + id);
                 throw new UnauthorizedInstantiationException(DocumentCargoEdit.class);
             }
         }
@@ -144,9 +158,16 @@ public class DocumentCargoEdit extends FormTemplatePage{
                     }else{
                         getSession().info(getString("document.cargo.edit.message.saved", getModel()));
                     }
+
+                    logBean.info(DOCUMENT, id == null ? CREATE : EDIT, DocumentCargoEdit.class, DocumentCargo.class,
+                                "ID: " + getModelObject().getId());
                 } catch (Exception e) {
                     getSession().info(getString("document.cargo.edit.message.save.error", getModel()));
+
                     log.error("Ошибка сохранения карточки на груз №" + getModelObject().getId(), e);
+
+                    logBean.error(DOCUMENT, id == null ? CREATE : EDIT, DocumentCargoEdit.class,
+                            DocumentCargo.class, "Ошибка сохранения в базу данных");
                 }
             }
         };
@@ -294,13 +315,14 @@ public class DocumentCargoEdit extends FormTemplatePage{
         form.add(created);
     }
 
-    private <T extends Localizable> DropDownChoice<T> addDropDownChoice(WebMarkupContainer container, String id, Class<T> bookClass, Object model, String property){
+    private <T extends Localizable> DropDownChoice<T> addDropDownChoice(WebMarkupContainer container, String id, Class<T> bookClass, IModel<DocumentCargo>  model, String property){
         List<T> list = null;
 
         try {
             list = documentCargoBean.getList(bookClass);
         } catch (Exception e) {
             log.error("Ошибка загрузки списка справочников: " + bookClass, e);
+            logBean.error(DOCUMENT, VIEW, DocumentCargoEdit.class, bookClass, "Ошибка загрузки данных из базы данных");
         }
 
         DropDownChoice<T> ddc = new DropDownChoice<T>(id,

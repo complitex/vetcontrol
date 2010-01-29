@@ -6,13 +6,11 @@ import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInst
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.*;
+import org.vetcontrol.service.LogBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.user.service.UserBean;
 import org.vetcontrol.web.security.SecurityRoles;
@@ -25,8 +23,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.wicket.model.ResourceModel;
 
+import static org.vetcontrol.entity.Log.EVENT.CREATE;
+import static org.vetcontrol.entity.Log.EVENT.EDIT;
+import static org.vetcontrol.entity.Log.MODULE.USER;
 import static org.vetcontrol.entity.SecurityGroup.*;
 
 /**
@@ -45,6 +45,9 @@ public class UserEdit extends FormTemplatePage {
 
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
+
+    @EJB(name = "LogBean")
+    private LogBean logBean;
 
     public UserEdit() {
         super();
@@ -70,6 +73,8 @@ public class UserEdit extends FormTemplatePage {
                     return (id != null) ? userBean.getUser(id) : new User();
                 } catch (Exception e) {
                     log.error("Пользователь по id = " + id + " не найден", e);
+                    logBean.error(USER, EDIT, UserEdit.class, User.class, 
+                            "Пользователь не найден. ID: " + id);
                 }
                 return null;
             }
@@ -102,8 +107,10 @@ public class UserEdit extends FormTemplatePage {
                     boolean toLogout = userBean.isUserAuthChanged(user);
 
                     userBean.save(user);
+
                     log.info("Пользователь сохранен: " + user);
                     getSession().info(getString("user.info.saved"));
+                    logBean.info(USER, id == null ? CREATE : EDIT, UserEdit.class, User.class, "ID: " + user.getId());
 
                     if (toLogout){
                         if (logout(user.getLogin())){
@@ -114,6 +121,8 @@ public class UserEdit extends FormTemplatePage {
                 } catch (Exception e) {
                     log.error("Ошибка сохранения пользователя в базу данных");
                     getSession().error(getString("user.info.error.saved"));
+                    logBean.error(USER, id == null ? CREATE : EDIT, UserEdit.class, User.class,
+                            "Ошибка сохранения пользователя в базу данных. ID: " + id);
                 }
 
                 setResponsePage(UserList.class);

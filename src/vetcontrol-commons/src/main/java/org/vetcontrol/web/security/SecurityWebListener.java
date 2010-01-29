@@ -2,7 +2,13 @@ package org.vetcontrol.web.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vetcontrol.entity.Log;
+import org.vetcontrol.service.LogBean;
+import org.vetcontrol.util.DateUtil;
 
+import javax.ejb.EJB;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 import javax.servlet.annotation.WebListener;
@@ -22,7 +28,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * об авторизованном пользователе. 
  */
 @WebListener
-public class SecurityWebListener implements HttpSessionListener, ServletRequestListener {
+public class SecurityWebListener implements HttpSessionListener, ServletRequestListener, ServletContextListener {
+    @EJB
+    private LogBean logBean;
+
     private static final Logger log = LoggerFactory.getLogger(SecurityWebListener.class);
 
     public final static String PRINCIPAL = "org.vetcontrol.web.security.PRINCIPAL";
@@ -30,26 +39,40 @@ public class SecurityWebListener implements HttpSessionListener, ServletRequestL
     private final static ConcurrentHashMap<String, HttpSession> activeSession = new ConcurrentHashMap<String, HttpSession>();
 
     @Override
-    public void sessionCreated(HttpSessionEvent httpSessionEvent) {
-        activeSession.put(httpSessionEvent.getSession().getId(), httpSessionEvent.getSession());
-        log.debug("session created: " + httpSessionEvent.getSession().getId());
+    public void sessionCreated(HttpSessionEvent event) {
+        activeSession.put(event.getSession().getId(), event.getSession());
     }
 
     @Override
-    public void sessionDestroyed(HttpSessionEvent httpSessionEvent) {
-        activeSession.remove(httpSessionEvent.getSession().getId());
-        log.debug("session destroyed: " + httpSessionEvent.getSession().getId());
+    public void sessionDestroyed(HttpSessionEvent event) {
+        activeSession.remove(event.getSession().getId());
+
+        //logout
+        long start = event.getSession().getCreationTime();
+        long end = event.getSession().getLastAccessedTime();                        
+        String d = "Длительность сессии: " + DateUtil.getTimeDiff(start, end);
+
+        logBean.info(Log.MODULE.COMMONS, Log.EVENT.USER_LOGOUT, SecurityWebListener.class, d);        
+        log.info("Сессия пользователя деактивированна [" + d + "]");
     }
 
     @Override
-    public void requestDestroyed(ServletRequestEvent servletRequestEvent) {
+    public void requestDestroyed(ServletRequestEvent event) {
     }
 
     @Override
-    public void requestInitialized(ServletRequestEvent servletRequestEvent) {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequestEvent.getServletRequest();
-        if (httpServletRequest.getUserPrincipal()!=null){
-            httpServletRequest.getSession().setAttribute(PRINCIPAL, httpServletRequest.getUserPrincipal().getName());
+    public void requestInitialized(ServletRequestEvent event) {
+        HttpServletRequest request = (HttpServletRequest) event.getServletRequest();
+
+        //login
+        if (request.getUserPrincipal() != null && request.getSession().getAttribute(PRINCIPAL) == null){
+            request.getSession().setAttribute(PRINCIPAL, request.getUserPrincipal().getName());
+
+            String d = "IP: " + request.getRemoteAddr();
+            String login = request.getUserPrincipal().getName();
+
+            logBean.info(Log.MODULE.COMMONS, Log.EVENT.USER_LOGIN, SecurityWebListener.class, d, login);
+            log.info("Пользователь авторизирован [login: " + login + ", " + d + "]");
         }
     }
 
@@ -63,5 +86,15 @@ public class SecurityWebListener implements HttpSessionListener, ServletRequestL
         }
 
         return sessions;
+    }
+
+    @Override
+    public void contextInitialized(ServletContextEvent servletContextEvent) {
+        logBean.info(Log.MODULE.COMMONS, Log.EVENT.SYSTEM_START, SecurityWebListener.class, null);
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent servletContextEvent) {        
+        logBean.info(Log.MODULE.COMMONS, Log.EVENT.SYSTEM_STOP, SecurityWebListener.class, null);
     }
 }
