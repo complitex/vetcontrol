@@ -59,7 +59,7 @@ selectedMenuLoad = function(){
     if(selecteMenuItemID){
         $("#"+selecteMenuItemID).parent().addClass(selectedMenuItemClassName)
         $("#"+selecteMenuItemID).focus();
-        $(".buttonLogin").focus();
+//        $("#ButtonMain").focus();
     }
 };
 
