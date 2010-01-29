@@ -13,7 +13,6 @@ import javax.ejb.EJB;
 import org.apache.wicket.Component;
 import org.apache.wicket.authorization.strategies.role.metadata.MetaDataRoleAuthorizationStrategy;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.HeadersToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterForm;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterToolbar;
@@ -123,7 +122,7 @@ public abstract class BookContentControl extends Panel {
                     selected(model.getObject());
                 }
             };
-            MetaDataRoleAuthorizationStrategy.authorize(editLink, ENABLE, SecurityRoles.INFORMATION_EDIT);
+            MetaDataRoleAuthorizationStrategy.authorize(editLink, RENDER, SecurityRoles.INFORMATION_EDIT);
             add(editLink);
         }
     }
