@@ -16,6 +16,7 @@
         <filter-name>wicket</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
     <security-role>
         <role-name>AUTHORIZED</role-name>
     </security-role>
@@ -46,6 +47,10 @@
     <security-role>
         <role-name>DOCUMENT_DEP_CHILD_EDIT</role-name>
     </security-role>
+    <security-role>
+        <role-name>LOGGING_VIEW</role-name>
+    </security-role>
+    
     <login-config>
         <auth-method>FORM</auth-method>
         <realm-name>VetcontrolRealm</realm-name>

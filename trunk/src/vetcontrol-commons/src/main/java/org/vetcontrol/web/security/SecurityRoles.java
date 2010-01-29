@@ -17,6 +17,7 @@ public class SecurityRoles {
     public final static String DOCUMENT_DEP_EDIT = "DOCUMENT_DEP_EDIT";
     public final static String DOCUMENT_DEP_CHILD_VIEW = "DOCUMENT_DEP_CHILD_VIEW";
     public final static String DOCUMENT_DEP_CHILD_EDIT = "DOCUMENT_DEP_CHILD_EDIT";
+    public final static String LOGGING_VIEW = "LOGGING_VIEW";
 
 
 //    ,DOCUMENT_VIEW_DEPARTMENT, DOCUMENT_EDIT_DEPARTMENT,

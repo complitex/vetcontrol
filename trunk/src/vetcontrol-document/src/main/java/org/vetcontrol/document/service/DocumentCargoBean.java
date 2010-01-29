@@ -3,7 +3,6 @@ package org.vetcontrol.document.service;
 import org.vetcontrol.entity.Cargo;
 import org.vetcontrol.entity.DocumentCargo;
 import org.vetcontrol.service.UserProfileBean;
-import org.vetcontrol.service.dao.IBookViewDAO;
 import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.web.security.SecurityRoles;
 
@@ -31,11 +30,8 @@ public class DocumentCargoBean {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @EJB
-    UserProfileBean userProfileBean;
-
-    @EJB(name = "BookViewDAO")
-    private IBookViewDAO bookViewDAO;
+    @EJB(beanName = "UserProfileBean")
+    private UserProfileBean userProfileBean;
 
     public DocumentCargo loadDocumentCargo(Long id){
         DocumentCargo documentCargo = entityManager.find(DocumentCargo.class, id);

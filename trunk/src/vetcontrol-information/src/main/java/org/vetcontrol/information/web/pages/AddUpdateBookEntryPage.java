@@ -5,23 +5,28 @@
 package org.vetcontrol.information.web.pages;
 
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
-import org.vetcontrol.util.book.BeanPropertyUtil;
+import org.apache.wicket.model.ResourceModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vetcontrol.entity.Localizable;
+import org.vetcontrol.entity.Log;
+import org.vetcontrol.information.service.fasade.pages.AddUpdateBookEntryPageFasade;
 import org.vetcontrol.information.web.component.BookEntryFormControl;
+import org.vetcontrol.service.LogBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
+import org.vetcontrol.util.book.BeanPropertyUtil;
+import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.FormTemplatePage;
 
 import javax.ejb.EJB;
 import java.beans.IntrospectionException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.ResourceModel;
-import org.vetcontrol.information.service.fasade.pages.AddUpdateBookEntryPageFasade;
-import org.vetcontrol.web.security.SecurityRoles;
 
 /**
  *
@@ -29,11 +34,14 @@ import org.vetcontrol.web.security.SecurityRoles;
  */
 @AuthorizeInstantiation(SecurityRoles.INFORMATION_EDIT)
 public class AddUpdateBookEntryPage extends FormTemplatePage {
+    private static final Logger log = LoggerFactory.getLogger(AddUpdateBookEntryPage.class);
 
     @EJB(name = "AddUpdateBookEntryPageFasade")
     private AddUpdateBookEntryPageFasade fasade;
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
+    @EJB(name = "LogBean")
+    private LogBean logBean;
 
     public AddUpdateBookEntryPage() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IntrospectionException, InvocationTargetException {
         init();
@@ -63,7 +71,31 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
 
             @Override
             public void saveOrUpdate() {
-                fasade.saveOrUpdate(bookEntry);
+                //TODO get description to log
+                Long id = -1L;
+                Log.EVENT event = null;
+                if (bookEntry instanceof Localizable){
+                    id = ((Localizable)bookEntry).getId();
+                    if (id == null){
+                        event = Log.EVENT.CREATE;
+                    }else if (id > 0){
+                        event = Log.EVENT.EDIT;
+                    }
+                }
+
+                try {
+                    fasade.saveOrUpdate(bookEntry);
+
+                    if (bookEntry instanceof Localizable){
+                        id = ((Localizable)bookEntry).getId();
+                    }
+
+                    logBean.info(Log.MODULE.INFORMATION, event, AddUpdateBookEntryPage.class, bookEntry.getClass(), "ID: " + id);
+                } catch (Exception e) {
+                    log.error("Ошибка сохранения справочника", e);
+                    logBean.error(Log.MODULE.INFORMATION, event, AddUpdateBookEntryPage.class, bookEntry.getClass(), "ID: " + id);
+                }
+
                 goToBooksPage();
             }
 

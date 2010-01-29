@@ -3,6 +3,8 @@ package org.vetcontrol.user.web.pages;
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.ITemplateLink;
 import org.vetcontrol.web.template.ResourceTemplateMenu;
@@ -19,6 +21,7 @@ import java.util.Locale;
  */
 @AuthorizeInstantiation(SecurityRoles.USER_EDIT)
 public class UserTemplateMenu extends ResourceTemplateMenu{
+    private static final Logger log = LoggerFactory.getLogger(UserTemplateMenu.class);
 
     @Override
     public String getTitle(Locale locale) {
@@ -49,6 +52,39 @@ public class UserTemplateMenu extends ResourceTemplateMenu{
             }
 
         });
+
+
+        try {
+            final Class logList = Class.forName("org.vetcontrol.logging.web.pages.LogList");
+
+            links.add(new ITemplateLink(){
+            @Override
+            public String getLabel(Locale locale) {
+                return getString(UserTemplateMenu.class, locale, "user.template.menu.log");
+            }
+
+            @SuppressWarnings({"unchecked"})
+            @Override
+            public Class<? extends Page> getPage() {
+
+                return logList;
+            }
+
+            @Override
+            public PageParameters getParameters() {
+                return PageParameters.NULL;
+            }
+
+            @Override
+            public String getTagId() {
+                return "Log";
+            }
+
+        });
+        } catch (ClassNotFoundException e) {
+            log.error("Модуль журнала событий не найден", e);
+        }
+
 
         return links;
     }

@@ -24,4 +24,18 @@ public class DateUtil {
 
         return c.getTime();
     }
+
+    public static String getTimeDiff(long start, long end){
+        long time = end - start;
+
+        long msec = time % 1000;
+        time = time / 1000;
+        long sec = time % 60;
+        time = time / 60;
+        long min = time % 60;
+        time = time / 60;
+        long hour = time;
+
+        return String.format("%d:%02d:%02d.%03d", hour, min, sec, msec);
+    }
 }
