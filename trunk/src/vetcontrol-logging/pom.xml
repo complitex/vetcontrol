@@ -15,6 +15,11 @@
 
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.vetcontrol</groupId>
+            <artifactId>vetcontrol-commons</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket</artifactId>
