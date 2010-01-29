@@ -35,7 +35,7 @@
                         <td class="ff_t">
                             <h2 style="text-align:center;"><fmt:message key='login.enterLabel'/></h2>
                             <div align="center">
-                                <form  method="POST" action="j_security_check">
+                                <form id="formId"  method="POST" action="j_security_check">
                                     <table style="margin-bottom:20px">
                                         <tr>
                                             <th align="left"><fmt:message key='login.loginLabel'/>:</th>

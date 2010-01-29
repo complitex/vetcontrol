@@ -1,7 +1,7 @@
 package org.vetcontrol.web;
 
 import org.apache.wicket.Page;
-import org.vetcontrol.web.pages.HomePage;
+import org.vetcontrol.web.pages.WelcomePage;
 import org.vetcontrol.web.pages.SessionExpiredPage;
 import org.vetcontrol.web.template.TemplateWebApplication;
 
@@ -19,7 +19,7 @@ public class VetcontrolWebApplication extends TemplateWebApplication {
 
     @Override
     public Class<? extends Page> getHomePage() {
-        return HomePage.class;
+        return WelcomePage.class;
     }
 
 }
