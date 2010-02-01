@@ -31,7 +31,6 @@
             <table  border="0" cellspacing="0" cellpadding="0" class="tbColor table_input">
                 <thead>
                 <tr>
-                    <th class="center" wicket:id="order_id"><wicket:message key="logging.log.id"/></th>
                     <th class="center" wicket:id="order_date"><wicket:message key="logging.log.date"/></th>
                     <th class="center" wicket:id="order_login"><wicket:message key="logging.log.login"/></th>
                     <th class="center" wicket:id="order_controllerClass"><wicket:message key="logging.log.controllerClass"/></th>
@@ -44,8 +43,7 @@
                         <input class="btnSmall"  wicket:id="filter_reset" type="submit" wicket:message="value:logging.log.filter.clear"/>
                     </th>
                 </tr>
-                <tr>
-                    <th class="center"><input type="text" wicket:id="id"/></th>
+                <tr>                    
                      <th class="center">
                         <div style="width:102px">
                             <input style="width:80px" type="text" wicket:id="date"/>
@@ -65,8 +63,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr wicket:id="logs">
-                    <td><span wicket:id="id"></span></td>
+                <tr wicket:id="logs">                    
                     <td><span wicket:id="date"></span></td>
                     <td><span wicket:id="login"></span></td>
                     <td><span wicket:id="controllerClass"></span></td>

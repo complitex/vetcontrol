@@ -72,10 +72,7 @@ public class LogList extends TemplatePage {
         };
         filter_reset.setDefaultFormProcessing(false);
         filterForm.add(filter_reset);
-
-        //ID
-        filterForm.add(new TextField<Integer>("id"));
-
+                
         //Date
         DatePicker<Date> date = new DatePicker<Date>("date");
         date.setButtonImage("images/calendar.gif");
@@ -202,7 +199,6 @@ public class LogList extends TemplatePage {
             @Override
             protected void populateItem(Item<Log> item) {
                 Log log = item.getModelObject();
-                item.add(new Label("id", String.valueOf(log.getId())));
                 item.add(DateLabel.forDatePattern("date", new Model<Date>(log.getDate()),"dd.MM.yy HH:mm:ss"));
                 item.add(new Label("login", log.getUser() != null ? log.getUser().getLogin() : "SYSTEM"));
                 item.add(new Label("controllerClass", getStringOrKey(log.getControllerClass())));
@@ -216,7 +212,6 @@ public class LogList extends TemplatePage {
         filterForm.add(dataView);
 
         //Сортировка
-        addOrderByBorder(filterForm, "order_id", LogListBean.OrderBy.ID.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_date", LogListBean.OrderBy.DATE.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_login", LogListBean.OrderBy.LOGIN.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_controllerClass", LogListBean.OrderBy.CONTROLLER_CLASS.name(), dataProvider, dataView);

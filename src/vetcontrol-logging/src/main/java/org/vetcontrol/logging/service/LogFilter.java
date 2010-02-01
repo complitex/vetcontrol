@@ -2,13 +2,14 @@ package org.vetcontrol.logging.service;
 
 import org.vetcontrol.entity.Log;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 27.01.2010 11:54:14
  */
-public class LogFilter {
+public class LogFilter implements Serializable{ 
     private Long id;
 
     private Date date;

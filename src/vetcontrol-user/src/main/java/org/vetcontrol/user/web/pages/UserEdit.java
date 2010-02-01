@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.LogBean;
+import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.user.service.UserBean;
 import org.vetcontrol.web.security.SecurityRoles;
@@ -48,6 +49,9 @@ public class UserEdit extends FormTemplatePage {
 
     @EJB(name = "LogBean")
     private LogBean logBean;
+
+    @EJB(name = "UserProfileBean")
+    private UserProfileBean userProfileBean;
 
     public UserEdit() {
         super();
@@ -104,7 +108,8 @@ public class UserEdit extends FormTemplatePage {
                 }
 
                 try {
-                    boolean toLogout = userBean.isUserAuthChanged(user);
+                    boolean toLogout = !userProfileBean.getCurrentUser().getId().equals(user.getId())
+                            && userBean.isUserAuthChanged(user);
 
                     userBean.save(user);
 

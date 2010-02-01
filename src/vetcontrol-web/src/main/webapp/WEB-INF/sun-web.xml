@@ -37,20 +37,17 @@
     <!--DOCUMENTS-->
     <security-role-mapping>
         <role-name>DOCUMENT_CREATE</role-name>
-        <group-name>ADMINISTRATORS</group-name>
         <group-name>LOCAL_OFFICERS</group-name>
         <group-name>LOCAL_OFFICERS_EDIT</group-name>
     </security-role-mapping>
     <security-role-mapping>
         <role-name>DOCUMENT_EDIT</role-name>
-        <group-name>ADMINISTRATORS</group-name>
         <group-name>LOCAL_OFFICERS_EDIT</group-name>
         <group-name>LOCAL_OFFICERS_DEP_EDIT</group-name>
         <group-name>LOCAL_OFFICERS_DEP_CHILD_EDIT</group-name>
     </security-role-mapping>
     <security-role-mapping>
         <role-name>DOCUMENT_DEP_VIEW</role-name>
-        <group-name>ADMINISTRATORS</group-name>
         <group-name>LOCAL_OFFICERS_DEP_VIEW</group-name>
         <group-name>LOCAL_OFFICERS_DEP_EDIT</group-name>
         <group-name>LOCAL_OFFICERS_DEP_CHILD_VIEW</group-name>
@@ -58,19 +55,16 @@
     </security-role-mapping>
     <security-role-mapping>
         <role-name>DOCUMENT_DEP_EDIT</role-name>
-        <group-name>ADMINISTRATORS</group-name>
         <group-name>LOCAL_OFFICERS_DEP_EDIT</group-name>
         <group-name>LOCAL_OFFICERS_DEP_CHILD_EDIT</group-name>
     </security-role-mapping>
     <security-role-mapping>
         <role-name>DOCUMENT_DEP_CHILD_VIEW</role-name>
-        <group-name>ADMINISTRATORS</group-name>
         <group-name>LOCAL_OFFICERS_DEP_CHILD_VIEW</group-name>
         <group-name>LOCAL_OFFICERS_DEP_CHILD_EDIT</group-name>
     </security-role-mapping>
     <security-role-mapping>
         <role-name>DOCUMENT_DEP_CHILD_EDIT</role-name>
-        <group-name>ADMINISTRATORS</group-name>
         <group-name>LOCAL_OFFICERS_DEP_CHILD_EDIT</group-name>
     </security-role-mapping>
 

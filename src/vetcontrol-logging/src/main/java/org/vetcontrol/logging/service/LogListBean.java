@@ -93,12 +93,14 @@ public class LogListBean {
     }
 
     public List<String> getControllerClasses(){
-        return entityManager.createQuery("select l.controllerClass from Log l group by l.controllerClass", String.class)
+        return entityManager
+                .createQuery("select l.controllerClass from Log l where l.controllerClass is not null group by l.controllerClass", String.class)
                 .getResultList();
     }
 
     public List<String> getModelClasses(){
-        return entityManager.createQuery("select l.modelClass from Log l group by l.modelClass", String.class)
+        return entityManager
+                .createQuery("select l.modelClass from Log l where l.modelClass is not null group by l.modelClass", String.class)
                 .getResultList();
     }
 
