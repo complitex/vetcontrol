@@ -104,8 +104,7 @@ public abstract class TemplatePage extends WebPage {
 
             @Override
             public void onSubmit() {
-                getSession().invalidateNow();
-                setResponsePage(getApplication().getHomePage());
+                 getVetControlTemplateApplication().logout();
             }
         });
     }
@@ -215,5 +214,9 @@ public abstract class TemplatePage extends WebPage {
 
     protected boolean hasAnyRole(String... roles){
         return ((IRoleCheckingStrategy) getApplication()).hasAnyRole(new Roles(roles));
+    }
+
+    protected TemplateWebApplication getVetControlTemplateApplication(){
+        return (TemplateWebApplication)getApplication();
     }
 }
