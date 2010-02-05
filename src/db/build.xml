@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="DB" default="create" basedir=".">
-    <target name="create">
-
-        <property file="database.properties"/>
-        
-        <sql
-            driver="com.mysql.jdbc.Driver"
-            encoding="UTF-8"
-            url="${url}"
-            userid="${username}"
-            password="${password}">
-                <classpath>
-                    <pathelement location="mysql-connector-java-5.1.6-bin.jar"/>
-                </classpath>
-                <transaction src="sql/create.sql"/>
-                <transaction src="sql/insert.sql"/>
-                <transaction src="sql/testdump.sql"/>
-        </sql>
-    </target>
-    
+<project>
+    <!--TODO run client and server build.xml-->
 </project>
