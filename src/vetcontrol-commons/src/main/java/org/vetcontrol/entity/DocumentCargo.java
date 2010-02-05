@@ -63,6 +63,10 @@ public class DocumentCargo implements Serializable{
     @Column(name = "details", length = 255)
     private String details;
 
+    @Version
+    @Column(name = "version")
+    private Date version;
+
     public Long getId() {
         return id;
     }
@@ -173,5 +177,13 @@ public class DocumentCargo implements Serializable{
 
     public void setDetails(String details) {
         this.details = details;
+    }
+
+    public Date getVersion() {
+        return version;
+    }
+
+    public void setVersion(Date version) {
+        this.version = version;
     }
 }

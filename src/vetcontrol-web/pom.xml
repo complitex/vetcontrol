@@ -9,8 +9,50 @@
     <artifactId>vetcontrol-web</artifactId>
 
     <packaging>war</packaging>
-    <name>Vetcontrol Java EE 6 Webapp</name>
+    <name>Vetcontrol Java EE 6 Webapp</name>    
 
+    <profiles>
+        <profile>
+            <id>server</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>                  
+            </activation>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.vetcontrol</groupId>
+                    <artifactId>vetcontrol-user</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.vetcontrol</groupId>
+                    <artifactId>vetcontrol-information</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.vetcontrol</groupId>
+                    <artifactId>vetcontrol-sync-server</artifactId>
+                </dependency>
+            </dependencies>
+
+            <build>
+                <finalName>vetcontrol-server</finalName>
+            </build>
+        </profile>
+
+        <profile>
+            <id>client</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.vetcontrol</groupId>
+                    <artifactId>vetcontrol-sync-client</artifactId>
+                </dependency>
+            </dependencies>
+
+            <build>
+                <finalName>vetcontrol-client</finalName>
+            </build>
+        </profile>
+    </profiles>
+    
     <dependencies>
         <dependency>
             <groupId>org.vetcontrol</groupId>
@@ -22,23 +64,11 @@
         </dependency>
         <dependency>
             <groupId>org.vetcontrol</groupId>
-            <artifactId>vetcontrol-information</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.vetcontrol</groupId>
             <artifactId>vetcontrol-logging</artifactId>
         </dependency>
         <dependency>
             <groupId>org.vetcontrol</groupId>
             <artifactId>vetcontrol-report</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.vetcontrol</groupId>
-            <artifactId>vetcontrol-sync-server</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.vetcontrol</groupId>
-            <artifactId>vetcontrol-user</artifactId>
         </dependency>
 
         <dependency>
@@ -53,11 +83,11 @@
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket-ioc</artifactId>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.apache.wicket</groupId>
-            <artifactId>wicket-extensions</artifactId>                        
+            <artifactId>wicket-extensions</artifactId>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket-datetime</artifactId>
         </dependency>
@@ -98,5 +128,8 @@
             <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/wicket-contrib-javaee-1.1.jar</systemPath>
         </dependency>
     </dependencies>
+
+
+
 </project>
 
