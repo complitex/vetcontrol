@@ -172,4 +172,56 @@ public class User implements Serializable {
                 + ((firstName != null) ? firstName.substring(0,1) + ". " : "")
                 + ((middleName != null) ? middleName.substring(0,1): ".");           
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final User other = (User) obj;
+        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
+            return false;
+        }
+        if ((this.login == null) ? (other.login != null) : !this.login.equals(other.login)) {
+            return false;
+        }
+        if ((this.password == null) ? (other.password != null) : !this.password.equals(other.password)) {
+            return false;
+        }
+        if ((this.firstName == null) ? (other.firstName != null) : !this.firstName.equals(other.firstName)) {
+            return false;
+        }
+        if ((this.middleName == null) ? (other.middleName != null) : !this.middleName.equals(other.middleName)) {
+            return false;
+        }
+        if ((this.lastName == null) ? (other.lastName != null) : !this.lastName.equals(other.lastName)) {
+            return false;
+        }
+        if (this.job.getId() != other.job.getId() && (this.job.getId() == null || !this.job.getId().equals(other.job.getId()))) {
+            return false;
+        }
+        if (this.department.getId() != other.department.getId() && (this.department.getId() == null || !this.department.getId().equals(other.department.getId()))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 37 * hash + (this.login != null ? this.login.hashCode() : 0);
+        hash = 37 * hash + (this.password != null ? this.password.hashCode() : 0);
+        hash = 37 * hash + (this.firstName != null ? this.firstName.hashCode() : 0);
+        hash = 37 * hash + (this.middleName != null ? this.middleName.hashCode() : 0);
+        hash = 37 * hash + (this.lastName != null ? this.lastName.hashCode() : 0);
+        hash = 37 * hash + (this.job.getId() != null ? this.job.getId().hashCode() : 0);
+        hash = 37 * hash + (this.department.getId() != null ? this.department.getId().hashCode() : 0);
+        return hash;
+    }
+
+
 }
