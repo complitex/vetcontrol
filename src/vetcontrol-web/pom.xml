@@ -9,13 +9,18 @@
     <artifactId>vetcontrol-web</artifactId>
 
     <packaging>war</packaging>
-    <name>Vetcontrol Java EE 6 Webapp</name>    
+    <name>Vetcontrol Java EE 6 Webapp</name>
 
     <profiles>
         <profile>
             <id>server</id>
+
+            <properties>
+                <jta-data-source>jdbc/vetcontroldb</jta-data-source>
+            </properties>
+
             <activation>
-                <activeByDefault>true</activeByDefault>                  
+                <activeByDefault>true</activeByDefault>
             </activation>
 
             <dependencies>
@@ -40,6 +45,11 @@
 
         <profile>
             <id>client</id>
+
+            <properties>
+                <jta-data-source>jdbc/vetcontrol_clientdb</jta-data-source>
+            </properties>
+
             <dependencies>
                 <dependency>
                     <groupId>org.vetcontrol</groupId>
@@ -52,7 +62,7 @@
             </build>
         </profile>
     </profiles>
-    
+
     <dependencies>
         <dependency>
             <groupId>org.vetcontrol</groupId>
@@ -128,6 +138,25 @@
             <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/wicket-contrib-javaee-1.1.jar</systemPath>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.0.2</version>
+                <configuration>
+                    <webResources>
+                        <resource>
+                            <directory>src\main\resources</directory>
+                            <targetPath>WEB-INF\classes</targetPath>
+                            <filtering>true</filtering>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 
 
