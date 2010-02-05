@@ -3,7 +3,7 @@ INSERT INTO `generator`(`generatorName`, `generatorValue`) VALUES ('books', 0);
 INSERT INTO `locales`(`language`, isSystem) VALUES ('ru', 1);
 INSERT INTO `locales`(`language`) VALUES ('en');
 
-INSERT INTO `stringculture` VALUES (1, 'ru', 'Государственный комитет ветеринарной медицины'),
+INSERT INTO `stringculture`(`id`, `locale`, `value`) VALUES (1, 'ru', 'Государственный комитет ветеринарной медицины'),
                                     (2, 'ru', 'Одеський РСДВСКН'),
                                     (3, 'ru', 'Апарат управління Одеськой РСДВСКН'),
                                     (4, 'ru', 'Арцизький ПДВСКН'),
