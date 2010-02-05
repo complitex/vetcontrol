@@ -27,6 +27,7 @@ import javax.ejb.EJB;
 import java.beans.IntrospectionException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import org.vetcontrol.util.book.BookHash;
 
 /**
  *
@@ -48,7 +49,6 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
     }
 
     public void init() throws IntrospectionException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException {
-
         final Serializable bookEntry = getSession().getMetaData(BookPage.SELECTED_BOOK_ENTRY);
 
         if (bookEntry == null) {
@@ -66,6 +66,9 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
         add(form);
 
         BeanPropertyUtil.addLocalization(bookEntry, localeDAO.all());
+        
+        //calculate initial hash code for book entry in order to increment version of the book entry if necessary later.
+        final BookHash initial = BeanPropertyUtil.hash(bookEntry);
 
         form.add(new BookEntryFormControl("book", new Model(bookEntry), localeDAO.systemLocale()) {
 
@@ -83,6 +86,8 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
                     }
                 }
 
+                //update version of book and its localizable strings if necessary.
+                BeanPropertyUtil.updateVersionIfNecessary(bookEntry, initial);
                 try {
                     fasade.saveOrUpdate(bookEntry);
 
