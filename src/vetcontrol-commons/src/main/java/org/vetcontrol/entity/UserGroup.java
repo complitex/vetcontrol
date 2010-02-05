@@ -50,13 +50,22 @@ public class UserGroup implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof UserGroup){
-            UserGroup ug = (UserGroup) obj;
-            if (ug.getUser() != null && user != null && user.getLogin()!= null && securityGroup != null){
-                return user.getLogin().equals(ug.getUser().getLogin()) && securityGroup.equals(ug.getSecurityGroup());
-            }
+        if (obj == null) {
+            return false;
         }
-        return super.equals(obj);
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final UserGroup other = (UserGroup) obj;
+        if (this.securityGroup != other.securityGroup && (this.securityGroup == null || !this.securityGroup.equals(other.securityGroup))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return securityGroup == null ? 0 : securityGroup.name().hashCode();
     }
 
     @Override
