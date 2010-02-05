@@ -27,6 +27,7 @@ import java.lang.reflect.Modifier;
 import java.text.DateFormat;
 import java.util.*;
 import org.apache.wicket.util.string.interpolator.VariableInterpolator;
+import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.util.book.entity.annotation.UIType;
 
 /**
@@ -251,16 +252,16 @@ public class BeanPropertyUtil {
 //                if (property.getUiType().equals(UIType.AUTO_COMPLETE) && !Strings.isEmpty(property.getBookReferencePattern())) {
 //                    return applyPattern(property.getBookReferencePattern(), propertyValue, systemLocale);
 //                } else {
-                    Object referencedBook = propertyValue;
-                    String referencedField = property.getReferencedField();
-                    Object value = null;
-                    try {
-                        value = getPropertyValue(referencedBook, referencedField);
-                    } catch (Exception e) {
-                        //TODO: remove it after testing.
-                        throw new RuntimeException(e);
-                    }
-                    return getPropertyAsString(value, getPropertyByName(referencedBook.getClass(), referencedField), systemLocale);
+                Object referencedBook = propertyValue;
+                String referencedField = property.getReferencedField();
+                Object value = null;
+                try {
+                    value = getPropertyValue(referencedBook, referencedField);
+                } catch (Exception e) {
+                    //TODO: remove it after testing.
+                    throw new RuntimeException(e);
+                }
+                return getPropertyAsString(value, getPropertyByName(referencedBook.getClass(), referencedField), systemLocale);
 //                }
 
             } else {
@@ -349,5 +350,110 @@ public class BeanPropertyUtil {
 
             }
         }.toString();
+    }
+
+    private static int bookHash(Object book) {
+        try {
+            int hash = 17;
+            int multiplier = 37;
+
+            for (Property prop : getProperties(book.getClass())) {
+                Class propType = prop.getType();
+                boolean isPrimitive = false;
+                for (Class primitive : PRIMITIVES) {
+                    if (primitive.isAssignableFrom(propType)) {
+                        isPrimitive = true;
+                        break;
+                    }
+                }
+                if (isPrimitive) {
+                    //simple property
+                    Object value = getPropertyValue(book, prop.getName());
+                    if (value != null) {
+                        hash = hash * multiplier + value.hashCode();
+                    }
+                } else if (prop.isLocalizable()) {
+                    //do nothing.
+                } else {
+                    // bean reference
+                    Object value = getPropertyValue(book, prop.getName());
+                    if (value != null) {
+                        Object ID = getPropertyValue(value, "id");
+                        if (ID != null) {
+                            hash = hash * multiplier + ID.hashCode();
+                        }
+                    }
+                }
+            }
+            return hash;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static int stringCultureHash(StringCulture culture) {
+        return culture.getValue() == null ? 0 : culture.getValue().hashCode();
+    }
+
+    public static BookHash hash(Object book) {
+        try {
+            BookHash bookHash = new BookHash();
+            bookHash.setBookHash(bookHash(book));
+            for (Property prop : getProperties(book.getClass())) {
+                if (prop.isLocalizable()) {
+                    List<StringCulture> strings = (List<StringCulture>) getPropertyValue(book, prop.getName());
+                    if (strings != null) {
+                        for (StringCulture stringCulture : strings) {
+                            bookHash.addStringCultureHash(prop.getName(), stringCulture.getId().getLocale(), stringCultureHash(stringCulture));
+                        }
+                    }
+                }
+            }
+            return bookHash;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void updateVersionIfNecessary(Object book, BookHash initialHash) {
+        try {
+            //TODO: add time zone shift
+            Date updated = DateUtil.getCurrentDate();
+
+            BookHash newHash = hash(book);
+
+            if (isNewBook(book) || !newHash.getBookHash().equals(initialHash.getBookHash())) {
+                setPropertyValue(book, getVersionPropertyName(), updated);
+            }
+
+            for (String propName : newHash.getStringCultureHashes().keySet()) {
+                for (String locale : newHash.getStringCultureHashes().get(propName).keySet()) {
+                    Integer newStringCultureHash = newHash.getStringCultureHashes().get(propName).get(locale);
+                    Integer initialStringCultureHash = initialHash.getStringCultureHashes().get(propName).get(locale);
+                    if (!newStringCultureHash.equals(initialStringCultureHash)) {
+                        List<StringCulture> strings = (List<StringCulture>) getPropertyValue(book, propName);
+                        for (StringCulture culture : strings) {
+                            if (culture.getId().getLocale().equals(locale) || culture.getUpdated() == null) {
+                                culture.setUpdated(updated);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static String getVersionPropertyName() {
+        return "updated";
+    }
+
+    private static boolean isNewBook(Object book) {
+        try {
+            return getPropertyValue(book, "id") == null;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
