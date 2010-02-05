@@ -4,21 +4,23 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 04.02.2010 15:50:03
  */
-@Entity
-@Table(name = "client")
-@XmlRootElement
+//@Entity
+//@Table(name = "client")
+//@XmlRootElement
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @XmlID
     private Long id;
+
+    @XmlID
+    @Transient
+    private String stringId;
 
     @ManyToOne
     @JoinColumn(name = "department_id")
