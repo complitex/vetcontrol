@@ -14,6 +14,7 @@ import java.util.Map;
  */
 @MappedSuperclass
 public abstract class Localizable implements Serializable {
+
     private Long id;
 
     @Id
@@ -23,10 +24,9 @@ public abstract class Localizable implements Serializable {
         return id;
     }
 
-    public void setId(Long id){
+    public void setId(Long id) {
         this.id = id;
     }
-
     private Long name;
 
     @Column(name = "name")
@@ -55,8 +55,7 @@ public abstract class Localizable implements Serializable {
         this.namesMap = namesMap;
     }
 
-    @Transient
-    public String getDisplayName(java.util.Locale current, java.util.Locale system){
+    public String getDisplayName(java.util.Locale current, java.util.Locale system) {
         String name;
         if ((name = namesMap.get(current.getLanguage())) != null  && !name.isEmpty()){
             return name;
@@ -66,15 +65,17 @@ public abstract class Localizable implements Serializable {
         return "";
     }
 
-    private Date version;
+    private Date updated;
 
-    @Version
     @ValidProperty(false)
-    public Date getVersion() {
-        return version;
+    @Column(name = "updated", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getUpdated() {
+        return updated;
     }
 
-    public void setVersion(Date version) {
-        this.version = version;
+    public void setUpdated(Date updated) {
+        this.updated = updated;
     }
+
 }

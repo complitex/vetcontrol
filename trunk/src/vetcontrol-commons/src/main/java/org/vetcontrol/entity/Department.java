@@ -68,7 +68,7 @@ public class Department extends Localizable{
     public void setParent(Department parent) {
         this.parent = parent;
     }
-
+    
     @Override
     public String toString() {
         return new StringBuilder().append("[hash: ").append(Integer.toHexString(hashCode()))

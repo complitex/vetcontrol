@@ -131,11 +131,11 @@ public class BookViewDAO implements IBookViewDAO {
                             addOrder(Order.asc("id.locale")).
                             add(Restrictions.eq("id.id", id)).
                             list();
-                    for (StringCulture culture : strings) {
-                        if (culture.getValue() == null) {
-                            culture.setValue("");
-                        }
-                    }
+//                    for (StringCulture culture : strings) {
+//                        if (culture.getValue() == null) {
+//                            culture.setValue("");
+//                        }
+//                    }
                     if (strings != null && !strings.isEmpty()) {
                         mappedProperty.getWriteMethod().invoke(bean, strings.get(0).getId().getId());
                     }

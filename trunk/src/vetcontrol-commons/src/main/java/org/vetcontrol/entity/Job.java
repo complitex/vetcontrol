@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.vetcontrol.entity;
 
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
@@ -19,10 +18,10 @@ import java.util.List;
  *
  * Справочник должностей
  */
-
 @Entity
+@org.hibernate.annotations.Entity(selectBeforeUpdate=true)
 @Table(name = "job")
-public class Job extends Localizable{
+public class Job extends Localizable {
     private List<StringCulture> names = new ArrayList<StringCulture>();
 
     @Transient
@@ -35,5 +34,4 @@ public class Job extends Localizable{
     public void setNames(List<StringCulture> names) {
         this.names = names;
     }
-
 }

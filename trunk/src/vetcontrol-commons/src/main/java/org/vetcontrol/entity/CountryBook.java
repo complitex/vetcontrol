@@ -15,10 +15,12 @@ import java.util.List;
  */
 @Entity
 @Table(name = "countrybook")
-public class CountryBook extends Localizable{
-    private String code;                         
+public class CountryBook extends Localizable {
 
-    public CountryBook() {}
+    private String code;
+
+    public CountryBook() {
+    }
 
     public CountryBook(String code) {
         this.code = code;
@@ -32,7 +34,6 @@ public class CountryBook extends Localizable{
     public void setCode(String code) {
         this.code = code;
     }
-
     private List<StringCulture> names = new ArrayList<StringCulture>();
 
     @MappedProperty("name")
