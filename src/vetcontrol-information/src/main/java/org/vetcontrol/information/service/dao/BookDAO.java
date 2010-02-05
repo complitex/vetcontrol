@@ -4,7 +4,6 @@
  */
 package org.vetcontrol.information.service.dao;
 
-import org.apache.wicket.util.string.Strings;
 import org.vetcontrol.entity.StringCulture;
 import org.vetcontrol.information.service.generator.Sequence;
 import org.vetcontrol.service.dao.BookViewDAO;
@@ -20,6 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
+import javax.persistence.LockModeType;
 
 /**
  *
@@ -60,10 +60,10 @@ public class BookDAO extends BookViewDAO implements IBookDAO {
                 long ID = sequence.next();
                 for (StringCulture culture : localizableStrings) {
                     culture.getId().setId(ID);
-                    if (Strings.isEmpty(culture.getValue())) {
-                        culture.setValue(null);
-                    }
-                    getEntityManager().merge(culture);
+//                    if (Strings.isEmpty(culture.getValue())) {
+//                        culture.setValue(null);
+//                    }
+//                    getEntityManager().merge(culture);
                 }
                 mappedProperty.getWriteMethod().invoke(book, ID);
             }

@@ -4,9 +4,15 @@ package org.vetcontrol.information.test;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+import com.mysql.jdbc.ConnectionImpl;
+import com.mysql.jdbc.Driver;
+import com.mysql.jdbc.JDBC4Connection;
+import com.mysql.jdbc.JDBC4PreparedStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import org.hibernate.Session;
 import org.junit.Assert;
-import org.junit.Test;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.information.service.dao.BookDAO;
 import org.vetcontrol.information.service.generator.Sequence;
@@ -22,6 +28,9 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
+import org.hibernate.jdbc.Work;
+import org.junit.Test;
 
 /**
  *
@@ -290,7 +299,7 @@ public class BooksTest {
         entityManager.close();
     }
 
-    @Test
+//    @Test
     public void usersTest() {
 
         EntityManager entityManager = managerFactory.createEntityManager();
@@ -299,7 +308,7 @@ public class BooksTest {
 
         IBookViewDAO bookViewDAO = new BookViewDAO();
         bookViewDAO.setEntityManager(entityManager);
-        
+
         User example = new User();
         Department d = new Department();
         StringCulture sc = new StringCulture();
@@ -315,4 +324,98 @@ public class BooksTest {
         transaction.commit();
         entityManager.close();
     }
+
+//    @Test
+    public void saveWithIdTest() {
+        EntityManager entityManager = managerFactory.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+
+        Sequence s = new Sequence();
+        s.setEntityManager(entityManager);
+        BookDAO bookDAO = new BookDAO();
+        bookDAO.setSequence(s);
+        bookDAO.setEntityManager(entityManager);
+
+        CountryBook book = new CountryBook("sw");
+        book.addName(new StringCulture(new StringCultureId("en"), "sweden"));
+        book.addName(new StringCulture(new StringCultureId("ru"), "швеция"));
+        book.setId(999L);
+        bookDAO.saveOrUpdate(book);
+
+        transaction.commit();
+        entityManager.close();
+    }
+
+//    @Test
+    public void testPreparedStatement() {
+
+        EntityManager entityManager = managerFactory.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+
+        Session s = HibernateSessionTransformer.getSession(entityManager);
+        s.doWork(new Work() {
+
+            @Override
+            public void execute(Connection connection) throws SQLException {
+                Properties props = new Properties();
+                props.put(Driver.PASSWORD_PROPERTY_KEY, "artem");
+                props.put(Driver.USER_PROPERTY_KEY, "artem");
+                JDBC4Connection c = new JDBC4Connection("localhost", 3306, props, "vetcontrol",
+                        "jdbc:mysql://localhost:3306/vetcontrol");
+
+                class JDBC4PreparedStatementTest extends JDBC4PreparedStatement {
+
+                    public JDBC4PreparedStatementTest(ConnectionImpl conn, String sql, String catalog) throws SQLException {
+                        super(conn, sql, catalog);
+                    }
+
+                    @Override
+                    public String asSql() throws SQLException {
+                        return super.asSql();
+                    }
+                }
+                JDBC4PreparedStatementTest mysqlps = new JDBC4PreparedStatementTest(c, "SELECT * FROM countrybook where id = ?", null);
+                mysqlps.setObject(1, 1L);
+                String sql = mysqlps.asSql();
+                System.out.println(sql);
+
+                PreparedStatement ps = connection.prepareStatement("SELECT * FROM document_cargo where id = ?");
+                System.out.println(ps.getClass());
+                ps.setString(1, "1");
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    System.out.println(rs.getString("id") + " " + rs.getString("updated"));
+                }
+                rs.close();
+                ps.close();
+
+            }
+        });
+
+        transaction.commit();
+        entityManager.close();
+
+    }
+
+//    @Test
+//    public void cloneTest() {
+//        EntityManager entityManager = managerFactory.createEntityManager();
+//        EntityTransaction transaction = entityManager.getTransaction();
+//        transaction.begin();
+//
+//        IBookViewDAO bookViewDAO = new BookViewDAO();
+//        bookViewDAO.setEntityManager(entityManager);
+//
+//        CountryBook b1 = bookViewDAO.getContent(CountryBook.class).get(0);
+//        CountryBook b2 = (CountryBook) b1.clone();
+//
+//        transaction.commit();
+//        entityManager.close();
+//
+//        System.out.println("Country book : " + b1);
+//        System.out.println("Country book : " + b2);
+//
+//    }
 }
