@@ -3,7 +3,9 @@ package org.vetcontrol.entity;
 import org.vetcontrol.util.book.entity.annotation.ValidProperty;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlID;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -16,6 +18,7 @@ public abstract class Localizable implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @XmlID
     public  Long getId(){
         return id;
     }
@@ -35,30 +38,43 @@ public abstract class Localizable implements Serializable {
         this.name = name;
     }
 
-    private  Map<String, StringCulture> namesMap;
+    private  Map<String, String> namesMap;
 
     @ValidProperty(false)
-    @OneToMany(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name = "locale")
-    @JoinColumn(name = "id", referencedColumnName = "name")
-    public Map<String, StringCulture> getNamesMap() {
+    @CollectionTable(name = "stringculture",
+            joinColumns = @JoinColumn(name="id", referencedColumnName="name"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"id", "locale"}))
+    @Column(name = "value")
+    public Map<String, String> getNamesMap() {
         return namesMap;
     }
 
-    public void setNamesMap(Map<String, StringCulture> namesMap) {
+    public void setNamesMap(Map<String, String> namesMap) {
         this.namesMap = namesMap;
     }
 
     @Transient
     public String getDisplayName(java.util.Locale current, java.util.Locale system){
-        StringCulture stringCulture = null;
-        if ((stringCulture = namesMap.get(current.getLanguage())) != null
-                && stringCulture.getValue() != null
-                && !stringCulture.getValue().isEmpty()){
-            return stringCulture.getValue();
-        }else if((stringCulture = namesMap.get(system.getLanguage())) != null){
-            return stringCulture.getValue();
+        String name;
+        if ((name = namesMap.get(current.getLanguage())) != null  && !name.isEmpty()){
+            return name;
+        }else if((name = namesMap.get(system.getLanguage())) != null){
+            return name;
         }
         return "";
+    }
+
+    private Date version;
+
+    @Version
+    @ValidProperty(false)
+    public Date getVersion() {
+        return version;
+    }
+
+    public void setVersion(Date version) {
+        this.version = version;
     }
 }

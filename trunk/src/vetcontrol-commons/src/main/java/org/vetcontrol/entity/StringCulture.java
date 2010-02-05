@@ -1,11 +1,9 @@
 package org.vetcontrol.entity;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import org.vetcontrol.util.book.entity.annotation.ValidProperty;
+
+import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "stringculture")
@@ -46,6 +44,19 @@ public class StringCulture implements java.io.Serializable {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+
+    private Date version;
+
+    @Version
+    @ValidProperty(false)
+    public Date getVersion() {
+        return version;
+    }
+
+    public void setVersion(Date version) {
+        this.version = version;
     }
 }
 

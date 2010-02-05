@@ -10,6 +10,7 @@ import org.vetcontrol.util.book.entity.annotation.BookReference;
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "department")
+@XmlRootElement
 public class Department extends Localizable{    
     private List<StringCulture> names = new ArrayList<StringCulture>();
 

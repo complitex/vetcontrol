@@ -4,30 +4,12 @@
  */
 package org.vetcontrol.service.dao;
 
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import org.apache.wicket.util.string.Strings;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Example;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
+import org.hibernate.criterion.*;
 import org.hibernate.type.Type;
 import org.vetcontrol.entity.StringCulture;
 import org.vetcontrol.util.book.BeanPropertyUtil;
@@ -35,6 +17,16 @@ import org.vetcontrol.util.book.Property;
 import org.vetcontrol.util.book.entity.annotation.UIType;
 import org.vetcontrol.util.book.service.HibernateSessionTransformer;
 import org.vetcontrol.web.security.SecurityRoles;
+
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
 
 /**
  *
