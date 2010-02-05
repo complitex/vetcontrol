@@ -79,16 +79,12 @@ public abstract class Localizable implements Serializable {
     private  Map<String, StringCulture> namesMap;
 
     @ValidProperty(false)
-    @ManyToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER)
     @MapKeyColumn(name = "locale")
-    @JoinTable(name="stringculture",
-            joinColumns= @JoinColumn(name="id", referencedColumnName="name"),
-            inverseJoinColumns= @JoinColumn(name="id", referencedColumnName="id"),
-            uniqueConstraints = @UniqueConstraint(columnNames={"id", "locale"})
-    )
+    @JoinColumn(name = "id", referencedColumnName = "name")
     public Map<String, StringCulture> getNamesMap() {
         return namesMap;
-    }
+    }  
 
     public void setNamesMap(Map<String, StringCulture> namesMap) {
         this.namesMap = namesMap;
