@@ -41,7 +41,11 @@ public abstract class Localizable implements Serializable {
 
     @XmlID
     @Transient
+    @ValidProperty(false)
     public String getXmlID() {
+        if(xmlID != null){
+            return xmlID;
+        }
         return id != null ? String.valueOf(id) : "-1";
     }
 
