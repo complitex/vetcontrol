@@ -16,7 +16,7 @@
                 <transaction src="../common/create.sql"/>
                 <transaction src="../common/insert.sql"/>
                 <transaction src="../common/testdump.sql"/>
-                <transaction src="screate.sql"/>
+                <transaction src="create.sql"/>
                 <transaction src="insert.sql"/>
                 <transaction src="testdump.sql"/>
         </sql>
