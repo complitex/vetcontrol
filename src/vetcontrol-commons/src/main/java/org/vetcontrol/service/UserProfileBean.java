@@ -4,7 +4,6 @@ import org.vetcontrol.entity.User;
 import org.vetcontrol.web.security.SecurityRoles;
 
 import javax.annotation.Resource;
-
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;

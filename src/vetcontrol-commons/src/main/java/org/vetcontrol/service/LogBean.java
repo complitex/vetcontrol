@@ -76,9 +76,13 @@ public class LogBean {
     }
 
     private User getUser(String login){
-        return entityManager.createQuery("from User u where u.login = :login", User.class)
-                .setParameter("login", login)
-                .getSingleResult();
+        try {
+            return entityManager.createQuery("from User u where u.login = :login", User.class)
+                    .setParameter("login", login)
+                    .getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private User getCurrentUser(){

@@ -7,6 +7,7 @@ import org.apache.wicket.authorization.strategies.role.IRoleCheckingStrategy;
 import org.apache.wicket.authorization.strategies.role.Roles;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
@@ -55,7 +56,8 @@ public abstract class TemplatePage extends WebPage {
 
         Locale system = localeDAO.systemLocale();
 
-
+        add(CSSPackageResource.getHeaderContribution("css/style.css"));
+        
         //locale picker
         add(new LocalePicker("localePicker", localeDAO.all(), system, getPreferences()));
 

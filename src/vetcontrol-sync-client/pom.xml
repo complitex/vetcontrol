@@ -19,10 +19,6 @@
             <artifactId>vetcontrol-commons</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.vetcontrol</groupId>
-            <artifactId>vetcontrol-sync-server</artifactId>
-        </dependency>
-        <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
             <scope>provided</scope>
@@ -46,3 +42,4 @@
     </dependencies>
 
 </project>
+

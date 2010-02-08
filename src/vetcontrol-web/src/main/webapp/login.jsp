@@ -5,10 +5,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
-    <link href="/css/style.css" rel="stylesheet" type="text/css"/>
-    <script src="resources/org.odlabs.wiquery.core.commons.CoreJavaScriptResourceReference/jquery/jquery-1.3.2.js" type="text/javascript"></script>
-    <script src="/js/common.js" type="text/javascript"></script>
-    <script src="/js/login.js" type="text/javascript"></script>
+    <link href="${pageContext.request.contextPath}/css/style.css" rel="stylesheet" type="text/css"/>
+    <script src="${pageContext.request.contextPath}/resources/org.odlabs.wiquery.core.commons.CoreJavaScriptResourceReference/jquery/jquery-1.3.2.js" type="text/javascript"></script>
+    <script src="${pageContext.request.contextPath}/js/common.js" type="text/javascript"></script>
+    <script src="${pageContext.request.contextPath}/js/login.js" type="text/javascript"></script>
 
     <%@ taglib uri='http://java.sun.com/jstl/fmt' prefix='fmt'%>
     <fmt:setBundle basename='login_messages'/>

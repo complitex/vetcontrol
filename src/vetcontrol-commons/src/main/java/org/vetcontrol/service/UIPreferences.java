@@ -85,7 +85,11 @@ public class UIPreferences implements Serializable {
 
     private void initCurrentUser() {
         if (currentUser == null) {
-            currentUser = getUserProfileBean().getCurrentUser();
+            try {
+                currentUser = getUserProfileBean().getCurrentUser();
+            } catch (Exception e) {
+                //nothing
+            }
         }
     }
 
