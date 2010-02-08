@@ -94,7 +94,11 @@ public class SecurityWebListener implements HttpSessionListener, ServletRequestL
     }
 
     @Override
-    public void contextDestroyed(ServletContextEvent servletContextEvent) {        
-        logBean.info(Log.MODULE.COMMONS, Log.EVENT.SYSTEM_STOP, SecurityWebListener.class, null);
+    public void contextDestroyed(ServletContextEvent servletContextEvent) {
+        try {
+            logBean.info(Log.MODULE.COMMONS, Log.EVENT.SYSTEM_STOP, SecurityWebListener.class, null);
+        } catch (Exception e) {
+            //nothing
+        }
     }
 }

@@ -6,64 +6,15 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>vetcontrol-web</artifactId>
+    <artifactId>vetcontrol-web-client</artifactId>
 
     <packaging>war</packaging>
-    <name>Vetcontrol Java EE 6 Webapp</name>
+    <name>vetcontrol web client</name>
 
-    <profiles>
-        <profile>
-            <id>server</id>
-
-            <properties>
-                <jta-data-source>jdbc/vetcontroldb</jta-data-source>
-                <context-root>/server</context-root>
-            </properties>
-
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-
-            <dependencies>
-                <dependency>
-                    <groupId>org.vetcontrol</groupId>
-                    <artifactId>vetcontrol-user</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.vetcontrol</groupId>
-                    <artifactId>vetcontrol-information</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.vetcontrol</groupId>
-                    <artifactId>vetcontrol-sync-server</artifactId>
-                </dependency>
-            </dependencies>
-
-            <build>
-                <finalName>vetcontrol-server</finalName>
-            </build>
-        </profile>
-
-        <profile>
-            <id>client</id>
-
-            <properties>
-                <jta-data-source>jdbc/vetcontrol_clientdb</jta-data-source>
-                <context-root>/client</context-root>
-            </properties>
-
-            <dependencies>
-                <dependency>
-                    <groupId>org.vetcontrol</groupId>
-                    <artifactId>vetcontrol-sync-client</artifactId>
-                </dependency>
-            </dependencies>
-
-            <build>
-                <finalName>vetcontrol-client</finalName>
-            </build>
-        </profile>
-    </profiles>
+    <properties>
+        <jta-data-source>jdbc/vetcontrol_clientdb</jta-data-source>
+        <context-root>/client</context-root>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -81,6 +32,10 @@
         <dependency>
             <groupId>org.vetcontrol</groupId>
             <artifactId>vetcontrol-report</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.vetcontrol</groupId>
+            <artifactId>vetcontrol-sync-client</artifactId>
         </dependency>
 
         <dependency>
@@ -131,31 +86,36 @@
             <artifactId>wiquery</artifactId>
             <scope>system</scope>
             <version>1.1</version>
-            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/wiquery-1.0.jar</systemPath>
+            <systemPath>${project.basedir}/../vetcontrol-web/src/main/webapp/WEB-INF/lib/wiquery-1.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.wicketstuff</groupId>
             <artifactId>wicket-contrib-javaee</artifactId>
             <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/wicket-contrib-javaee-1.1.jar</systemPath>
+            <systemPath>${project.basedir}/../vetcontrol-web/src/main/webapp/WEB-INF/lib/wicket-contrib-javaee-1.1.jar</systemPath>
         </dependency>
     </dependencies>
 
     <build>
+        <finalName>vetcontrol-client</finalName>
+
+        <sourceDirectory>${project.basedir}\..\vetcontrol-web\src\main\java</sourceDirectory>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.1-beta-1</version>
+
                 <configuration>
                     <webResources>
                         <resource>
-                            <directory>${project.basedir}\src\main\resources</directory>
+                            <directory>${project.basedir}\..\vetcontrol-web\src\main\resources</directory>
                             <targetPath>WEB-INF\classes</targetPath>
                             <filtering>true</filtering>
                         </resource>
                         <resource>
-                            <directory>${project.basedir}\src\main\webapp</directory>
+                            <directory>${project.basedir}\..\vetcontrol-web\src\main\webapp</directory>
                             <includes>
                                 <include>**/*.xml</include>
                             </includes>
@@ -163,7 +123,7 @@
                             <filtering>true</filtering>
                         </resource>
                         <resource>
-                            <directory>${project.basedir}\src\main\webapp</directory>
+                            <directory>${project.basedir}\..\vetcontrol-web\src\main\webapp</directory>
                             <excludes>
                                 <exclude>**/*.xml</exclude>
                             </excludes>
@@ -174,8 +134,5 @@
             </plugin>
         </plugins>
     </build>
-
-
-
 </project>
 

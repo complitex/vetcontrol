@@ -50,7 +50,7 @@
     <security-role>
         <role-name>LOGGING_VIEW</role-name>
     </security-role>
-    
+
     <login-config>
         <auth-method>FORM</auth-method>
         <realm-name>VetcontrolRealm</realm-name>
