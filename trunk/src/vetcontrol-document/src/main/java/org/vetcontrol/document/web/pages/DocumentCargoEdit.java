@@ -203,9 +203,10 @@ public class DocumentCargoEdit extends FormTemplatePage {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                DocumentCargo dc = (DocumentCargo) form.getModelObject();
                 Cargo cargo = new Cargo();
-                cargo.setDocumentCargo(documentCargoModel.getObject());
-                documentCargoModel.getObject().getCargos().add(cargo);
+                cargo.setDocumentCargo(dc);
+                dc.getCargos().add(cargo);
                 target.addComponent(cargoContainer);
 
                 String setFocusOnNewCargo = "newCargoFirstInputId = $('.table_input tbody tr:last input[type=\"text\"]:first').attr('id');"
@@ -218,7 +219,12 @@ public class DocumentCargoEdit extends FormTemplatePage {
 
 
         final ListView cargoListView = new ListView<Cargo>("document.cargo.cargo_list",
-                new PropertyModel<List<Cargo>>(documentCargoModel.getObject(), "cargos")) {
+                new PropertyModel<List<Cargo>>(documentCargoModel, "cargos")) {
+
+            @Override
+            protected IModel<Cargo> getListItemModel(IModel<? extends List<Cargo>> listViewModel, int index) {
+                return new Model<Cargo>(listViewModel.getObject().get(index));
+            }
 
             @Override
             protected void populateItem(final ListItem<Cargo> item) {
@@ -229,9 +235,13 @@ public class DocumentCargoEdit extends FormTemplatePage {
 
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                        int last_index = documentCargoModel.getObject().getCargos().size() - 1;
                         @SuppressWarnings({"unchecked"})
                         ListItem<Cargo> item = (ListItem) getParent();
+                        Cargo remove = item.getModelObject();
+                        @SuppressWarnings({"unchecked"})
+                        ListView<Cargo> list = (ListView<Cargo>) item.getParent();
+
+                        int last_index = list.getModelObject().size() - 1;
 
                         //Copy childs from next list item and remove last 
                         for (int index = item.getIndex(); index < last_index; index++) {
@@ -250,7 +260,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
                             li.add(childs);
                         }
 
-                        documentCargoModel.getObject().getCargos().remove(item.getModelObject());
+                        list.getModelObject().remove(remove);                         
                         item.getParent().get(last_index).remove();
 
                         target.addComponent(cargoContainer);
