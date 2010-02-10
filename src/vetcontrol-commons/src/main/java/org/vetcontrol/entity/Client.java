@@ -1,48 +1,46 @@
 package org.vetcontrol.entity;
 
+import org.vetcontrol.sync.LongAdapter;
+
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 04.02.2010 15:50:03
  */
-//@Entity
-//@Table(name = "client")
-//@XmlRootElement
-public class Client {
+@Entity
+@Table(name = "client")
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+public class Client implements ILongId{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @XmlID
+    @XmlJavaTypeAdapter(LongAdapter.class)
     private Long id;
 
-    @XmlID
-    @Transient
-    private String stringId;
-
-    @ManyToOne
-    @JoinColumn(name = "department_id")
+    @ManyToOne @JoinColumn(name = "department_id")
     @XmlIDREF
-    @XmlElement(required = true, nillable = false)
     private Department department;
 
-    @Column(name = "ip")
-    @XmlElement(required = true, nillable = false)
+    @Column(name = "ip", nullable = false)
     private String ip;
 
-    @Column(name ="mac")
-    @XmlElement(required = true, nillable = false)
+    @Column(name ="mac", nullable = false)
     private String mac;
 
-    @Column(name = "secureKey")
+    @Column(name = "secureKey", nullable = false)
     private String secureKey;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created", nullable = false)
     private Date created;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated")
     private Date updated;
 
     public Long getId() {
@@ -99,5 +97,17 @@ public class Client {
 
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    @Override
+    public String toString() {
+        return "[hash: " + Integer.toHexString(hashCode())
+                + ", id: " + id
+                + ", department: " + department
+                + ", ip: " + ip
+                + ", mac: " + mac
+                + ", secureKey: " + secureKey
+                + ", created: " + created
+                + ", updated: " + updated +"]";                
     }
 }

@@ -404,7 +404,7 @@ CREATE TABLE  `log` (
   `status` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `FK1A3442BC5F099` (`user_id`),
+  KEY `FK_user` (`user_id`),
   KEY `Index_date` (`date`),
   KEY `Index_controller_class` (`controller_class`),
   KEY `Index_model_class` (`model_class`),
@@ -412,8 +412,22 @@ CREATE TABLE  `log` (
   KEY `Index_module` (`module`),
   KEY `Index_status` (`status`),
   KEY `Index_description` (`description`),
-  CONSTRAINT `FK1A3442BC5F099` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+  CONSTRAINT `FK_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `client`;
+CREATE TABLE `client` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `ip` varchar(64) NOT NULL,
+  `mac` varchar(64) NOT NULL,
+  `secureKey` varchar(64) NOT NULL,
+  `created` datetime NOT NULL,
+  `updated` datetime DEFAULT NULL,
+  `department_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_department` (`department_id`),
+  CONSTRAINT `FK_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

@@ -72,8 +72,8 @@ public class Department extends Localizable{
     @Override
     public String toString() {
         return new StringBuilder().append("[hash: ").append(Integer.toHexString(hashCode()))
-                .append(", id: ").append(getId())
-                .append(", stringCultureMap: ").append(getNamesMap())
+                .append(", id: ").append(getId())                 
+                .append(", namesMap: ").append(getNamesMap())
                 .append("]").toString();
     }
 }

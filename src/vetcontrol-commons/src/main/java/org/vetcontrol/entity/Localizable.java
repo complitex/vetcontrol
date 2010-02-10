@@ -1,10 +1,11 @@
 package org.vetcontrol.entity;
 
+import org.vetcontrol.sync.LongAdapter;
 import org.vetcontrol.util.book.entity.annotation.ValidProperty;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlID;
-import java.io.Serializable;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
 import java.util.Map;
 
@@ -13,12 +14,14 @@ import java.util.Map;
  *         Date: 18.01.2010 18:44:59
  */
 @MappedSuperclass
-public abstract class Localizable implements Serializable {
+public abstract class Localizable implements ILongId {
 
     private Long id;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @XmlID
+    @XmlJavaTypeAdapter(LongAdapter.class)
     public  Long getId(){
         return id;
     }
@@ -35,22 +38,6 @@ public abstract class Localizable implements Serializable {
 
     public void setName(Long name) {
         this.name = name;
-    }
-
-    private String xmlID;
-
-    @XmlID
-    @Transient
-    @ValidProperty(false)
-    public String getXmlID() {
-        if(xmlID != null){
-            return xmlID;
-        }
-        return id != null ? String.valueOf(id) : "-1";
-    }
-
-    public void setXmlID(String xmlID) {
-        this.xmlID = xmlID;
     }
 
 //    private  Map<String, String> namesMap;
