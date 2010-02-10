@@ -1,11 +1,16 @@
 package org.vetcontrol.sync.client.service;
 
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 import org.vetcontrol.entity.Client;
-import org.vetcontrol.sync.IRegistrationService;
-import org.vetcontrol.sync.RegistrationException;
+import org.vetcontrol.entity.Department;
+import org.vetcontrol.sync.JSONResolver;
 
 import javax.ejb.Stateless;
-import javax.xml.ws.WebServiceRef;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -13,14 +18,22 @@ import javax.xml.ws.WebServiceRef;
  */
 @Stateless(name = "RegistrationBean")
 public class RegistrationBean {
-    @WebServiceRef(RegistrationServiceClient.class)
-    private IRegistrationService registrationService;
+    @PersistenceContext
+    private EntityManager em;
 
-    public Client processRegistration(Client client) throws RegistrationException {
-        registrationService.test(client.toString());
+    public Client processRegistration(Client client){
+        ClientConfig cc = new DefaultClientConfig();
+        cc.getClasses().add(JSONResolver.JAXBContextResolver.class);
+        cc.getClasses().add(JSONResolver.UnmarshallerContextResolver.class);
 
-//        return registrationService.processRegistration(client);
-        return  null;
+        return com.sun.jersey.api.client.Client.create(cc)
+                .resource("http://localhost:8080/server/sync/registration")
+                .accept(MediaType.APPLICATION_JSON)
+                .type(MediaType.APPLICATION_JSON_TYPE)
+                .post(Client.class, client);
     }
-
+    
+    public List<Department> getDepartments(){
+        return em.createQuery("select d from Department d", Department.class).getResultList();
+    }
 }

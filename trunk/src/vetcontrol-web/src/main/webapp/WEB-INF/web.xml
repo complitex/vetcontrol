@@ -17,6 +17,19 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <servlet>
+        <servlet-name>sync</servlet-name>
+        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+      <!--  <init-param>
+              <param-name>com.sun.jersey.config.property.packages</param-name>
+              <param-value>org.vetcontrol.sync.server.resources;org.vetcontrol.sync</param-value>
+         </init-param>-->
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>sync</servlet-name>
+        <url-pattern>/sync/*</url-pattern>
+    </servlet-mapping>
+
     <security-role>
         <role-name>AUTHORIZED</role-name>
     </security-role>
