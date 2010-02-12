@@ -14,7 +14,8 @@ import java.util.List;
  */
 @Entity
 @Table(name = "cargo_type")
-public class CargoType extends Localizable{
+public class CargoType extends Localizable {
+
     private String uktZedCode;
 
     @Column(name = "ukt_zed_code", nullable = false, length = 10, unique = true)
@@ -24,8 +25,7 @@ public class CargoType extends Localizable{
 
     public void setCode(String uktZedCode) {
         this.uktZedCode = uktZedCode;
-    }     
-
+    }
     private List<StringCulture> names = new ArrayList<StringCulture>();
 
     @Transient
@@ -44,5 +44,16 @@ public class CargoType extends Localizable{
         return getCode();
     }
 
-
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof CargoType) {
+            CargoType that = (CargoType) obj;
+            if (getId() != null) {
+                return getId().equals(that.getId());
+            } else {
+                return that.getId() == null;
+            }
+        }
+        return false;
+    }
 }
