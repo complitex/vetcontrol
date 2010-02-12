@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.vetcontrol.information.web.component;
+package org.vetcontrol.information.web.component.edit;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.Panel;

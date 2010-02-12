@@ -9,7 +9,11 @@ import org.vetcontrol.entity.*;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import org.vetcontrol.information.web.pages.custom.cargomode.CargoModeList;
+import org.vetcontrol.web.template.TemplatePage;
 
 /**
  *
@@ -29,7 +33,6 @@ public class BookTypes {
                 MovementType.class,
                 CargoProducer.class,
                 UnitType.class,
-                CargoMode.class,
                 CargoType.class,                
                 Job.class,
                 Prohibition.class,
@@ -37,5 +40,12 @@ public class BookTypes {
                 ArrestReason.class,
                 AddressBook.class,
                 PassingBorderPoint.class));
+    }
+
+    public static Map<Class, Class<? extends TemplatePage>> getCustomBooks(){
+        Map<Class, Class<? extends TemplatePage>> customBooks = new HashMap<Class, Class<? extends TemplatePage>>();
+        customBooks.put(CargoMode.class, CargoModeList.class);
+
+        return customBooks;
     }
 }

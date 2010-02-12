@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.vetcontrol.information.web.component;
+package org.vetcontrol.information.web.component.edit;
 
 import java.util.Date;
 import org.apache.wicket.markup.html.panel.Panel;

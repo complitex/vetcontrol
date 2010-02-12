@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+    <wicket:head><title wicket:id="title"></title></wicket:head>
+</head>
+<body>
+<wicket:extend>
+    <h1><span wicket:id="caption"></span></h1>
+
+    <form wicket:id="filterForm">
+        <table class="tbColor bookContent" cellspacing="0" cellpadding="0" border="0">
+            <thead>
+                <tr>
+                    <th wicket:id="nameHeader">
+                        <wicket:message key="cargoMode.list.name.header"/>
+                    </th>
+                    <th wicket:id="uktzedHeader">
+                        <wicket:message key="cargoMode.list.uktzed.header"/>
+                    </th>
+                    <th>
+                       <input class="btnSmall"  wicket:id="clear" type="submit" wicket:message="value:cargoMode.list.clear"/>
+                    </th>
+                </tr>
+                <tr>
+                    <th>
+                        <input type="text" wicket:id="name" style="width: 100%"/>
+                    </th>
+                    <th>
+                        <input type="text" wicket:id="uktzed" style="width: 100%"/>
+                    </th>
+                    <th class="center">
+                        <input class="btnSmall default" type="submit" wicket:message="value:cargoMode.list.go"/>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr wicket:id="cargoModes">
+                    <td>
+                        <span wicket:id="nameValue"></span>
+                    </td>
+                    <td>
+                        <span wicket:id="uktzedValue"></span>
+                    </td>
+                    <td>
+                        <span wicket:id="edit"></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+    <div wicket:id="navigator"></div>
+</wicket:extend>
+</body>
+</html>
