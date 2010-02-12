@@ -1,7 +1,7 @@
 
-/* Common Cookie API */
+/* Common API */
 
-function setCookie( name, value, expires, path, domain)
+function setCookie( name, value, expires)
 {
     // set time, it's in milliseconds
     var today = new Date();
@@ -18,6 +18,8 @@ function setCookie( name, value, expires, path, domain)
         expires = expires * 1000 * 60 * 60 * 24;
     }
     var expires_date = new Date( today.getTime() + (expires) );
+    var path = getApplicationContext();
+    var domain = getDomain();
 
     var cookie = name + "=" +escape( value )
     + ( ( expires ) ? ";expires=" + expires_date.toGMTString() : "" ) +
@@ -104,12 +106,26 @@ function getCookie( check_name ) {
 }
 
 // this deletes the cookie when called
-function deleteCookie(name, path, domain) {
+function deleteCookie(name) {
+    var path = getApplicationContext();
+    var domain = getDomain();
+
     if ( getCookie( name ) ) document.cookie = name + "=" +
         ( ( path ) ? ";path=" + path : "") +
         ( ( domain ) ? ";domain=" + domain : "" ) +
         ";expires=Thu, 01-Jan-1970 00:00:01 GMT";
+}
 
+function getApplicationContext(){
+    var pathname = window.location.pathname;
+    var applicationContext = pathname.substring(0, pathname.indexOf("/", 1));
+    //debug
+//    alert("App context : "+applicationContext);
+    return applicationContext;
+}
+
+function getDomain(){
+    return "";
 }
 
 

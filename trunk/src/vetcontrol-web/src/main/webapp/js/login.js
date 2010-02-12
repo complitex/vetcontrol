@@ -1,10 +1,10 @@
 setFocusOnFirstFormElement = function(){
-    id = $(".formFrame form").attr("id");
-    form = document.getElementById(id);
+    var id = $(".formFrame form").attr("id");
+    var form = document.getElementById(id);
 
     if(form != null){
         for(i=0; i<form.elements.length; i++){
-            element = form.elements[i];
+            var element = form.elements[i];
 
             //for debug only.
             //alert("Element = {id : "+element.id+", tagName : "+element.tagName+", type : "+element.type+", disabled : "+element.disabled+"}");
@@ -23,10 +23,10 @@ var mainMenuCookieName = "MainMenuCookie";
 var menuCookiePrefix = "MenuPrefix_";
 
 $(document).ready(function(){
-    deleteCookie(selectedMenuItemClassName, "/", "");
-    deleteCookie(mainMenuCookieName, "/", "");
+    deleteCookie(selectedMenuItemClassName);
+    deleteCookie(mainMenuCookieName);
     while(cookieName = getCookieName(menuCookiePrefix)){
-        deleteCookie(cookieName, "/", "");
+        deleteCookie(cookieName);
     }
 
     setFocusOnFirstFormElement();
