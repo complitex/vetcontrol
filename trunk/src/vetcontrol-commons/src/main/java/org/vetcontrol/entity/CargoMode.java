@@ -9,15 +9,12 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.vetcontrol.util.book.entity.annotation.BookReference;
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
-import org.vetcontrol.util.book.entity.annotation.UIType;
 
 /**
  * 2.4.3.12 Справочник видов грузов
@@ -27,68 +24,44 @@ import org.vetcontrol.util.book.entity.annotation.UIType;
 @Entity
 @Table(name = "cargo_mode")
 public class CargoMode extends Localizable {
-//     private String code;
-//
-//    @Column(name = "ukt_zed_code", nullable = false, length = 10)
-//    public String getCode() {
-//        return code;
-//    }
-//
-//    public void setCode(String code) {
-//        this.code = code;
-//    }
 
-    private CargoType cargoType;
+    private List<CargoModeCargoType> cargoModeCargoTypes = new ArrayList<CargoModeCargoType>();
 
-    /**
-     * Get the value of cargoType
-     *
-     * @return the value of cargoType
-     */
-    @BookReference(referencedProperty = "code", uiType = UIType.AUTO_COMPLETE, pattern = "${code}   ${names}")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "cargoMode", fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "cargo_type", nullable = false)
-    public CargoType getCargoType() {
-        return cargoType;
+    public List<CargoModeCargoType> getCargoModeCargoTypes() {
+        return cargoModeCargoTypes;
     }
 
-    /**
-     * Set the value of cargoType
-     *
-     * @param cargoType new value of cargoType
-     */
-    public void setCargoType(CargoType cargoType) {
-        this.cargoType = cargoType;
+    public void setCargoModeCargoTypes(List<CargoModeCargoType> cargoModeCargoTypes) {
+        this.cargoModeCargoTypes = cargoModeCargoTypes;
     }
-    private UnitType unitType;
 
-    /**
-     * Get the value of unitType
-     *
-     * @return the value of unitType
-     */
-    @BookReference(referencedProperty = "names")
-    @ManyToOne(fetch = FetchType.EAGER)
+    public void addCargoModeCargoType(CargoModeCargoType cargoModeCargoType) {
+        cargoModeCargoType.setCargoMode(this);
+        cargoModeCargoTypes.add(cargoModeCargoType);
+    }
+    private List<CargoModeUnitType> cargoModeUnitTypes = new ArrayList<CargoModeUnitType>();
+
+    @OneToMany(mappedBy = "cargoMode", fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "unit_type", nullable = false)
-    public UnitType getUnitType() {
-        return unitType;
+    public List<CargoModeUnitType> getCargoModeUnitTypes() {
+        return cargoModeUnitTypes;
     }
 
-    /**
-     * Set the value of unitType
-     *
-     * @param unitType new value of unitType
-     */
-    public void setUnitType(UnitType unitType) {
-        this.unitType = unitType;
+    public void setCargoModeUnitTypes(List<CargoModeUnitType> cargoModeUnitTypes) {
+        this.cargoModeUnitTypes = cargoModeUnitTypes;
+    }
+
+    public void addCargoModeUnitType(CargoModeUnitType cargoModeUnitType) {
+        cargoModeUnitType.setCargoMode(this);
+        cargoModeUnitTypes.add(cargoModeUnitType);
     }
     private List<StringCulture> names = new ArrayList<StringCulture>();
 
     @Transient
     @MappedProperty("name")
-    @Column(length = 20, nullable = false)
+    @Column(length = 500, nullable = false)
     public List<StringCulture> getNames() {
         return names;
     }
