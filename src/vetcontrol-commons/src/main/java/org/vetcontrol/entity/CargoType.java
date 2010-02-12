@@ -38,4 +38,11 @@ public class CargoType extends Localizable{
     public void setNames(List<StringCulture> names) {
         this.names = names;
     }
+
+    @Override
+    public String toString() {
+        return getCode();
+    }
+
+
 }
