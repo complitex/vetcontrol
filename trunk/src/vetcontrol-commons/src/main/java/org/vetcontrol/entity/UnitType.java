@@ -12,10 +12,10 @@ import java.util.List;
  *
  * Справочник единиц измерения
  */
-
 @Entity
 @Table(name = "unit_type")
-public class UnitType extends Localizable{
+public class UnitType extends Localizable {
+
     private List<StringCulture> names = new ArrayList<StringCulture>();
 
     @Transient
@@ -27,5 +27,18 @@ public class UnitType extends Localizable{
 
     public void setNames(List<StringCulture> names) {
         this.names = names;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof UnitType) {
+            UnitType that = (UnitType) obj;
+            if (getId() != null) {
+                return getId().equals(that.getId());
+            } else {
+                return that.getId() == null;
+            }
+        }
+        return false;
     }
 }

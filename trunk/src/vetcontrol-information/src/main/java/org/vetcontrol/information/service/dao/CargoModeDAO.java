@@ -189,8 +189,6 @@ public class CargoModeDAO {
 
         bookDAO.saveOrUpdate(cargoMode);
 
-        System.out.println(" CargoMode id = " + cargoMode.getId() + " CargoModeDAO, cmct : " + cargoMode.getCargoModeCargoTypes());
-
         Session session = HibernateSessionTransformer.getSession(entityManager);
         for (CargoModeCargoType cmct : cargoMode.getCargoModeCargoTypes()) {
             cmct.getId().setCargoModeId(cargoMode.getId());

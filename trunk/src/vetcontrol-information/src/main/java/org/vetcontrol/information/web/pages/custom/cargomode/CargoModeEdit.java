@@ -122,7 +122,10 @@ public final class CargoModeEdit extends FormTemplatePage {
 
                         @Override
                         public void setObject(UnitType object) {
-                            cargoModeUnitType.setNeedToUpdateVersion(true);
+                            UnitType old = model.getObject();
+                            if (old == null || !old.equals(object)) {
+                                cargoModeUnitType.setNeedToUpdateVersion(true);
+                            }
                             model.setObject(object);
                         }
 
@@ -188,8 +191,11 @@ public final class CargoModeEdit extends FormTemplatePage {
                 @Override
                 public void setObject(String object) {
                     CargoType cargoType = autoCompleteTextField.findChoice();
+                    CargoType old = cargoModeCargoType.getCargoType();
+                    if(old == null || !old.equals(cargoType)){
+                        cargoModeCargoType.setNeedToUpdateVersion(true);
+                    }
                     cargoModeCargoType.setCargoType(cargoType);
-                    cargoModeCargoType.setNeedToUpdateVersion(true);
                     localObject = object;
                 }
             }
@@ -481,9 +487,6 @@ public final class CargoModeEdit extends FormTemplatePage {
                             updateCargoModeReferences();
 
                             try {
-                                System.out.println("Cargo types : " + cargoModeModel.getObject().getCargoModeCargoTypes());
-                                System.out.println("Unit types : " + cargoModeModel.getObject().getCargoModeUnitTypes());
-
                                 cargoModeDAO.saveOrUpdate(cargoModeModel.getObject());
                                 setResponsePage(CargoModeList.class);
 
@@ -497,7 +500,6 @@ public final class CargoModeEdit extends FormTemplatePage {
 
                     private boolean validate() {
                         boolean validated = true;
-                        System.out.println("VALIDATE");
                         for (CargoModeCargoType cargoModeCargoType : cargoModeModel.getObject().getCargoModeCargoTypes()) {
                             CargoType cargoType = cargoModeCargoType.getCargoType();
                             if (cargoType == null) {
