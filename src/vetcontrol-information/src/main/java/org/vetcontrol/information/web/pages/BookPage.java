@@ -10,7 +10,7 @@ import org.apache.wicket.PageParameters;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.vetcontrol.information.service.fasade.pages.BookPageFasade;
-import org.vetcontrol.information.web.component.BookContentControl;
+import org.vetcontrol.information.web.component.list.BookContentControl;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.web.component.toolbar.ToolbarButton;
 

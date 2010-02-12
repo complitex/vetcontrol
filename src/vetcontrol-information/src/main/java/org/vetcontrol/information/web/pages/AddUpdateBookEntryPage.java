@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.Localizable;
 import org.vetcontrol.entity.Log;
 import org.vetcontrol.information.service.fasade.pages.AddUpdateBookEntryPageFasade;
-import org.vetcontrol.information.web.component.BookEntryFormControl;
+import org.vetcontrol.information.web.component.edit.BookEntryFormControl;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.util.book.BeanPropertyUtil;

@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.vetcontrol.information.web.pages;
 
 import org.apache.wicket.Page;
@@ -16,6 +15,7 @@ import org.vetcontrol.web.template.ITemplateLink;
 import org.vetcontrol.web.template.ITemplateMenu;
 
 import java.util.*;
+import org.vetcontrol.web.template.TemplatePage;
 
 /**
  *
@@ -32,7 +32,7 @@ public class BookMenu implements ITemplateMenu {
     @Override
     public List<ITemplateLink> getTemplateLinks(final Locale locale) {
         List<ITemplateLink> links = new ArrayList<ITemplateLink>();
-        for(final Class bookType : BookTypes.getList()){
+        for (final Class bookType : BookTypes.getList()) {
             links.add(new ITemplateLink() {
 
                 @Override
@@ -56,16 +56,42 @@ public class BookMenu implements ITemplateMenu {
                 public String getTagId() {
                     return bookType.getSimpleName();
                 }
-
             });
-            Collections.sort(links, new Comparator<ITemplateLink>(){
+        }
+        for(Map.Entry<Class, Class<? extends TemplatePage>> entry : BookTypes.getCustomBooks().entrySet()){
+            final Class bookType = entry.getKey();
+            final Class<? extends TemplatePage> bookListPage = entry.getValue();
+
+            links.add(new ITemplateLink() {
 
                 @Override
-                public int compare(ITemplateLink o1, ITemplateLink o2) {
-                    return o1.getLabel(locale).compareTo(o2.getLabel(locale));
+                public String getLabel(Locale locale) {
+                    return new DisplayBookClassModel(bookType).getObject();
+                }
+
+                @Override
+                public Class<? extends Page> getPage() {
+                    return bookListPage;
+                }
+
+                @Override
+                public PageParameters getParameters() {
+                    return PageParameters.NULL;
+                }
+
+                @Override
+                public String getTagId() {
+                    return bookType.getSimpleName();
                 }
             });
         }
+        Collections.sort(links, new Comparator<ITemplateLink>() {
+
+            @Override
+            public int compare(ITemplateLink o1, ITemplateLink o2) {
+                return o1.getLabel(locale).compareTo(o2.getLabel(locale));
+            }
+        });
 
         return links;
     }

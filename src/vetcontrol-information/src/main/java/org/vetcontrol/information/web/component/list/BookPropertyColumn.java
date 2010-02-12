@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.vetcontrol.information.web.component;
+package org.vetcontrol.information.web.component.list;
 
+import org.vetcontrol.information.web.component.edit.DateFilter;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;

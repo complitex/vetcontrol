@@ -19,7 +19,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
-import javax.persistence.LockModeType;
+import org.hibernate.Session;
+import org.vetcontrol.util.book.service.HibernateSessionTransformer;
 
 /**
  *
@@ -40,18 +41,20 @@ public class BookDAO extends BookViewDAO implements IBookDAO {
     @Override
     public void saveOrUpdate(Serializable book) {
         try {
+            Session session = HibernateSessionTransformer.getSession(getEntityManager());
             Map<PropertyDescriptor, PropertyDescriptor> mappedProperties = BeanPropertyUtil.getMappedProperties(book.getClass());
 
             for (PropertyDescriptor prop : mappedProperties.keySet()) {
-                saveOrUpdateLocalizableStrings(mappedProperties, prop, book);
+                saveOrUpdateLocalizableStrings(mappedProperties, prop, book, session);
             }
-            getEntityManager().merge(book);
+            session.saveOrUpdate(book);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void saveOrUpdateLocalizableStrings(Map<PropertyDescriptor, PropertyDescriptor> mappedProperties, PropertyDescriptor prop, Serializable book) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+    private void saveOrUpdateLocalizableStrings(Map<PropertyDescriptor, PropertyDescriptor> mappedProperties, PropertyDescriptor prop, 
+            Serializable book, Session session) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         PropertyDescriptor mappedProperty = mappedProperties.get(prop);
         Method getter = prop.getReadMethod();
         List<StringCulture> localizableStrings = (List<StringCulture>) getter.invoke(book);
@@ -69,7 +72,7 @@ public class BookDAO extends BookViewDAO implements IBookDAO {
             }
         }
         for (StringCulture culture : localizableStrings) {
-            getEntityManager().merge(culture);
+            session.saveOrUpdate(culture);
         }
     }
     
