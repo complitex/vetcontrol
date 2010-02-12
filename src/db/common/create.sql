@@ -222,8 +222,8 @@ CREATE TABLE  `cargo_type` (
 
 DROP TABLE IF EXISTS `cargo_mode_cargo_type`;
 CREATE TABLE  `cargo_mode_cargo_type` (
-    `cargo_type_id` bigint(20) NOT NULL,
     `cargo_mode_id` bigint(20) NOT NULL,
+    `cargo_type_id` bigint(20) NOT NULL,
     `updated` timestamp NOT NULL,
     PRIMARY KEY (`cargo_mode_id`, `cargo_type_id`),
     UNIQUE KEY `cargo_type_id` (`cargo_type_id`),
