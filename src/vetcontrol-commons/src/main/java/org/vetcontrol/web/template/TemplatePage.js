@@ -7,12 +7,12 @@ var menuCookiePrefix = "MenuPrefix_";
 
 menuLoad = function(){
     $(".block div").each(function(){
-        t = getCookie(menuCookiePrefix+$(this).attr("id"))
+        var t = getCookie(menuCookiePrefix+$(this).attr("id"))
         //t = 1 - expanded, t = 0 - collapsed
         if(t){
             if(t == 0){
                 //collapsed
-                element = $(this).find("h2");
+                var element = $(this).find("h2");
                 $(element).parent().find(".bottom").toggle("fast");
                 $(element).removeClass(expandedMenuClassName).addClass(collapsedMenuClassName);
             } else{
@@ -30,11 +30,11 @@ menuLoad = function(){
     $(".block h2").click(function(){
         $(this).parent().find(".bottom").toggle("fast");
         if($(this).hasClass(expandedMenuClassName)){
-            setCookie(menuCookiePrefix+$(this).parent().attr("id"), "0", "", "/", "");
+            setCookie(menuCookiePrefix+$(this).parent().attr("id"), "0", "");
             $(this).removeClass(expandedMenuClassName).addClass(collapsedMenuClassName);
         //            $(this).closest(".LeftBlock").addClass("LeftBlockOff").removeClass("LeftBlock");
         } else {
-            setCookie(menuCookiePrefix+$(this).parent().attr("id"), "1", "", "/", "");
+            setCookie(menuCookiePrefix+$(this).parent().attr("id"), "1", "");
             $(this).removeClass(collapsedMenuClassName).addClass(expandedMenuClassName);
         //            $(this).closest(".LeftBlockOff").addClass("LeftBlock").removeClass("LeftBlockOff");
         }
@@ -47,15 +47,15 @@ var selectedMenuItemClassName = "SelectedMenuItem";
 
 selectedMenuLoad = function(){
     $(".block li a").each(function(){
-        id = $(this).attr("id");
+        var id = $(this).attr("id");
         if(id){
             $(this).click(function(){
-                setCookie(selectedMenuItemCookieName, $(this).attr("id"), "", "/", "");
+                setCookie(selectedMenuItemCookieName, $(this).attr("id"), "");
             });
         }
     });
 
-    selecteMenuItemID = getCookie(selectedMenuItemCookieName);
+    var selecteMenuItemID = getCookie(selectedMenuItemCookieName);
     if(selecteMenuItemID){
         $("#"+selecteMenuItemID).parent().addClass(selectedMenuItemClassName)
         $("#"+selecteMenuItemID).focus();
@@ -73,7 +73,7 @@ var collapsedMainMenuClassName = "collapsed";
 var mainMenuCookieName = "MainMenuCookie";
 
 mainPanelLoad = function(){
-    t = getCookie(mainMenuCookieName);
+    var t = getCookie(mainMenuCookieName);
     //t = 1 - expanded, t = 0 - collapsed
     if(t){
         if(t == 0){
@@ -95,11 +95,11 @@ mainPanelLoad = function(){
     $("#TopPanel #ButtonMain").click(function(){
         $("#LeftPanel").toggle("fast");
         if($(this).hasClass(expandedMainMenuClassName)){
-            setCookie(mainMenuCookieName, "0", "", "/", "");
+            setCookie(mainMenuCookieName, "0", "");
             $(this).removeClass(expandedMainMenuClassName).addClass(collapsedMainMenuClassName);
             $("#Content").removeClass(collapsedContentClassName).addClass(expandedContentClassName);
         } else {
-            setCookie(mainMenuCookieName, "1", "", "/", "");
+            setCookie(mainMenuCookieName, "1", "");
             $(this).addClass(expandedMainMenuClassName).removeClass(collapsedMainMenuClassName);
             $("#Content").removeClass(expandedContentClassName).addClass(collapsedContentClassName);
         }

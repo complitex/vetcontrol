@@ -51,6 +51,7 @@ public abstract class TemplatePage extends WebPage {
     private ILocaleDAO localeDAO;
 
     public TemplatePage() {
+        add(JavascriptPackageResource.getHeaderContribution("js/common.js"));
         add(JavascriptPackageResource.getHeaderContribution(CoreJavaScriptResourceReference.get()));
         add(JavascriptPackageResource.getHeaderContribution(TemplatePage.class, "TemplatePage.js"));
 

@@ -1,10 +1,10 @@
 setFocusOnFirstFormElement = function(){
-    id = $(".formFrame form").attr("id");
-    form = document.getElementById(id);
+    var id = $(".formFrame form").attr("id");
+    var form = document.getElementById(id);
 
     if(form != null){
         for(i=0; i<form.elements.length; i++){
-            element = form.elements[i];
+            var element = form.elements[i];
 
             //for debug only.
             //alert("Element = {id : "+element.id+", tagName : "+element.tagName+", type : "+element.type+", disabled : "+element.disabled+"}");

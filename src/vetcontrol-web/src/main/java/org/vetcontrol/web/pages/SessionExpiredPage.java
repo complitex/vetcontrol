@@ -20,7 +20,7 @@ public final class SessionExpiredPage extends PageExpiredErrorPage {
         super ();
 
         add(JavascriptPackageResource.getHeaderContribution(CoreJavaScriptResourceReference.get()));
-        add(JavascriptPackageResource.getHeaderContribution("/js/common.js"));
+        add(JavascriptPackageResource.getHeaderContribution("js/common.js"));
         add(JavascriptPackageResource.getHeaderContribution(SessionExpiredPage.class, "SessionExpiredPage.js"));
         add(new Label("title", new ResourceModel("session_expired.title")));
         add(CSSPackageResource.getHeaderContribution("css/style.css"));
