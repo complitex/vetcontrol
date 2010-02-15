@@ -444,11 +444,14 @@ CREATE TABLE `client` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `ip` varchar(64) NOT NULL,
   `mac` varchar(64) NOT NULL,
-  `secureKey` varchar(64) NOT NULL,
+  `secure_key` varchar(64) NOT NULL,
   `created` datetime NOT NULL,
   `updated` datetime DEFAULT NULL,
   `department_id` bigint(20) NOT NULL,
+  `sync_status` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `mac` (`mac`),
+  UNIQUE KEY `secure_key` (`secure_key`),
   KEY `FK_department` (`department_id`),
   CONSTRAINT `FK_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

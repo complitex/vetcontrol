@@ -9,15 +9,22 @@ import org.vetcontrol.util.DateUtil;
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.text.MessageFormat;
 import java.util.Date;
+
+import static org.vetcontrol.entity.Log.*;
+
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 28.01.2010 13:26:15
  */
 @Stateless(name = "LogBean")
+@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class LogBean {
     private static final Logger log = LoggerFactory.getLogger(LogBean.class);
 
@@ -27,31 +34,48 @@ public class LogBean {
     @Resource
     private SessionContext sctx;
 
-    public void info(Log.MODULE module, Log.EVENT event, Class controllerClass, Class modelClass, String description){
-        log(module, event, controllerClass, modelClass, Log.STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser());
+    /**
+     * Use MessageFormat. http://java.sun.com/j2se/1.5.0/docs/api/java/text/MessageFormat.html
+     * @param module Module Type
+     * @param event Event Type
+     * @param controllerClass Controller Class
+     * @param modelClass Model class
+     * @param description pattern
+     * @param args arguments for pattern
+     */
+    public void info(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description, Object... args){
+        log(module, event, controllerClass, modelClass, STATUS.OK, MessageFormat.format(description, args), DateUtil.getCurrentDate(), getCurrentUser());
     }
 
-    public void error(Log.MODULE module, Log.EVENT event, Class controllerClass, Class modelClass, String description){
-        log(module, event, controllerClass, modelClass, Log.STATUS.ERROR, description, DateUtil.getCurrentDate(), getCurrentUser());
+    public void error(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description, Object... args){
+        log(module, event, controllerClass, modelClass, STATUS.ERROR, MessageFormat.format(description, args), DateUtil.getCurrentDate(), getCurrentUser());
     }
 
-    public void info(Log.MODULE module, Log.EVENT event, Class controllerClass, String description){
-        log(module, event, controllerClass, null, Log.STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser());
+    public void info(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description){
+        log(module, event, controllerClass, modelClass, STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser());
     }
 
-    public void error(Log.MODULE module, Log.EVENT event, Class controllerClass, String description){
-        log(module, event, controllerClass, null, Log.STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser());
+    public void error(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description){
+        log(module, event, controllerClass, modelClass, STATUS.ERROR, description, DateUtil.getCurrentDate(), getCurrentUser());
     }
 
-    public void info(Log.MODULE module, Log.EVENT event, Class controllerClass, String description, String login){
-        log(module, event, controllerClass, null, Log.STATUS.OK, description, DateUtil.getCurrentDate(), getUser(login));
+    public void info(MODULE module, EVENT event, Class controllerClass, String description){
+        log(module, event, controllerClass, null, STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser());
     }
 
-    public void error(Log.MODULE module, Log.EVENT event, Class controllerClass, String description, String login){
-        log(module, event, controllerClass, null, Log.STATUS.ERROR, description, DateUtil.getCurrentDate(), getUser(login));
+    public void error(MODULE module, EVENT event, Class controllerClass, String description){
+        log(module, event, controllerClass, null, STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser());
     }
 
-    private void log(Log.MODULE module, Log.EVENT event, Class controllerClass, Class modelClass, Log.STATUS status,
+    public void info(String login, MODULE module, EVENT event, Class controllerClass, String description){
+        log(module, event, controllerClass, null, STATUS.OK, description, DateUtil.getCurrentDate(), getUser(login));
+    }
+
+    public void error(String login, MODULE module, EVENT event, Class controllerClass, String description){
+        log(module, event, controllerClass, null, STATUS.ERROR, description, DateUtil.getCurrentDate(), getUser(login));
+    }
+       
+    private void log(MODULE module, EVENT event, Class controllerClass, Class modelClass, Log.STATUS status,
                      String description, Date date, User user){
         Log log = new Log();
 

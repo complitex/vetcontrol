@@ -21,13 +21,13 @@ public class EntityIDResolver extends IDResolver {
         return new Callable(){
             @Override
             public Object call() throws Exception {
-                Object obj = targetType.newInstance();
-
-                if (obj instanceof ILongId){
-                    ((ILongId)obj).setId(Long.decode(id));
+                if (ILongId.class.isAssignableFrom(targetType)){
+                    ILongId obj = (ILongId) targetType.newInstance();
+                    obj.setId(Long.decode(id));
+                    return obj;
                 }
              
-                return obj;
+                return null;
             }
         };
     }

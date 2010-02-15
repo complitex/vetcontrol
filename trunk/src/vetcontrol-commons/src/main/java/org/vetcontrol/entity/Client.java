@@ -15,9 +15,10 @@ import java.util.Date;
 @Table(name = "client")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Client implements ILongId{
+public class Client extends Synchronized implements ILongId{
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    
     @XmlID
     @XmlJavaTypeAdapter(LongAdapter.class)
     private Long id;
@@ -29,10 +30,10 @@ public class Client implements ILongId{
     @Column(name = "ip", nullable = false)
     private String ip;
 
-    @Column(name ="mac", nullable = false)
+    @Column(name ="mac", nullable = false, unique = true)
     private String mac;
 
-    @Column(name = "secureKey", nullable = false)
+    @Column(name = "secure_key", nullable = false, unique = true)
     private String secureKey;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -97,6 +98,18 @@ public class Client implements ILongId{
 
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    public Query getInsertQuery(EntityManager em){
+       return em.createNativeQuery("insert into client (id, department_id, ip, mac, secure_key, created, updated)" +
+               " value (:id, :department_id, :ip, :mac, :secure_key, :created, :updated)")
+               .setParameter("id", id)
+               .setParameter("department_id", department.getId())
+               .setParameter("ip", ip)
+               .setParameter("mac", mac)
+               .setParameter("secure_key", secureKey)
+               .setParameter("created", created)
+               .setParameter("updated", updated);
     }
 
     @Override

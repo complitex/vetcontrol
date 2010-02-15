@@ -1,29 +1,44 @@
 package org.vetcontrol.sync.client.web.pages;
 
 import com.sun.jersey.api.client.UniformInterfaceException;
+import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.Client;
 import org.vetcontrol.entity.Department;
+import org.vetcontrol.service.ClientBean;
+import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.sync.client.service.RegistrationBean;
 
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 07.02.2010 18:18:28
  */
 public class RegistrationPage extends WebPage {
-     private static final Logger log = LoggerFactory.getLogger(RegistrationPage.class);
+    private static final Logger log = LoggerFactory.getLogger(RegistrationPage.class);
+
+    @EJB(name = "LocaleDAO")
+    private ILocaleDAO localeDAO;
+
+    @EJB(name = "ClientBean")
+    private ClientBean clientBean;
+
 
     @EJB(name = "RegistrationBean")
     private RegistrationBean registrationBean;
@@ -31,53 +46,96 @@ public class RegistrationPage extends WebPage {
     public RegistrationPage() {
         super();
 
+        final Locale system = localeDAO.systemLocale();
+
+        add(CSSPackageResource.getHeaderContribution("css/style.css"));
+
+        add(new Label("title", getString("sync.client.registration.title")));
+
         add(new FeedbackPanel("messages"));
 
-        add(new Form("registration_form"){
+        IModel<Client> clientModel = new Model<Client>(new Client());
+
+        //DEBUG
+        info("IP: " + clientBean.getCurrentIP() + ", MAC:"  + clientBean.getCurrentMAC());
+
+        //Регистрация успешно
+        final WebMarkupContainer info = new WebMarkupContainer("info");
+        add(info);
+        info.setVisible(false);
+
+        info.add(new Label("registered", getString("sync.client.registration.registered")));
+
+        ExternalLink login = new ExternalLink("login", "/login.jsp", getString("sync.client.registration.login"));
+        login.setContextRelative(true);
+        info.add(login);
+
+
+        //Форма регистрации
+        Form form = new Form<Client>("registration_form", clientModel){
             @Override
             protected void onSubmit() {
-                Client client = new Client();
+                Client client = getModelObject();
 
-                try {
-                    client.setIp(InetAddress.getLocalHost().getHostAddress());
-
-                    NetworkInterface networkInterface = NetworkInterface.getByInetAddress(InetAddress.getLocalHost());
-
-                    String mac = "";
-                    if (networkInterface.getHardwareAddress() != null){
-                        for (byte m  : networkInterface.getHardwareAddress()){
-                            mac += String.format("%02x-", m);
-                        }
-                    }
-                    if (!mac.isEmpty()){
-                        mac = mac.substring(0, mac.length()-1).toUpperCase();
-                        client.setMac(mac);
-                    }    
-                } catch (SocketException e) {
-                    log.error(e.getMessage(), e);
-                    error(e.getLocalizedMessage());
-                } catch (UnknownHostException e) {
-                    log.error(e.getMessage(), e);
-                    error(e.getLocalizedMessage());
+                String ip = clientBean.getCurrentIP();
+                if (ip != null){
+                    client.setIp(ip);
+                }else{
+                    error("Ошибка получения IP адреса клиента");
                 }
 
-                List<Department> departments = registrationBean.getDepartments();
-
-                client.setDepartment(departments.get(0));
+                String mac = clientBean.getCurrentMAC();
+                if (mac != null){
+                    client.setMac(mac);
+                }else{
+                     error("Ошибка получения MAC адреса клиента");
+                }
 
                 try {
                     client = registrationBean.processRegistration(client);
-                    info("Клиент зарегистрирован. " + client.toString());
-                    log.info("Клиент зарегистрирован. {}", client.toString());
+                    log.debug("Клиент зарегистрирован. {}", client.toString());
+
+                    setVisible(false);
+                    info.setVisible(true);
                 } catch (EJBException e) {
                     if (e.getCausedByException() instanceof UniformInterfaceException){
                         UniformInterfaceException uie = (UniformInterfaceException) e.getCausedByException();
                         String message = uie.getResponse().getEntity(String.class);
                         log.error(message, e);
                         error(message);
+                    }else{
+                        log.error(e.getCausedByException().getLocalizedMessage(), e);
+                        error(e.getCausedByException().getLocalizedMessage());                        
                     }
                 }
             }
-        });
+        };
+        add(form);
+
+        DropDownChoice ddc = new DropDownChoice<Department>("sync.client.registration.department",
+                new PropertyModel<Department>(clientModel, "department"),
+                registrationBean.getDepartments(),
+                new IChoiceRenderer<Department>(){
+
+                    @Override
+                    public Object getDisplayValue(Department department) {
+                        return department.getDisplayName(getLocale(), system);
+                    }
+
+                    @Override
+                    public String getIdValue(Department department, int index) {
+                        return department.getId().toString();
+                    }
+                });
+        ddc.setRequired(true);
+
+        form.add(ddc);
+
+        form.add(new TextField<String>("sync.client.registration.key", new PropertyModel<String>(clientModel, "secureKey")));
+
+
+
+
+
     }
 }
