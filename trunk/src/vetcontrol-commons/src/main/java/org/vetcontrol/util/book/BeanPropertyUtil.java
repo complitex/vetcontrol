@@ -165,48 +165,52 @@ public class BeanPropertyUtil {
         return result;
     }
 
-    public static void addLocalization(Serializable bookEntry, List<Locale> supportedLocales) throws IntrospectionException, InvocationTargetException, IllegalAccessException {
-        BeanInfo beanInfo = Introspector.getBeanInfo(bookEntry.getClass());
-        PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
-        for (PropertyDescriptor propDesc : props) {
-            MappedProperty mappedProperty = propDesc.getReadMethod().getAnnotation(MappedProperty.class);
-            if (mappedProperty != null) {
-                List<StringCulture> strings = (List<StringCulture>) propDesc.getReadMethod().invoke(bookEntry);
+    public static void addLocalization(Serializable bookEntry, List<Locale> supportedLocales) {
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(bookEntry.getClass());
+            PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
+            for (PropertyDescriptor propDesc : props) {
+                MappedProperty mappedProperty = propDesc.getReadMethod().getAnnotation(MappedProperty.class);
+                if (mappedProperty != null) {
+                    List<StringCulture> strings = (List<StringCulture>) propDesc.getReadMethod().invoke(bookEntry);
 
-                List<StringCulture> toAdd = new ArrayList<StringCulture>();
-                if (strings.size() < supportedLocales.size()) {
-                    Long stringId = null;
-                    if (strings.size() > 0) {
-                        stringId = strings.get(0).getId().getId();
-                    }
-                    for (Locale locale : supportedLocales) {
-                        boolean add = true;
-                        for (StringCulture sc : strings) {
-                            if (new Locale(sc.getId().getLocale()).getLanguage().equalsIgnoreCase(locale.getLanguage())) {
-                                add = false;
-                                break;
+                    List<StringCulture> toAdd = new ArrayList<StringCulture>();
+                    if (strings.size() < supportedLocales.size()) {
+                        Long stringId = null;
+                        if (strings.size() > 0) {
+                            stringId = strings.get(0).getId().getId();
+                        }
+                        for (Locale locale : supportedLocales) {
+                            boolean add = true;
+                            for (StringCulture sc : strings) {
+                                if (new Locale(sc.getId().getLocale()).getLanguage().equalsIgnoreCase(locale.getLanguage())) {
+                                    add = false;
+                                    break;
+                                }
+                            }
+                            if (add) {
+                                StringCultureId cultureId = new StringCultureId(locale.getLanguage());
+                                if (stringId != null) {
+                                    cultureId.setId(stringId);
+                                }
+                                StringCulture culture = new StringCulture(cultureId, "");
+                                toAdd.add(culture);
                             }
                         }
-                        if (add) {
-                            StringCultureId cultureId = new StringCultureId(locale.getLanguage());
-                            if (stringId != null) {
-                                cultureId.setId(stringId);
-                            }
-                            StringCulture culture = new StringCulture(cultureId, "");
-                            toAdd.add(culture);
-                        }
                     }
+                    strings.addAll(toAdd);
+                    Collections.sort(strings, new Comparator<StringCulture>() {
+
+                        @Override
+                        public int compare(StringCulture o1, StringCulture o2) {
+                            return o1.getId().getLocale().compareToIgnoreCase(o2.getId().getLocale());
+                        }
+                    });
+                    propDesc.getWriteMethod().invoke(bookEntry, strings);
                 }
-                strings.addAll(toAdd);
-                Collections.sort(strings, new Comparator<StringCulture>() {
-
-                    @Override
-                    public int compare(StringCulture o1, StringCulture o2) {
-                        return o1.getId().getLocale().compareToIgnoreCase(o2.getId().getLocale());
-                    }
-                });
-                propDesc.getWriteMethod().invoke(bookEntry, strings);
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -374,8 +378,8 @@ public class BeanPropertyUtil {
                     }
                 } else if (prop.isLocalizable()) {
                     //do nothing.
-                } else {
-                    // bean reference
+                } else if(prop.isBookReference()) {
+                    
                     Object value = getPropertyValue(book, prop.getName());
                     if (value != null) {
                         Object ID = getPropertyValue(value, "id");
