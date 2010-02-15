@@ -190,7 +190,7 @@ public class LogList extends TemplatePage {
         String sortPropertyFromPreferences = preferences.getPreference(UIPreferences.PreferenceType.SORT_PROPERTY, SORT_PROPERTY_KEY, String.class);
         Boolean sortOrderFromPreferences = preferences.getPreference(UIPreferences.PreferenceType.SORT_ORDER, SORT_ORDER_KEY, Boolean.class);
         String sortProp = sortPropertyFromPreferences != null ? sortPropertyFromPreferences : LogListBean.OrderBy.ID.name();
-        boolean asc = sortOrderFromPreferences != null ? sortOrderFromPreferences : true;
+        boolean asc = sortOrderFromPreferences != null ? sortOrderFromPreferences : false;
         dataProvider.setSort(sortProp, asc);
 
         //Таблица журнала событий

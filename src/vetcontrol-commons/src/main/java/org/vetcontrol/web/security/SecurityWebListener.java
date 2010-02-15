@@ -71,7 +71,7 @@ public class SecurityWebListener implements HttpSessionListener, ServletRequestL
             String d = "IP: " + request.getRemoteAddr();
             String login = request.getUserPrincipal().getName();
 
-            logBean.info(Log.MODULE.COMMONS, Log.EVENT.USER_LOGIN, SecurityWebListener.class, d, login);
+            logBean.info(login, Log.MODULE.COMMONS, Log.EVENT.USER_LOGIN, SecurityWebListener.class, d);
             log.info("Пользователь авторизирован [login: " + login + ", " + d + "]");
         }
     }
