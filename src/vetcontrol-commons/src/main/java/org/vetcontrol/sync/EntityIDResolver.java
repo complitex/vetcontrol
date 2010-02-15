@@ -1,6 +1,6 @@
 package org.vetcontrol.sync;
 
-import com.sun.xml.bind.IDResolver;
+import com.sun.xml.internal.bind.IDResolver;
 import org.vetcontrol.entity.ILongId;
 import org.xml.sax.SAXException;
 
