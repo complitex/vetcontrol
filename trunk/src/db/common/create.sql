@@ -20,6 +20,7 @@ CREATE TABLE  `user` (
   `last_name` varchar(45) DEFAULT NULL,
    `job_id` bigint(20) DEFAULT NULL,
   `department_id` bigint(20) DEFAULT NULL,
+  `updated` timestamp  DEFAULT NOW(),
   `locale` VARCHAR(2) NULL,
   `page_size` int(3) NULL,
   PRIMARY KEY (`id`),
@@ -35,6 +36,7 @@ CREATE TABLE  `usergroup` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `login` varchar(32) NOT NULL,
   `usergroup` varchar(32) NOT NULL,
+  `updated` timestamp  DEFAULT NOW()
   PRIMARY KEY (`id`),
   UNIQUE KEY `login_usergroup` (`login`,`usergroup`),
   CONSTRAINT `fk_user_login` FOREIGN KEY (`login`) REFERENCES `user` (`login`)

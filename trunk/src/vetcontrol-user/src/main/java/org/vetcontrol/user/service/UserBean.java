@@ -116,7 +116,7 @@ public class UserBean {
     public void save(User user) {
         for (UserGroup userGroup : user.getUserGroups()) {
             if (userGroup.getId() == null) {
-                userGroup.setUser(user);
+                userGroup.setLogin(user.getLogin());
             }
         }
 

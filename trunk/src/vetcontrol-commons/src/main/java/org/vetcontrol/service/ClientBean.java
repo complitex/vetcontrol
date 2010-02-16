@@ -3,6 +3,7 @@ package org.vetcontrol.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.Client;
+import org.vetcontrol.sync.NotRegisteredException;
 
 import javax.ejb.Singleton;
 import javax.persistence.EntityManager;
@@ -26,7 +27,7 @@ public class ClientBean {
     @PersistenceContext
     private EntityManager em;
 
-    public Client getCurrentClient(){
+    public Client getCurrentClient() throws NotRegisteredException {
         if (currentClient == null){
             String mac = getCurrentMAC();
             if (mac != null){
@@ -35,12 +36,16 @@ public class ClientBean {
                             .setParameter("mac", mac)
                             .getSingleResult();
                 } catch (NoResultException e) {
-                    //client not found
+                    throw new NotRegisteredException();
                 }
             }
         }
 
         return currentClient;
+    }
+
+    public String getCurrentSecureKey() throws NotRegisteredException {
+        return getCurrentClient().getSecureKey();
     }
 
     public String getCurrentMAC(){
@@ -72,5 +77,11 @@ public class ClientBean {
             log.error(e.getMessage(), e);
         }
         return null;
+    }
+
+    public Client getClient(String secureKey){
+        return em.createQuery("select c from Client c where c.secureKey = :secureKey", Client.class)
+                .setParameter("secureKey", secureKey)
+                .getSingleResult();
     }
 }

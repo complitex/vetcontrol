@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +20,8 @@ import java.util.List;
  * Справочник должностей
  */
 @Entity
-@org.hibernate.annotations.Entity(selectBeforeUpdate=true)
 @Table(name = "job")
+@XmlRootElement
 public class Job extends Localizable {
     private List<StringCulture> names = new ArrayList<StringCulture>();
 

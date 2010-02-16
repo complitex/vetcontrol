@@ -1,7 +1,12 @@
 package org.vetcontrol.entity;
 
+import org.vetcontrol.sync.LongAdapter;
+
 import javax.persistence.*;
+import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * User: Anatoly A. Ivanov java@inheaven.ru
@@ -11,18 +16,23 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "usergroup")
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class UserGroup implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @XmlID @XmlJavaTypeAdapter(LongAdapter.class)
     private Long id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "usergroup", nullable = false)
     private SecurityGroup securityGroup;
 
-    @ManyToOne
-    @JoinColumn(name = "login", referencedColumnName = "login", nullable = false)
-    private User user;
+    @Column(name = "login", nullable = false)
+    private String login;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updated;
 
     public Long getId() {
         return id;
@@ -40,12 +50,29 @@ public class UserGroup implements Serializable {
         this.securityGroup = securityGroup;
     }
 
-    public User getUser() {
-        return user;
+    public String getLogin() {
+        return login;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public Date getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Date updated) {
+        this.updated = updated;
+    }
+
+    public Query getInsertQuery(EntityManager em){
+        return em.createNativeQuery("insert into `usergroup` (id, `usergroup`, login, updated)" +
+                " value (:id, :usergroup, :login, :updated)")
+                .setParameter("id", id)
+                .setParameter("usergroup", securityGroup.name())
+                .setParameter("login", login)
+                .setParameter("updated", updated);    
     }
 
     @Override
@@ -73,6 +100,7 @@ public class UserGroup implements Serializable {
         return new StringBuilder()
                 .append("[hash: ").append(Integer.toHexString(hashCode()))
                 .append(", id: ").append(id)
+                .append(", login: ").append(login)
                 .append(", userGroup: ").append(securityGroup).append("]")
                 .toString();
     }

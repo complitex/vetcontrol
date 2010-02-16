@@ -8,6 +8,7 @@ import org.vetcontrol.entity.Client;
 import org.vetcontrol.entity.Department;
 import org.vetcontrol.entity.Synchronized;
 import org.vetcontrol.sync.JSONResolver;
+import org.vetcontrol.util.DateUtil;
 
 import javax.ejb.Stateless;
 import javax.naming.InitialContext;
@@ -60,6 +61,7 @@ public class RegistrationBean {
                 .type(MediaType.APPLICATION_JSON_TYPE)
                 .put(client.getSecureKey());
         client.setSyncStatus(Synchronized.SyncStatus.SYNCHRONIZED);
+        client.setUpdated(DateUtil.getCurrentDate());
 
         client.getInsertQuery(em).executeUpdate();
 

@@ -101,15 +101,16 @@ public class Client extends Synchronized implements ILongId{
     }
 
     public Query getInsertQuery(EntityManager em){
-       return em.createNativeQuery("insert into client (id, department_id, ip, mac, secure_key, created, updated)" +
-               " value (:id, :department_id, :ip, :mac, :secure_key, :created, :updated)")
+       return em.createNativeQuery("insert into client (id, department_id, ip, mac, secure_key, created, updated, sync_status)" +
+               " value (:id, :department_id, :ip, :mac, :secure_key, :created, :updated, :syncStatus)")
                .setParameter("id", id)
                .setParameter("department_id", department.getId())
                .setParameter("ip", ip)
                .setParameter("mac", mac)
                .setParameter("secure_key", secureKey)
                .setParameter("created", created)
-               .setParameter("updated", updated);
+               .setParameter("updated", updated)
+               .setParameter("syncStatus", syncStatus);
     }
 
     @Override
