@@ -18,6 +18,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import java.util.ResourceBundle;
+
 import static org.vetcontrol.entity.Log.EVENT.CREATE;
 import static org.vetcontrol.entity.Log.MODULE.SYNC_SERVER;
 
@@ -29,6 +31,7 @@ import static org.vetcontrol.entity.Log.MODULE.SYNC_SERVER;
 @Stateless
 public class RegistrationResourceBean {
     private static final Logger log = LoggerFactory.getLogger(RegistrationResourceBean.class);
+    private static final ResourceBundle rb = ResourceBundle.getBundle("org.vetcontrol.sync.server.resources.RegistrationResourceBean");
 
     @PersistenceContext
     private EntityManager em;
@@ -40,42 +43,42 @@ public class RegistrationResourceBean {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Client processRegistration(Client client, @Context HttpServletRequest request){
-        log.debug("Запрос на регистрацию клиента. [client: {}]", client);
+        log.debug(rb.getString("info.registration.request") + " [client: {}]", client);
 
         if (client == null){
-            log.warn("Клиент не должен быть пустым. [ip: {}]", request.getRemoteHost());
+            log.warn(rb.getString("error.client.null") + " [ip: {}]", request.getRemoteHost());
 
             logBean.error(SYNC_SERVER, CREATE, RegistrationResourceBean.class, Client.class,
-                    "Клиент не должен быть пустым. [ip: {0}]", request.getRemoteHost());
+                    rb.getString("error.client.null") + " [ip: {0}]", request.getRemoteHost());
 
             throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Клиент не должен быть null")
+                    .entity(rb.getString("error.client.null"))
                     .type("text/plain;charset=UTF-8")
                     .build());
         }
 
         //Регистрационный ключ
         if (!checkKey(client.getSecureKey())){
-            log.warn("Неправильный регистрационный ключ. [ip: {}]", request.getRemoteHost());
+            log.warn(rb.getString("error.secure_key.check") + " [ip: {}]", request.getRemoteHost());
 
             logBean.error(SYNC_SERVER, CREATE, RegistrationResourceBean.class, Client.class,
-                    "Неправильный регистрационный ключ. [ip: {0}]", request.getRemoteHost());
+                    rb.getString("error.secure_key.check") + " [ip: {0}]", request.getRemoteHost());
 
             throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Неправильный регистрационный ключ")
+                    .entity(rb.getString("error.secure_key.check"))
                     .type("text/plain;charset=UTF-8")
                     .build());
         }
 
         //Уникальность MAC адреса
         if (client.getMac() == null){
-            log.warn("MAC адрес не должен быть пустым. [ip: {}]", request.getRemoteHost());
+            log.warn(rb.getString("error.mac.null") + " [ip: {}]", request.getRemoteHost());
 
             logBean.error(SYNC_SERVER, CREATE, RegistrationResourceBean.class, Client.class,
-                    "MAC адрес не должен быть пустым. [ip: {0}]", request.getRemoteHost());
+                    rb.getString("error.mac.null") + " [ip: {0}]", request.getRemoteHost());
 
             throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-                    .entity("MAC адрес не должен быть пустым")
+                    .entity(rb.getString("error.mac.null"))
                     .type("text/plain;charset=UTF-8")
                     .build());
         }
@@ -86,26 +89,26 @@ public class RegistrationResourceBean {
                 .getSingleResult();
 
         if (count > 0){
-            log.warn("Клиент уже зарегистрирован в системе. [mac: {}, ip: {}]", client.getMac(), request.getRemoteHost());
+            log.warn(rb.getString("error.mac.registered") + " [mac: {}, ip: {}]", client.getMac(), request.getRemoteHost());
 
             logBean.error(SYNC_SERVER, CREATE, RegistrationResourceBean.class, Client.class,
-                    "Клиент уже зарегистрирован в системе. [mac: {0}, ip: {1}]", client.getMac(), request.getRemoteHost());
+                    rb.getString("error.mac.registered") + " [mac: {0}, ip: {1}]", client.getMac(), request.getRemoteHost());
 
             throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Клиент с mac адресом " + client.getMac() + " уже зарегистрирован в системе")
+                    .entity(rb.getString("error.mac.registered") + " [mac: " + client.getMac()+"]")
                     .type("text/plain;charset=UTF-8")
                     .build());
         }
 
         //Структурное подразделение
         if (client.getDepartment() == null){
-            log.warn("Структурное подразделение не должен быть пустым. [ip: {}]", request.getRemoteHost());
+            log.warn(rb.getString("error.department.null") + " [ip: {}]", request.getRemoteHost());
 
             logBean.error(SYNC_SERVER, CREATE, RegistrationResourceBean.class, Client.class,
-                    "Структурное подразделение не должен быть пустым. [ip: {0}]", request.getRemoteHost());
+                    rb.getString("error.department.null") + " [ip: {0}]", request.getRemoteHost());
 
             throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Структурное подразделение не должено быть пустым")
+                    .entity(rb.getString("error.department.null"))
                     .type("text/plain;charset=UTF-8")
                     .build());
         }
@@ -138,15 +141,15 @@ public class RegistrationResourceBean {
                     em.merge(client);
                 }
 
-                log.debug("Клиент сохранен в базу данных. Ожидаем подтверждение. [id:" + client.getId()+"]");
+                log.debug(rb.getString("info.registration.processing") + " [id: {}]",  client.getId());
             } catch (Exception e) {
-                log.error("Ошибка сохранения клиента. [ip: {}]", request.getRemoteHost());
+                log.error(rb.getString("error.client.save") + " [ip: {}]", request.getRemoteHost());
 
                 logBean.error(SYNC_SERVER, CREATE, RegistrationResourceBean.class, Client.class,
-                        "Ошибка сохранения клиента. [ip: {0}]", request.getRemoteHost());
+                        rb.getString("error.client.save") + " [ip: {0}]", request.getRemoteHost());
 
                 throw new WebApplicationException(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .entity("Ошибка сохранения клиента")
+                        .entity(rb.getString("error.client.save"))
                         .type("text/plain;charset=UTF-8")
                         .build());
             }
@@ -155,11 +158,10 @@ public class RegistrationResourceBean {
         return client;
     }
 
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
+    @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/commit")
-    public String commit(String secureKey, @Context HttpServletRequest request){
+    public void commit(String secureKey, @Context HttpServletRequest request){
         try {
             int row = em.createQuery("update Client c set c.syncStatus = :newSyncStatus, c.updated = :updated " +
                     "where c.secureKey = :secureKey and c.syncStatus = :oldSyncStatus")
@@ -170,8 +172,13 @@ public class RegistrationResourceBean {
                     .executeUpdate();
 
             if (row != 1){
+                log.error(rb.getString("error.client.find") + " [ip: {}]", request.getRemoteHost());
+
+                logBean.error(SYNC_SERVER, CREATE, RegistrationResourceBean.class, Client.class,
+                        rb.getString("error.client.find") + " [ip: {0}]", request.getRemoteHost());
+
                 throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-                        .entity("Ошибка синхронизации. Клиент по ключу не найдет.")
+                        .entity(rb.getString("error.client.find"))
                         .type("text/plain;charset=UTF-8")
                         .build());
             }
@@ -180,26 +187,26 @@ public class RegistrationResourceBean {
                     .setParameter("secureKey", secureKey)
                     .getSingleResult();
 
-            log.debug("Подтверждение регистрации успешно обработано. Клиент добавлен. [id: {}, ip: {}, mac: {}]",
+            log.debug(rb.getString("info.registration.success") + " [id: {}, ip: {}, mac: {}]",
                     new String[]{client.getId().toString(), request.getRemoteHost(), client.getMac()});
 
             logBean.info(SYNC_SERVER, CREATE, RegistrationResourceBean.class, Client.class,
-                    "Клиент добавлен. [id: {0}, ip: {1}, mac: {2}]",
+                    rb.getString("info.registration.success") + " [id: {0}, ip: {1}, mac: {2}]",
                     client.getId(), request.getRemoteHost(), client.getMac());
 
+        } catch (WebApplicationException e){
+            throw e;
         } catch (Exception e) {
-            log.error(e.getLocalizedMessage(), e);
+            log.error(rb.getString("error.registration.save") + " [ip: {0}]", request.getRemoteHost());
 
             logBean.error(SYNC_SERVER, CREATE, RegistrationResourceBean.class, Client.class,
-                    "Ошибка сохранения статуса синхронизации. [ip: {0}]", request.getRemoteHost());
+                    rb.getString("error.registration.save") + " [ip: {0}]", request.getRemoteHost());
 
             throw new WebApplicationException(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Ошибка сохранения статуса синхронизации")
+                    .entity(rb.getString("error.registration.save"))
                     .type("text/plain;charset=UTF-8")
                     .build());
-        }
-
-        return "SYNCHRONIZED";
+        }          
     }
 
     private boolean checkKey(String key){

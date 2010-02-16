@@ -57,9 +57,8 @@ public class RegistrationBean {
         //commit
         create(clientConfig)
                 .resource(syncServerUrl+"/registration/commit")
-                .accept(MediaType.APPLICATION_JSON)
                 .type(MediaType.APPLICATION_JSON_TYPE)
-                .post(String.class, client.getSecureKey());
+                .put(client.getSecureKey());
         client.setSyncStatus(Synchronized.SyncStatus.SYNCHRONIZED);
 
         client.getInsertQuery(em).executeUpdate();
