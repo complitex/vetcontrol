@@ -72,5 +72,16 @@ INSERT INTO `department`(`name`, `parent_id`) VALUES (1, NULL),
                                                             (32, 2),
                                                             (33, 2);
 
-UPDATE `generator` SET `generatorValue` = 33 WHERE `generatorName` = 'books';
+INSERT INTO `stringculture`(`id`, `locale`, `value`) VALUES (34,'en','импорт'),(34,'ru','импорт'),
+(35,'en','экспорт'),(35,'ru','экспорт'),(36,'en','транзит'),(36,'ru','транзит'),(37,'en','импортный транзит'),(37,'ru','импортный транзит');
+/* Common movement types(for reports):
+    id  movement type
+    1   импорт
+    2   экспорт
+    3   транзит
+    4   импортный транзит
+*/
+INSERT INTO `movement_type` VALUES (1,34, CURRENT_TIMESTAMP),(2,35, CURRENT_TIMESTAMP),(3,36, CURRENT_TIMESTAMP),(4,37, CURRENT_TIMESTAMP);
+
+UPDATE `generator` SET `generatorValue` = 37 WHERE `generatorName` = 'books';
 
