@@ -5,8 +5,7 @@ import com.sun.jersey.api.json.JSONJAXBContext;
 import com.sun.xml.bind.IDResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vetcontrol.entity.Client;
-import org.vetcontrol.entity.Department;
+import org.vetcontrol.entity.*;
 
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
@@ -25,7 +24,7 @@ public class JSONResolver {
     private static Logger log = LoggerFactory.getLogger(JSONResolver.class);
 
     private final static Class[] cTypes = {
-            Client.class, Department.class
+            Client.class, Department.class, User.class, UserGroup.class, Job.class
     };
     
     private final static Set<Class> types = new HashSet<Class>(Arrays.asList(cTypes));

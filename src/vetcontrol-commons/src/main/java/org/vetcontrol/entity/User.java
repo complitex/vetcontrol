@@ -1,8 +1,12 @@
 package org.vetcontrol.entity;
 
+import org.vetcontrol.sync.LongAdapter;
+
 import javax.persistence.*;
-import java.io.Serializable;
+import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,33 +17,56 @@ import java.util.List;
  */
 @Entity
 @Table(name = "user")
-public class User implements Serializable {
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+public class User implements ILongId{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @XmlID @XmlJavaTypeAdapter(LongAdapter.class)
     private Long id;
+
     @Column(name = "login", length = 32, unique = true, nullable = false)
     private String login;
+
     @Column(name = "_password", length = 32, nullable = false)
     private String password;
+
     @Transient
+    @XmlTransient
     private String changePassword;
+
     @Column(name = "first_name", length = 45)
     private String firstName;
+
     @Column(name = "middle_name", length = 45)
     private String middleName;
+
     @Column(name = "last_name", length = 45)
     private String lastName;
+
     @ManyToOne
     @JoinColumn(name = "job_id")
+//    @XmlIDREF
+    @XmlTransient
     private Job job;
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "login", referencedColumnName = "login")
+    @XmlTransient
     private List<UserGroup> userGroups = new ArrayList<UserGroup>();
+
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "department_id", nullable = true)
+    @JoinColumn(name = "department_id", nullable = false)
+    @XmlIDREF
     private Department department;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updated;
+
     @Column(name = "locale", length = 2)
     private String locale;
+
     @Column(name = "page_size")
     private Integer pageSize;
 
@@ -139,9 +166,41 @@ public class User implements Serializable {
         this.pageSize = pageSize;
     }
 
+    public Date getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Date updated) {
+        this.updated = updated;
+    }
+
+    public Query getInsertQuery(EntityManager em){
+        return em.createNativeQuery("insert into user " +
+                "(id, login, _password, first_name, middle_name, last_name, job_id, department_id, updated) " +
+                " value (:id, :login, :_password, :first_name, :middle_name, :last_name, :job_id, :department_id, :updated)")
+                .setParameter("id", id)
+                .setParameter("login", login)
+                .setParameter("_password", password)
+                .setParameter("first_name", firstName)
+                .setParameter("middle_name", middleName)
+                .setParameter("last_name", lastName)
+                .setParameter("job_id", job != null ? job.getId() : null)
+                .setParameter("department_id", department.getId())
+                .setParameter("updated", updated);
+    }
+
     @Override
     public String toString() {
-        return new StringBuilder().append("[hash: ").append(Integer.toHexString(hashCode())).append(", id: ").append(id).append(", login: ").append(login).append(", firstName: ").append(firstName).append(", lastName: ").append(lastName).append(", middleName: ").append(middleName).append(", userGroups: ").append(userGroups).append(", department: ").append(department).append("]").toString();
+        return new StringBuilder().append("[hash: ").append(Integer.toHexString(hashCode()))
+                .append(", id: ").append(id)
+                .append(", login: ").append(login)
+                .append(", firstName: ").append(firstName)
+                .append(", lastName: ").append(lastName)
+                .append(", middleName: ").append(middleName)
+                .append(", job: ").append(job)
+                .append(", userGroups: ").append(userGroups)
+                .append(", department: ").append(department)
+                .append("]").toString();
     }
 
     @Transient
@@ -167,7 +226,7 @@ public class User implements Serializable {
             return false;
         }
         final User other = (User) obj;
-        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
+        if ((id == null && other.id != null) || (id != null && other.id == null) || (this.id != null && !this.id.equals(other.id))){
             return false;
         }
         if ((this.login == null) ? (other.login != null) : !this.login.equals(other.login)) {
@@ -186,12 +245,12 @@ public class User implements Serializable {
             return false;
         }
         if (this.job != null && other.job != null) {
-            if (this.job.getId() != other.job.getId() && (this.job.getId() == null || !this.job.getId().equals(other.job.getId()))) {
+            if (!this.job.getId().equals(other.job.getId()) && (this.job.getId() == null || !this.job.getId().equals(other.job.getId()))) {
                 return false;
             }
         }
         if (this.department != null && other.department != null) {
-            if (this.department.getId() != other.department.getId() && (this.department.getId() == null || !this.department.getId().equals(other.department.getId()))) {
+            if (!this.department.getId().equals(other.department.getId()) && (this.department.getId() == null || !this.department.getId().equals(other.department.getId()))) {
                 return false;
             }
         }

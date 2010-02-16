@@ -20,7 +20,7 @@ public class Synchronized {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "sync_status")
-    private SyncStatus syncStatus = SyncStatus.NOT_SYNCHRONIZED;
+    protected SyncStatus syncStatus = SyncStatus.NOT_SYNCHRONIZED;
 
     @XmlTransient
     @ValidProperty(false)

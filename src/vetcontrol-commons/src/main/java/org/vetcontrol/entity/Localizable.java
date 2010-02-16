@@ -20,8 +20,7 @@ public abstract class Localizable implements ILongId {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @XmlID
-    @XmlJavaTypeAdapter(LongAdapter.class)
+    @XmlID @XmlJavaTypeAdapter(LongAdapter.class)
     public  Long getId(){
         return id;
     }
