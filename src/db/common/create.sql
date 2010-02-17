@@ -12,35 +12,35 @@
 
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE  `user` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `login` varchar(32) NOT NULL,
-  `_password` varchar(32) DEFAULT NULL,
-  `first_name` varchar(45) DEFAULT NULL,
-  `middle_name` varchar(45) DEFAULT NULL,
-  `last_name` varchar(45) DEFAULT NULL,
-   `job_id` bigint(20) DEFAULT NULL,
-  `department_id` bigint(20) DEFAULT NULL,
-  `updated` timestamp  DEFAULT NOW(),
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `login` VARCHAR(32) NOT NULL,
+  `_password` VARCHAR(32) DEFAULT NULL,
+  `first_name` VARCHAR(45) DEFAULT NULL,
+  `middle_name` VARCHAR(45) DEFAULT NULL,
+  `last_name` VARCHAR(45) DEFAULT NULL,
+   `job_id` BIGINT(20) DEFAULT NULL,
+  `department_id` BIGINT(20) DEFAULT NULL,
+  `updated` TIMESTAMP  DEFAULT NOW(),
   `locale` VARCHAR(2) NULL,
-  `page_size` int(3) NULL,
+  `page_size` INT(3) NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_login` (`login`),
   KEY `fk_job` (`job_id`),
   KEY `fk_user_department` (`department_id`),
   CONSTRAINT `fk_job` FOREIGN KEY (`job_id`) REFERENCES `job` (`id`),
   CONSTRAINT `fk_user_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `usergroup`;
 CREATE TABLE  `usergroup` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `login` varchar(32) NOT NULL,
-  `usergroup` varchar(32) NOT NULL,
-  `updated` timestamp  DEFAULT NOW()
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `login` VARCHAR(32) NOT NULL,
+  `usergroup` VARCHAR(32) NOT NULL,
+  `updated` TIMESTAMP  DEFAULT NOW(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `login_usergroup` (`login`,`usergroup`),
   CONSTRAINT `fk_user_login` FOREIGN KEY (`login`) REFERENCES `user` (`login`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 
 
