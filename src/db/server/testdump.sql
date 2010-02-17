@@ -167,27 +167,29 @@ INSERT INTO `cargo_mode_cargo_type` VALUES (1, 1, CURRENT_TIMESTAMP), (1, 2, CUR
 
 INSERT INTO `cargo_mode_unit_type` VALUES (1, 1, CURRENT_TIMESTAMP);
 
-INSERT INTO `cargo_receiver` VALUES (1,39, CURRENT_TIMESTAMP),(2,40, CURRENT_TIMESTAMP),(3,41, CURRENT_TIMESTAMP);
+INSERT INTO `cargo_receiver` VALUES (1, 43, CURRENT_TIMESTAMP),(2,44, CURRENT_TIMESTAMP),(3,45, CURRENT_TIMESTAMP);
 
-INSERT INTO `cargo_sender` VALUES (1,42, CURRENT_TIMESTAMP),(2,43, CURRENT_TIMESTAMP),(3,44, CURRENT_TIMESTAMP);
+INSERT INTO `cargo_sender` VALUES (1,46, CURRENT_TIMESTAMP),(2,47, CURRENT_TIMESTAMP),(3,48, CURRENT_TIMESTAMP);
 
 INSERT INTO `passing_border_point` VALUES (1,68, CURRENT_TIMESTAMP),(2,69, CURRENT_TIMESTAMP),(3,70, CURRENT_TIMESTAMP);
 
 INSERT INTO `cargo_producer` VALUES (1,49, CURRENT_TIMESTAMP),(2,50, CURRENT_TIMESTAMP),(3,51, CURRENT_TIMESTAMP);
 
-INSERT INTO `vehicletypes` VALUES (1,34, CURRENT_TIMESTAMP),(2,35, CURRENT_TIMESTAMP),(3,36, CURRENT_TIMESTAMP),(4,37, CURRENT_TIMESTAMP),(5,38, CURRENT_TIMESTAMP);
+INSERT INTO `vehicletypes` VALUES (1,38, CURRENT_TIMESTAMP),(2,39, CURRENT_TIMESTAMP),(3,40, CURRENT_TIMESTAMP),(4,41, CURRENT_TIMESTAMP),
+(5,42, CURRENT_TIMESTAMP);
 
-INSERT INTO `document_cargo` VALUES (1,2,'2010-01-15 17:59:09',NULL,1,1, 'транспорт 1',1,2,3,1,'примечание 3','задержан 2'),
-                                    (2,2, '2010-02-15 17:48:00', NULL, 1,1, 'транспорт 2', 1,2,3,1, 'примечание','задержан'),
-                                    (3,2, '2010-02-16 17:48:00', NULL, 3,1, 'транспорт 2', 1,2,3,1, 'примечание','задержан'),
-                                    (4,2, '2010-03-30 17:48:00', NULL, 1,1, 'транспорт 3', 1,2,3,1, 'примечание','задержан'),
-                                    (5,2, '2010-03-31 17:48:00', NULL, 2,1, 'транспорт 3', 1,2,3,1, 'примечание','задержан'),
-                                    (6, 30, '2010-02-16 17:25:00', NULL, 2,1, 'транспорт 4',1,2,3,1,'примечание','задержан');
+INSERT INTO `document_cargo` VALUES (1,30,'2010-01-15 17:59:09',NULL,1,1, 'транспорт 1',1,2,3,1,'примечание 3','задержан 2'),
+                                    (2,30, '2010-02-15 17:48:00', NULL, 1,1, 'транспорт 2', 1,2,3,1, 'примечание','задержан'),
+                                    (3,30, '2010-02-16 17:48:00', NULL, 3,1, 'транспорт 2', 1,2,3,1, 'примечание','задержан'),
+                                    (4,30, '2010-03-30 17:48:00', NULL, 1,1, 'транспорт 3', 1,2,3,1, 'примечание','задержан'),
+                                    (5,30, '2010-03-31 17:48:00', NULL, 2,1, 'транспорт 3', 1,2,3,1, 'примечание','задержан'),
+                                    (6,30, '2010-02-16 17:25:00', NULL, 2,1, 'транспорт 4',1,2,3,1,'примечание','задержан');
 
 INSERT INTO `cargo`(`document_cargo_id`, `cargo_type_id`, `unit_type_id`, `count`, `certificate_date`, `certificate_details`)
  VALUES (1,1,1,20,'2010-01-15','сертификат 1'),
 (2,1,1,30,'2010-02-15','сертификат 2'), 
 (3,1,1, 23,'2010-02-15','сертификат 2'),
+(3,1,2, 73,'2010-02-15','сертификат 2'),
 (4, 2, 1, 40, '2010-03-30', 'сертификат 3'),
 (5, 2, 1, 89, '2010-03-30', 'сертификат 3'),
 (6,1,1,50,'2010-02-16', 'сертификат 4');
