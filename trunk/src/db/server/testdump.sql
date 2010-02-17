@@ -101,7 +101,8 @@ INSERT INTO `user`(`id`, `login`, `_password`, `first_name`, `middle_name`, `las
 (115,'login_98','364619769245e708adef869de6ae9184','д_first_name_7','ж_middle_name_4','г_last_name_6',6),
 (116,'login_99','6596185c21965d9ee710ca5e8f3ee1e6','е_first_name_3','г_middle_name_3','а_last_name_5',15);
 
-INSERT INTO `usergroup` VALUES (2,'admin','ADMINISTRATORS'),(13,'login_0','DEPARTMENT_OFFICERS'),
+INSERT INTO `usergroup` (`id`, `login`, `usergroup`) VALUES
+(2,'admin','ADMINISTRATORS'),(13,'login_0','DEPARTMENT_OFFICERS'),
 (14,'login_1','ADMINISTRATORS'),(23,'login_10','ADMINISTRATORS'),(24,'login_11','ADMINISTRATORS'),
 (25,'login_12','DEPARTMENT_OFFICERS'),(26,'login_13','LOCAL_OFFICERS'),(27,'login_14','ADMINISTRATORS'),
 (28,'login_15','LOCAL_OFFICERS'),(29,'login_16','DEPARTMENT_OFFICERS'),(30,'login_17','LOCAL_OFFICERS'),
