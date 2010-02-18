@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:wicket="http://wicket.apache.org">
+    <head>
+        <wicket:head><title wicket:id="title"></title></wicket:head>
+    </head>
+    <body>
+        <wicket:extend>
+            <h1><wicket:message key="report.name"/></h1>
+            <table class="tbColor" border="0" cellpadding="0" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>
+                        </th>
+                        <th colspan="4" class="center">
+                            <span wicket:id="report.header.all"></span>
+                        </th>
+                        <th colspan="4" class="center">
+                            <wicket:message key="report.header.inCurrentMonth"/>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th class="center" wicket:id="report.header.cargoMode">
+                            <wicket:message key="report.header.cargoMode"/>
+                        </th>
+                        <th class="center">
+                            <wicket:message key="report.header.export"/>
+                        </th>
+                        <th class="center">
+                            <wicket:message key="report.header.import"/>
+                        </th>
+                        <th class="center">
+                            <wicket:message key="report.header.transit"/>
+                        </th>
+                        <th class="center">
+                            <wicket:message key="report.header.importTransit"/>
+                        </th>
+                        <th class="center">
+                            <wicket:message key="report.header.export"/>
+                        </th>
+                        <th class="center">
+                            <wicket:message key="report.header.import"/>
+                        </th>
+                        <th class="center">
+                            <wicket:message key="report.header.transit"/>
+                        </th>
+                        <th class="center">
+                            <wicket:message key="report.header.importTransit"/>
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr wicket:id="list">
+                        <td>
+                            <span wicket:id="cargoModeName"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="export"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="import"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="transit"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="importTransit"></span>
+                        </td>
+
+                        <td class="center">
+                            <span wicket:id="exportInCurrentMonth"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="importInCurrentMonth"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="transitInCurrentMonth"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="importTransitInCurrentMonth"></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div>
+                <span wicket:id="navigator"></span>
+            </div>
+
+            <div>
+                <div>
+                    <wicket:link>
+                        <a href="MovementTypesReportForm.html">
+                            <wicket:message key="report.backToSetParams"/>
+                        </a>
+                    </wicket:link>
+                </div>
+                <div>
+                    <!--<a wicket:id="asPdf">
+                        <wicket:message key="report.asPdf"/>
+                    </a>-->
+                    <form id="pdfForm" target="_blank" method="get" action="MovementTypesReportInPDF">
+                        <input wicket:id="pdfMonth" type="hidden"/>
+                        <input wicket:id="pdfDepartment" type="hidden"/>
+                        <a href="#" onclick="$('#pdfForm').submit();">
+                            <wicket:message key="report.asPdf"/>
+                        </a>
+                    </form>
+                </div>
+            </div>
+
+        </wicket:extend>
+    </body>
+</html>
