@@ -6,5 +6,6 @@
         <menu class="org.vetcontrol.user.web.pages.UserTemplateMenu"/>
         <menu class="org.vetcontrol.information.web.pages.BookMenu"/>
         <menu class="org.vetcontrol.document.web.pages.DocumentTemplateMenu"/>
+        <menu class="org.vetcontrol.report.web.pages.ReportMenu"/>
     </sidebar>
 </template>
