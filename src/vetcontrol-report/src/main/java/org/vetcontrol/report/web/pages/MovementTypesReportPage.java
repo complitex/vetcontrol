@@ -1,0 +1,159 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.vetcontrol.report.web.pages;
+
+import java.math.BigInteger;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Locale;
+import javax.ejb.EJB;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
+import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
+import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.HiddenField;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.model.StringResourceModel;
+import org.vetcontrol.report.entity.MovementTypesReport;
+import org.vetcontrol.report.service.LocaleService;
+import org.vetcontrol.report.service.dao.MovementTypesReportDAO;
+import org.vetcontrol.report.util.movementtypes.CellFormatter;
+import org.vetcontrol.service.UIPreferences;
+import org.vetcontrol.service.UIPreferences.PreferenceType;
+import org.vetcontrol.util.DateUtil;
+import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
+import org.vetcontrol.web.component.paging.PagingNavigator;
+import org.vetcontrol.web.template.TemplatePage;
+
+/**
+ *
+ * @author Artem
+ */
+public final class MovementTypesReportPage extends TemplatePage {
+
+    @EJB(name = "MovementTypesReportDAO")
+    private MovementTypesReportDAO reportDAO;
+    @EJB(name = "LocaleService")
+    private LocaleService localeService;
+    private static final String PAGE_NUMBER_KEY = MovementTypesReportPage.class.getSimpleName() + "_PAGE_NUMBER";
+    private static final String SORT_ORDER_KEY = MovementTypesReportPage.class.getSimpleName() + "_SORT_ORDER_KEY";
+
+    public MovementTypesReportPage() {
+        init();
+    }
+
+    private void init() {
+        final Integer month = getSession().getMetaData(MovementTypesReportForm.MONTH_KEY);
+        if (month == null) {
+            throw new IllegalArgumentException("Month must be specified.");
+        }
+        final Long departmentId = getSession().getMetaData(MovementTypesReportForm.DEPARTMENT_KEY);
+        if (departmentId == null) {
+            throw new IllegalArgumentException("Department must be specified.");
+        }
+
+        final UIPreferences preferences = getPreferences();
+        final Locale reportLocale = localeService.getReportLocale();
+
+        final Date startDate = DateUtil.getFirstDateOfYear();
+        final Date endDate = DateUtil.getLastDateOfMonth(month);
+
+        add(new Label("title", new ResourceModel("title")));
+        add(new Label("report.header.all", new StringResourceModel("report.header.all", null, new Object[]{endDate})));
+
+
+
+        SortableDataProvider<MovementTypesReport> dataProvider = new SortableDataProvider<MovementTypesReport>() {
+
+            private IModel<Integer> sizeModel = new LoadableDetachableModel<Integer>() {
+
+                @Override
+                protected Integer load() {
+                    return reportDAO.size(departmentId, reportLocale, startDate, endDate);
+                }
+            };
+
+            @Override
+            public Iterator<? extends MovementTypesReport> iterator(int first, int count) {
+                SortParam sortParam = getSort();
+                preferences.putPreference(PreferenceType.SORT_ORDER, SORT_ORDER_KEY, sortParam.isAscending());
+
+                return reportDAO.getAll(departmentId, reportLocale, startDate, endDate, first, count, sortParam.isAscending()).iterator();
+            }
+
+            @Override
+            public int size() {
+                return sizeModel.getObject();
+            }
+
+            @Override
+            public IModel<MovementTypesReport> model(MovementTypesReport object) {
+                return new Model<MovementTypesReport>(object);
+            }
+        };
+        //sort property and ordering
+        Boolean sortOrderFromPreferences = preferences.getPreference(PreferenceType.SORT_ORDER, SORT_ORDER_KEY, Boolean.class);
+        boolean asc = sortOrderFromPreferences != null ? sortOrderFromPreferences : true;
+        dataProvider.setSort("cargoModeName", asc);
+
+        final DataView<MovementTypesReport> list = new DataView<MovementTypesReport>("list", dataProvider, 1) {
+
+            @Override
+            protected void populateItem(Item<MovementTypesReport> item) {
+                MovementTypesReport report = item.getModelObject();
+
+                item.add(new Label("cargoModeName", report.getCargoModeName()));
+
+                item.add(new Label("export", getFormattedReportData(report.getExport(), report.getUnitTypeName())));
+                item.add(new Label("import", getFormattedReportData(report.getImprt(), report.getUnitTypeName())));
+                item.add(new Label("transit", getFormattedReportData(report.getTransit(), report.getUnitTypeName())));
+                item.add(new Label("importTransit", getFormattedReportData(report.getImportTransit(), report.getUnitTypeName())));
+
+                item.add(new Label("exportInCurrentMonth", getFormattedReportData(report.getExportInCurrentMonth(), report.getUnitTypeName())));
+                item.add(new Label("importInCurrentMonth", getFormattedReportData(report.getImprtInCurrentMonth(), report.getUnitTypeName())));
+                item.add(new Label("transitInCurrentMonth", getFormattedReportData(report.getTransitInCurrentMonth(), report.getUnitTypeName())));
+                item.add(new Label("importTransitInCurrentMonth",
+                        getFormattedReportData(report.getImportTransitInCurrentMonth(), report.getUnitTypeName())));
+            }
+        };
+
+        add(new ArrowOrderByBorder("report.header.cargoMode", "cargoModeName", dataProvider) {
+
+            @Override
+            protected void onSortChanged() {
+                list.setCurrentPage(0);
+            }
+        });
+
+        add(list);
+        add(new PagingNavigator("navigator", list, "itemsPerPage", preferences, PAGE_NUMBER_KEY));
+
+//        AjaxFallbackLink<Void> asPdf = new AjaxFallbackLink<Void>("asPdf") {
+//
+//            @Override
+//            public void onClick(AjaxRequestTarget target) {
+//
+//            }
+//        };
+//        add(asPdf);
+
+        HiddenField<Integer> pdfMonth = new HiddenField<Integer>("pdfMonth", new Model<Integer>(month));
+        add(pdfMonth);
+        HiddenField<Long> pdfDepartment = new HiddenField<Long>("pdfDepartment", new Model<Long>(departmentId));
+        add(pdfDepartment);
+
+    }
+
+    private String getFormattedReportData(BigInteger data, String unitTypeName) {
+        return CellFormatter.format(data, unitTypeName);
+    }
+}
+

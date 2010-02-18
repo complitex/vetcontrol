@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM 'http://java.sun.com/dtd/properties.dtd'>
+<properties>
+    <entry key="query">
+        <![CDATA[
+        SELECT
+                (SELECT sc.value from stringculture sc where sc.id =
+                (select cm.name from cargo_mode cm where cm.id = cmct.cargo_mode_id)
+                AND sc.locale = :locale) as cargoModeName,
+                (select sc.value from stringculture sc where sc.id = ut.name
+                and sc.locale = :locale) as unitTypeName,
+                CAST(SUM(CASE WHEN (mt.id = 1) THEN c.count ELSE 0 END) AS UNSIGNED) AS imprt,
+                CAST(SUM(CASE WHEN (mt.id = 2) THEN c.count ELSE 0 END) AS UNSIGNED) AS export,
+                CAST(SUM(CASE WHEN (mt.id = 3) THEN c.count ELSE 0 END) AS UNSIGNED) AS transit,
+                CAST(SUM(CASE WHEN (mt.id = 4) THEN c.count ELSE 0 END) AS UNSIGNED) AS importTransit,
+
+                /* in current month */
+                CAST(SUM(CASE WHEN (mt.id = 1 AND MONTH(dc.created) = MONTH(:endDate)) THEN c.count ELSE 0 END) AS UNSIGNED) AS imprtInCurrentMonth,
+                CAST(SUM(CASE WHEN (mt.id = 2 AND MONTH(dc.created) = MONTH(:endDate)) THEN c.count ELSE 0 END) AS UNSIGNED) AS exportInCurrentMonth,
+                CAST(SUM(CASE WHEN (mt.id = 3 AND MONTH(dc.created) = MONTH(:endDate)) THEN c.count ELSE 0 END) AS UNSIGNED) AS transitInCurrentMonth,
+                CAST(SUM(CASE WHEN (mt.id = 4 AND MONTH(dc.created) = MONTH(:endDate)) THEN c.count ELSE 0 END) AS UNSIGNED) AS importTransitInCurrentMonth
+
+        FROM cargo c
+        left join cargo_mode_cargo_type cmct on cmct.cargo_type_id = c.cargo_type_id
+        LEFT join unit_type ut on c.unit_type_id = ut.id
+        left join document_cargo dc on dc.id = c.document_cargo_id
+        left join movement_type mt on mt.id = dc.movement_type_id
+        where dc.created>= :startDate AND dc.created <= :endDate AND dc.creator_id
+        IN (SELECT u.id FROM `user` u WHERE u.department_id = :department)
+        GROUP BY cmct.cargo_mode_id, ut.id
+        ORDER BY cargoModeName
+]]>
+    </entry>
+    <entry key="size">
+        <![CDATA[
+        SELECT COUNT(*) FROM (SELECT 1
+                                FROM cargo c
+                                left join cargo_mode_cargo_type cmct on cmct.cargo_type_id = c.cargo_type_id
+                                LEFT join unit_type ut on c.unit_type_id = ut.id
+                                left join document_cargo dc on dc.id = c.document_cargo_id
+                                left join movement_type mt on mt.id = dc.movement_type_id
+                                where dc.created>= :startDate AND dc.created <= :endDate AND dc.creator_id
+                                IN (SELECT u.id FROM `user` u WHERE u.department_id = :department)
+                                GROUP BY cmct.cargo_mode_id, ut.id) report
+]]>
+    </entry>
+
+</properties>

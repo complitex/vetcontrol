@@ -17,10 +17,104 @@
         <dependency>
             <groupId>org.vetcontrol</groupId>
             <artifactId>vetcontrol-commons</artifactId>
-            <version>${parent.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.wicket</groupId>
+            <artifactId>wicket</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.wicket</groupId>
+            <artifactId>wicket-extensions</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-web-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>3.5.0-Beta-2</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>hsqldb</groupId>
+                    <artifactId>hsqldb</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.transaction</groupId>
+                    <artifactId>jta</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>jasperreports</groupId>
+            <artifactId>jasperreports</artifactId>
+            <version>3.7.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>jfree</groupId>
+                    <artifactId>jcommon</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jfree</groupId>
+                    <artifactId>jfreechart</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>eclipse</groupId>
+                    <artifactId>jdtcore</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jasperreports-maven-plugin</artifactId>
+                <configuration>
+                    <sourceDirectory>src/main/java</sourceDirectory>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile-reports</goal>
+                        </goals>
+                        <phase>compile</phase>
+                    </execution>
+                </executions>
 
+                <dependencies>
+                    <dependency>
+                        <groupId>jasperreports</groupId>
+                        <artifactId>jasperreports</artifactId>
+                        <version>3.7.1</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>jfree</groupId>
+                                <artifactId>jcommon</artifactId>
+                            </exclusion>
+                            <exclusion>
+                                <groupId>jfree</groupId>
+                                <artifactId>jfreechart</artifactId>
+                            </exclusion>
+                            <exclusion>
+                                <groupId>eclipse</groupId>
+                                <artifactId>jdtcore</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                </dependencies>
+
+            </plugin>
+        </plugins>
+    </build>
 </project>
