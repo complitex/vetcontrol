@@ -124,6 +124,7 @@ public class UserBean {
             entityManager.persist(user);
         } else {
             User currentUser = entityManager.find(User.class, user.getId());
+            entityManager.detach(currentUser);
             for (UserGroup db : currentUser.getUserGroups()) {
                 boolean delete = true;
                 for (UserGroup model : user.getUserGroups()) {
@@ -134,7 +135,9 @@ public class UserBean {
                 }
 
                 if (delete) {
-                    entityManager.remove(db);
+                    entityManager.createQuery("delete from UserGroup ug where ug.id = :id")
+                            .setParameter("id", db.getId())
+                            .executeUpdate();                                                        
                 }
             }
 
