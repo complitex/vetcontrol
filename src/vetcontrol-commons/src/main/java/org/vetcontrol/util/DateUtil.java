@@ -1,7 +1,9 @@
 package org.vetcontrol.util;
 
+import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -9,11 +11,11 @@ import java.util.Date;
  */
 public class DateUtil {
 
-    public static Date getCurrentDate(){
+    public static Date getCurrentDate() {
         return Calendar.getInstance().getTime();
     }
 
-    public static Date getEndOfDay(Date date){
+    public static Date getEndOfDay(Date date) {
         Calendar c = Calendar.getInstance();
 
         c.setTime(date);
@@ -25,7 +27,7 @@ public class DateUtil {
         return c.getTime();
     }
 
-    public static String getTimeDiff(long start, long end){
+    public static String getTimeDiff(long start, long end) {
         long time = end - start;
 
         long msec = time % 1000;
@@ -37,5 +39,29 @@ public class DateUtil {
         long hour = time;
 
         return String.format("%d:%02d:%02d.%03d", hour, min, sec, msec);
+    }
+
+    public static Date getFirstDateOfYear() {
+        Calendar c = Calendar.getInstance();
+        c.set(c.get(Calendar.YEAR), 0, 1, 0, 0, 0);
+        return c.getTime();
+    }
+
+    public static Date getLastDateOfMonth(int month) {
+        Calendar c = Calendar.getInstance();
+        c.set(c.get(Calendar.YEAR), month + 1, 1);
+        c.add(Calendar.DATE, -1);
+        return getEndOfDay(c.getTime());
+    }
+
+    public static String getDisplayMonth(int month, Locale locale) {
+        Calendar c = Calendar.getInstance();
+        c.set(c.get(Calendar.YEAR), month, 1);
+        return c.getDisplayName(Calendar.MONTH, Calendar.LONG, locale);
+    }
+
+    public static String format(Date date, Locale locale) {
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, locale);
+        return dateFormat.format(date);
     }
 }
