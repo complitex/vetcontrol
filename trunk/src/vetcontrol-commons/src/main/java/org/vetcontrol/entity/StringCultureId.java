@@ -1,9 +1,12 @@
 package org.vetcontrol.entity;
 
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.xml.bind.annotation.XmlType;
 
 @Embeddable
+@XmlType
 public class StringCultureId implements java.io.Serializable {
     private Long id;
     private String locale;

@@ -19,7 +19,7 @@ import java.util.List;
 @Table(name = "user")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class User implements ILongId{
+public class User implements ILongId, IUpdated, IQuery{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -174,6 +174,7 @@ public class User implements ILongId{
         this.updated = updated;
     }
 
+    @Override
     public Query getInsertQuery(EntityManager em){
         return em.createNativeQuery("insert into user " +
                 "(id, login, _password, first_name, middle_name, last_name, job_id, department_id, updated) " +

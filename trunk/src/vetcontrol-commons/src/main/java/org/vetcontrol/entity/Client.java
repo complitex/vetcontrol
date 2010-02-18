@@ -110,7 +110,7 @@ public class Client extends Synchronized implements ILongId{
                .setParameter("secure_key", secureKey)
                .setParameter("created", created)
                .setParameter("updated", updated)
-               .setParameter("syncStatus", syncStatus);
+               .setParameter("syncStatus", syncStatus.name());
     }
 
     @Override

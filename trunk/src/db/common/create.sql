@@ -20,7 +20,7 @@ CREATE TABLE  `user` (
   `last_name` VARCHAR(45) DEFAULT NULL,
    `job_id` BIGINT(20) DEFAULT NULL,
   `department_id` BIGINT(20) DEFAULT NULL,
-  `updated` TIMESTAMP  DEFAULT NOW(),
+  `updated` TIMESTAMP NOT NULL DEFAULT NOW(),
   `locale` VARCHAR(2) NULL,
   `page_size` INT(3) NULL,
   PRIMARY KEY (`id`),
@@ -36,7 +36,7 @@ CREATE TABLE  `usergroup` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
   `login` VARCHAR(32) NOT NULL,
   `usergroup` VARCHAR(32) NOT NULL,
-  `updated` TIMESTAMP  DEFAULT NOW(),
+  `updated` TIMESTAMP NOT NULL DEFAULT NOW(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `login_usergroup` (`login`,`usergroup`),
   CONSTRAINT `fk_user_login` FOREIGN KEY (`login`) REFERENCES `user` (`login`)
@@ -76,7 +76,7 @@ CREATE TABLE `stringculture` (
   `id` bigint(20) NOT NULL,
   `locale` varchar(2) NOT NULL,
   `value` varchar(1024) default NULL,
-  `updated` timestamp NOT NULL,
+  `updated` timestamp NOT NULL DEFAULT NOW(),
   PRIMARY KEY  (`id`, `locale`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -88,7 +88,7 @@ CREATE TABLE `countrybook` (
   `id` bigint(20) NOT NULL auto_increment,
   `code` varchar(2) NOT NULL,
   `name` bigint(20) NOT NULL,
-  `updated` timestamp NOT NULL,
+  `updated` timestamp NOT NULL DEFAULT NOW(),
   PRIMARY KEY  (`id`),
   KEY `FK_countrybook_name` (`name`),
   CONSTRAINT `FK_countrybook_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -106,7 +106,7 @@ CREATE TABLE `registered_products` (
   `regnumber` varchar(50) NOT NULL,
   `date` date NOT NULL,
   `country_id` bigint(20) NOT NULL,
-  `updated` timestamp NOT NULL,
+  `updated` timestamp NOT NULL DEFAULT NOW(),
   PRIMARY KEY  (`id`),
   KEY `FK_registeredproducts_name` (`name`),
   CONSTRAINT `FK_registeredproducts_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
@@ -125,7 +125,7 @@ DROP TABLE IF EXISTS `vehicletypes`;
 CREATE TABLE `vehicletypes` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL,
+    `updated` timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`),
     KEY `FK_vehicletypes_name` (`name`),
     CONSTRAINT `FK_vehicletypes_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -138,7 +138,7 @@ CREATE TABLE  `department` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
     `parent_id` bigint(20) NULL,
-    `updated` timestamp NOT NULL,
+    `updated` timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`),
     KEY `FK_department_name` (`name`),
     CONSTRAINT `FK_department_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
@@ -152,7 +152,7 @@ DROP TABLE IF EXISTS `cargo_sender`;
 CREATE TABLE  `cargo_sender` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL,
+    `updated` timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`),
     KEY `FK_cargo_sender_name` (`name`),
     CONSTRAINT `FK_cargo_sender_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -164,7 +164,7 @@ DROP TABLE IF EXISTS `cargo_receiver`;
 CREATE TABLE  `cargo_receiver` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL,
+    `updated` timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`),
     KEY `FK_cargo_receiver_name` (`name`),
     CONSTRAINT `FK_cargo_receiver_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -176,7 +176,7 @@ DROP TABLE IF EXISTS `customs_point`;
 CREATE TABLE  `customs_point` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL,
+    `updated` timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`),
     KEY `FK_customs_point_name` (`name`),
     CONSTRAINT `FK_customs_point_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -188,7 +188,7 @@ DROP TABLE IF EXISTS `movement_type`;
 CREATE TABLE  `movement_type` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL,
+    `updated` timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`),
     KEY `FK_movement_type_name` (`name`),
     CONSTRAINT `FK_movement_type_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -200,7 +200,7 @@ DROP TABLE IF EXISTS `cargo_producer`;
 CREATE TABLE  `cargo_producer` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL,
+    `updated` timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`),
     KEY `FK_producer_name` (`name`),
     CONSTRAINT `FK_producer_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -213,7 +213,7 @@ CREATE TABLE  `cargo_type` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
     `ukt_zed_code` VARCHAR(10) NOT NULL,
-    `updated` timestamp NOT NULL,
+    `updated` timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`),
     UNIQUE KEY `code` (`ukt_zed_code`),
     KEY `FK_cargo_type_name` (`name`),
@@ -226,7 +226,7 @@ DROP TABLE IF EXISTS `cargo_mode_cargo_type`;
 CREATE TABLE  `cargo_mode_cargo_type` (
     `cargo_mode_id` bigint(20) NOT NULL,
     `cargo_type_id` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL,
+    `updated` timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`cargo_mode_id`, `cargo_type_id`),
     UNIQUE KEY `cargo_type_id` (`cargo_type_id`),
     KEY `FK_cargo_mode_cargo_type_cargo_mode_id` (`cargo_mode_id`),
@@ -241,7 +241,7 @@ DROP TABLE IF EXISTS `cargo_mode`;
 CREATE TABLE  `cargo_mode` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL,
+    `updated` timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`),
     KEY `FK_cargo_mode_name` (`name`),
     CONSTRAINT `FK_cargo_mode_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -254,7 +254,7 @@ DROP TABLE IF EXISTS `cargo_mode_unit_type`;
 CREATE TABLE  `cargo_mode_unit_type` (
     `cargo_mode_id` bigint(20) NOT NULL,
     `unit_type_id` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL,
+    `updated` timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`cargo_mode_id`, `unit_type_id`),
     KEY `FK_cargo_mode_unit_type_cargo_mode_id` (`cargo_mode_id`),
     CONSTRAINT `FK_cargo_mode_unit_type_cargo_mode_id` FOREIGN KEY (`cargo_mode_id`) REFERENCES `cargo_mode` (`id`),
@@ -268,7 +268,7 @@ DROP TABLE IF EXISTS `unit_type`;
 CREATE TABLE  `unit_type` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL,
+    `updated` timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`),
     KEY `FK_unit_type_name` (`name`),
     CONSTRAINT `FK_unit_type_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -280,7 +280,7 @@ DROP TABLE IF EXISTS `job`;
 CREATE TABLE  `job` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL,
+    `updated` timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`),
     KEY `FK_job_name` (`name`),
     CONSTRAINT `FK_job_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -297,7 +297,7 @@ CREATE TABLE  `prohibition_country` (
     `reason` bigint(20) NOT NULL,
     `region` bigint(20) NOT NULL,
     `target` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL,
+    `updated` timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`),
     KEY `FK_prohibition_country_country_ref` (`country_id`),
     CONSTRAINT `FK_prohibition_country_country_ref` FOREIGN KEY (`country_id`) REFERENCES `countrybook` (`id`),
@@ -315,7 +315,7 @@ DROP TABLE IF EXISTS `arrest_reason`;
 CREATE TABLE  `arrest_reason` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL,
+    `updated` timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`),
     KEY `FK_arrest_reason_name` (`name`),
     CONSTRAINT `FK_arrest_reason_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -327,7 +327,7 @@ DROP TABLE IF EXISTS `bad_epizootic_situation`;
 CREATE TABLE  `bad_epizootic_situation` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL,
+    `updated` timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`),
     KEY `FK_bad_epizootic_situation_name` (`name`),
     CONSTRAINT `FK_bad_epizootic_situation_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -339,7 +339,7 @@ DROP TABLE IF EXISTS `tariff`;
 CREATE TABLE  `tariff` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL,
+    `updated` timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`),
     KEY `FK_tariff_name` (`name`),
     CONSTRAINT `FK_tariff_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -351,7 +351,7 @@ DROP TABLE IF EXISTS `passing_border_point`;
 CREATE TABLE  `passing_border_point` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL,
+    `updated` timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`),
     KEY `FK_passing_border_point_name` (`name`),
     CONSTRAINT `FK_passing_border_point_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -363,7 +363,7 @@ DROP TABLE IF EXISTS `addressbook`;
 CREATE TABLE  `addressbook` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL,
+    `updated` timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`),
     KEY `FK_addressbook_name` (`name`),
     CONSTRAINT `FK_addressbook_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -392,8 +392,8 @@ DROP TABLE IF EXISTS `document_cargo`;
 CREATE TABLE `document_cargo` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `creator_id` bigint(20) NOT NULL,
-  `created` datetime NOT NULL,
-  `updated` datetime DEFAULT NULL,
+  `created` timestamp NOT NULL,
+  `updated` timestamp NOT NULL,
   `movement_type_id` bigint(20) NOT NULL,
   `vehicle_type_id` bigint(20) NOT NULL,
   `vehicle_details` varchar(255) NOT NULL,
@@ -447,8 +447,8 @@ CREATE TABLE `client` (
   `ip` varchar(64) NOT NULL,
   `mac` varchar(64) NOT NULL,
   `secure_key` varchar(64) NOT NULL,
-  `created` datetime NOT NULL,
-  `updated` datetime DEFAULT NULL,
+  `created` timestamp NOT NULL,
+  `updated` timestamp,
   `department_id` bigint(20) NOT NULL,
   `sync_status` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id`),

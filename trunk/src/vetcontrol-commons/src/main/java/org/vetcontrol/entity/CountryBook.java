@@ -2,10 +2,9 @@ package org.vetcontrol.entity;
 
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +14,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "countrybook")
+@XmlRootElement
 public class CountryBook extends Localizable {
 
     private String code;
@@ -39,6 +39,7 @@ public class CountryBook extends Localizable {
     @MappedProperty("name")
     @Transient
     @Column(length = 10, nullable = false)
+    @XmlTransient
     public List<StringCulture> getNames() {
         return this.names;
     }
@@ -49,6 +50,16 @@ public class CountryBook extends Localizable {
 
     public void addName(StringCulture name) {
         names.add(name);
+    }
+
+    @Override
+    public Query getInsertQuery(EntityManager em){
+        return em.createNativeQuery("insert into countrybook (id, `name`, code, updated) " +
+                "value (:id, :name, :code, :updated)")
+                .setParameter("id", id)
+                .setParameter("name", name)
+                .setParameter("code", code)
+                .setParameter("updated", updated);
     }
 }
 

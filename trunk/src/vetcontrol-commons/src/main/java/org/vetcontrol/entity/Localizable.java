@@ -5,6 +5,7 @@ import org.vetcontrol.util.book.entity.annotation.ValidProperty;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
 import java.util.Map;
@@ -14,9 +15,9 @@ import java.util.Map;
  *         Date: 18.01.2010 18:44:59
  */
 @MappedSuperclass
-public abstract class Localizable implements ILongId {
+public abstract class Localizable implements ILongId, IUpdated, IQuery {
 
-    private Long id;
+    protected Long id;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,7 +29,7 @@ public abstract class Localizable implements ILongId {
     public void setId(Long id) {
         this.id = id;
     }
-    private Long name;
+    protected Long name;
 
     @Column(name = "name")
     public Long getName() {
@@ -72,6 +73,7 @@ public abstract class Localizable implements ILongId {
     @OneToMany(fetch = FetchType.EAGER)
     @MapKeyColumn(name = "locale")
     @JoinColumn(name = "id", referencedColumnName = "name")
+    @XmlTransient
     public Map<String, StringCulture> getNamesMap() {
         return namesMap;
     }  
@@ -82,7 +84,7 @@ public abstract class Localizable implements ILongId {
 
     @Transient
     public String getDisplayName(java.util.Locale current, java.util.Locale system){
-        StringCulture stringCulture = null;
+        StringCulture stringCulture;
         if ((stringCulture = namesMap.get(current.getLanguage())) != null
                 && stringCulture.getValue() != null
                 && !stringCulture.getValue().isEmpty()){
@@ -93,12 +95,12 @@ public abstract class Localizable implements ILongId {
         return "";
     }
 
-
-    private Date updated;
+    protected Date updated;
 
     @ValidProperty(false)
     @Column(name = "updated", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
+    @XmlTransient
     public Date getUpdated() {
         return updated;
     }
@@ -107,4 +109,20 @@ public abstract class Localizable implements ILongId {
         this.updated = updated;
     }
 
+    public abstract Query getInsertQuery(EntityManager em);
+
+    protected Query getInsertQuery(EntityManager em, String table){
+        return em.createNativeQuery("insert into " + table + " (id, `name`, updated) value (:id, :name, :updated)")
+                .setParameter("id", id)
+                .setParameter("name", name)
+                .setParameter("updated", updated);
+    }
+
+    @Override
+    public String toString() {
+        return "[hash: " + Integer.toHexString(hashCode()) +
+                ", id: " + id +
+                ", name: " + name +
+                ", namesMap: " + namesMap + "]";
+    }
 }

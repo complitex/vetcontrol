@@ -4,17 +4,15 @@
  */
 package org.vetcontrol.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
+
+import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 2.4.3.12 Справочник видов грузов
@@ -23,12 +21,14 @@ import org.vetcontrol.util.book.entity.annotation.MappedProperty;
  */
 @Entity
 @Table(name = "cargo_mode")
+@XmlRootElement
 public class CargoMode extends Localizable {
 
     private List<CargoModeCargoType> cargoModeCargoTypes = new ArrayList<CargoModeCargoType>();
 
     @OneToMany(mappedBy = "cargoMode", fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
+    @XmlTransient
     public List<CargoModeCargoType> getCargoModeCargoTypes() {
         return cargoModeCargoTypes;
     }
@@ -45,6 +45,7 @@ public class CargoMode extends Localizable {
 
     @OneToMany(mappedBy = "cargoMode", fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
+    @XmlTransient
     public List<CargoModeUnitType> getCargoModeUnitTypes() {
         return cargoModeUnitTypes;
     }
@@ -62,11 +63,17 @@ public class CargoMode extends Localizable {
     @Transient
     @MappedProperty("name")
     @Column(length = 500, nullable = false)
+    @XmlTransient
     public List<StringCulture> getNames() {
         return names;
     }
 
     public void setNames(List<StringCulture> names) {
         this.names = names;
+    }
+
+    @Override
+    public Query getInsertQuery(EntityManager em) {
+        return getInsertQuery(em, "cargo_mode");
     }
 }
