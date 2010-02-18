@@ -24,7 +24,12 @@ public class JSONResolver {
     private static Logger log = LoggerFactory.getLogger(JSONResolver.class);
 
     private final static Class[] cTypes = {
-            Client.class, Department.class, User.class, UserGroup.class, Job.class
+            Client.class, Department.class, User.class, UserGroup.class, StringCulture.class, StringCultureId.class,
+            AddressBook.class,
+            ArrestReason.class, CargoMode.class, CargoProducer.class, CargoReceiver.class, CargoSender.class,
+            CargoType.class, CountryBook.class, CountryWithBadEpizooticSituation.class, CustomsPoint.class,
+            Department.class, Job.class, MovementType.class, PassingBorderPoint.class, Prohibition.class,
+            RegisteredProducts.class, Tariff.class, UnitType.class, VehicleType.class
     };
     
     private final static Set<Class> types = new HashSet<Class>(Arrays.asList(cTypes));

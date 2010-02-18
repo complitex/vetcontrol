@@ -6,6 +6,8 @@ import org.vetcontrol.util.book.entity.annotation.BookReference;
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,11 +18,8 @@ import java.util.List;
  */
 @Entity
 @Table(name = "registered_products")
+@XmlRootElement
 public class RegisteredProducts extends Localizable{
-    private long classificator;
-    private String regnumber;
-    private Date date;
-
     public RegisteredProducts() {
     }
 
@@ -29,14 +28,39 @@ public class RegisteredProducts extends Localizable{
         this.date = date;
     }
 
+//  classificator
+
+    private Long classificator;
+
     @Column(name = "classificator", nullable = false)
-    public long getClassificator() {
+    public Long getClassificator() {
         return this.classificator;
     }
 
-    public void setClassificator(long classificator) {
+    public void setClassificator(Long classificator) {
         this.classificator = classificator;
     }
+
+    private List<StringCulture> classificators = new ArrayList<StringCulture>();
+
+    @MappedProperty("classificator")
+    @Transient
+    @Column(length = 10, nullable = false)
+    @XmlTransient
+    public List<StringCulture> getClassificators() {
+        return classificators;
+    }
+
+    public void setClassificators(List<StringCulture> classificators) {
+        this.classificators = classificators;
+    }
+
+    public void addClassificator(StringCulture classificator) {
+        classificators.add(classificator);
+    }
+
+//  cargoProducer
+
     private CargoProducer cargoProducer;
 
     @BookReference(referencedProperty = "names")
@@ -51,6 +75,10 @@ public class RegisteredProducts extends Localizable{
         this.cargoProducer = cargoProducer;
     }
 
+//  regnumber
+
+    private String regnumber;
+
     @Column(name = "regnumber", nullable = false, length = 50)
     public String getRegnumber() {
         return this.regnumber;
@@ -59,6 +87,10 @@ public class RegisteredProducts extends Localizable{
     public void setRegnumber(String regnumber) {
         this.regnumber = regnumber;
     }
+
+//  date
+
+    private Date date;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "date", nullable = false, length = 10)
@@ -69,13 +101,11 @@ public class RegisteredProducts extends Localizable{
     public void setDate(Date date) {
         this.date = date;
     }
+
+// names
+
     private List<StringCulture> names = new ArrayList<StringCulture>();
 
-    /**
-     * Get the value of names
-     *
-     * @return the value of names
-     */
     @MappedProperty("name")
     @Transient
     @Column(length = 10, nullable = false)
@@ -83,51 +113,14 @@ public class RegisteredProducts extends Localizable{
         return names;
     }
 
-    /**
-     * Set the value of names
-     *
-     * @param names new value of names
-     */
     public void setNames(List<StringCulture> names) {
         this.names = names;
     }
 
-    public void addName(StringCulture name) {
-        names.add(name);
-    }
-    private List<StringCulture> classificators = new ArrayList<StringCulture>();
+//  country
 
-    /**
-     * Get the value of classificators
-     *
-     * @return the value of classificators
-     */
-    @MappedProperty("classificator")
-    @Transient
-    @Column(length = 10, nullable = false)
-    public List<StringCulture> getClassificators() {
-        return classificators;
-    }
-
-    /**
-     * Set the value of classificators
-     *
-     * @param classificators new value of classificators
-     */
-    public void setClassificators(List<StringCulture> classificators) {
-        this.classificators = classificators;
-    }
-
-    public void addClassificator(StringCulture classificator) {
-        classificators.add(classificator);
-    }
     private CountryBook country;
 
-    /**
-     * Get the value of referencedCountry
-     *
-     * @return the value of referencedCountry
-     */
     @BookReference(referencedProperty = "names")
     @ManyToOne(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
@@ -136,14 +129,23 @@ public class RegisteredProducts extends Localizable{
         return country;
     }
 
-    /**
-     * Set the value of referencedCountry
-     *
-     * @param referencedCountry new value of referencedCountry
-     */
     public void setCountry(CountryBook referencedCountry) {
         this.country = referencedCountry;
     }
+
+    @Override
+    public Query getInsertQuery(EntityManager em){
+        return em.createNativeQuery("insert into registered_products (id, `date`, `classificator`, cargo_producer_id, " +
+                "regnumber, `name`, country_id, updated) " +
+                "value (:id, :date, :classificator, :cargo_producer_id, :regnumber, :name, :country_id, :updated)")
+                .setParameter("date", date)
+                .setParameter("classificator", classificator)
+                .setParameter("cargo_producer_id", cargoProducer.getId())
+                .setParameter("name", name)
+                .setParameter("country_id", country.getId())
+                .setParameter("updated", updated);
+    }
+
 }
 
 

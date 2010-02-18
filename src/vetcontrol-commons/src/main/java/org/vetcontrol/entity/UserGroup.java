@@ -18,7 +18,7 @@ import java.util.Date;
 @Table(name = "usergroup")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class UserGroup implements Serializable {
+public class UserGroup implements Serializable, IUpdated, IQuery {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @XmlID @XmlJavaTypeAdapter(LongAdapter.class)
@@ -28,7 +28,7 @@ public class UserGroup implements Serializable {
     @Column(name = "usergroup", nullable = false)
     private SecurityGroup securityGroup;
 
-    @Column(name = "login", nullable = false)
+    @Column(name = "login")
     private String login;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -66,6 +66,7 @@ public class UserGroup implements Serializable {
         this.updated = updated;
     }
 
+    @Override
     public Query getInsertQuery(EntityManager em){
         return em.createNativeQuery("insert into `usergroup` (id, `usergroup`, login, updated)" +
                 " value (:id, :usergroup, :login, :updated)")
@@ -92,7 +93,10 @@ public class UserGroup implements Serializable {
 
     @Override
     public int hashCode() {
-        return securityGroup == null ? 0 : securityGroup.name().hashCode();
+        int hash = (this.securityGroup != null ? this.securityGroup.hashCode() : 0);
+        hash += 2*(this.login != null ? this.login.hashCode() : 0);
+
+        return hash;
     }
 
     @Override

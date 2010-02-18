@@ -10,7 +10,9 @@ import org.vetcontrol.util.book.entity.annotation.BookReference;
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +35,7 @@ public class Department extends Localizable{
     @Transient
     @MappedProperty("name")
     @Column(length = 50, nullable = false)
+    @XmlTransient
     public List<StringCulture> getNames() {
         return names;
     }
@@ -56,6 +59,7 @@ public class Department extends Localizable{
     @ManyToOne(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "parent_id", nullable = true)
+    @XmlIDREF
     public Department getParent() {
         return parent;
     }
@@ -68,11 +72,22 @@ public class Department extends Localizable{
     public void setParent(Department parent) {
         this.parent = parent;
     }
+
+    @Override
+    public Query getInsertQuery(EntityManager em){
+        return em.createNativeQuery("insert into department (id, `name`, parent_id, updated) " +
+                "value (:id, :name, :parent_id, :updated)")
+                .setParameter("id", id)
+                .setParameter("name", name)
+                .setParameter("parent_id", parent != null ? parent.getId() : null)
+                .setParameter("updated", updated);
+    }
     
     @Override
     public String toString() {
         return new StringBuilder().append("[hash: ").append(Integer.toHexString(hashCode()))
-                .append(", id: ").append(getId())                 
+                .append(", id: ").append(id)
+                .append(", parent_id: ").append(parent != null ? parent.getId() : null)
                 .append(", namesMap: ").append(getNamesMap())
                 .append("]").toString();
     }

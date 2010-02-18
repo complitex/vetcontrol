@@ -5,15 +5,10 @@
 package org.vetcontrol.information.web.support;
 
 import org.vetcontrol.entity.*;
-
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.vetcontrol.information.web.pages.custom.cargomode.CargoModeList;
 import org.vetcontrol.web.template.TemplatePage;
+
+import java.util.*;
 
 /**
  *
@@ -21,8 +16,9 @@ import org.vetcontrol.web.template.TemplatePage;
  */
 public class BookTypes {
 
-    public static List<Class<? extends Serializable>> getList() {
-        return Collections.unmodifiableList(Arrays.asList(
+    @SuppressWarnings({"unchecked"})
+    public static List<Class> getList() {
+        return Collections.unmodifiableList((List)Arrays.asList(
                 Department.class,
                 CountryBook.class,
                 RegisteredProducts.class,

@@ -10,7 +10,9 @@ import org.vetcontrol.util.book.entity.annotation.BookReference;
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
 
 import javax.persistence.*;
-import java.io.Serializable;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,7 +24,8 @@ import java.util.List;
  */
 @Entity
 @Table(name = "prohibition_country")
-public class Prohibition implements Serializable {
+@XmlRootElement
+public class Prohibition implements ILongId, IUpdated, IQuery {
 
     private Long id;
 
@@ -63,6 +66,7 @@ public class Prohibition implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "country_id", nullable = false)
+    @XmlIDREF
     public CountryBook getCountry() {
         return country;
     }
@@ -85,6 +89,7 @@ public class Prohibition implements Serializable {
     @MappedProperty("reason")
     @Transient
     @Column(length = 50, nullable = false)
+    @XmlTransient
     public List<StringCulture> getReasons() {
         return reasons;
     }
@@ -107,6 +112,7 @@ public class Prohibition implements Serializable {
     @MappedProperty("region")
     @Transient
     @Column(length = 50, nullable = false)
+    @XmlTransient
     public List<StringCulture> getRegions() {
         return regions;
     }
@@ -129,11 +135,37 @@ public class Prohibition implements Serializable {
     @MappedProperty("target")
     @Transient
     @Column(length = 50, nullable = false)
+    @XmlTransient
     public List<StringCulture> getTargets() {
         return targets;
     }
 
     public void setTargets(List<StringCulture> targets) {
         this.targets = targets;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @XmlTransient
+    private Date updated;
+
+    public Date getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Date updated) {
+        this.updated = updated;
+    }
+
+    @Override
+    public Query getInsertQuery(EntityManager em){
+        return em.createNativeQuery("insert into prohibition_country (id, `date`, `number`, country_id, reason, region, target, updated) " +
+                "value (:id, :date, :number, :country_id, :reason, :region, :target, :updated)")
+                .setParameter("date", date)
+                .setParameter("number", number)
+                .setParameter("country_id", country.getId())
+                .setParameter("reason", reason)
+                .setParameter("region", region)
+                .setParameter("target", target)
+                .setParameter("updated", updated);
     }
 }

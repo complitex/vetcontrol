@@ -1,27 +1,17 @@
 package org.vetcontrol.entity;
 
-import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import org.vetcontrol.util.book.entity.annotation.ValidProperty;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "stringculture")
-public class StringCulture implements Serializable {
-
-    private StringCultureId id;
-    private String value;
-
+@XmlRootElement
+public class StringCulture implements IUpdated, Serializable {
     public StringCulture() {
     }
 
@@ -33,6 +23,8 @@ public class StringCulture implements Serializable {
         this.id = id;
         this.value = value;
     }
+
+    private StringCultureId id;
 
     @EmbeddedId
     @AttributeOverrides({
@@ -48,6 +40,8 @@ public class StringCulture implements Serializable {
         this.id = id;
     }
 
+    private String value;
+
     @Column(name = "value", length = 1024)
     public String getValue() {
         return this.value;
@@ -61,12 +55,31 @@ public class StringCulture implements Serializable {
     @ValidProperty(false)
     @Column(name = "updated", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
+    @XmlTransient
     public Date getUpdated() {
         return updated;
     }
 
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    public Query getInsertQuery(EntityManager em){
+        return em.createNativeQuery("insert into stringculture (id, locale, `value`, updated) " +
+                "value (:id, :locale, :value, :updated)")
+                .setParameter("id", id.getId())
+                .setParameter("locale", id.getLocale())
+                .setParameter("value", value)
+                .setParameter("updated", updated);
+    }
+
+    @Override
+    public String toString() {
+        return "[hash: " + Integer.toHexString(hashCode()) +
+                ", id: " + id.getId() +
+                ", locale: " + id.getLocale() +
+                ", value: " + value +
+                ", updated: " + updated + "]";
     }
 }
 
