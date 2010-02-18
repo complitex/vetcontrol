@@ -243,5 +243,9 @@
             <id>jboss</id>
             <url>http://repository.jboss.com/maven2</url>
         </repository>
+         <repository>
+            <id>jasperReports</id>
+            <url>http://jasperreports.sourceforge.net/maven2</url>
+        </repository>
     </repositories>
 </project>
