@@ -94,4 +94,11 @@ public class MovementTypesReportDAO {
             }
         }
     }
+
+    public String getDepartmentName(Long departmentId, Locale locale){
+        return em.createQuery("SELECT sc.value FROM StringCulture sc WHERE sc.id.id = " +
+                "(SELECT d.name FROM Department d WHERE d.id = :departmentId) AND sc.id.locale = :locale", String.class).
+                setParameter("departmentId", departmentId).
+                setParameter("locale", locale.getLanguage()).getSingleResult();
+    }
 }

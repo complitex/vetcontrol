@@ -67,8 +67,9 @@ public final class MovementTypesReportPage extends TemplatePage {
         final Date endDate = DateUtil.getLastDateOfMonth(month);
 
         add(new Label("title", new ResourceModel("title")));
-        add(new Label("report.name", new StringResourceModel("report.name", null, 
-                new Object[]{DateUtil.getDisplayMonth(month, reportLocale).toLowerCase()})));
+        add(new Label("report.name.params", new StringResourceModel("report.name.params", null,
+                new Object[]{DateUtil.getDisplayMonth(month, reportLocale).toLowerCase(), String.valueOf(DateUtil.getCurrrentYear()),
+                            reportDAO.getDepartmentName(departmentId, reportLocale)})));
         add(new Label("report.header.all", new StringResourceModel("report.header.all", null, new Object[]{endDate})));
 
 
