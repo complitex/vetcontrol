@@ -18,6 +18,8 @@ public class SecurityRoles {
     public final static String DOCUMENT_DEP_CHILD_VIEW = "DOCUMENT_DEP_CHILD_VIEW";
     public final static String DOCUMENT_DEP_CHILD_EDIT = "DOCUMENT_DEP_CHILD_EDIT";
     public final static String LOGGING_VIEW = "LOGGING_VIEW";
+    public final static String LOCAL_REPORT = "LOCAL_REPORT";
+    public final static String LOCAL_AND_REGIONAL_REPORT = "LOCAL_AND_REGIONAL_REPORT";
 
 
 //    ,DOCUMENT_VIEW_DEPARTMENT, DOCUMENT_EDIT_DEPARTMENT,
