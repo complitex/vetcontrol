@@ -197,3 +197,9 @@ input.btnMiddle {
 .table_input input, .table_input select{
     width:100%;    
 }
+
+/* отчеты */
+
+.referenceToExport{
+    padding-top: 4px;
+}
