@@ -22,8 +22,7 @@ import java.util.List;
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 17.02.2010 14:46:24
  */
-@Stateless
-@Path("/usergroup")
+@Stateless @Path("/usergroup")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class UserGroupResourceBean {

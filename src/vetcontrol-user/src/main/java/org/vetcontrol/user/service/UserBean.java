@@ -54,10 +54,10 @@ public class UserBean {
                 order = " order by u.middleName";
                 break;
             case JOB:
-                order = " order by jn.value";
+                order = " order by jn";
                 break;
             case DEPARTMENT:
-                order = " order by dn.value";
+                order = " order by dn";
                 break;
         }
 

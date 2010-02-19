@@ -20,7 +20,7 @@ public class CargoTypeBean {
 
     public List<CargoType> getCargoTypesByName(String filter, int count){
         return entityManager
-                .createQuery("select distinct(ct) from CargoType ct left join ct.namesMap n where n.value like :filter order by n.value", CargoType.class)
+                .createQuery("select distinct(ct) from CargoType ct left join ct.namesMap n where n like :filter order by n", CargoType.class)
                 .setParameter("filter", "%" + filter + "%")
                 .setMaxResults(count)
                 .getResultList();

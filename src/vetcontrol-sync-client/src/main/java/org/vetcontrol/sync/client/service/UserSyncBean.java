@@ -59,7 +59,7 @@ public class UserSyncBean {
         }
 
         //Загрузка с сервера списка групп пользователей
-        List<UserGroup> usergroups = createJSONClient("/user/usergroup/list").post(new GenericType<List<UserGroup>>(){}, 
+        List<UserGroup> usergroups = createJSONClient("/usergroup/list").post(new GenericType<List<UserGroup>>(){}, 
                 new SyncRequestEntity(secureKey, getUpdated(UserGroup.class)));
 
         //Сохранение в базу данных списка групп пользователей
