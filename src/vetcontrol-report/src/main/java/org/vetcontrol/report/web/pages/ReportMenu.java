@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Locale;
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.ITemplateLink;
 import org.vetcontrol.web.template.ResourceTemplateMenu;
 
@@ -17,6 +19,7 @@ import org.vetcontrol.web.template.ResourceTemplateMenu;
  *
  * @author Artem
  */
+@AuthorizeInstantiation({SecurityRoles.LOCAL_AND_REGIONAL_REPORT, SecurityRoles.LOCAL_REPORT})
 public class ReportMenu extends ResourceTemplateMenu {
 
     @Override

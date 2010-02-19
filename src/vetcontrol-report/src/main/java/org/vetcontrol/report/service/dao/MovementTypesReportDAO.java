@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -23,6 +24,7 @@ import org.vetcontrol.report.entity.MovementTypesReport;
 import org.vetcontrol.report.util.QueryLoader;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.util.book.service.HibernateSessionTransformer;
+import org.vetcontrol.web.security.SecurityRoles;
 
 /**
  *
@@ -30,6 +32,7 @@ import org.vetcontrol.util.book.service.HibernateSessionTransformer;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
+@RolesAllowed({SecurityRoles.LOCAL_AND_REGIONAL_REPORT, SecurityRoles.LOCAL_REPORT})
 public class MovementTypesReportDAO {
 
     @PersistenceContext

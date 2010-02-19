@@ -14,9 +14,7 @@
 			<pen lineWidth="0.5" lineStyle="Solid"/>
 		</box>
 	</style>
-        <style name="Title" isDefault="false" hAlign="Center" vAlign="Middle" fontSize="7" pdfFontName="org/vetcontrol/report/fonts/DejaVuSerif.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true">
-	</style>
-
+	<style name="Title" isDefault="false" hAlign="Center" vAlign="Middle" fontSize="7" pdfFontName="org/vetcontrol/report/fonts/DejaVuSerif.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
 	<parameter name="endDate" class="java.util.Date"/>
 	<parameter name="month" class="java.lang.String"/>
 	<parameter name="year" class="java.lang.String"/>
@@ -37,7 +35,7 @@
 	<title>
 		<band height="46" splitType="Stretch">
 			<textField>
-				<reportElement style="Title" x="137" y="0" width="261" height="19"/>
+				<reportElement style="Title" x="95" y="0" width="365" height="19"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{title}]]></textFieldExpression>
 			</textField>
