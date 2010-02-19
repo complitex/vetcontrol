@@ -5,10 +5,13 @@
 package org.vetcontrol.report.web.pages;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import javax.ejb.EJB;
+import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
@@ -25,18 +28,23 @@ import org.apache.wicket.model.StringResourceModel;
 import org.vetcontrol.report.entity.MovementTypesReport;
 import org.vetcontrol.report.service.LocaleService;
 import org.vetcontrol.report.service.dao.MovementTypesReportDAO;
+import org.vetcontrol.report.util.jasper.ExportType;
 import org.vetcontrol.report.util.movementtypes.CellFormatter;
+import org.vetcontrol.report.web.components.PrintButton;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UIPreferences.PreferenceType;
 import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
 import org.vetcontrol.web.component.paging.PagingNavigator;
+import org.vetcontrol.web.component.toolbar.ToolbarButton;
+import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.TemplatePage;
 
 /**
  *
  * @author Artem
  */
+@AuthorizeInstantiation(SecurityRoles.LOCAL_AND_REGIONAL_REPORT)
 public final class MovementTypesReportPage extends TemplatePage {
 
     @EJB(name = "MovementTypesReportDAO")
@@ -69,10 +77,8 @@ public final class MovementTypesReportPage extends TemplatePage {
         add(new Label("title", new ResourceModel("title")));
         add(new Label("report.name.params", new StringResourceModel("report.name.params", null,
                 new Object[]{DateUtil.getDisplayMonth(month, reportLocale).toLowerCase(), String.valueOf(DateUtil.getCurrrentYear()),
-                            reportDAO.getDepartmentName(departmentId, reportLocale)})));
+                    reportDAO.getDepartmentName(departmentId, reportLocale)})));
         add(new Label("report.header.all", new StringResourceModel("report.header.all", null, new Object[]{endDate})));
-
-
 
         SortableDataProvider<MovementTypesReport> dataProvider = new SortableDataProvider<MovementTypesReport>() {
 
@@ -141,6 +147,7 @@ public final class MovementTypesReportPage extends TemplatePage {
 
         IBehavior monthAttribute = new SimpleAttributeModifier("name", "month");
         IBehavior departmentAttribute = new SimpleAttributeModifier("name", "department");
+
         //pdf parameters
         HiddenField<Integer> pdfMonth = new HiddenField<Integer>("pdfMonth", new Model<Integer>(month));
         pdfMonth.add(monthAttribute);
@@ -161,6 +168,14 @@ public final class MovementTypesReportPage extends TemplatePage {
 
     private String getFormattedReportData(BigInteger data, String unitTypeName) {
         return CellFormatter.format(data, unitTypeName);
+    }
+
+    @Override
+    protected List<ToolbarButton> getToolbarButtons(String id) {
+        List<ToolbarButton> toolbarButtons = new ArrayList<ToolbarButton>();
+        toolbarButtons.add(new PrintButton(id, ExportType.PDF, "pdfForm"));
+        toolbarButtons.add(new PrintButton(id, ExportType.TEXT, "textForm"));
+        return toolbarButtons;
     }
 }
 

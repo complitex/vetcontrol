@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -36,12 +37,14 @@ import org.vetcontrol.report.util.jasper.ExportType;
 import org.vetcontrol.report.util.jasper.ExportTypeUtil;
 import org.vetcontrol.report.util.jasper.TextExporterConstants;
 import org.vetcontrol.util.DateUtil;
+import org.vetcontrol.web.security.SecurityRoles;
 
 /**
  *
  * @author Artem
  */
 @WebServlet(name = "MovementTypesReportServlet", urlPatterns = {"/MovementTypesReportServlet"})
+@RolesAllowed({SecurityRoles.LOCAL_AND_REGIONAL_REPORT, SecurityRoles.LOCAL_REPORT})
 public class MovementTypesReportServlet extends HttpServlet {
 
     public static final String MONTH_KEY = "month";

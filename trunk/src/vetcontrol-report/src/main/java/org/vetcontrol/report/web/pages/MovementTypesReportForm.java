@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 import javax.ejb.EJB;
 import org.apache.wicket.MetaDataKey;
+import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -21,12 +22,14 @@ import org.vetcontrol.report.service.dao.MovementTypesReportDAO;
 import org.vetcontrol.report.util.Month;
 import org.vetcontrol.report.web.components.DepartmentPicker;
 import org.vetcontrol.report.web.components.MonthPicker;
+import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.FormTemplatePage;
 
 /**
  *
  * @author Artem
  */
+@AuthorizeInstantiation(SecurityRoles.LOCAL_AND_REGIONAL_REPORT)
 public final class MovementTypesReportForm extends FormTemplatePage {
 
     @EJB(name = "MovementTypesReportDAO")

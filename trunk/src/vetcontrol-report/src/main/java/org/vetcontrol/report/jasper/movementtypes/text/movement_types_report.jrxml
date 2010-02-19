@@ -1,181 +1,179 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="movement_types_report" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="org/vetcontrol/report/jasper/movementtypes/movement_types_report">
-    <property name="ireport.zoom" value="1.0"/>
-    <property name="ireport.x" value="0"/>
-    <property name="ireport.y" value="0"/>
-    <import value="org.vetcontrol.report.util.movementtypes.CellFormatter"/>
-    <style name="base" isDefault="true" hAlign="Center" vAlign="Middle" fontSize="7" isStrikeThrough="false" pdfFontName="org/vetcontrol/report/fonts/DejaVuSerif.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true">
-        <box>
-            <pen lineWidth="0.5" lineStyle="Solid"/>
-        </box>
-    </style>
-    <style name="Header" isDefault="false" hAlign="Center" vAlign="Middle" fontSize="7" pdfFontName="org/vetcontrol/report/fonts/DejaVuSerif-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true">
-        <box>
-            <pen lineWidth="0.5" lineStyle="Solid"/>
-        </box>
-    </style>
-    <style name="Title" isDefault="false" hAlign="Center" vAlign="Middle" fontSize="7" pdfFontName="org/vetcontrol/report/fonts/DejaVuSerif.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true">
-    </style>
-
-    <parameter name="endDate" class="java.util.Date"/>
-    <parameter name="month" class="java.lang.String"/>
-    <parameter name="year" class="java.lang.String"/>
-    <parameter name="department" class="java.lang.String"/>
-    <field name="cargoModeName" class="java.lang.String"/>
-    <field name="unitTypeName" class="java.lang.String"/>
-    <field name="imprt" class="java.math.BigInteger"/>
-    <field name="export" class="java.math.BigInteger"/>
-    <field name="transit" class="java.math.BigInteger"/>
-    <field name="importTransit" class="java.math.BigInteger"/>
-    <field name="imprtInCurrentMonth" class="java.math.BigInteger"/>
-    <field name="exportInCurrentMonth" class="java.math.BigInteger"/>
-    <field name="transitInCurrentMonth" class="java.math.BigInteger"/>
-    <field name="importTransitInCurrentMonth" class="java.math.BigInteger"/>
-    <background>
-        <band splitType="Stretch"/>
-    </background>
-    <title>
-        <band height="46" splitType="Stretch">
-            <textField>
-                <reportElement style="Title" x="137" y="0" width="261" height="19"/>
-                <textElement/>
-                <textFieldExpression class="java.lang.String"><![CDATA[$R{title}]]></textFieldExpression>
-            </textField>
-            <textField>
-                <reportElement style="Title" x="180" y="19" width="185" height="20"/>
-                <textElement/>
-                <textFieldExpression class="java.lang.String"><![CDATA[$R{month}+$P{month} + " "+$P{year} + $R{year}+", "+$P{department}]]></textFieldExpression>
-            </textField>
-        </band>
-    </title>
-    <pageHeader>
-        <band height="69" splitType="Stretch">
-            <staticText>
-                <reportElement style="Header" x="16" y="0" width="101" height="19"/>
-                <textElement/>
-                <text><![CDATA[]]></text>
-            </staticText>
-            <textField isStretchWithOverflow="true">
-                <reportElement style="Header" x="16" y="19" width="101" height="37"/>
-                <textElement/>
-                <textFieldExpression class="java.lang.String"><![CDATA[$R{cargoMode}]]></textFieldExpression>
-            </textField>
-            <textField isStretchWithOverflow="true">
-                <reportElement style="Header" x="117" y="0" width="206" height="19"/>
-                <textElement/>
-                <textFieldExpression class="java.lang.String"><![CDATA[$R{on} + "  " + java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT, $P{REPORT_LOCALE}).format($P{endDate})]]></textFieldExpression>
-            </textField>
-            <textField isStretchWithOverflow="true">
-                <reportElement style="Header" x="117" y="19" width="63" height="37"/>
-                <textElement/>
-                <textFieldExpression class="java.lang.String"><![CDATA[$R{export}]]></textFieldExpression>
-            </textField>
-            <textField isStretchWithOverflow="true">
-                <reportElement style="Header" x="180" y="19" width="40" height="37"/>
-                <textElement/>
-                <textFieldExpression class="java.lang.String"><![CDATA[$R{import}]]></textFieldExpression>
-            </textField>
-            <textField isStretchWithOverflow="true">
-                <reportElement style="Header" x="220" y="19" width="45" height="37"/>
-                <textElement/>
-                <textFieldExpression class="java.lang.String"><![CDATA[$R{transit}]]></textFieldExpression>
-            </textField>
-            <textField isStretchWithOverflow="true">
-                <reportElement style="Header" x="265" y="19" width="58" height="37"/>
-                <textElement/>
-                <textFieldExpression class="java.lang.String"><![CDATA[$R{importTransit}]]></textFieldExpression>
-            </textField>
-            <textField isStretchWithOverflow="true">
-                <reportElement style="Header" x="375" y="19" width="40" height="37"/>
-                <textElement/>
-                <textFieldExpression class="java.lang.String"><![CDATA[$R{import}]]></textFieldExpression>
-            </textField>
-            <textField isStretchWithOverflow="true">
-                <reportElement style="Header" x="415" y="19" width="45" height="37"/>
-                <textElement/>
-                <textFieldExpression class="java.lang.String"><![CDATA[$R{transit}]]></textFieldExpression>
-            </textField>
-            <textField isStretchWithOverflow="true">
-                <reportElement style="Header" x="460" y="19" width="58" height="37"/>
-                <textElement/>
-                <textFieldExpression class="java.lang.String"><![CDATA[$R{importTransit}]]></textFieldExpression>
-            </textField>
-            <textField isStretchWithOverflow="true">
-                <reportElement style="Header" x="323" y="0" width="195" height="19"/>
-                <textElement/>
-                <textFieldExpression class="java.lang.String"><![CDATA[$R{inCurrentMonth}]]></textFieldExpression>
-            </textField>
-            <textField isStretchWithOverflow="true">
-                <reportElement style="Header" x="323" y="19" width="52" height="37"/>
-                <textElement/>
-                <textFieldExpression class="java.lang.String"><![CDATA[$R{export}]]></textFieldExpression>
-            </textField>
-            <staticText>
-                <reportElement x="16" y="56" width="502" height="13"/>
-                <textElement/>
-                <text><![CDATA[____________________________________________________________________________________________________________________________]]></text>
-            </staticText>
-        </band>
-    </pageHeader>
-    <columnHeader>
-        <band splitType="Stretch"/>
-    </columnHeader>
-    <detail>
-        <band height="44" splitType="Stretch">
-            <textField isStretchWithOverflow="true">
-                <reportElement x="16" y="0" width="101" height="44"/>
-                <textElement/>
-                <textFieldExpression class="java.lang.String"><![CDATA[$F{cargoModeName}]]></textFieldExpression>
-            </textField>
-            <textField isStretchWithOverflow="true">
-                <reportElement x="117" y="0" width="63" height="44"/>
-                <textElement/>
-                <textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{export}, $F{unitTypeName})]]></textFieldExpression>
-            </textField>
-            <textField isStretchWithOverflow="true">
-                <reportElement x="180" y="0" width="40" height="44"/>
-                <textElement/>
-                <textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{imprt}, $F{unitTypeName})]]></textFieldExpression>
-            </textField>
-            <textField isStretchWithOverflow="true">
-                <reportElement x="220" y="0" width="45" height="44"/>
-                <textElement/>
-                <textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{transit}, $F{unitTypeName})]]></textFieldExpression>
-            </textField>
-            <textField isStretchWithOverflow="true">
-                <reportElement x="265" y="0" width="58" height="44"/>
-                <textElement/>
-                <textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{importTransit}, $F{unitTypeName})]]></textFieldExpression>
-            </textField>
-            <textField isStretchWithOverflow="true">
-                <reportElement x="323" y="0" width="52" height="44"/>
-                <textElement/>
-                <textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{exportInCurrentMonth}, $F{unitTypeName})]]></textFieldExpression>
-            </textField>
-            <textField isStretchWithOverflow="true">
-                <reportElement x="375" y="0" width="40" height="44"/>
-                <textElement/>
-                <textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{imprtInCurrentMonth}, $F{unitTypeName})]]></textFieldExpression>
-            </textField>
-            <textField isStretchWithOverflow="true">
-                <reportElement x="415" y="0" width="45" height="44"/>
-                <textElement/>
-                <textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{transitInCurrentMonth}, $F{unitTypeName})]]></textFieldExpression>
-            </textField>
-            <textField isStretchWithOverflow="true">
-                <reportElement x="460" y="0" width="58" height="44"/>
-                <textElement/>
-                <textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{importTransitInCurrentMonth}, $F{unitTypeName})]]></textFieldExpression>
-            </textField>
-        </band>
-    </detail>
-    <columnFooter>
-        <band splitType="Stretch"/>
-    </columnFooter>
-    <pageFooter>
-        <band splitType="Stretch"/>
-    </pageFooter>
-    <summary>
-        <band splitType="Stretch"/>
-    </summary>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="org.vetcontrol.report.util.movementtypes.CellFormatter"/>
+	<style name="base" isDefault="true" hAlign="Center" vAlign="Middle" fontSize="7" isStrikeThrough="false" pdfFontName="org/vetcontrol/report/fonts/DejaVuSerif.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="Header" isDefault="false" hAlign="Center" vAlign="Middle" fontSize="7" pdfFontName="org/vetcontrol/report/fonts/DejaVuSerif-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="Title" isDefault="false" hAlign="Center" vAlign="Middle" fontSize="7" pdfFontName="org/vetcontrol/report/fonts/DejaVuSerif.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<parameter name="endDate" class="java.util.Date"/>
+	<parameter name="month" class="java.lang.String"/>
+	<parameter name="year" class="java.lang.String"/>
+	<parameter name="department" class="java.lang.String"/>
+	<field name="cargoModeName" class="java.lang.String"/>
+	<field name="unitTypeName" class="java.lang.String"/>
+	<field name="imprt" class="java.math.BigInteger"/>
+	<field name="export" class="java.math.BigInteger"/>
+	<field name="transit" class="java.math.BigInteger"/>
+	<field name="importTransit" class="java.math.BigInteger"/>
+	<field name="imprtInCurrentMonth" class="java.math.BigInteger"/>
+	<field name="exportInCurrentMonth" class="java.math.BigInteger"/>
+	<field name="transitInCurrentMonth" class="java.math.BigInteger"/>
+	<field name="importTransitInCurrentMonth" class="java.math.BigInteger"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="46" splitType="Stretch">
+			<textField>
+				<reportElement style="Title" x="95" y="0" width="365" height="19"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{title}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Title" x="180" y="19" width="185" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{month}+$P{month} + " "+$P{year} + $R{year}+", "+$P{department}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="69" splitType="Stretch">
+			<staticText>
+				<reportElement style="Header" x="16" y="0" width="101" height="19"/>
+				<textElement/>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header" x="16" y="19" width="101" height="37"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{cargoMode}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header" x="117" y="0" width="206" height="19"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{on} + "  " + java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT, $P{REPORT_LOCALE}).format($P{endDate})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header" x="117" y="19" width="63" height="37"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{export}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header" x="180" y="19" width="40" height="37"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{import}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header" x="220" y="19" width="45" height="37"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{transit}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header" x="265" y="19" width="58" height="37"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{importTransit}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header" x="375" y="19" width="40" height="37"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{import}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header" x="415" y="19" width="45" height="37"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{transit}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header" x="460" y="19" width="58" height="37"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{importTransit}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header" x="323" y="0" width="195" height="19"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{inCurrentMonth}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header" x="323" y="19" width="52" height="37"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{export}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="16" y="56" width="502" height="13"/>
+				<textElement/>
+				<text><![CDATA[____________________________________________________________________________________________________________________________]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="44" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="16" y="0" width="101" height="44"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{cargoModeName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="117" y="0" width="63" height="44"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{export}, $F{unitTypeName})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="180" y="0" width="40" height="44"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{imprt}, $F{unitTypeName})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="220" y="0" width="45" height="44"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{transit}, $F{unitTypeName})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="265" y="0" width="58" height="44"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{importTransit}, $F{unitTypeName})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="323" y="0" width="52" height="44"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{exportInCurrentMonth}, $F{unitTypeName})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="375" y="0" width="40" height="44"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{imprtInCurrentMonth}, $F{unitTypeName})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="415" y="0" width="45" height="44"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{transitInCurrentMonth}, $F{unitTypeName})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="460" y="0" width="58" height="44"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{importTransitInCurrentMonth}, $F{unitTypeName})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
 </jasperReport>
