@@ -4,7 +4,7 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="org.vetcontrol.report.util.movementtypes.CellFormatter"/>
-	<style name="base" isDefault="true" fontSize="7" vAlign="Middle" hAlign="Center" isStrikeThrough="false" pdfFontName="DejaVuSerif.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true">
+	<style name="base" isDefault="true" fontSize="7" vAlign="Middle" hAlign="Center" isStrikeThrough="false" pdfFontName="org/vetcontrol/report/fonts/DejaVuSerif.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true">
 		<box>
 			<pen lineWidth="0.5" lineStyle="Solid"/>
 		</box>

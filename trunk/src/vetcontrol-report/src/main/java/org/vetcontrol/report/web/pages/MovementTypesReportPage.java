@@ -9,8 +9,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;
 import javax.ejb.EJB;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
+import org.apache.wicket.behavior.IBehavior;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
@@ -67,6 +67,8 @@ public final class MovementTypesReportPage extends TemplatePage {
         final Date endDate = DateUtil.getLastDateOfMonth(month);
 
         add(new Label("title", new ResourceModel("title")));
+        add(new Label("report.name", new StringResourceModel("report.name", null, 
+                new Object[]{DateUtil.getDisplayMonth(month, reportLocale).toLowerCase()})));
         add(new Label("report.header.all", new StringResourceModel("report.header.all", null, new Object[]{endDate})));
 
 
@@ -136,19 +138,23 @@ public final class MovementTypesReportPage extends TemplatePage {
         add(list);
         add(new PagingNavigator("navigator", list, "itemsPerPage", preferences, PAGE_NUMBER_KEY));
 
-//        AjaxFallbackLink<Void> asPdf = new AjaxFallbackLink<Void>("asPdf") {
-//
-//            @Override
-//            public void onClick(AjaxRequestTarget target) {
-//
-//            }
-//        };
-//        add(asPdf);
-
+        IBehavior monthAttribute = new SimpleAttributeModifier("name", "month");
+        IBehavior departmentAttribute = new SimpleAttributeModifier("name", "department");
+        //pdf parameters
         HiddenField<Integer> pdfMonth = new HiddenField<Integer>("pdfMonth", new Model<Integer>(month));
+        pdfMonth.add(monthAttribute);
         add(pdfMonth);
         HiddenField<Long> pdfDepartment = new HiddenField<Long>("pdfDepartment", new Model<Long>(departmentId));
+        pdfDepartment.add(departmentAttribute);
         add(pdfDepartment);
+
+        //text parameters
+        HiddenField<Integer> textMonth = new HiddenField<Integer>("textMonth", new Model<Integer>(month));
+        textMonth.add(monthAttribute);
+        add(textMonth);
+        HiddenField<Long> textDepartment = new HiddenField<Long>("textDepartment", new Model<Long>(departmentId));
+        textDepartment.add(departmentAttribute);
+        add(textDepartment);
 
     }
 
