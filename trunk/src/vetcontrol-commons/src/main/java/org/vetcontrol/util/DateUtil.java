@@ -64,4 +64,8 @@ public class DateUtil {
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, locale);
         return dateFormat.format(date);
     }
+
+    public static int getCurrrentYear(){
+        return Calendar.getInstance().get(Calendar.YEAR);
+    }
 }
