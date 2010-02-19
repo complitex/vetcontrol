@@ -65,23 +65,33 @@ public class MovementTypesReportServlet extends HttpServlet {
             Date endDate = DateUtil.getLastDateOfMonth(month);
             Locale reportLocale = localeService.getReportLocale();
 
+            String monthAsString = DateUtil.getDisplayMonth(month, reportLocale).toLowerCase();
+            String year = String.valueOf(DateUtil.getCurrrentYear());
+            String departmentName = reportDAO.getDepartmentName(departmentId, reportLocale);
+
+
             ServletOutputStream servletOutputStream = response.getOutputStream();
 
-            InputStream reportStream = getClass().getResourceAsStream("movement_types_report.jasper");
+            InputStream reportStream = null;
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("endDate", endDate);
             params.put(JRParameter.REPORT_LOCALE, reportLocale);
+            params.put("month", monthAsString);
+            params.put("year", year);
+            params.put("department", departmentName);
 
             JRDataSource dataSource = new JRBeanCollectionDataSource(getAll(departmentId, reportLocale, startDate, endDate));
 
             switch (exportType) {
                 case PDF:
+                    reportStream = getClass().getResourceAsStream("pdf/movement_types_report.jasper");
                     JasperRunManager.runReportToPdfStream(reportStream, servletOutputStream, params, dataSource);
                     response.setContentType("application/pdf");
                     servletOutputStream.flush();
                     servletOutputStream.close();
                     break;
                 case TEXT:
+                    reportStream = getClass().getResourceAsStream("text/movement_types_report.jasper");
                     JasperPrint jasperPrint = JasperFillManager.fillReport(reportStream, params, dataSource);
 
                     JRTextExporter textExporter = new JRTextExporter();

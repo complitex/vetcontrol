@@ -4,12 +4,23 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="org.vetcontrol.report.util.movementtypes.CellFormatter"/>
-	<style name="base" isDefault="true" fontSize="7" vAlign="Middle" hAlign="Center" isStrikeThrough="false" pdfFontName="org/vetcontrol/report/fonts/DejaVuSerif.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true">
+	<style name="base" isDefault="true" hAlign="Center" vAlign="Middle" fontSize="7" isStrikeThrough="false" pdfFontName="org/vetcontrol/report/fonts/DejaVuSerif.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true">
 		<box>
 			<pen lineWidth="0.5" lineStyle="Solid"/>
 		</box>
 	</style>
+	<style name="Header" isDefault="false" hAlign="Center" vAlign="Middle" fontSize="7" pdfFontName="org/vetcontrol/report/fonts/DejaVuSerif-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid"/>
+		</box>
+	</style>
+        <style name="Title" isDefault="false" hAlign="Center" vAlign="Middle" fontSize="7" pdfFontName="org/vetcontrol/report/fonts/DejaVuSerif.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true">
+	</style>
+
 	<parameter name="endDate" class="java.util.Date"/>
+	<parameter name="month" class="java.lang.String"/>
+	<parameter name="year" class="java.lang.String"/>
+	<parameter name="department" class="java.lang.String"/>
 	<field name="cargoModeName" class="java.lang.String"/>
 	<field name="unitTypeName" class="java.lang.String"/>
 	<field name="imprt" class="java.math.BigInteger"/>
@@ -24,67 +35,78 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="1" splitType="Stretch"/>
+		<band height="46" splitType="Stretch">
+			<textField>
+				<reportElement style="Title" x="137" y="0" width="261" height="19"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{title}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Title" x="180" y="19" width="185" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{month}+$P{month} + " "+$P{year} + $R{year}+", "+$P{department}]]></textFieldExpression>
+			</textField>
+		</band>
 	</title>
 	<pageHeader>
 		<band height="56" splitType="Stretch">
 			<staticText>
-				<reportElement x="16" y="0" width="101" height="19"/>
+				<reportElement style="Header" x="16" y="0" width="101" height="19"/>
 				<textElement/>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="16" y="19" width="101" height="37"/>
+				<reportElement style="Header" x="16" y="19" width="101" height="37"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{cargoMode}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="117" y="0" width="206" height="19"/>
+				<reportElement style="Header" x="117" y="0" width="206" height="19"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{on} + "  " + java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT, $P{REPORT_LOCALE}).format($P{endDate})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="117" y="19" width="63" height="37"/>
+				<reportElement style="Header" x="117" y="19" width="63" height="37"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{export}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="180" y="19" width="40" height="37"/>
+				<reportElement style="Header" x="180" y="19" width="40" height="37"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{import}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="220" y="19" width="45" height="37"/>
+				<reportElement style="Header" x="220" y="19" width="45" height="37"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{transit}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="265" y="19" width="58" height="37"/>
+				<reportElement style="Header" x="265" y="19" width="58" height="37"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{importTransit}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="375" y="19" width="40" height="37"/>
+				<reportElement style="Header" x="375" y="19" width="40" height="37"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{import}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="415" y="19" width="45" height="37"/>
+				<reportElement style="Header" x="415" y="19" width="45" height="37"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{transit}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="460" y="19" width="58" height="37"/>
+				<reportElement style="Header" x="460" y="19" width="58" height="37"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{importTransit}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="323" y="0" width="195" height="19"/>
+				<reportElement style="Header" x="323" y="0" width="195" height="19"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{inCurrentMonth}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="323" y="19" width="52" height="37"/>
+				<reportElement style="Header" x="323" y="19" width="52" height="37"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{export}]]></textFieldExpression>
 			</textField>
@@ -143,12 +165,12 @@
 		</band>
 	</detail>
 	<columnFooter>
-		<band height="0" splitType="Stretch"/>
+		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="0" splitType="Stretch"/>
+		<band splitType="Stretch"/>
 	</pageFooter>
 	<summary>
-		<band height="0" splitType="Stretch"/>
+		<band splitType="Stretch"/>
 	</summary>
 </jasperReport>
