@@ -70,6 +70,12 @@
     <security-role>
         <role-name>LOGGING_VIEW</role-name>
     </security-role>
+    <security-role>
+        <role-name>LOCAL_REPORT</role-name>
+    </security-role>
+    <security-role>
+        <role-name>LOCAL_AND_REGIONAL_REPORT</role-name>
+    </security-role>
 
     <login-config>
         <auth-method>FORM</auth-method>

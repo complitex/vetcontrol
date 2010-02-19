@@ -74,4 +74,17 @@
         <role-name>LOGGING_VIEW</role-name>
         <group-name>ADMINISTRATORS</group-name>
     </security-role-mapping>
+
+    <!-- REPORT -->
+    <security-role-mapping>
+        <role-name>LOCAL_REPORT</role-name>
+        <group-name>LOCAL_OFFICERS</group-name>
+    </security-role-mapping>
+    <security-role-mapping>
+        <role-name>LOCAL_AND_REGIONAL_REPORT</role-name>
+        <group-name>LOCAL_OFFICERS</group-name>
+        <group-name>DEPARTMENT_OFFICERS</group-name>
+        <group-name>MOBILE_OFFICERS</group-name>
+    </security-role-mapping>
+
 </sun-web-app>
