@@ -34,7 +34,8 @@ import org.vetcontrol.util.DateUtil;
  *
  * @author Artem
  */
-@WebServlet(name = "MovementTypesReportInPDF", urlPatterns = {"/MovementTypesReportInPDF"})
+//@WebServlet(name = "MovementTypesReportInPDF", urlPatterns = {"/MovementTypesReportInPDF"})
+@Deprecated
 public class MovementTypesReportInPDF extends HttpServlet {
 
     private final Logger log = LoggerFactory.getLogger(MovementTypesReportInPDF.class);

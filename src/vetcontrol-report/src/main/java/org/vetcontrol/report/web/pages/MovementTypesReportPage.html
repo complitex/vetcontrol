@@ -6,7 +6,7 @@
     </head>
     <body>
         <wicket:extend>
-            <h1><wicket:message key="report.name"/></h1>
+            <h1><span wicket:id="report.name"></span></h1>
             <table class="tbColor" border="0" cellpadding="0" cellspacing="0">
                 <thead>
                     <tr>
@@ -89,6 +89,9 @@
             </div>
 
             <div>
+                <br/>
+                <br/>
+                <br/>
                 <div>
                     <wicket:link>
                         <a href="MovementTypesReportForm.html">
@@ -96,15 +99,23 @@
                         </a>
                     </wicket:link>
                 </div>
-                <div>
-                    <!--<a wicket:id="asPdf">
-                        <wicket:message key="report.asPdf"/>
-                    </a>-->
-                    <form id="pdfForm" target="_blank" method="get" action="MovementTypesReportInPDF">
+                <div class="referenceToExport">
+                    <form id="pdfForm" target="_blank" method="post" action="MovementTypesReportServlet">
+                        <input type="hidden" value="pdf" name="ExportType"/>
                         <input wicket:id="pdfMonth" type="hidden"/>
                         <input wicket:id="pdfDepartment" type="hidden"/>
                         <a href="#" onclick="$('#pdfForm').submit();">
                             <wicket:message key="report.asPdf"/>
+                        </a>
+                    </form>
+                </div>
+                <div class="referenceToExport">
+                    <form id="textForm" target="_blank" method="post" action="MovementTypesReportServlet">
+                        <input type="hidden" value="text" name="ExportType"/>
+                        <input wicket:id="textMonth" type="hidden"/>
+                        <input wicket:id="textDepartment" type="hidden"/>
+                        <a href="#" onclick="$('#textForm').submit();">
+                            <wicket:message key="report.asText"/>
                         </a>
                     </form>
                 </div>
