@@ -101,6 +101,19 @@
 
         <sourceDirectory>${project.basedir}\..\vetcontrol-web\src\main\java</sourceDirectory>
 
+        <resources>
+            <resource>
+                <filtering>false</filtering>
+                <directory>${project.basedir}\..\vetcontrol-web\src\main\java</directory>
+                <includes>
+                    <include>**</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

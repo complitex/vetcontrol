@@ -40,57 +40,29 @@ public abstract class Localizable implements ILongId, IUpdated, IQuery {
         this.name = name;
     }
 
-//    private  Map<String, String> namesMap;
-
-//    @ValidProperty(false)
-//    @ElementCollection(fetch = FetchType.EAGER)
-//    @MapKeyColumn(name = "locale")
-//    @CollectionTable(name = "stringculture",
-//            joinColumns = @JoinColumn(name="id", referencedColumnName="name"),
-//            uniqueConstraints = @UniqueConstraint(columnNames = {"id", "locale"}))
-//    @Column(name = "value")
-//    public Map<String, String> getNamesMap() {
-//        return namesMap;
-//    }
-//
-//    public void setNamesMap(Map<String, String> namesMap) {
-//        this.namesMap = namesMap;
-//    }
-//
-//    public String getDisplayName(java.util.Locale current, java.util.Locale system) {
-//        String name;
-//        if ((name = namesMap.get(current.getLanguage())) != null  && !name.isEmpty()){
-//            return name;
-//        }else if((name = namesMap.get(system.getLanguage())) != null){
-//            return name;
-//        }
-//        return "";
-//    }
-
-    private  Map<String, StringCulture> namesMap;
+    private  Map<String, String> namesMap;
 
     @ValidProperty(false)
-    @OneToMany(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name = "locale")
-    @JoinColumn(name = "id", referencedColumnName = "name")
-    @XmlTransient
-    public Map<String, StringCulture> getNamesMap() {
+    @CollectionTable(name = "stringculture",
+            joinColumns = @JoinColumn(name="id", referencedColumnName="name"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"id", "locale"}))
+    @Column(name = "value")
+    public Map<String, String> getNamesMap() {
         return namesMap;
-    }  
+    }
 
-    public void setNamesMap(Map<String, StringCulture> namesMap) {
+    public void setNamesMap(Map<String, String> namesMap) {
         this.namesMap = namesMap;
     }
 
-    @Transient
-    public String getDisplayName(java.util.Locale current, java.util.Locale system){
-        StringCulture stringCulture;
-        if ((stringCulture = namesMap.get(current.getLanguage())) != null
-                && stringCulture.getValue() != null
-                && !stringCulture.getValue().isEmpty()){
-            return stringCulture.getValue();
-        }else if((stringCulture = namesMap.get(system.getLanguage())) != null){
-            return stringCulture.getValue();
+    public String getDisplayName(java.util.Locale current, java.util.Locale system) {
+        String name;
+        if ((name = namesMap.get(current.getLanguage())) != null  && !name.isEmpty()){
+            return name;
+        }else if((name = namesMap.get(system.getLanguage())) != null){
+            return name;
         }
         return "";
     }

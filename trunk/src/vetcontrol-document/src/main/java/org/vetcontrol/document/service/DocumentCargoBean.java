@@ -14,7 +14,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -91,26 +90,21 @@ public class DocumentCargoBean {
                 break;
             case MOVEMENT_TYPE:
                 order += getOrderLocaleFilter("movementType");
-                where += getWhereLocaleFilter("movementType", filter.getCurrentLocale(), filter.getSystemLocale());
                 break;
             case VECHICLE_TYPE:
                 order += getOrderLocaleFilter("vehicleType");
-                where += getWhereLocaleFilter("vehicleType", filter.getCurrentLocale(), filter.getSystemLocale());
                 break;
             case VECHICLE_DETAILS:
                 order += " order by dc.vehicleDetails";
                 break;
             case CARGO_SENDER:
                 order += getOrderLocaleFilter("cargoSender");
-                where += getWhereLocaleFilter("cargoSender", filter.getCurrentLocale(), filter.getSystemLocale());
                 break;
             case CARGO_RECEIVER:
                 order += getOrderLocaleFilter("cargoReceiver");
-                where += getWhereLocaleFilter("cargoReceiver", filter.getCurrentLocale(), filter.getSystemLocale());
                 break;
             case CARGO_PRODUCER:
                 order += getOrderLocaleFilter("cargoProducer");
-                where += getWhereLocaleFilter("cargoProducer", filter.getCurrentLocale(), filter.getSystemLocale());
                 break;
             case CREATED:
                 order += " order by dc.created";
@@ -125,18 +119,11 @@ public class DocumentCargoBean {
     }
 
     private String getOrderLocaleFilter(String entity){
-        return " order by m_" + entity + ".value";
+        return " order by m_" + entity;
     }
 
     private String getSelectLocaleFilter(String entity){
         return " left join dc." + entity + ".namesMap as m_"+entity;
-    }
-
-    private String getWhereLocaleFilter(String entity, Locale currentLocale, Locale systemLocale){
-        return " and ((m_"+entity+".id.locale = '" + currentLocale.getLanguage() + "' and length(m_"+entity+".value) > 0)" 
-                + " or (m_"+entity+".id.locale = '" + systemLocale.getLanguage()
-                +"' and not exists (select 1 from StringCulture n where n.id.id = m_"+entity+".id.id" +
-                " and n.id.locale = '" +currentLocale.getLanguage() +"' and length(n.value) > 0)))";
     }
     
     private String getJoin(DocumentCargoFilter filter, OrderBy orderBy){
@@ -195,15 +182,15 @@ public class DocumentCargoBean {
             }
 
             if (filter.getCargoSenderName() != null){
-                where += " and upper(m_cargoSender.value) like :cargoSenderName";
+                where += " and upper(m_cargoSender) like :cargoSenderName";
             }
 
             if (filter.getCargoReceiverName() != null){
-                where += " and upper(m_cargoReceiver.value) like :cargoReceiverName";
+                where += " and upper(m_cargoReceiver) like :cargoReceiverName";
             }
 
             if (filter.getCargoProducerName() != null){
-                where += " and upper(m_cargoProducer.value) like :cargoProducerName";                
+                where += " and upper(m_cargoProducer) like :cargoProducerName";
             }
 
             if (filter.getDetentionDetails() != null){
@@ -257,7 +244,4 @@ public class DocumentCargoBean {
     public <T> List<T> getList(Class<T> _class){
         return entityManager.createQuery("from " + _class.getSimpleName(), _class).getResultList();
     }
-
-   
-
 }

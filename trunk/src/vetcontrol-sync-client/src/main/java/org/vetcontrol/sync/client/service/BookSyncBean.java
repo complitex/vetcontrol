@@ -34,6 +34,8 @@ public class BookSyncBean {
     @PersistenceContext
     private EntityManager em;
 
+    private boolean initial = false;
+
     private final Class[] syncBooks = new Class[]{
             AddressBook.class, ArrestReason.class, CargoMode.class, CargoProducer.class, CargoReceiver.class,
             CargoSender.class, CargoType.class, CountryBook.class, CountryWithBadEpizooticSituation.class,
@@ -64,98 +66,105 @@ public class BookSyncBean {
         genericTypeMap.put(VehicleType.class, new GenericType<List<VehicleType>>(){});
     }
 
+    public boolean isInitial() {
+        return initial;
+    }
+
+    /**
+     * Если true то синхронизируются все записи вне зависимости от даты обновления
+     * @param initial Синхронизировать все записи
+     */
+    public void setInitial(boolean initial) {
+        this.initial = initial;
+    }
+
     public void processStringCulture() throws NotRegisteredException{
         String secureKey = clientBean.getCurrentSecureKey();
 
-        //TODO performance issue
+        log.debug("\n==================== Synchronizing: String Culture ============================");
 
-        log.debug("==================== String Culture ===================");
         processStringCulture(secureKey);
-        log.debug("++++++++++++++++++++ String Culture: Done +++++++++++++++++++");
 
+        log.debug("++++++++++++++++++++ Synchronizing Complete: String Culture +++++++++++++++++++\n");
     }
 
     public void processBooks() throws NotRegisteredException{
         String secureKey = clientBean.getCurrentSecureKey();
 
-
         for (Class book : syncBooks){
-            log.debug("==================== {} ===================", book.getSimpleName());
+            log.debug("\n==================== Synchronizing: {} ============================", book.getSimpleName());
 
             //noinspection unchecked
             processBook(secureKey, book);
 
-
+            log.debug("++++++++++++++++++++ Synchronizing Complete: {} +++++++++++++++++++\n", book.getSimpleName());
         }
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private <T extends ILongId & IQuery & IUpdated> void processBook(String secureKey, Class<T> bookClass){
+        Date syncUpdated = DateUtil.getCurrentDate(); 
+
         @SuppressWarnings({"unchecked"})
         List<T> books = ClientFactory.createJSONClient("/book/" + bookClass.getSimpleName() + "/list")
-                .post((GenericType<List<T>>)genericTypeMap.get(bookClass), new SyncRequestEntity(secureKey, getUpdated(bookClass)));
+                .post((GenericType<List<T>>)genericTypeMap.get(bookClass), new SyncRequestEntity(secureKey,
+                        initial ? new Date(0) : getUpdated(bookClass)));
 
         //Сохранение в базу данных списка пользователей
         for (T book : books){
             //json protocol feature, skip empty entity
             if (book.getId() == null) continue;
 
-            log.debug(book.toString());
+            log.debug("Synchronizing: {}", book.toString());
 
             int count = em.createQuery("select count(b) from " + bookClass.getSimpleName() + " b where b.id = :id", Long.class)
                     .setParameter("id", book.getId())
                     .getSingleResult()
                     .intValue();
 
-            book.setUpdated(DateUtil.getCurrentDate());
+            book.setUpdated(syncUpdated);
 
             if (count != 1){
                 book.getInsertQuery(em).executeUpdate();
             }else{                
-//                em.merge(book);
+                em.merge(book);
             }
-
-            log.debug("saved: " + book.getId());
         }                    
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private void processStringCulture(String secureKey){
+        Date syncUpdated = DateUtil.getCurrentDate();
+
         List<StringCulture> books = ClientFactory.createJSONClient("/book/StringCulture/list")
-                .post(new GenericType<List<StringCulture>>(){}, new SyncRequestEntity(secureKey, getUpdated(StringCulture.class)));
+                .post(new GenericType<List<StringCulture>>(){}, new SyncRequestEntity(secureKey,
+                        initial ? new Date(0) : getUpdated(StringCulture.class)));
 
         //Сохранение в базу данных списка пользователей
         for (StringCulture book : books){
             //json protocol feature, skip empty entity
             if (book.getId() == null || book.getId().getId() == null) continue;
 
-            StringCulture sc = em.find(StringCulture.class, book.getId());
+            log.debug("Synchronizing: {}", book.toString());
 
-            if (sc != null) em.detach(sc);
-
-
-            book.setUpdated(DateUtil.getCurrentDate());
+            book.setUpdated(syncUpdated);
                         
-            if (sc == null){
+            if (em.find(StringCulture.class, book.getId()) == null){
                 book.getInsertQuery(em).executeUpdate();
             }else{
                 em.merge(book);
             }
-
-            log.debug(book.toString());
         }
     }
 
     private Date getUpdated(Class<? extends IUpdated> book){
-        return new Date(0);
-        
-//        Date updated = em.createQuery("select max(e.updated) from " + book.getSimpleName() +" e", Date.class).getSingleResult();
-//
-//        if (updated == null){
-//            return new Date(0);
-//        }
-//
-//        return updated;
+        Date updated = em.createQuery("select max(e.updated) from " + book.getSimpleName() +" e", Date.class).getSingleResult();
+
+        if (updated == null){
+            return new Date(0);
+        }
+
+        return updated;
     }
 
 }
