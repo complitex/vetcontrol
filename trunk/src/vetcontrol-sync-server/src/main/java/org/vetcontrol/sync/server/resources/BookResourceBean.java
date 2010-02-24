@@ -142,7 +142,7 @@ public class BookResourceBean {
         return  new GenericEntity<List<StringCulture>>(getList(StringCulture.class, requestEntity)){};
     }
 
-    private <T> List<T> getList(Class<T> entity, SyncRequestEntity requestEntity){
+    private void checkClient(SyncRequestEntity requestEntity){
         try {
             clientBean.getClient(requestEntity.getSecureKey());
         } catch (Exception e) {
@@ -153,7 +153,19 @@ public class BookResourceBean {
                     .type("text/plain;charset=UTF-8")
                     .build());
         }
+    }
 
+    @POST @Path("/{entity}/count")
+    public String getEntityCount(@PathParam("entity") String entity, SyncRequestEntity requestEntity){
+        checkClient(requestEntity);
+        return em.createQuery("select count(*) from "+ entity + " e where e.updated >= :updated", Long.class)
+                .setParameter("updated", requestEntity.getUpdated())
+                .getSingleResult().toString();
+    }
+
+
+    private <T> List<T> getList(Class<T> entity, SyncRequestEntity requestEntity){
+        checkClient(requestEntity);
         return em.createQuery("select e from "+ entity.getSimpleName() + " e where e.updated >= :updated", entity)
                 .setParameter("updated", requestEntity.getUpdated())
                 .getResultList();

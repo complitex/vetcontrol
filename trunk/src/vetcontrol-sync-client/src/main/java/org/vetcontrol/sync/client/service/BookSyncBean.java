@@ -20,12 +20,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.vetcontrol.sync.client.service.ClientFactory.createJSONClient;
+
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 17.02.2010 15:16:39
  */
 @Stateless(name = "BookSyncBean")
-public class BookSyncBean {
+public class BookSyncBean extends SyncInfo{
     private static final Logger log = LoggerFactory.getLogger(BookSyncBean.class);
 
     @EJB(beanName = "ClientBean")
@@ -37,10 +39,12 @@ public class BookSyncBean {
     private boolean initial = false;
 
     private final Class[] syncBooks = new Class[]{
+            StringCulture.class,
             AddressBook.class, ArrestReason.class, CargoMode.class, CargoProducer.class, CargoReceiver.class,
             CargoSender.class, CargoType.class, CountryBook.class, CountryWithBadEpizooticSituation.class,
             CustomsPoint.class, Department.class, Job.class, MovementType.class, PassingBorderPoint.class,
-            Prohibition.class, RegisteredProducts.class, Tariff.class, UnitType.class, VehicleType.class};
+            Prohibition.class, RegisteredProducts.class, Tariff.class, UnitType.class, VehicleType.class,
+            CargoModeCargoType.class, CargoModeUnitType.class};
 
     private final Map<Class, GenericType> genericTypeMap = new HashMap<Class, GenericType>();
 
@@ -48,6 +52,8 @@ public class BookSyncBean {
         genericTypeMap.put(AddressBook.class, new GenericType<List<AddressBook>>(){});
         genericTypeMap.put(ArrestReason.class, new GenericType<List<ArrestReason>>(){});
         genericTypeMap.put(CargoMode.class, new GenericType<List<CargoMode>>(){});
+        genericTypeMap.put(CargoModeCargoType.class, new GenericType<List<CargoModeCargoType>>(){});
+        genericTypeMap.put(CargoModeUnitType.class, new GenericType<List<CargoModeUnitType>>(){});
         genericTypeMap.put(CargoProducer.class, new GenericType<List<CargoProducer>>(){});
         genericTypeMap.put(CargoReceiver.class, new GenericType<List<CargoReceiver>>(){});
         genericTypeMap.put(CargoSender.class, new GenericType<List<CargoSender>>(){});
@@ -61,6 +67,7 @@ public class BookSyncBean {
         genericTypeMap.put(PassingBorderPoint.class, new GenericType<List<PassingBorderPoint>>(){});
         genericTypeMap.put(Prohibition.class, new GenericType<List<Prohibition>>(){});
         genericTypeMap.put(RegisteredProducts.class, new GenericType<List<RegisteredProducts>>(){});
+        genericTypeMap.put(StringCulture.class, new GenericType<List<StringCulture>>(){});
         genericTypeMap.put(Tariff.class, new GenericType<List<Tariff>>(){});
         genericTypeMap.put(UnitType.class, new GenericType<List<UnitType>>(){});
         genericTypeMap.put(VehicleType.class, new GenericType<List<VehicleType>>(){});
@@ -78,83 +85,74 @@ public class BookSyncBean {
         this.initial = initial;
     }
 
-    public void processStringCulture() throws NotRegisteredException{
-        String secureKey = clientBean.getCurrentSecureKey();
-
-        log.debug("\n==================== Synchronizing: String Culture ============================");
-
-        processStringCulture(secureKey);
-
-        log.debug("++++++++++++++++++++ Synchronizing Complete: String Culture +++++++++++++++++++\n");
-    }
-
-    public void processBooks() throws NotRegisteredException{
-        String secureKey = clientBean.getCurrentSecureKey();
-
+    public void process() throws NotRegisteredException{
         for (Class book : syncBooks){
-            log.debug("\n==================== Synchronizing: {} ============================", book.getSimpleName());
-
             //noinspection unchecked
-            processBook(secureKey, book);
-
-            log.debug("++++++++++++++++++++ Synchronizing Complete: {} +++++++++++++++++++\n", book.getSimpleName());
+            processBook(book);
         }
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    private <T extends ILongId & IQuery & IUpdated> void processBook(String secureKey, Class<T> bookClass){
-        Date syncUpdated = DateUtil.getCurrentDate(); 
+    private <T extends IQuery & IUpdated> void processBook(Class<T> bookClass) throws NotRegisteredException {
+        String secureKey = clientBean.getCurrentSecureKey();
+        Date syncUpdated = DateUtil.getCurrentDate();
+
+        log.debug("\n==================== Synchronizing: {} ============================", bookClass.getSimpleName());
+
+        //Количество записей загрузки
+        int count = Integer.parseInt(createJSONClient("/book/" + bookClass.getSimpleName() + "/count")
+                .post(String.class, new SyncRequestEntity(secureKey, getUpdated(User.class))));
+        start(new SyncEvent(count, bookClass));
 
         @SuppressWarnings({"unchecked"})
         List<T> books = ClientFactory.createJSONClient("/book/" + bookClass.getSimpleName() + "/list")
                 .post((GenericType<List<T>>)genericTypeMap.get(bookClass), new SyncRequestEntity(secureKey,
                         initial ? new Date(0) : getUpdated(bookClass)));
 
-        //Сохранение в базу данных списка пользователей
+        //Сохранение в базу данных списка
+        int index = 0;
         for (T book : books){
-            //json protocol feature, skip empty entity
-            if (book.getId() == null) continue;
+            //skip null
+            if (isSkip(book)) continue;
 
             log.debug("Synchronizing: {}", book.toString());
-
-            int count = em.createQuery("select count(b) from " + bookClass.getSimpleName() + " b where b.id = :id", Long.class)
-                    .setParameter("id", book.getId())
-                    .getSingleResult()
-                    .intValue();
+            sync(new SyncEvent(count, index++, book));
 
             book.setUpdated(syncUpdated);
 
-            if (count != 1){
-                book.getInsertQuery(em).executeUpdate();
-            }else{                
+            if (isPersisted(book)){
                 em.merge(book);
-            }
-        }                    
-    }
-
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    private void processStringCulture(String secureKey){
-        Date syncUpdated = DateUtil.getCurrentDate();
-
-        List<StringCulture> books = ClientFactory.createJSONClient("/book/StringCulture/list")
-                .post(new GenericType<List<StringCulture>>(){}, new SyncRequestEntity(secureKey,
-                        initial ? new Date(0) : getUpdated(StringCulture.class)));
-
-        //Сохранение в базу данных списка пользователей
-        for (StringCulture book : books){
-            //json protocol feature, skip empty entity
-            if (book.getId() == null || book.getId().getId() == null) continue;
-
-            log.debug("Synchronizing: {}", book.toString());
-
-            book.setUpdated(syncUpdated);
-                        
-            if (em.find(StringCulture.class, book.getId()) == null){
-                book.getInsertQuery(em).executeUpdate();
             }else{
-                em.merge(book);
+                book.getInsertQuery(em).executeUpdate();
             }
         }
+
+        complete(new SyncEvent(index, bookClass));
+        log.debug("++++++++++++++++++++ Synchronizing Complete: {} +++++++++++++++++++\n", bookClass.getSimpleName());
+    }
+
+    private boolean isSkip(Object obj){
+         if (obj instanceof ILongId){
+            return ((ILongId) obj).getId() == null;
+        }else if (obj instanceof IEmbeddedId){
+            return ((IEmbeddedId)obj).getId() == null;
+        }
+
+        throw new IllegalArgumentException();
+    }
+
+    private boolean isPersisted(Object obj){
+        if (obj instanceof ILongId){
+            ILongId book = (ILongId) obj;
+
+            return em.createQuery("select count(b) from " + book.getClass().getSimpleName() + " b where b.id = :id", Long.class)
+                    .setParameter("id", book.getId())
+                    .getSingleResult() == 1;
+        }else if (obj instanceof IEmbeddedId){
+            return em.find(obj.getClass(), ((IEmbeddedId)obj).getId()) != null;
+        }
+
+        throw new IllegalArgumentException();
     }
 
     private Date getUpdated(Class<? extends IUpdated> book){
@@ -166,5 +164,4 @@ public class BookSyncBean {
 
         return updated;
     }
-
 }

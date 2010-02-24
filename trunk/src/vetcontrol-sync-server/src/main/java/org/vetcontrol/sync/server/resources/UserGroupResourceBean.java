@@ -37,24 +37,34 @@ public class UserGroupResourceBean {
     @EJB(beanName = "LogBean")
     private LogBean logBean;
 
-    @POST @Path("/list")    
-    public GenericEntity<List<UserGroup>> getUserGroups(SyncRequestEntity requestEntity){
-        Client client;
+    private Client getClient(SyncRequestEntity requestEntity){
         try {
-            client = clientBean.getClient(requestEntity.getSecureKey());
+            return clientBean.getClient(requestEntity.getSecureKey());
         } catch (Exception e) {
-            log.error("Клиент не найден.", e);
+            log.error("Неверный ключ регистрации. Доступ запрещен.", e);
 
             throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN)
-                    .entity("Клиент не найден.")
+                    .entity("Неверный ключ регистрации. Доступ запрещен.")
                     .type("text/plain;charset=UTF-8")
                     .build());
         }
+    }
 
+    @POST @Path("/list")    
+    public GenericEntity<List<UserGroup>> getUserGroups(SyncRequestEntity requestEntity){
         return new GenericEntity<List<UserGroup>>(em.createQuery("select ug from UserGroup ug, User u " +
                 "where ug.login = u.login and u.department = :department and ug.updated >= :updated", UserGroup.class)
-                .setParameter("department", client.getDepartment())
+                .setParameter("department", getClient(requestEntity).getDepartment())
                 .setParameter("updated", requestEntity.getUpdated())
                 .getResultList()){};
+    }
+
+    @POST @Path("/count")
+    public String getUserGroupsCount(SyncRequestEntity requestEntity){
+        return em.createQuery("select count(ug) from UserGroup ug, User u " +
+                "where ug.login = u.login and u.department = :department and ug.updated >= :updated", Long.class)
+                .setParameter("department", getClient(requestEntity).getDepartment())
+                .setParameter("updated", requestEntity.getUpdated())
+                .getSingleResult().toString();
     }
 }

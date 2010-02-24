@@ -4,19 +4,10 @@
  */
 package org.vetcontrol.entity;
 
+import javax.persistence.*;
+import javax.xml.bind.annotation.*;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 /**
  *
@@ -24,9 +15,12 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name = "cargo_mode_cargo_type")
-public class CargoModeCargoType implements Serializable {
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+public class CargoModeCargoType implements IUpdated, IQuery, IEmbeddedId<CargoModeCargoType.Id> {
 
     @Embeddable
+    @XmlType
     public static class Id implements Serializable {
 
         @Column(name = "cargo_mode_id")
@@ -46,8 +40,16 @@ public class CargoModeCargoType implements Serializable {
             this.cargoModeId = cargoModeId;
         }
 
+        public Long getCargoModeId() {
+            return cargoModeId;
+        }
+
         public void setCargoTypeId(Long cargoTypeId) {
             this.cargoTypeId = cargoTypeId;
+        }
+
+        public Long getCargoTypeId() {
+            return cargoTypeId;
         }
 
         @Override
@@ -63,18 +65,24 @@ public class CargoModeCargoType implements Serializable {
 
         @Override
         public int hashCode() {
-            return cargoModeId.hashCode() + cargoTypeId.hashCode();
+            return 2*cargoModeId.hashCode() + 3*cargoTypeId.hashCode();
         }
     }
     @EmbeddedId
     private Id id = new Id();
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cargo_mode_id", insertable = false, updatable = false)
+    @XmlTransient
     private CargoMode cargoMode;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cargo_type_id", insertable = false, updatable = false)
+    @XmlTransient
     private CargoType cargoType;
+
     @Transient
+    @XmlTransient
     private boolean needToUpdateVersion;
 
     public CargoModeCargoType() {
@@ -102,11 +110,13 @@ public class CargoModeCargoType implements Serializable {
         }
     }
 
+    @Override
     public Id getId() {
         return id;
     }
 
-    private void setId(Id id) {
+    @Override
+    public void setId(Id id) {
         this.id = id;
     }
 
@@ -121,14 +131,26 @@ public class CargoModeCargoType implements Serializable {
     @Column(name = "updated", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
-    
+
+    @Override
     public Date getUpdated() {
         return updated;
     }
 
+    @Override
     public void setUpdated(Date updated) {
         this.updated = updated;
     }
+
+    @Override
+    public Query getInsertQuery(EntityManager em) {
+        return em.createNativeQuery("insert into cargo_mode_cargo_type (cargo_mode_id, cargo_type_id, updated) " +
+                "value (:cargo_mode_id, :cargo_type_id, :updated)")
+                .setParameter("cargo_mode_id", id.cargoModeId)
+                .setParameter("cargo_type_id", id.cargoTypeId)
+                .setParameter("updated", updated);
+    }
+
 
     @Override
     public String toString() {

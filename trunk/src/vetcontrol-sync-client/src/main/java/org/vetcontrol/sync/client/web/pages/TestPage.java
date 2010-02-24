@@ -34,11 +34,10 @@ public class TestPage extends WebPage {
             @Override
             protected void onSubmit() {
                 try {
-                    userSyncBean.processUser();
+                    userSyncBean.process();
                     
-                    bookSyncBean.setInitial(true);
-                    bookSyncBean.processStringCulture();
-                    bookSyncBean.processBooks();
+                    bookSyncBean.setInitial(true);                    
+                    bookSyncBean.process();
                 } catch (NotRegisteredException e) {
                     e.printStackTrace();
                 }
