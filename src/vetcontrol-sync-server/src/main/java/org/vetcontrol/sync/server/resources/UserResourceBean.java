@@ -38,11 +38,9 @@ public class UserResourceBean {
     @EJB(beanName = "LogBean")
     private LogBean logBean;
 
-    @POST @Path("/list")       
-    public GenericEntity<List<User>> getUsers(SyncRequestEntity requestEntity){
-        Client client;
+    private Client getClient(SyncRequestEntity requestEntity){
         try {
-            client = clientBean.getClient(requestEntity.getSecureKey());
+            return clientBean.getClient(requestEntity.getSecureKey());
         } catch (Exception e) {
             log.error("Неверный ключ регистрации. Доступ запрещен.", e);
 
@@ -51,10 +49,23 @@ public class UserResourceBean {
                     .type("text/plain;charset=UTF-8")
                     .build());
         }
+    }
 
-        return new GenericEntity<List<User>>(em.createQuery("select u from User u where u.department = :department and u.updated >= :updated", User.class)
-                .setParameter("department", client.getDepartment())
+    @POST @Path("/list")       
+    public GenericEntity<List<User>> getUsers(SyncRequestEntity requestEntity){
+        return new GenericEntity<List<User>>(em.createQuery("select u from User u where u.department = :department " +
+                "and u.updated >= :updated", User.class)
+                .setParameter("department", getClient(requestEntity).getDepartment())
                 .setParameter("updated", requestEntity.getUpdated())
                 .getResultList()){};
-    }    
+    }
+
+    @POST @Path("/count")
+    public String getUsersCount(SyncRequestEntity requestEntity){
+         return em.createQuery("select count(u) from User u where u.department = :department " +
+                "and u.updated >= :updated", Long.class)
+                .setParameter("department", getClient(requestEntity).getDepartment())
+                .setParameter("updated", requestEntity.getUpdated())
+                .getSingleResult().toString();
+    }
 }

@@ -5,13 +5,12 @@ import org.vetcontrol.util.book.entity.annotation.ValidProperty;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "stringculture")
 @XmlRootElement
-public class StringCulture implements IUpdated, Serializable {
+public class StringCulture implements IUpdated, IQuery, IEmbeddedId<StringCultureId> {
     public StringCulture() {
     }
 

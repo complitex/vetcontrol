@@ -5,19 +5,10 @@
 
 package org.vetcontrol.entity;
 
+import javax.persistence.*;
+import javax.xml.bind.annotation.*;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 /**
  *
@@ -25,9 +16,12 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name = "cargo_mode_unit_type")
-public class CargoModeUnitType implements Serializable {
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+public class CargoModeUnitType implements IQuery, IUpdated, IEmbeddedId<CargoModeUnitType.Id> {
 
     @Embeddable
+    @XmlType
     public static class Id implements Serializable {
 
         @Column(name = "cargo_mode_id")
@@ -47,8 +41,16 @@ public class CargoModeUnitType implements Serializable {
             this.cargoModeId = cargoModeId;
         }
 
+        public Long getCargoModeId() {
+            return cargoModeId;
+        }
+
         public void setUnitTypeId(Long unitTypeId) {
             this.unitTypeId = unitTypeId;
+        }
+
+        public Long getUnitTypeId() {
+            return unitTypeId;
         }
 
         @Override
@@ -64,19 +66,24 @@ public class CargoModeUnitType implements Serializable {
 
         @Override
         public int hashCode() {
-            return cargoModeId.hashCode() + unitTypeId.hashCode();
+            return 2*cargoModeId.hashCode() + 3*unitTypeId.hashCode();
         }
     }
     @EmbeddedId
     private Id id = new Id();
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cargo_mode_id", insertable = false, updatable = false)
+    @XmlTransient
     private CargoMode cargoMode;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "unit_type_id", insertable = false, updatable = false)
+    @XmlTransient
     private UnitType unitType;
 
     @Transient
+    @XmlTransient
     private boolean needToUpdateVersion;
 
     public CargoModeUnitType() {
@@ -104,7 +111,7 @@ public class CargoModeUnitType implements Serializable {
         return id;
     }
 
-    private void setId(Id id) {
+    public void setId(Id id) {
         this.id = id;
     }
 
@@ -126,6 +133,15 @@ public class CargoModeUnitType implements Serializable {
 
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    @Override
+    public Query getInsertQuery(EntityManager em) {
+        return em.createNativeQuery("insert into cargo_mode_unit_type (cargo_mode_id, unit_type_id, updated) " +
+                "value (:cargo_mode_id, :unit_type_id, :updated)")
+                .setParameter("cargo_mode_id", id.cargoModeId)
+                .setParameter("unit_type_id", id.unitTypeId)
+                .setParameter("updated", updated);
     }
 
     @Override

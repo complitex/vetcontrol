@@ -9,6 +9,7 @@ import org.vetcontrol.entity.UserGroup;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.sync.NotRegisteredException;
 import org.vetcontrol.sync.SyncRequestEntity;
+import org.vetcontrol.util.DateUtil;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -24,7 +25,7 @@ import static org.vetcontrol.sync.client.service.ClientFactory.createJSONClient;
  *         Date: 16.02.2010 20:49:06
  */
 @Stateless(name = "UserSyncBean")
-public class UserSyncBean {
+public class UserSyncBean extends SyncInfo{
     private static final Logger log = LoggerFactory.getLogger(UserSyncBean.class);
 
     @EJB(beanName = "ClientBean")
@@ -33,52 +34,83 @@ public class UserSyncBean {
     @PersistenceContext
     private EntityManager em;
 
-    public void processUser() throws NotRegisteredException {
+    public void process() throws NotRegisteredException {
+        processUser();
+        processUserGroups();
+    }
+
+    private void processUser() throws NotRegisteredException {
         String secureKey = clientBean.getCurrentSecureKey();
+        Date syncUpdated = DateUtil.getCurrentDate();
+
+        log.debug("\n==================== Synchronizing: User ============================");
+
+        //Количество пользователей для загрузки
+        int count = Integer.parseInt(createJSONClient("/user/count")
+                .post(String.class, new SyncRequestEntity(secureKey, getUpdated(User.class))));
+        start(new SyncEvent(count, User.class));
 
         //Загрузка с сервера списка пользователей
         List<User> users = createJSONClient("/user/list").post(new GenericType<List<User>>(){},
                 new SyncRequestEntity(secureKey, getUpdated(User.class)));
 
         //Сохранение в базу данных списка пользователей
+        int index = 0;
         for (User user : users){
-            int count = em.createQuery("select count(u) from User u where u.id = :id", Long.class)
-                    .setParameter("id", user.getId())
-                    .getSingleResult()
-                    .intValue();
-
             //json protocol feature, skip empty entity
             if (user.getId() == null) continue;
 
-            if (count != 1){
+            log.debug("Synchronizing: {}", user.toString());
+            sync(new SyncEvent(count, index++, user));
+
+            user.setUpdated(syncUpdated);
+
+            if (em.find(User.class, user.getId()) == null){
                 user.getInsertQuery(em).executeUpdate();
             }else{
                 em.merge(user);
-
             }
         }
 
+        complete(new SyncEvent(index, User.class));
+        log.debug("++++++++++++++++++++ Synchronizing Complete: User +++++++++++++++++++\n");
+    }
+
+    private void processUserGroups() throws NotRegisteredException {
+        String secureKey = clientBean.getCurrentSecureKey();
+        Date syncUpdated = DateUtil.getCurrentDate();
+
+        log.debug("\n==================== Synchronizing: User Group ============================");
+
+        //Количество групп пользователей для загрузки
+        int count = Integer.parseInt(createJSONClient("/usergroup/count")
+                .post(String.class, new SyncRequestEntity(secureKey, getUpdated(User.class))));
+        start(new SyncEvent(count, UserGroup.class));
+
         //Загрузка с сервера списка групп пользователей
-        List<UserGroup> usergroups = createJSONClient("/usergroup/list").post(new GenericType<List<UserGroup>>(){}, 
+        List<UserGroup> userGroups = createJSONClient("/usergroup/list").post(new GenericType<List<UserGroup>>(){},
                 new SyncRequestEntity(secureKey, getUpdated(UserGroup.class)));
 
         //Сохранение в базу данных списка групп пользователей
-        for (UserGroup userGroup : usergroups){
-            int count = em.createQuery("select count(u) from UserGroup u where u.id = :id", Long.class)
-                    .setParameter("id", userGroup.getId())
-                    .getSingleResult()
-                    .intValue();
-
+        int index = 0;
+        for (UserGroup userGroup : userGroups){
             //json protocol feature, skip empty entity
             if (userGroup.getId() == null) continue;
 
-            if (count != 1){
-                log.debug(userGroup.toString());
+            log.debug("Synchronizing: {}", userGroup.toString());
+            sync(new SyncEvent(count, index++, userGroup));
+
+            userGroup.setUpdated(syncUpdated);
+
+            if (em.find(UserGroup.class, userGroup.getId()) == null){
                 userGroup.getInsertQuery(em).executeUpdate();
             }else{
                 em.merge(userGroup);
             }
         }
+
+        complete(new SyncEvent(index, UserGroup.class));
+        log.debug("++++++++++++++++++++ Synchronizing Complete: User Group +++++++++++++++++++\n");
     }
 
     private Date getUpdated(Class<? extends IUpdated> entity){
