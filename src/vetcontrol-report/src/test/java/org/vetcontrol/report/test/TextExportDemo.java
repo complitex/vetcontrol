@@ -14,6 +14,7 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.export.JRTextExporterParameter;
+import org.vetcontrol.report.util.jasper.TextExporterConstants;
 
 /**
  *
@@ -25,20 +26,22 @@ public class TextExportDemo {
         try {
             HashMap parameterMap = new HashMap();
             parameterMap.put(JRParameter.REPORT_LOCALE, Locale.getDefault());
-            parameterMap.put("endDate", new Date());
-            parameterMap.put("month", "Январь");
-            parameterMap.put("year", "2010");
-            parameterMap.put("department", "Кодимский ПДВСКН");
+            parameterMap.put("date", new Date());
+//            parameterMap.put("endDate", new Date());
+//            parameterMap.put("month", "Январь");
+//            parameterMap.put("year", "2010");
+//            parameterMap.put("department", "Кодимский ПДВСКН");
 
             System.out.println("Filling report..." + System.getProperty("user.dir"));
-            JasperPrint jasperPrint = JasperFillManager.fillReport("target/classes/org/vetcontrol/report/jasper/movementtypes/text/movement_types_report.jasper",
+            JasperPrint jasperPrint = JasperFillManager.fillReport(
+                    "target/classes/org/vetcontrol/report/jasper/cargosinday/text/cargos_in_day_report.jasper",
                     parameterMap, new JREmptyDataSource());
 
             JRTextExporter textExporter = new JRTextExporter();
             textExporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
-            textExporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, "movement_types_report.txt");
-            textExporter.setParameter(JRTextExporterParameter.PAGE_WIDTH, 150);
-            textExporter.setParameter(JRTextExporterParameter.PAGE_HEIGHT, 150);
+            textExporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, "cargos_in_day_report.txt");
+            textExporter.setParameter(JRTextExporterParameter.PAGE_WIDTH, TextExporterConstants.PAGE_WIDTH);
+            textExporter.setParameter(JRTextExporterParameter.PAGE_HEIGHT, TextExporterConstants.PAGE_HEIGHT);
 
             textExporter.exportReport();
             System.out.println("Done!");

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:wicket="http://wicket.apache.org">
+    <head>
+        <wicket:head><title wicket:id="title"></title></wicket:head>
+    </head>
+    <body>
+        <wicket:extend>
+            <h1>
+                <span wicket:id="report.name"></span>
+            </h1>
+            <table class="tbColor" border="0" cellpadding="0" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th wicket:id="report.header.cargo_type">
+                            <wicket:message key="report.header.cargo_type"/>
+                        </th>
+                        <th wicket:id="report.header.cargo_producer">
+                            <wicket:message key="report.header.cargo_producer"/>
+                        </th>
+                        <th wicket:id="report.header.cargo_receiver">
+                            <wicket:message key="report.header.cargo_receiver"/>
+                        </th>
+                        <th wicket:id="report.header.cargo_sender">
+                            <wicket:message key="report.header.cargo_sender"/>
+                        </th>
+                        <th colspan="5">
+                            <wicket:message key="report.header.vehicle_type"/>
+                        </th>
+                        <th>
+                            <wicket:message key="report.header.count"/>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                        </th>
+                        <th>
+                        </th>
+                        <th>
+                        </th>
+                        <th>
+                        </th>
+                        <th class="center vertical">
+                            <wicket:message key="report.header.vehicle_type.car"/>
+                        </th>
+                        <th class="center vertical">
+                            <wicket:message key="report.header.vehicle_type.ship"/>
+                        </th>
+                        <th class="center vertical">
+                            <wicket:message key="report.header.vehicle_type.container"/>
+                        </th>
+                        <th class="center vertical">
+                            <wicket:message key="report.header.vehicle_type.carriage"/>
+                        </th>
+                        <th class="center vertical">
+                            <wicket:message key="report.header.vehicle_type.aircraft"/>
+                        </th>
+                        <th>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr wicket:id="list">
+                        <td>
+                            <span wicket:id="cargoTypeName"></span>
+                        </td>
+                        <td>
+                            <span wicket:id="cargoProducerName"></span>
+                        </td>
+                        <td>
+                            <span wicket:id="cargoReceiverName"></span>
+                        </td>
+                        <td>
+                            <span wicket:id="cargoSenderName"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="isCar"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="isShip"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="isContainer"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="isCarriage"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="isAircraft"></span>
+                        </td>
+                        <td>
+                            <span wicket:id="count"></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div>
+                <span wicket:id="navigator"></span>
+            </div>
+
+            <div>
+                <br/>
+                <br/>
+                <br/>
+                <div>
+                    <wicket:link>
+                        <a href="CargosInDayReportForm.html">
+                            <wicket:message key="report.backToSetParams"/>
+                        </a>
+                    </wicket:link>
+                </div>
+                <div class="referenceToExport">
+                    <form id="pdfForm" target="_blank" method="post" action="CargosInDayReportServlet">
+                    <input type="hidden" value="pdf" name="ExportType"/>
+                        <input wicket:id="pdfDay" type="hidden"/>
+                    </form>
+                </div>
+                <div class="referenceToExport">
+                    <form id="textForm" target="_blank" method="post" action="CargosInDayReportServlet">
+                        <input type="hidden" value="text" name="ExportType"/>
+                        <input wicket:id="textDay" type="hidden"/>
+                    </form>
+                </div>
+            </div>
+        </wicket:extend>
+    </body>
+</html>

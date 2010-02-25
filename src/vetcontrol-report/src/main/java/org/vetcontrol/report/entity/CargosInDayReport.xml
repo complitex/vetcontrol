@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM 'http://java.sun.com/dtd/properties.dtd'>
+<properties>
+    <entry key="query">
+        <![CDATA[
+            SELECT
+                    (SELECT sc.value FROM stringculture sc WHERE sc.id =
+                            (SELECT ct.name FROM cargo_type ct WHERE ct.id = c.cargo_type_id)
+                            AND sc.locale= :locale) AS cargoTypeName,
+                    (SELECT sc.value FROM stringculture sc WHERE sc.id =
+                            (SELECT s.name FROM cargo_sender s WHERE s.id = d.cargo_sender_id)
+                            AND sc.locale= :locale) AS cargoSenderName,
+                    (SELECT sc.value FROM stringculture sc WHERE sc.id =
+                            (SELECT r.name FROM cargo_receiver r WHERE r.id = d.cargo_receiver_id)
+                            AND sc.locale= :locale) AS cargoReceiverName,
+                    (SELECT sc.value FROM stringculture sc WHERE sc.id =
+                            (SELECT p.name FROM cargo_producer p WHERE p.id = d.cargo_producer_id)
+                            AND sc.locale= :locale) AS cargoProducerName,
+                    (CASE (d.vehicle_type_id) WHEN 1 THEN 1 ELSE 0 END) AS car,
+                    (CASE (d.vehicle_type_id) WHEN 2 THEN 1 ELSE 0 END) AS ship,
+                    (CASE (d.vehicle_type_id) WHEN 3 THEN 1 ELSE 0 END) AS container,
+                    (CASE (d.vehicle_type_id) WHEN 4 THEN 1 ELSE 0 END) AS carriage,
+                    (CASE (d.vehicle_type_id) WHEN 5 THEN 1 ELSE 0 END) AS aircraft,
+                    c.count AS `count`,
+                    (SELECT sc.value FROM stringculture sc WHERE sc.id =
+                            (SELECT ut.name FROM unit_type ut WHERE ut.id = c.unit_type_id)
+                            AND sc.locale= :locale) AS unitTypeName
+
+            FROM cargo c
+            LEFT JOIN document_cargo d ON c.document_cargo_id = d.id
+            WHERE d.creator_id IN (SELECT u.id FROM `user` u WHERE u.department_id = :department) AND d.created >= :startDate AND d.created <= :endDate
+            ORDER BY {0} {1}
+        ]]>
+    </entry>
+     <entry key="size">
+        <![CDATA[
+            SELECT COUNT(*)
+            FROM cargo c
+            LEFT JOIN document_cargo d ON c.document_cargo_id = d.id
+            WHERE d.creator_id IN (SELECT u.id FROM `user` u WHERE u.department_id = :department) AND d.created >= :startDate AND d.created <= :endDate
+        ]]>
+    </entry>
+</properties>

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.vetcontrol.report.jasper.movementtypes;
+package org.vetcontrol.report.jasper.cargosinday;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,12 +30,14 @@ import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.export.JRTextExporterParameter;
-import org.vetcontrol.report.entity.MovementTypesReport;
+import org.vetcontrol.report.entity.CargosInDayReport;
 import org.vetcontrol.report.service.LocaleService;
-import org.vetcontrol.report.service.dao.MovementTypesReportDAO;
+import org.vetcontrol.report.service.dao.CargosInDayReportDAO;
+import org.vetcontrol.report.util.cargosinday.DateConverter;
 import org.vetcontrol.report.util.jasper.ExportType;
 import org.vetcontrol.report.util.jasper.ExportTypeUtil;
 import org.vetcontrol.report.util.jasper.TextExporterConstants;
+import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.web.security.SecurityRoles;
 
@@ -43,16 +45,19 @@ import org.vetcontrol.web.security.SecurityRoles;
  *
  * @author Artem
  */
-@WebServlet(name = "MovementTypesReportServlet", urlPatterns = {"/MovementTypesReportServlet"})
-@RolesAllowed({SecurityRoles.LOCAL_AND_REGIONAL_REPORT})
-public class MovementTypesReportServlet extends HttpServlet {
+@WebServlet(name = "CargosInDayReportServlet", urlPatterns = {"/CargosInDayReportServlet"})
+@RolesAllowed({SecurityRoles.LOCAL_REPORT})
+public class CargosInDayReportServlet extends HttpServlet {
 
-    public static final String MONTH_KEY = "month";
-    public static final String DEPARTMENT_KEY = "department";
+    public static final String DAY_KEY = "day";
     @EJB
-    private MovementTypesReportDAO reportDAO;
+    private CargosInDayReportDAO reportDAO;
     @EJB
     private LocaleService localeService;
+    @EJB
+    private DateConverter dateConverter;
+    @EJB
+    private UserProfileBean userProfileBean;
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -61,40 +66,29 @@ public class MovementTypesReportServlet extends HttpServlet {
             if (exportType == null) {
                 return;
             }
-            int month = getMonth(request);
-            Long departmentId = getDepartment(request);
-
-            Date startDate = DateUtil.getFirstDateOfYear();
-            Date endDate = DateUtil.getLastDateOfMonth(month);
+            Date day = getDay(request);
+            Date startDate = DateUtil.getBeginOfDay(day);
+            Date endDate = DateUtil.getEndOfDay(day);
+            Long departmentId = userProfileBean.getCurrentUser().getDepartment().getId();
             Locale reportLocale = localeService.getReportLocale();
 
-            String monthAsString = DateUtil.getDisplayMonth(month, reportLocale).toLowerCase();
-            String year = String.valueOf(DateUtil.getCurrrentYear());
-            String departmentName = reportDAO.getDepartmentName(departmentId, reportLocale);
-
-
             ServletOutputStream servletOutputStream = response.getOutputStream();
-
             InputStream reportStream = null;
             Map<String, Object> params = new HashMap<String, Object>();
-            params.put("endDate", endDate);
+            params.put("date", day);
             params.put(JRParameter.REPORT_LOCALE, reportLocale);
-            params.put("month", monthAsString);
-            params.put("year", year);
-            params.put("department", departmentName);
 
             JRDataSource dataSource = new JRBeanCollectionDataSource(getAll(departmentId, reportLocale, startDate, endDate));
-
             switch (exportType) {
                 case PDF:
-                    reportStream = getClass().getResourceAsStream("pdf/movement_types_report.jasper");
+                    reportStream = getClass().getResourceAsStream("pdf/cargos_in_day_report.jasper");
                     JasperRunManager.runReportToPdfStream(reportStream, servletOutputStream, params, dataSource);
                     response.setContentType("application/pdf");
                     servletOutputStream.flush();
                     servletOutputStream.close();
                     break;
                 case TEXT:
-                    reportStream = getClass().getResourceAsStream("text/movement_types_report.jasper");
+                    reportStream = getClass().getResourceAsStream("text/cargos_in_day_report.jasper");
                     JasperPrint jasperPrint = JasperFillManager.fillReport(reportStream, params, dataSource);
 
                     JRTextExporter textExporter = new JRTextExporter();
@@ -122,16 +116,12 @@ public class MovementTypesReportServlet extends HttpServlet {
         }
     }
 
-    private List<MovementTypesReport> getAll(Long departmentId, Locale locale, Date startDate, Date endDate) {
-        int size = reportDAO.size(departmentId, locale, startDate, endDate);
-        return reportDAO.getAll(departmentId, locale, startDate, endDate, 0, size, true);
+    private Date getDay(HttpServletRequest request) {
+        return dateConverter.toDate(request.getParameter(DAY_KEY).trim());
     }
 
-    private int getMonth(HttpServletRequest request) {
-        return Integer.valueOf(request.getParameter(MONTH_KEY).trim());
-    }
-
-    private Long getDepartment(HttpServletRequest request) {
-        return Long.valueOf(request.getParameter(DEPARTMENT_KEY).trim());
+    private List<CargosInDayReport> getAll(Long departmentId, Locale reportLocale, Date stratDate, Date endDate){
+        int size = reportDAO.size(departmentId, reportLocale, stratDate, endDate);
+        return reportDAO.getAll(departmentId, reportLocale, stratDate, endDate, 0, size, CargosInDayReportDAO.OrderBy.CARGO_TYPE.getName(), true);
     }
 }
