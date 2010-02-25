@@ -6,18 +6,18 @@ body, td, p, li, ol, ul, input, select, textarea, div {	font-family: Arial, Helv
 form {margin:0px; padding:0px;}
 
 a, a:visited {
-	color: #007AAE;
-	text-decoration: none;
+    color: #007AAE;
+    text-decoration: none;
 }
 
 a:hover {
-	color: #007AAE;
-	text-decoration: underline;
+    color: #007AAE;
+    text-decoration: underline;
 }
 
 img {
-border:none;
-text-decoration:none;
+    border:none;
+    text-decoration:none;
 }
 
 #Header { height:107px; vertical-align:top; background:url('../images/logo.jpg') no-repeat; border-bottom: 1px solid #C9D1D9; }
@@ -202,4 +202,12 @@ input.btnMiddle {
 
 .referenceToExport{
     padding-top: 4px;
+}
+
+.vertical{
+    height: 100px;
+    width: 35px;
+    vertical-align: top;
+    padding-left: 0px !important;
+    padding-right: 0px !important;
 }
