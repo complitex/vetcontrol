@@ -8,12 +8,15 @@ package org.vetcontrol.report.web.pages;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import org.apache.wicket.Application;
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.authorization.strategies.role.IRoleCheckingStrategy;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.ITemplateLink;
 import org.vetcontrol.web.template.ResourceTemplateMenu;
+import org.vetcontrol.web.template.TemplateWebApplication;
 
 /**
  *
@@ -52,6 +55,33 @@ public class ReportMenu extends ResourceTemplateMenu {
                 return "movement_types_report";
             }
         });
+
+        TemplateWebApplication application = (TemplateWebApplication)Application.get();
+        if(application.hasAnyRole(SecurityRoles.LOCAL_REPORT)){
+            links.add(new ITemplateLink() {
+
+                @Override
+                public String getLabel(Locale locale) {
+                    return getString(ReportMenu.class, locale, "cargos_in_day_report");
+                }
+
+                @Override
+                public Class<? extends Page> getPage() {
+                    return CargosInDayReportForm.class;
+                }
+
+                @Override
+                public PageParameters getParameters() {
+                    return PageParameters.NULL;
+                }
+
+                @Override
+                public String getTagId() {
+                    return "cargos_in_day_report";
+                }
+            });
+        }
+
         return links;
     }
 

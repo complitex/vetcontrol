@@ -26,6 +26,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.vetcontrol.report.entity.MovementTypesReport;
+import org.vetcontrol.report.jasper.movementtypes.MovementTypesReportServlet;
 import org.vetcontrol.report.service.LocaleService;
 import org.vetcontrol.report.service.dao.MovementTypesReportDAO;
 import org.vetcontrol.report.util.jasper.ExportType;
@@ -145,8 +146,8 @@ public final class MovementTypesReportPage extends TemplatePage {
         add(list);
         add(new PagingNavigator("navigator", list, "itemsPerPage", preferences, PAGE_NUMBER_KEY));
 
-        IBehavior monthAttribute = new SimpleAttributeModifier("name", "month");
-        IBehavior departmentAttribute = new SimpleAttributeModifier("name", "department");
+        IBehavior monthAttribute = new SimpleAttributeModifier("name", MovementTypesReportServlet.MONTH_KEY);
+        IBehavior departmentAttribute = new SimpleAttributeModifier("name", MovementTypesReportServlet.DEPARTMENT_KEY);
 
         //pdf parameters
         HiddenField<Integer> pdfMonth = new HiddenField<Integer>("pdfMonth", new Model<Integer>(month));
