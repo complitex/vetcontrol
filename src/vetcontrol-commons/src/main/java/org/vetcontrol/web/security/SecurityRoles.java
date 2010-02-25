@@ -20,6 +20,7 @@ public class SecurityRoles {
     public final static String LOGGING_VIEW = "LOGGING_VIEW";
     public final static String LOCAL_REPORT = "LOCAL_REPORT";
     public final static String LOCAL_AND_REGIONAL_REPORT = "LOCAL_AND_REGIONAL_REPORT";
+    public final static String REGIONAL_REPORT = "REGIONAL_REPORT";
 
 
 //    ,DOCUMENT_VIEW_DEPARTMENT, DOCUMENT_EDIT_DEPARTMENT,
