@@ -68,4 +68,16 @@ public class DateUtil {
     public static int getCurrrentYear(){
         return Calendar.getInstance().get(Calendar.YEAR);
     }
+
+    public static Date getBeginOfDay(Date date){
+        Calendar c = Calendar.getInstance();
+
+        c.setTime(date);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+
+        return c.getTime();
+    }
 }

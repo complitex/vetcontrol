@@ -51,6 +51,10 @@ public abstract class ServeltAuthWebApplication extends WebApplication
         return false;
     }
 
+    public boolean hasAnyRole(String... roles){
+        return hasAnyRole(new Roles(roles));
+    }
+
     @Override
     public void onUnauthorizedInstantiation(Component component) {
         WebRequestCycle webRequestCycle = (WebRequestCycle) RequestCycle.get();
