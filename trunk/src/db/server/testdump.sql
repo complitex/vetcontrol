@@ -137,8 +137,7 @@ INSERT INTO `usergroup` (`id`, `login`, `usergroup`) VALUES
 (107,'login_94','LOCAL_OFFICERS'),(108,'login_95','LOCAL_OFFICERS'),(109,'login_96','ADMINISTRATORS'),
 (110,'login_97','DEPARTMENT_OFFICERS'),(111,'login_98','ADMINISTRATORS'),(112,'login_99','DEPARTMENT_OFFICERS');
 
-INSERT INTO `stringculture`(`id`, `locale`, `value`) VALUES (38,'en','автомобиль'),(38,'ru','автомобиль'),(39,'en','вагон'),(39,'ru','вагон'),
-(40,'en','контейнер'),(40,'ru','контейнер'),(41,'en','самолет'),(41,'ru','самолет'),(42,'en','судно'),(42,'ru','судно'),
+INSERT INTO `stringculture`(`id`, `locale`, `value`) VALUES
 (43,'en','Получатель 1'),(43,'ru','Получатель 1'),(44,'en','Получатель 2'),(44,'ru','Получатель 2'),
 (45,'en','Получатель 3'),(45,'ru','Получатель 3'),(46,'en','Отправитель 1'),(46,'ru','Отправитель 1'),
 (47,'en','Отправитель 2'),(47,'ru','Отправитель 2'),(48,'en','Отправитель 3'),(48,'ru','Отправитель 3'),
@@ -174,9 +173,6 @@ INSERT INTO `cargo_sender` VALUES (1,46, CURRENT_TIMESTAMP),(2,47, CURRENT_TIMES
 INSERT INTO `passing_border_point` VALUES (1,68, CURRENT_TIMESTAMP),(2,69, CURRENT_TIMESTAMP),(3,70, CURRENT_TIMESTAMP);
 
 INSERT INTO `cargo_producer` VALUES (1,49, CURRENT_TIMESTAMP),(2,50, CURRENT_TIMESTAMP),(3,51, CURRENT_TIMESTAMP);
-
-INSERT INTO `vehicletypes` VALUES (1,38, CURRENT_TIMESTAMP),(2,39, CURRENT_TIMESTAMP),(3,40, CURRENT_TIMESTAMP),(4,41, CURRENT_TIMESTAMP),
-(5,42, CURRENT_TIMESTAMP);
 
 INSERT INTO `document_cargo` VALUES (1,30,'2010-01-15 17:59:09',NULL,1,1, 'транспорт 1',1,2,3,1,'примечание 3','задержан 2'),
                                     (2,30, '2010-02-15 17:48:00', NULL, 1,1, 'транспорт 2', 1,2,3,1, 'примечание','задержан'),

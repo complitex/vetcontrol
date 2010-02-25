@@ -83,5 +83,19 @@ INSERT INTO `stringculture`(`id`, `locale`, `value`) VALUES (34,'en','импор
 */
 INSERT INTO `movement_type` VALUES (1,34, CURRENT_TIMESTAMP),(2,35, CURRENT_TIMESTAMP),(3,36, CURRENT_TIMESTAMP),(4,37, CURRENT_TIMESTAMP);
 
+INSERT INTO `stringculture`(`id`, `locale`, `value`) VALUES (38,'en','автомобиль'),(38,'ru','автомобиль'),(41,'en','вагон'),(41,'ru','вагон'),
+(40,'en','контейнер'),(40,'ru','контейнер'),(42,'en','самолет'),(42,'ru','самолет'),(39,'en','судно'),(39,'ru','судно');
+
+/* Common vehicle types(for reports):
+    id vehicle type
+    1   автомобиль
+    2   судно
+    3   контейнер
+    4   вагон
+    5   самолет
+*/
+INSERT INTO `vehicletypes` VALUES (1,38, CURRENT_TIMESTAMP),(2,39, CURRENT_TIMESTAMP),(3,40, CURRENT_TIMESTAMP),(4,41, CURRENT_TIMESTAMP),
+(5,42, CURRENT_TIMESTAMP);
+
 UPDATE `generator` SET `generatorValue` = 37 WHERE `generatorName` = 'books';
 
