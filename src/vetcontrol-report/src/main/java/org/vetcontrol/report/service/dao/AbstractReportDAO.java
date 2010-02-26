@@ -16,6 +16,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
+import org.vetcontrol.report.entity.ReportParameter;
 import org.vetcontrol.report.util.QueryLoader;
 import org.vetcontrol.util.book.service.HibernateSessionTransformer;
 
@@ -25,7 +26,6 @@ import org.vetcontrol.util.book.service.HibernateSessionTransformer;
  */
 public abstract class AbstractReportDAO<T extends Serializable> {
 
-    private static final String REPORT_LOCALE = "locale";
     private static final String ALL_KEY = "all";
     private static final String SIZE_KEY = "size";
     private Class<T> reportEntityType;
@@ -46,7 +46,7 @@ public abstract class AbstractReportDAO<T extends Serializable> {
             String pattern = QueryLoader.getQuery(reportEntityType, getKeyForAll());
             String sql = prepareAllSQL(pattern, daoParameters, reportLocale, sortProperty, isAscending);
             Query query = session.createSQLQuery(sql);
-            query.setParameter(REPORT_LOCALE, reportLocale.getLanguage());
+            query.setParameter(ReportParameter.REPORT_LOCALE, reportLocale.getLanguage());
             for (Map.Entry<String, Object> entry : daoParameters.entrySet()) {
                 if (entry.getValue() instanceof Date) {
                     query.setParameter(entry.getKey(), entry.getValue(), Hibernate.TIMESTAMP);
