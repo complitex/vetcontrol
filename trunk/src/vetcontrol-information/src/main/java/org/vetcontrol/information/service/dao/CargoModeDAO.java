@@ -22,8 +22,10 @@ import org.vetcontrol.entity.CargoMode;
 import org.vetcontrol.entity.CargoModeCargoType;
 import org.vetcontrol.entity.CargoModeUnitType;
 import org.vetcontrol.entity.CargoType;
+import org.vetcontrol.entity.Deleted;
 import org.vetcontrol.entity.UnitType;
 import org.vetcontrol.information.util.web.cargomode.CargoModeFilterBean;
+import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.util.book.service.HibernateSessionTransformer;
 
 /**
@@ -34,6 +36,7 @@ import org.vetcontrol.util.book.service.HibernateSessionTransformer;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class CargoModeDAO {
 
+    private static final String DELETED_PRIMARY_KEY_SEPARATOR = ":";
     @EJB
     private IBookDAO bookDAO;
 
@@ -142,15 +145,19 @@ public class CargoModeDAO {
                 }
             }
             if (!toRemove.isEmpty()) {
-                StringBuilder query = new StringBuilder("DELETE CargoModeCargoType cmct WHERE cmct.cargoType.id IN (");
+                StringBuilder query = new StringBuilder("DELETE CargoModeCargoType cmct WHERE cmct.cargoMode = :cargoMode AND cmct.cargoType.id IN (");
                 for (int i = 0; i < toRemove.size(); i++) {
                     query.append(toRemove.get(i));
                     if (i < toRemove.size() - 1) {
                         query.append(", ");
                     }
+
+                    Deleted deleted = createDeletedEntry(cargoMode.getId(), CargoModeCargoType.class, toRemove.get(i));
+                    entityManager.persist(deleted);
                 }
                 query.append(")");
-                entityManager.createQuery(query.toString()).executeUpdate();
+
+                entityManager.createQuery(query.toString()).setParameter("cargoMode", cargoMode).executeUpdate();
             }
 
             //unit types
@@ -175,15 +182,17 @@ public class CargoModeDAO {
                 }
             }
             if (!toRemove.isEmpty()) {
-                StringBuilder query = new StringBuilder("DELETE CargoModeUnitType cmut WHERE cmut.unitType.id IN (");
+                StringBuilder query = new StringBuilder("DELETE CargoModeUnitType cmut WHERE cmut.cargoMode = :cargoMode AND cmut.unitType.id IN (");
                 for (int i = 0; i < toRemove.size(); i++) {
                     query.append(toRemove.get(i));
                     if (i < toRemove.size() - 1) {
                         query.append(", ");
                     }
+                    Deleted deleted = createDeletedEntry(cargoMode.getId(), CargoModeUnitType.class, toRemove.get(i));
+                    entityManager.persist(deleted);
                 }
                 query.append(")");
-                entityManager.createQuery(query.toString()).executeUpdate();
+                entityManager.createQuery(query.toString()).setParameter("cargoMode", cargoMode).executeUpdate();
             }
         }
 
@@ -198,6 +207,14 @@ public class CargoModeDAO {
             cmut.getId().setCargoModeId(cargoMode.getId());
             session.saveOrUpdate(cmut);
         }
+    }
+
+    private Deleted createDeletedEntry(Long cargoModeId, Class entityType, Long id) {
+        Deleted deleted = new Deleted();
+        deleted.setId(String.valueOf(cargoModeId) + DELETED_PRIMARY_KEY_SEPARATOR + String.valueOf(id));
+        deleted.setEntity(entityType.getName());
+        deleted.setDeleted(DateUtil.getCurrentDate());
+        return deleted;
     }
 
     public List<CargoType> getAvailableCargoTypes(String search, int count, Long cargoModeId, List<CargoType> exclude) {
@@ -231,7 +248,7 @@ public class CargoModeDAO {
 
     public List<UnitType> getAvailableUnitTypes(List<UnitType> exclude) {
         StringBuilder query = new StringBuilder("SELECT DISTINCT ut FROM UnitType ut");
-        
+
         if (exclude != null && !exclude.isEmpty()) {
             query.append(" WHERE ut.id NOT IN (");
             for (int i = 0; i < exclude.size(); i++) {
