@@ -6,9 +6,11 @@ package org.vetcontrol.report.web.pages;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import javax.ejb.EJB;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
@@ -28,6 +30,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.vetcontrol.report.entity.RegionalControlReport;
+import org.vetcontrol.report.entity.RegionalControlReportParameter;
 import org.vetcontrol.report.jasper.regionalcontrol.RegionalControlReportServlet;
 import org.vetcontrol.report.service.LocaleService;
 import org.vetcontrol.report.service.dao.DepartmentDAO;
@@ -79,7 +82,7 @@ public final class RegionalControlReportPage extends TemplatePage {
         if (end == null) {
             throw new IllegalArgumentException("End date must be specified.");
         }
-        
+
         final Date startDate = DateUtil.getBeginOfDay(start);
         final Date endDate = DateUtil.getEndOfDay(end);
         final Long departmentId = userProfileBean.getCurrentUser().getDepartment().getId();
@@ -87,16 +90,23 @@ public final class RegionalControlReportPage extends TemplatePage {
         final UIPreferences preferences = getPreferences();
 
         add(new Label("title", new ResourceModel("title")));
-        add(new Label("report.name", new StringResourceModel("report.name", null, 
+        add(new Label("report.name", new StringResourceModel("report.name", null,
                 new Object[]{departmentDAO.getDepartmentName(departmentId, reportLocale), startDate, endDate})));
 
         SortableDataProvider<RegionalControlReport> dataProvider = new SortableDataProvider<RegionalControlReport>() {
 
+            private Map<String, Object> daoParams = new HashMap<String, Object>();
+
+            {
+                daoParams.put(RegionalControlReportParameter.START_DATE, startDate);
+                daoParams.put(RegionalControlReportParameter.END_DATE, endDate);
+                daoParams.put(RegionalControlReportParameter.DEPARTMENT, departmentId);
+            }
             private IModel<Integer> sizeModel = new LoadableDetachableModel<Integer>() {
 
                 @Override
                 protected Integer load() {
-                    return reportDAO.size(departmentId, reportLocale, startDate, endDate);
+                    return reportDAO.size(daoParams);
                 }
             };
 
@@ -106,8 +116,7 @@ public final class RegionalControlReportPage extends TemplatePage {
                 preferences.putPreference(UIPreferences.PreferenceType.SORT_ORDER, SORT_ORDER_KEY, sortParam.isAscending());
                 preferences.putPreference(UIPreferences.PreferenceType.SORT_PROPERTY, SORT_PROPERTY_KEY, sortParam.getProperty());
 
-                return reportDAO.getAll(departmentId, reportLocale, startDate, endDate, first, count, sortParam.getProperty(),
-                        sortParam.isAscending()).iterator();
+                return reportDAO.getAll(daoParams, reportLocale, first, count, sortParam.getProperty(), sortParam.isAscending()).iterator();
             }
 
             @Override

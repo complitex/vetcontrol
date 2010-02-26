@@ -10,7 +10,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.annotation.security.RolesAllowed;
@@ -27,15 +26,15 @@ import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperRunManager;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.export.JRTextExporterParameter;
-import org.vetcontrol.report.entity.MovementTypesReport;
+import org.vetcontrol.report.entity.MovementTypesReportParameter;
 import org.vetcontrol.report.service.LocaleService;
 import org.vetcontrol.report.service.dao.DepartmentDAO;
 import org.vetcontrol.report.service.dao.MovementTypesReportDAO;
 import org.vetcontrol.report.util.jasper.ExportType;
 import org.vetcontrol.report.util.jasper.ExportTypeUtil;
+import org.vetcontrol.report.util.jasper.JRCacheableDataSource;
 import org.vetcontrol.report.util.jasper.TextExporterConstants;
 import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.web.security.SecurityRoles;
@@ -85,7 +84,11 @@ public class MovementTypesReportServlet extends HttpServlet {
             params.put("year", year);
             params.put("department", departmentName);
 
-            JRDataSource dataSource = new JRBeanCollectionDataSource(getAll(departmentId, reportLocale, startDate, endDate));
+            Map<String, Object> daoParams = new HashMap<String, Object>();
+            daoParams.put(MovementTypesReportParameter.START_DATE, startDate);
+            daoParams.put(MovementTypesReportParameter.END_DATE, endDate);
+            daoParams.put(MovementTypesReportParameter.DEPARTMENT, departmentId);
+            JRDataSource dataSource = new JRCacheableDataSource(reportDAO, daoParams, reportLocale, null, true);
 
             switch (exportType) {
                 case PDF:
@@ -122,11 +125,6 @@ public class MovementTypesReportServlet extends HttpServlet {
             response.setContentType("text/plain");
             response.getOutputStream().print(stringWriter.toString());
         }
-    }
-
-    private List<MovementTypesReport> getAll(Long departmentId, Locale locale, Date startDate, Date endDate) {
-        int size = reportDAO.size(departmentId, locale, startDate, endDate);
-        return reportDAO.getAll(departmentId, locale, startDate, endDate, 0, size, true);
     }
 
     private int getMonth(HttpServletRequest request) {

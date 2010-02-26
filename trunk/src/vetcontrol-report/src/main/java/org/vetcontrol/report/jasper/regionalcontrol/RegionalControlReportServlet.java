@@ -10,7 +10,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.annotation.security.RolesAllowed;
@@ -27,16 +26,16 @@ import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperRunManager;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.export.JRTextExporterParameter;
-import org.vetcontrol.report.entity.RegionalControlReport;
+import org.vetcontrol.report.entity.RegionalControlReportParameter;
 import org.vetcontrol.report.service.LocaleService;
 import org.vetcontrol.report.service.dao.DepartmentDAO;
 import org.vetcontrol.report.service.dao.RegionalControlReportDAO;
 import org.vetcontrol.report.util.DateConverter;
 import org.vetcontrol.report.util.jasper.ExportType;
 import org.vetcontrol.report.util.jasper.ExportTypeUtil;
+import org.vetcontrol.report.util.jasper.JRCacheableDataSource;
 import org.vetcontrol.report.util.jasper.TextExporterConstants;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.util.DateUtil;
@@ -86,7 +85,12 @@ public class RegionalControlReportServlet extends HttpServlet {
             params.put("department", departmentName);
             params.put(JRParameter.REPORT_LOCALE, reportLocale);
 
-            JRDataSource dataSource = new JRBeanCollectionDataSource(getAll(departmentId, reportLocale, startDate, endDate));
+            Map<String, Object> daoParams = new HashMap<String, Object>();
+            daoParams.put(RegionalControlReportParameter.START_DATE, startDate);
+            daoParams.put(RegionalControlReportParameter.END_DATE, endDate);
+            daoParams.put(RegionalControlReportParameter.DEPARTMENT, departmentId);
+            JRDataSource dataSource = new JRCacheableDataSource(reportDAO, daoParams, reportLocale,
+                    RegionalControlReportDAO.OrderBy.CARGO_ARRIVED.getName(), true);
             switch (exportType) {
                 case PDF:
                     reportStream = getClass().getResourceAsStream("pdf/regional_control_report.jasper");
@@ -130,10 +134,5 @@ public class RegionalControlReportServlet extends HttpServlet {
 
     private Date getEnd(HttpServletRequest request) {
         return dateConverter.toDate(request.getParameter(END_DATE_KEY).trim());
-    }
-
-    private List<RegionalControlReport> getAll(Long departmentId, Locale reportLocale, Date stratDate, Date endDate) {
-        int size = reportDAO.size(departmentId, reportLocale, stratDate, endDate);
-        return reportDAO.getAll(departmentId, reportLocale, stratDate, endDate, 0, size, RegionalControlReportDAO.OrderBy.CARGO_ARRIVED.getName(), true);
     }
 }

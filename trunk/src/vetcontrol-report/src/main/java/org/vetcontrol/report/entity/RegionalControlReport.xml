@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM 'http://java.sun.com/dtd/properties.dtd'>
 <properties>
-    <entry key="query">
+    <entry key="all">
         <![CDATA[
             SELECT
                 (SELECT d.created FROM document_cargo d WHERE d.id = c.document_cargo_id) AS cargoArrived,

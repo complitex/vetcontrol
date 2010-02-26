@@ -10,7 +10,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.annotation.security.RolesAllowed;
@@ -27,15 +26,15 @@ import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperRunManager;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.export.JRTextExporterParameter;
-import org.vetcontrol.report.entity.CargosInDayReport;
+import org.vetcontrol.report.entity.CargosInDayReportParameter;
 import org.vetcontrol.report.service.LocaleService;
 import org.vetcontrol.report.service.dao.CargosInDayReportDAO;
 import org.vetcontrol.report.util.DateConverter;
 import org.vetcontrol.report.util.jasper.ExportType;
 import org.vetcontrol.report.util.jasper.ExportTypeUtil;
+import org.vetcontrol.report.util.jasper.JRCacheableDataSource;
 import org.vetcontrol.report.util.jasper.TextExporterConstants;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.util.DateUtil;
@@ -78,7 +77,12 @@ public class CargosInDayReportServlet extends HttpServlet {
             params.put("date", day);
             params.put(JRParameter.REPORT_LOCALE, reportLocale);
 
-            JRDataSource dataSource = new JRBeanCollectionDataSource(getAll(departmentId, reportLocale, startDate, endDate));
+            Map<String, Object> daoParams = new HashMap<String, Object>();
+            daoParams.put(CargosInDayReportParameter.START_DATE, startDate);
+            daoParams.put(CargosInDayReportParameter.END_DATE, endDate);
+            daoParams.put(CargosInDayReportParameter.DEPARTMENT, departmentId);
+            JRDataSource dataSource = new JRCacheableDataSource(reportDAO, daoParams, reportLocale,
+                    CargosInDayReportDAO.OrderBy.CARGO_TYPE.getName(), true);
             switch (exportType) {
                 case PDF:
                     reportStream = getClass().getResourceAsStream("pdf/cargos_in_day_report.jasper");
@@ -118,10 +122,5 @@ public class CargosInDayReportServlet extends HttpServlet {
 
     private Date getDay(HttpServletRequest request) {
         return dateConverter.toDate(request.getParameter(DAY_KEY).trim());
-    }
-
-    private List<CargosInDayReport> getAll(Long departmentId, Locale reportLocale, Date stratDate, Date endDate){
-        int size = reportDAO.size(departmentId, reportLocale, stratDate, endDate);
-        return reportDAO.getAll(departmentId, reportLocale, stratDate, endDate, 0, size, CargosInDayReportDAO.OrderBy.CARGO_TYPE.getName(), true);
     }
 }

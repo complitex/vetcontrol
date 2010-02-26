@@ -7,9 +7,11 @@ package org.vetcontrol.report.web.pages;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import javax.ejb.EJB;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.behavior.IBehavior;
@@ -26,6 +28,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.vetcontrol.report.entity.MovementTypesReport;
+import org.vetcontrol.report.entity.MovementTypesReportParameter;
 import org.vetcontrol.report.jasper.movementtypes.MovementTypesReportServlet;
 import org.vetcontrol.report.service.LocaleService;
 import org.vetcontrol.report.service.dao.DepartmentDAO;
@@ -86,11 +89,18 @@ public final class MovementTypesReportPage extends TemplatePage {
 
         SortableDataProvider<MovementTypesReport> dataProvider = new SortableDataProvider<MovementTypesReport>() {
 
+            private Map<String, Object> daoParams = new HashMap<String, Object>();
+
+            {
+                daoParams.put(MovementTypesReportParameter.START_DATE, startDate);
+                daoParams.put(MovementTypesReportParameter.END_DATE, endDate);
+                daoParams.put(MovementTypesReportParameter.DEPARTMENT, departmentId);
+            }
             private IModel<Integer> sizeModel = new LoadableDetachableModel<Integer>() {
 
                 @Override
                 protected Integer load() {
-                    return reportDAO.size(departmentId, reportLocale, startDate, endDate);
+                    return reportDAO.size(daoParams);
                 }
             };
 
@@ -99,7 +109,7 @@ public final class MovementTypesReportPage extends TemplatePage {
                 SortParam sortParam = getSort();
                 preferences.putPreference(PreferenceType.SORT_ORDER, SORT_ORDER_KEY, sortParam.isAscending());
 
-                return reportDAO.getAll(departmentId, reportLocale, startDate, endDate, first, count, sortParam.isAscending()).iterator();
+                return reportDAO.getAll(daoParams, reportLocale, first, count, null, sortParam.isAscending()).iterator();
             }
 
             @Override
