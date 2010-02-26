@@ -11,8 +11,8 @@ import org.vetcontrol.sync.NotRegisteredException;
 import org.vetcontrol.sync.SyncRequestEntity;
 import org.vetcontrol.util.DateUtil;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.annotation.Resource;
+import javax.ejb.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Date;
@@ -28,6 +28,8 @@ import static org.vetcontrol.sync.client.service.ClientFactory.createJSONClient;
 public class UserSyncBean extends SyncInfo{
     private static final Logger log = LoggerFactory.getLogger(UserSyncBean.class);
 
+    @Resource TimerService timerService;
+
     @EJB(beanName = "ClientBean")
     private ClientBean clientBean;
 
@@ -35,6 +37,13 @@ public class UserSyncBean extends SyncInfo{
     private EntityManager em;
 
     public void process() throws NotRegisteredException {
+        if (timerService.getTimers().size() == 0){
+            timerService.createSingleActionTimer(0, new TimerConfig(null, false));
+        }
+    }
+
+    @Timeout
+    private void monitor(Timer timer) throws NotRegisteredException {
         processUser();
         processUserGroups();
     }

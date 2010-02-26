@@ -7,5 +7,6 @@
         <menu class="org.vetcontrol.information.web.pages.BookMenu"/>
         <menu class="org.vetcontrol.document.web.pages.DocumentTemplateMenu"/>
         <menu class="org.vetcontrol.report.web.pages.ReportMenu"/>
+        <menu class="org.vetcontrol.sync.client.web.pages.SyncTemplateMenu"/>
     </sidebar>
 </template>
