@@ -11,10 +11,13 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.util.ListModel;
 import org.apache.wicket.util.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.sync.client.service.ISyncListener;
 import org.vetcontrol.sync.client.service.SyncBean;
 import org.vetcontrol.sync.client.service.SyncEvent;
@@ -27,6 +30,7 @@ import javax.ejb.EJB;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -38,6 +42,10 @@ import java.util.concurrent.Future;
 @AuthorizeInstantiation(SecurityRoles.AUTHORIZED)
 public class SyncPage extends TemplatePage{
     private static final Logger log = LoggerFactory.getLogger(SyncPage.class);
+
+    private static boolean lock = false;
+
+    private final String STATUS_MODEL = "STATUS_MODEL";
 
     @EJB(name = "SyncBean")
     SyncBean syncBean;
@@ -62,10 +70,9 @@ public class SyncPage extends TemplatePage{
         add(new FeedbackPanel("messages"));
 
         final WebMarkupContainer container = new WebMarkupContainer("container");
-        container.setVisible(false);
         add(container);
 
-        final ListView<StatusRow> listView = new ListView<StatusRow>("list", new ArrayList<StatusRow>()){
+        final ListView<StatusRow> listView = new ListView<StatusRow>("list"){
 
             @Override
             protected void populateItem(ListItem<StatusRow> item) {
@@ -73,7 +80,22 @@ public class SyncPage extends TemplatePage{
                 item.add(new Label("name", item.getModelObject().name));
                 item.add(new Label("status", item.getModelObject().status));
             }
-        };        
+        };
+        container.add(listView);
+
+
+        //Загрузка информации о статусе предыдущей синхронизации
+        @SuppressWarnings({"unchecked"})
+        IModel<List<StatusRow>> model = getPreferences().getPreference(UIPreferences.PreferenceType.SYNC, STATUS_MODEL, IModel.class);
+        if (model != null){
+            listView.setModel(model);
+            container.setVisible(true);
+        }else{
+            model = new ListModel<StatusRow>(new ArrayList<StatusRow>());
+            listView.setModel(model);
+            container.setVisible(false);
+            getPreferences().putPreference(UIPreferences.PreferenceType.SYNC, STATUS_MODEL, model);
+        }
 
         //Форма
         form = new Form("form");
@@ -84,6 +106,11 @@ public class SyncPage extends TemplatePage{
             @Override
             public void onSubmit() {
                 try {
+                    if (lock){
+                        error("Синхронизация уже запущена в фоновом режиме или другом окне браузера");
+                        return;
+                    }
+
                     container.removeAll();
                     container.setVisible(true);
 
@@ -114,7 +141,8 @@ public class SyncPage extends TemplatePage{
 
                     future = syncBean.asynchronousProcess();
                 } catch (ExecutionException e) {
-                    error(e.getCause().getLocalizedMessage());                    
+                    error(e.getCause().getLocalizedMessage());
+                    lock = false;
                 }
             }
         };
@@ -125,6 +153,8 @@ public class SyncPage extends TemplatePage{
 
             @Override
             public void start(SyncEvent syncEvent) {
+                lock = true;
+
                 StatusRow row = new StatusRow();
                 String key = ((Class)syncEvent.getObject()).getCanonicalName();
                 row.date = DateUtil.getCurrentDate();
@@ -145,7 +175,9 @@ public class SyncPage extends TemplatePage{
             public void complete(SyncEvent syncEvent) {
                 StatusRow row = listView.getModelObject().get(listView.getModelObject().size()-1);
                 row.date = DateUtil.getCurrentDate();
-                row.status = "Успешно синхронизировано " + syncEvent.getCount() + " элементов";
+                row.status = "Успешно синхронизировано: " + syncEvent.getCount();
+
+                lock = false;
             }
         };
 
