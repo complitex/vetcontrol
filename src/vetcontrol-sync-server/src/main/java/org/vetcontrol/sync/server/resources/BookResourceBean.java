@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.ClientBean;
+import org.vetcontrol.sync.Count;
 import org.vetcontrol.sync.SyncRequestEntity;
 
 import javax.ejb.EJB;
@@ -156,15 +157,21 @@ public class BookResourceBean {
     }
 
     @POST @Path("/{entity}/count")
-    public String getEntityCount(@PathParam("entity") String entity, SyncRequestEntity requestEntity){
+    public Count getEntityCount(@PathParam("entity") String entity, SyncRequestEntity requestEntity){
         checkClient(requestEntity);
-        return em.createQuery("select count(*) from "+ entity + " e where e.updated >= :updated", Long.class)
-                .setParameter("updated", requestEntity.getUpdated())
-                .getSingleResult().toString();
+        return new Count(em.createQuery("select count(*) from "+ entity + " e where e.updated >= :updated", Long.class)
+                .setParameter("updated", requestEntity.getUpdated()).getSingleResult().intValue());      
     }
 
 
     private <T> List<T> getList(Class<T> entity, SyncRequestEntity requestEntity){
+        //TODO test
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         checkClient(requestEntity);
         return em.createQuery("select e from "+ entity.getSimpleName() + " e where e.updated >= :updated", entity)
                 .setParameter("updated", requestEntity.getUpdated())

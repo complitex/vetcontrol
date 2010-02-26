@@ -7,16 +7,20 @@ import org.vetcontrol.entity.IUpdated;
 import org.vetcontrol.entity.User;
 import org.vetcontrol.entity.UserGroup;
 import org.vetcontrol.service.ClientBean;
-import org.vetcontrol.sync.NotRegisteredException;
+import org.vetcontrol.sync.Count;
 import org.vetcontrol.sync.SyncRequestEntity;
 import org.vetcontrol.util.DateUtil;
 
-import javax.annotation.Resource;
-import javax.ejb.*;
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import static org.vetcontrol.sync.client.service.ClientFactory.createJSONClient;
 
@@ -28,35 +32,33 @@ import static org.vetcontrol.sync.client.service.ClientFactory.createJSONClient;
 public class UserSyncBean extends SyncInfo{
     private static final Logger log = LoggerFactory.getLogger(UserSyncBean.class);
 
-    @Resource TimerService timerService;
-
     @EJB(beanName = "ClientBean")
     private ClientBean clientBean;
 
     @PersistenceContext
     private EntityManager em;
 
-    public void process() throws NotRegisteredException {
-        if (timerService.getTimers().size() == 0){
-            timerService.createSingleActionTimer(0, new TimerConfig(null, false));
-        }
-    }
-
-    @Timeout
-    private void monitor(Timer timer) throws NotRegisteredException {
+    public void process(){
         processUser();
         processUserGroups();
     }
 
-    private void processUser() throws NotRegisteredException {
+    @Asynchronous
+    public Future<SyncStatus> asynchronousProcess() throws ExecutionException {
+        process();
+
+        return new AsyncResult<SyncStatus>(SyncStatus.COMPLETE);
+    }
+
+    private void processUser(){
         String secureKey = clientBean.getCurrentSecureKey();
         Date syncUpdated = DateUtil.getCurrentDate();
 
         log.debug("\n==================== Synchronizing: User ============================");
 
         //Количество пользователей для загрузки
-        int count = Integer.parseInt(createJSONClient("/user/count")
-                .post(String.class, new SyncRequestEntity(secureKey, getUpdated(User.class))));
+        int count = createJSONClient("/user/count")
+                .post(Count.class, new SyncRequestEntity(secureKey, getUpdated(User.class))).getCount();
         start(new SyncEvent(count, User.class));
 
         //Загрузка с сервера списка пользователей
@@ -85,15 +87,15 @@ public class UserSyncBean extends SyncInfo{
         log.debug("++++++++++++++++++++ Synchronizing Complete: User +++++++++++++++++++\n");
     }
 
-    private void processUserGroups() throws NotRegisteredException {
+    private void processUserGroups(){
         String secureKey = clientBean.getCurrentSecureKey();
         Date syncUpdated = DateUtil.getCurrentDate();
 
         log.debug("\n==================== Synchronizing: User Group ============================");
 
         //Количество групп пользователей для загрузки
-        int count = Integer.parseInt(createJSONClient("/usergroup/count")
-                .post(String.class, new SyncRequestEntity(secureKey, getUpdated(User.class))));
+        int count = createJSONClient("/usergroup/count")
+                .post(Count.class, new SyncRequestEntity(secureKey, getUpdated(UserGroup.class))).getCount();
         start(new SyncEvent(count, UserGroup.class));
 
         //Загрузка с сервера списка групп пользователей

@@ -12,16 +12,31 @@
 
     <div id="messages" wicket:id="messages"></div>
 
+    <div wicket:id="container">
+        <table  border="0" cellspacing="0" cellpadding="0" class="tbColor">
+            <thead>
+            <tr>
+                <th>Время</th>
+                <th>Объект</th>
+                <th>Статус</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr wicket:id="list">
+                <td wicket:id="date"></td>
+                <td wicket:id="name"></td>
+                <td wicket:id="status"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
     <form action="#" wicket:id="form">
         <div align="center">
-            <input type="submit" class="btnBig" wicket:message="value:sync.client.process"/>
+            <input type="submit" class="btnBig" wicket:message="value:sync.client.process" wicket:id="submit"/>
+            <input type="submit" class="btnBig" wicket:message="value:sync.client.cancel" wicket:id="cancel"/>
         </div>
     </form>
-
-    <div align="center">
-        <span wicket:id="label"></span>
-    </div>
-    
 
 </wicket:extend>
 </body>

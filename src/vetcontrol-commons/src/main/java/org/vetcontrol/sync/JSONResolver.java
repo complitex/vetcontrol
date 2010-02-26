@@ -29,7 +29,7 @@ public class JSONResolver {
             ArrestReason.class, CargoMode.class, CargoProducer.class, CargoReceiver.class, CargoSender.class,
             CargoType.class, CountryBook.class, CountryWithBadEpizooticSituation.class, CustomsPoint.class,
             Department.class, Job.class, MovementType.class, PassingBorderPoint.class, Prohibition.class,
-            RegisteredProducts.class, Tariff.class, UnitType.class, VehicleType.class
+            RegisteredProducts.class, Tariff.class, UnitType.class, VehicleType.class, Count.class
     };
     
     private final static Set<Class> types = new HashSet<Class>(Arrays.asList(cTypes));
