@@ -43,35 +43,13 @@ public class SyncPage extends TemplatePage{
     SyncBean syncBean;
 
     transient Future<SyncStatus> future;
+    private Button submit;
+    private Form form;
 
     private class StatusRow implements Serializable{
         private Date date;
         private String name;
         private String status;
-
-        public Date getDate() {
-            return date;
-        }
-
-        public void setDate(Date date) {
-            this.date = date;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getStatus() {
-            return status;
-        }
-
-        public void setStatus(String status) {
-            this.status = status;
-        }
     }
 
     public SyncPage() {
@@ -96,32 +74,43 @@ public class SyncPage extends TemplatePage{
                 item.add(new Label("status", item.getModelObject().status));
             }
         };        
-        container.add(listView);
-
-        final AjaxSelfUpdatingTimerBehavior timer = new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)){
-            @Override
-            protected void onPostProcessTarget(AjaxRequestTarget target) {
-                if (future.isDone()){
-                    StatusRow row = new StatusRow();
-                    row.setStatus("Синхронизация завершена успешно");
-                    listView.getModelObject().add(row);                                       
-
-                    this.stop();
-                }
-            }
-        };
 
         //Форма
-        Form form = new Form("form");
+        form = new Form("form");
+        form.setOutputMarkupId(true);
         add(form);
 
-        Button submit = new Button("submit"){
+        submit = new Button("submit"){
             @Override
             public void onSubmit() {
                 try {
+                    container.removeAll();
                     container.setVisible(true);
-                    container.add(timer);
+
+                    listView.getModelObject().clear();
+                    container.add(listView);
+
+                    container.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)){
+                        @Override
+                        protected void onPostProcessTarget(AjaxRequestTarget target) {
+                            if (future.isDone()){
+                                StatusRow row = new StatusRow();
+                                row.status = "Синхронизация завершена успешно.";
+                                listView.getModelObject().add(row);
+
+                                submit.setVisible(true);
+                                target.addComponent(form);
+
+                                this.stop();
+                            }
+                        }
+                    });
                     setVisible(false);
+
+                    StatusRow row = new StatusRow();
+                    row.date = DateUtil.getCurrentDate();
+                    row.status = "Начало синхронизации";
+                    listView.getModelObject().add(row);
 
                     future = syncBean.asynchronousProcess();
                 } catch (ExecutionException e) {
@@ -131,17 +120,6 @@ public class SyncPage extends TemplatePage{
         };
         form.add(submit);
 
-        Button cancel = new Button("cancel"){
-            @Override
-            public void onSubmit() {
-                if (future != null){
-                    future.cancel(true);
-                }
-            }
-        };
-        form.add(cancel);
-        cancel.setVisible(false);
-
         //Слушатель процесса синхронизации
         ISyncListener listener = new ISyncListener(){
 
@@ -149,9 +127,9 @@ public class SyncPage extends TemplatePage{
             public void start(SyncEvent syncEvent) {
                 StatusRow row = new StatusRow();
                 String key = ((Class)syncEvent.getObject()).getCanonicalName();
-                row.setDate(DateUtil.getCurrentDate());
-                row.setName(rb.containsKey(key) ? rb.getString(key) : key);
-                row.setStatus("Начало синхронизации (" + syncEvent.getCount() + ")") ;
+                row.date = DateUtil.getCurrentDate();
+                row.name = rb.containsKey(key) ? rb.getString(key) : key;
+                row.status = "Подключение к серверу... " + syncEvent.getCount();
 
                 listView.getModelObject().add(row);
             }
@@ -159,15 +137,15 @@ public class SyncPage extends TemplatePage{
             @Override
             public void sync(SyncEvent syncEvent) {
                 StatusRow row = listView.getModelObject().get(listView.getModelObject().size()-1);
-                row.setDate(DateUtil.getCurrentDate());
-                row.setStatus("Синхронизация: " + syncEvent.getIndex() + " из " + syncEvent.getCount());
+                row.date = DateUtil.getCurrentDate();
+                row.status = "Синхронизация... " + syncEvent.getIndex() + " из " + syncEvent.getCount();
             }
 
             @Override
             public void complete(SyncEvent syncEvent) {
                 StatusRow row = listView.getModelObject().get(listView.getModelObject().size()-1);
-                row.setDate(DateUtil.getCurrentDate());
-                row.setStatus("Успешно. (" + syncEvent.getCount() + " элементов)");
+                row.date = DateUtil.getCurrentDate();
+                row.status = "Успешно синхронизировано " + syncEvent.getCount() + " элементов";
             }
         };
 

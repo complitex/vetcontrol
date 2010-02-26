@@ -167,7 +167,7 @@ public class BookResourceBean {
     private <T> List<T> getList(Class<T> entity, SyncRequestEntity requestEntity){
         //TODO test
         try {
-            Thread.sleep(250);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
