@@ -5,11 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.ClientBean;
-import org.vetcontrol.sync.NotRegisteredException;
+import org.vetcontrol.sync.Count;
 import org.vetcontrol.sync.SyncRequestEntity;
 import org.vetcontrol.util.DateUtil;
 
-import javax.annotation.Resource;
 import javax.ejb.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -17,6 +16,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import static org.vetcontrol.sync.client.service.ClientFactory.createJSONClient;
 
@@ -27,9 +28,6 @@ import static org.vetcontrol.sync.client.service.ClientFactory.createJSONClient;
 @Stateless(name = "BookSyncBean")
 public class BookSyncBean extends SyncInfo{
     private static final Logger log = LoggerFactory.getLogger(BookSyncBean.class);
-
-    @Resource
-    TimerService timerService;
 
     @EJB(beanName = "ClientBean")
     private ClientBean clientBean;
@@ -86,43 +84,48 @@ public class BookSyncBean extends SyncInfo{
         this.initial = initial;
     }
 
-    public void process() throws NotRegisteredException {
-        if (timerService.getTimers().size() == 0){
-            timerService.createSingleActionTimer(0, new TimerConfig(null, false));
-        }
-    }
-
-    @Timeout
-    private void monitor(Timer timer) throws NotRegisteredException {
+    public void process(){
         for (Class book : syncBooks){
             //noinspection unchecked
             processBook(book);
         }
     }
 
+    @Asynchronous
+    public Future<SyncStatus> asynchronousProcess() throws ExecutionException {
+        process();
+
+        return new AsyncResult<SyncStatus>(SyncStatus.COMPLETE);
+    }
+
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    private <T extends IQuery & IUpdated> void processBook(Class<T> bookClass) throws NotRegisteredException {
+    private <T extends IQuery & IUpdated> void processBook(Class<T> bookClass) {
         String secureKey = clientBean.getCurrentSecureKey();
         Date syncUpdated = DateUtil.getCurrentDate();
 
         log.debug("\n==================== Synchronizing: {} ============================", bookClass.getSimpleName());
 
         //Количество записей загрузки
-        int count = Integer.parseInt(createJSONClient("/book/" + bookClass.getSimpleName() + "/count")
-                .post(String.class, new SyncRequestEntity(secureKey, getUpdated(User.class))));
+        int count = createJSONClient("/book/" + bookClass.getSimpleName() + "/count")
+                .post(Count.class, new SyncRequestEntity(secureKey, getUpdated(bookClass))).getCount();
         start(new SyncEvent(count, bookClass));
 
         @SuppressWarnings({"unchecked"})
         List<T> books = ClientFactory.createJSONClient("/book/" + bookClass.getSimpleName() + "/list")
-                .post((GenericType<List<T>>)genericTypeMap.get(bookClass), new SyncRequestEntity(secureKey,
-                        initial ? new Date(0) : getUpdated(bookClass)));
+                .post((GenericType<List<T>>)genericTypeMap.get(bookClass), new SyncRequestEntity(secureKey, getUpdated(bookClass)));
 
         //Сохранение в базу данных списка
         int index = 0;
         for (T book : books){
             //skip null
             if (isSkip(book)) continue;
-
+                         
+            //TODO test
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             log.debug("Synchronizing: {}", book.toString());
             sync(new SyncEvent(count, index++, book));
 
@@ -164,6 +167,10 @@ public class BookSyncBean extends SyncInfo{
     }
 
     private Date getUpdated(Class<? extends IUpdated> book){
+        if (initial){
+            return new Date(0);
+        }
+
         Date updated = em.createQuery("select max(e.updated) from " + book.getSimpleName() +" e", Date.class).getSingleResult();
 
         if (updated == null){

@@ -6,6 +6,7 @@ import org.vetcontrol.entity.Client;
 import org.vetcontrol.entity.UserGroup;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.LogBean;
+import org.vetcontrol.sync.Count;
 import org.vetcontrol.sync.SyncRequestEntity;
 
 import javax.ejb.EJB;
@@ -60,11 +61,11 @@ public class UserGroupResourceBean {
     }
 
     @POST @Path("/count")
-    public String getUserGroupsCount(SyncRequestEntity requestEntity){
-        return em.createQuery("select count(ug) from UserGroup ug, User u " +
+    public Count getUserGroupsCount(SyncRequestEntity requestEntity){
+        return new Count(em.createQuery("select count(ug) from UserGroup ug, User u " +
                 "where ug.login = u.login and u.department = :department and ug.updated >= :updated", Long.class)
                 .setParameter("department", getClient(requestEntity).getDepartment())
                 .setParameter("updated", requestEntity.getUpdated())
-                .getSingleResult().toString();
+                .getSingleResult().intValue());
     }
 }

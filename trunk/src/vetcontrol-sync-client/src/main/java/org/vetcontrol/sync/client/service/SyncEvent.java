@@ -27,6 +27,11 @@ public class SyncEvent {
         this.object = object;
     }
 
+    public SyncEvent(Object object, String message) {
+        this.object = object;
+        this.message = message;
+    }
+
     public int getCount() {
         return count;
     }
