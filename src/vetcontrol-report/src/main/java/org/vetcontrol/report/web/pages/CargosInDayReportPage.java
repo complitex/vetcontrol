@@ -6,9 +6,11 @@ package org.vetcontrol.report.web.pages;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import javax.ejb.EJB;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
@@ -28,6 +30,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.vetcontrol.report.entity.CargosInDayReport;
+import org.vetcontrol.report.entity.CargosInDayReportParameter;
 import org.vetcontrol.report.jasper.cargosinday.CargosInDayReportServlet;
 import org.vetcontrol.report.service.LocaleService;
 import org.vetcontrol.report.service.dao.CargosInDayReportDAO;
@@ -84,11 +87,18 @@ public final class CargosInDayReportPage extends TemplatePage {
 
         SortableDataProvider<CargosInDayReport> dataProvider = new SortableDataProvider<CargosInDayReport>() {
 
+            private Map<String, Object> daoParams = new HashMap<String, Object>();
+
+            {
+                daoParams.put(CargosInDayReportParameter.START_DATE, startDate);
+                daoParams.put(CargosInDayReportParameter.END_DATE, endDate);
+                daoParams.put(CargosInDayReportParameter.DEPARTMENT, departmentId);
+            }
             private IModel<Integer> sizeModel = new LoadableDetachableModel<Integer>() {
 
                 @Override
                 protected Integer load() {
-                    return reportDAO.size(departmentId, reportLocale, startDate, endDate);
+                    return reportDAO.size(daoParams);
                 }
             };
 
@@ -98,7 +108,7 @@ public final class CargosInDayReportPage extends TemplatePage {
                 preferences.putPreference(UIPreferences.PreferenceType.SORT_ORDER, SORT_ORDER_KEY, sortParam.isAscending());
                 preferences.putPreference(UIPreferences.PreferenceType.SORT_PROPERTY, SORT_PROPERTY_KEY, sortParam.getProperty());
 
-                return reportDAO.getAll(departmentId, reportLocale, startDate, endDate, first, count, sortParam.getProperty(),
+                return reportDAO.getAll(daoParams, reportLocale, first, count, sortParam.getProperty(),
                         sortParam.isAscending()).iterator();
             }
 
@@ -177,7 +187,5 @@ public final class CargosInDayReportPage extends TemplatePage {
         toolbarButtons.add(new PrintButton(id, ExportType.TEXT, "textForm"));
         return toolbarButtons;
     }
-
-
 }
 
