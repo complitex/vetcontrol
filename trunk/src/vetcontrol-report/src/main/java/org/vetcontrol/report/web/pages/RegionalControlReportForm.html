@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:wicket="http://wicket.apache.org">
+    <head>
+        <wicket:head><title wicket:id="title"></title></wicket:head>
+    </head>
+    <body>
+        <wicket:extend>
+            <h1>
+                <wicket:message key="parameters"/>
+            </h1>
+            <div wicket:id="messages"></div>
+            <form wicket:id="form">
+                <table class="tbForm" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                        <td>
+                            <wicket:message key="startDate"/>
+                            <b class="blue">*</b>
+                            :
+                        </td>
+                        <td>
+                            <input type="text" wicket:id="startDate"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <wicket:message key="endDate"/>
+                            <b class="blue">*</b>
+                            :
+                        </td>
+                        <td>
+                            <input type="text" wicket:id="endDate"/>
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="line"><img src="images/spacer.gif" style="width:1px; height:1px" width="1px" height="1px" alt=""></div>
+                <input class="btnBig" type="submit" wicket:message="value:submit"/>
+            </form>
+        </wicket:extend>
+    </body>
+</html>

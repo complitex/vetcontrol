@@ -32,6 +32,7 @@ import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.export.JRTextExporterParameter;
 import org.vetcontrol.report.entity.MovementTypesReport;
 import org.vetcontrol.report.service.LocaleService;
+import org.vetcontrol.report.service.dao.DepartmentDAO;
 import org.vetcontrol.report.service.dao.MovementTypesReportDAO;
 import org.vetcontrol.report.util.jasper.ExportType;
 import org.vetcontrol.report.util.jasper.ExportTypeUtil;
@@ -52,6 +53,8 @@ public class MovementTypesReportServlet extends HttpServlet {
     @EJB
     private MovementTypesReportDAO reportDAO;
     @EJB
+    private DepartmentDAO departmentDAO;
+    @EJB
     private LocaleService localeService;
 
     @Override
@@ -70,8 +73,7 @@ public class MovementTypesReportServlet extends HttpServlet {
 
             String monthAsString = DateUtil.getDisplayMonth(month, reportLocale).toLowerCase();
             String year = String.valueOf(DateUtil.getCurrrentYear());
-            String departmentName = reportDAO.getDepartmentName(departmentId, reportLocale);
-
+            String departmentName = departmentDAO.getDepartmentName(departmentId, reportLocale);
 
             ServletOutputStream servletOutputStream = response.getOutputStream();
 

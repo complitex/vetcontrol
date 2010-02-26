@@ -3,12 +3,11 @@
  * and open the template in the editor.
  */
 
-package org.vetcontrol.report.util.cargosinday;
+package org.vetcontrol.report.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;

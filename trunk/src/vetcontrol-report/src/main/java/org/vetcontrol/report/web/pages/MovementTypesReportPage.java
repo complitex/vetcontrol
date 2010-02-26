@@ -28,6 +28,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.vetcontrol.report.entity.MovementTypesReport;
 import org.vetcontrol.report.jasper.movementtypes.MovementTypesReportServlet;
 import org.vetcontrol.report.service.LocaleService;
+import org.vetcontrol.report.service.dao.DepartmentDAO;
 import org.vetcontrol.report.service.dao.MovementTypesReportDAO;
 import org.vetcontrol.report.util.jasper.ExportType;
 import org.vetcontrol.report.util.movementtypes.CellFormatter;
@@ -50,6 +51,8 @@ public final class MovementTypesReportPage extends TemplatePage {
 
     @EJB(name = "MovementTypesReportDAO")
     private MovementTypesReportDAO reportDAO;
+    @EJB(name = "DepartmentDAO")
+    private DepartmentDAO departmentDAO;
     @EJB(name = "LocaleService")
     private LocaleService localeService;
     private static final String PAGE_NUMBER_KEY = MovementTypesReportPage.class.getSimpleName() + "_PAGE_NUMBER";
@@ -78,7 +81,7 @@ public final class MovementTypesReportPage extends TemplatePage {
         add(new Label("title", new ResourceModel("title")));
         add(new Label("report.name.params", new StringResourceModel("report.name.params", null,
                 new Object[]{DateUtil.getDisplayMonth(month, reportLocale).toLowerCase(), String.valueOf(DateUtil.getCurrrentYear()),
-                    reportDAO.getDepartmentName(departmentId, reportLocale)})));
+                    departmentDAO.getDepartmentName(departmentId, reportLocale)})));
         add(new Label("report.header.all", new StringResourceModel("report.header.all", null, new Object[]{endDate})));
 
         SortableDataProvider<MovementTypesReport> dataProvider = new SortableDataProvider<MovementTypesReport>() {

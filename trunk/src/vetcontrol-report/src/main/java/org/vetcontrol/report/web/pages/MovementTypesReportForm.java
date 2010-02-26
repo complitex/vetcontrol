@@ -18,8 +18,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.vetcontrol.entity.Department;
+import org.vetcontrol.report.service.dao.DepartmentDAO;
 import org.vetcontrol.report.service.dao.MovementTypesReportDAO;
-import org.vetcontrol.report.util.Month;
+import org.vetcontrol.report.util.movementtypes.Month;
 import org.vetcontrol.report.web.components.DepartmentPicker;
 import org.vetcontrol.report.web.components.MonthPicker;
 import org.vetcontrol.web.security.SecurityRoles;
@@ -34,6 +35,8 @@ public final class MovementTypesReportForm extends FormTemplatePage {
 
     @EJB(name = "MovementTypesReportDAO")
     private MovementTypesReportDAO reportDAO;
+    @EJB(name = "DepartmentDAO")
+    private DepartmentDAO departmentDAO;
     static final MetaDataKey<Integer> MONTH_KEY = new MetaDataKey<Integer>() {
     };
     static final MetaDataKey<Long> DEPARTMENT_KEY = new MetaDataKey<Long>() {
@@ -74,7 +77,7 @@ public final class MovementTypesReportForm extends FormTemplatePage {
         WebMarkupContainer departmentPanel = new WebMarkupContainer("departmentPanel");
         form.add(departmentPanel);
 
-        List<Department> availableDepartments = reportDAO.getAvailableDepartments();
+        List<Department> availableDepartments = departmentDAO.getAvailableDepartments();
         Collections.sort(availableDepartments, new Comparator<Department>() {
 
             @Override

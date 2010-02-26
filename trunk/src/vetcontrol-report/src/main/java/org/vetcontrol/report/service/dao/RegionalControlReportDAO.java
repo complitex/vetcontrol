@@ -5,6 +5,7 @@
 package org.vetcontrol.report.service.dao;
 
 import java.math.BigInteger;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -17,8 +18,9 @@ import javax.persistence.PersistenceContext;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
-import org.vetcontrol.report.entity.MovementTypesReport;
+import org.vetcontrol.report.entity.RegionalControlReport;
 import org.vetcontrol.report.util.QueryLoader;
+import org.vetcontrol.report.util.regionalcontrol.CellFormatter;
 import org.vetcontrol.util.book.service.HibernateSessionTransformer;
 import org.vetcontrol.web.security.SecurityRoles;
 
@@ -28,9 +30,24 @@ import org.vetcontrol.web.security.SecurityRoles;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@RolesAllowed({SecurityRoles.LOCAL_AND_REGIONAL_REPORT})
-public class MovementTypesReportDAO {
+@RolesAllowed({SecurityRoles.REGIONAL_REPORT})
+public class RegionalControlReportDAO {
 
+    public static enum OrderBy {
+
+        CARGO_ARRIVED("cargoArrived"),
+        CARGO_TYPE("cargoTypeName + '" + CellFormatter.CARGO_TYPE_DELIMETER + "' + cargoTypeCode"),
+        CARGO_RECEIVER("cargoReceiverName"), CARGO_PRODUCER("cargoProducerName");
+        private String name;
+
+        private OrderBy(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
     @PersistenceContext
     private EntityManager em;
     private static final String LOCALE = "locale";
@@ -38,12 +55,12 @@ public class MovementTypesReportDAO {
     private static final String END_DATE = "endDate";
     private static final String DEPARTMENT = "department";
 
-    public List<MovementTypesReport> getAll(Long departmentId, Locale locale, Date startDate, Date endDate, int first, int count,
-            boolean isAscending) {
+    public List<RegionalControlReport> getAll(Long departmentId, Locale locale, Date startDate, Date endDate, int first, int count,
+            String sortProperty, boolean isAscending) {
         try {
             Session session = HibernateSessionTransformer.getSession(em);
-            String sql = QueryLoader.getQuery(MovementTypesReport.class, "query");
-            sql += isAscending ? " ASC" : " DESC";
+            String pattern = QueryLoader.getQuery(RegionalControlReport.class, "query");
+            String sql = MessageFormat.format(pattern, sortProperty, isAscending ? "ASC" : "DESC");
             return session.createSQLQuery(sql).
                     setParameter(LOCALE, locale.getLanguage()).
                     setParameter(START_DATE, startDate, Hibernate.TIMESTAMP).
@@ -51,7 +68,7 @@ public class MovementTypesReportDAO {
                     setParameter(DEPARTMENT, departmentId).
                     setFirstResult(first).
                     setMaxResults(count).
-                    setResultTransformer(Transformers.aliasToBean(MovementTypesReport.class)).
+                    setResultTransformer(Transformers.aliasToBean(RegionalControlReport.class)).
                     list();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -61,7 +78,7 @@ public class MovementTypesReportDAO {
     public int size(Long departmentId, Locale locale, Date startDate, Date endDate) {
         try {
             Session session = HibernateSessionTransformer.getSession(em);
-            String sql = QueryLoader.getQuery(MovementTypesReport.class, "size");
+            String sql = QueryLoader.getQuery(RegionalControlReport.class, "size");
             BigInteger size = (BigInteger) session.createSQLQuery(sql).
                     setParameter(START_DATE, startDate, Hibernate.TIMESTAMP).
                     setParameter(END_DATE, endDate, Hibernate.TIMESTAMP).

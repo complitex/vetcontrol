@@ -24,13 +24,15 @@ public class PDFExportDemo {
 //            parameterMap.put("endDate", new Date());
 //            parameterMap.put("month", "Январь");
 //            parameterMap.put("year", "2010");
-//            parameterMap.put("department", "Кодимский ПДВСКН");
-            parameterMap.put("date", new Date());
+            parameterMap.put("department", "Кодимский ПДВСКН");
+//            parameterMap.put("date", new Date());
+            parameterMap.put("startDate", new Date());
+            parameterMap.put("endDate", new Date());
 
             System.out.println("Filling report..." + System.getProperty("user.dir"));
             JasperRunManager.runReportToPdfFile(
-                    "target/classes/org/vetcontrol/report/jasper/cargosinday/pdf/cargos_in_day_report.jasper",
-                    "cargos_in_day_report.pdf",
+                    "target/classes/org/vetcontrol/report/jasper/regionalcontrol/pdf/regional_control_report.jasper",
+                    "report.pdf",
                     parameterMap, new JREmptyDataSource());
             System.out.println("Done!");
         } catch (Exception e) {

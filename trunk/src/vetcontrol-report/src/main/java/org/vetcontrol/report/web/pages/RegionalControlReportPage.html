@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:wicket="http://wicket.apache.org">
+    <head>
+        <wicket:head><title wicket:id="title"></title></wicket:head>
+    </head>
+    <body>
+        <wicket:extend>
+            <h1>
+                <span wicket:id="report.name"></span>
+            </h1>
+            <table class="tbColor" border="0" cellpadding="0" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th wicket:id="report.header.cargoArrived">
+                            <wicket:message key="report.header.cargoArrived"/>
+                        </th>
+                        <th wicket:id="report.header.cargo_producer">
+                            <wicket:message key="report.header.cargo_producer"/>
+                        </th>
+                        <th wicket:id="report.header.cargo_receiver">
+                            <wicket:message key="report.header.cargo_receiver"/>
+                        </th>
+                        <th wicket:id="report.header.cargo_type">
+                            <wicket:message key="report.header.cargo_type"/>
+                        </th>
+                        <th>
+                            <wicket:message key="report.header.count"/>
+                        </th>
+                        <th>
+                            <wicket:message key="report.header.movement_type"/>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr wicket:id="list">
+                        <td>
+                            <span wicket:id="cargoArrived"></span>
+                        </td>
+                        <td>
+                            <span wicket:id="cargoProducerName"></span>
+                        </td>
+                        <td>
+                            <span wicket:id="cargoReceiverName"></span>
+                        </td>
+                        <td>
+                            <span wicket:id="cargoTypeName"></span>
+                        </td>
+                        <td>
+                            <span wicket:id="count"></span>
+                        </td>
+                        <td>
+                            <span wicket:id="movementType"></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div>
+                <span wicket:id="navigator"></span>
+            </div>
+
+            <div>
+                <br/>
+                <br/>
+                <br/>
+                <div>
+                    <wicket:link>
+                        <a href="RegionalControlReportForm.html">
+                            <wicket:message key="report.backToSetParams"/>
+                        </a>
+                    </wicket:link>
+                </div>
+                <div class="referenceToExport">
+                    <form id="pdfForm" target="_blank" method="post" action="RegionalControlReportServlet">
+                        <input type="hidden" value="pdf" name="ExportType"/>
+                        <input wicket:id="pdfStartDate" type="hidden"/>
+                        <input wicket:id="pdfEndDate" type="hidden"/>
+                    </form>
+                </div>
+                <div class="referenceToExport">
+                    <form id="textForm" target="_blank" method="post" action="RegionalControlReportServlet">
+                        <input type="hidden" value="text" name="ExportType"/>
+                        <input wicket:id="textStartDate" type="hidden"/>
+                        <input wicket:id="textEndDate" type="hidden"/>
+                    </form>
+                </div>
+            </div>
+        </wicket:extend>
+    </body>
+</html>

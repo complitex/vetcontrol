@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM 'http://java.sun.com/dtd/properties.dtd'>
+<properties>
+    <entry key="query">
+        <![CDATA[
+            SELECT
+                (SELECT d.created FROM document_cargo d WHERE d.id = c.document_cargo_id) AS cargoArrived,
+                (SELECT sc.value FROM stringculture sc WHERE sc.id =
+                (SELECT cp.name FROM cargo_producer cp WHERE cp.id =  dc.cargo_producer_id)
+                AND sc.locale = :locale) AS cargoProducerName,
+                (SELECT sc.value FROM stringculture sc WHERE sc.id =
+                (SELECT cr.name FROM cargo_receiver cr WHERE cr.id = dc.cargo_receiver_id)
+                AND sc.locale= :locale) AS cargoReceiverName,
+                (SELECT sc.value FROM stringculture sc WHERE sc.id =
+                (SELECT ct.name FROM cargo_type ct WHERE ct.id = c.cargo_type_id)
+                AND sc.locale= :locale) AS cargoTypeName,
+                (SELECT ct.ukt_zed_code FROM cargo_type ct WHERE ct.id = c.cargo_type_id) AS cargoTypeCode,
+                c.count AS `count`,
+                (SELECT sc.value FROM stringculture sc WHERE sc.id =
+                (SELECT ut.name FROM unit_type ut WHERE ut.id = c.unit_type_id)
+                AND sc.locale= :locale) AS unitTypeName,
+                (SELECT sc.value FROM stringculture sc WHERE sc.id =
+                (SELECT mt.name FROM movement_type mt WHERE mt.id = dc.movement_type_id)
+                AND sc.locale = :locale) AS movementTypeName
+            FROM cargo c
+            JOIN document_cargo dc ON c.document_cargo_id = dc.id
+            WHERE ((dc.creator_id IN (SELECT u.id FROM `user` u WHERE u.department_id = :department))
+             OR (dc.creator_id IN (SELECT u.id FROM `user` u WHERE u.department_id IN (SELECT d3.id FROM department d3 WHERE d3.parent_id = :department)))
+             OR (dc.creator_id IN (SELECT u.id FROM `user` u WHERE u.department_id IN (SELECT d3.id FROM department d3 WHERE d3.parent_id IN
+             (SELECT d2.id FROM department d2 WHERE d2.parent_id = :department)))))
+             AND dc.created >= :startDate AND dc.created <= :endDate
+             ORDER BY {0} {1}
+        ]]>
+    </entry>
+    <entry key="size">
+        <![CDATA[
+            SELECT COUNT(*)
+            FROM cargo c
+            JOIN document_cargo dc ON c.document_cargo_id = dc.id
+            WHERE ((dc.creator_id IN (SELECT u.id FROM `user` u WHERE u.department_id = :department))
+             OR (dc.creator_id IN (SELECT u.id FROM `user` u WHERE u.department_id IN (SELECT d3.id FROM department d3 WHERE d3.parent_id = :department)))
+             OR (dc.creator_id IN (SELECT u.id FROM `user` u WHERE u.department_id IN (SELECT d3.id FROM department d3 WHERE d3.parent_id IN
+             (SELECT d2.id FROM department d2 WHERE d2.parent_id = :department)))))
+             AND dc.created >= :startDate AND dc.created <= :endDate
+        ]]>
+    </entry>
+</properties>

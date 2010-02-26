@@ -26,15 +26,18 @@ public class TextExportDemo {
         try {
             HashMap parameterMap = new HashMap();
             parameterMap.put(JRParameter.REPORT_LOCALE, Locale.getDefault());
-            parameterMap.put("date", new Date());
+//            parameterMap.put("date", new Date());
 //            parameterMap.put("endDate", new Date());
 //            parameterMap.put("month", "Январь");
 //            parameterMap.put("year", "2010");
-//            parameterMap.put("department", "Кодимский ПДВСКН");
+            parameterMap.put("department", "Кодимский ПДВСКН");
+
+            parameterMap.put("startDate", new Date());
+            parameterMap.put("endDate", new Date());
 
             System.out.println("Filling report..." + System.getProperty("user.dir"));
             JasperPrint jasperPrint = JasperFillManager.fillReport(
-                    "target/classes/org/vetcontrol/report/jasper/cargosinday/text/cargos_in_day_report.jasper",
+                    "target/classes/org/vetcontrol/report/jasper/regionalcontrol/text/regional_control_report.jasper",
                     parameterMap, new JREmptyDataSource());
 
             JRTextExporter textExporter = new JRTextExporter();
