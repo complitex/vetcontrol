@@ -27,13 +27,14 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.vetcontrol.report.entity.CargosInDayReport;
-import org.vetcontrol.report.jasper.cargosinday.CargosInDayReportServlet;
+import org.vetcontrol.report.entity.RegionalControlReport;
+import org.vetcontrol.report.jasper.regionalcontrol.RegionalControlReportServlet;
 import org.vetcontrol.report.service.LocaleService;
-import org.vetcontrol.report.service.dao.CargosInDayReportDAO;
-import org.vetcontrol.report.util.cargosinday.CellFormatter;
+import org.vetcontrol.report.service.dao.DepartmentDAO;
+import org.vetcontrol.report.service.dao.RegionalControlReportDAO;
 import org.vetcontrol.report.util.DateConverter;
 import org.vetcontrol.report.util.jasper.ExportType;
+import org.vetcontrol.report.util.regionalcontrol.CellFormatter;
 import org.vetcontrol.report.web.components.PrintButton;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UserProfileBean;
@@ -48,41 +49,48 @@ import org.vetcontrol.web.template.TemplatePage;
  *
  * @author Artem
  */
-@AuthorizeInstantiation(SecurityRoles.LOCAL_REPORT)
-public final class CargosInDayReportPage extends TemplatePage {
+@AuthorizeInstantiation(SecurityRoles.REGIONAL_REPORT)
+public final class RegionalControlReportPage extends TemplatePage {
 
-    @EJB(name = "CargosInDayReportDAO")
-    private CargosInDayReportDAO reportDAO;
+    @EJB(name = "RegionalControlReportDAO")
+    private RegionalControlReportDAO reportDAO;
+    @EJB(name = "DepartmentDAO")
+    private DepartmentDAO departmentDAO;
     @EJB(name = "LocaleService")
     private LocaleService localeService;
     @EJB(name = "UserProfileBean")
     private UserProfileBean userProfileBean;
     @EJB(name = "DateConverter")
     private DateConverter dateConverter;
-    private static final String PAGE_NUMBER_KEY = CargosInDayReportPage.class.getSimpleName() + "_PAGE_NUMBER";
-    private static final String SORT_ORDER_KEY = CargosInDayReportPage.class.getSimpleName() + "_SORT_ORDER_KEY";
-    private static final String SORT_PROPERTY_KEY = CargosInDayReportPage.class.getSimpleName() + "_SORT_PROPERTY_KEY";
+    private static final String PAGE_NUMBER_KEY = RegionalControlReportPage.class.getSimpleName() + "_PAGE_NUMBER";
+    private static final String SORT_ORDER_KEY = RegionalControlReportPage.class.getSimpleName() + "_SORT_ORDER_KEY";
+    private static final String SORT_PROPERTY_KEY = RegionalControlReportPage.class.getSimpleName() + "_SORT_PROPERTY_KEY";
 
-    public CargosInDayReportPage() {
+    public RegionalControlReportPage() {
         init();
     }
 
     private void init() {
-        Date day = getSession().getMetaData(CargosInDayReportForm.DAY_KEY);
-        if (day == null) {
-            throw new IllegalArgumentException("Day must be specified.");
+        Date start = getSession().getMetaData(RegionalControlReportForm.START_DATE_KEY);
+        if (start == null) {
+            throw new IllegalArgumentException("Start date must be specified.");
         }
-
-        final Date startDate = DateUtil.getBeginOfDay(day);
-        final Date endDate = DateUtil.getEndOfDay(day);
+        Date end = getSession().getMetaData(RegionalControlReportForm.END_DATE_KEY);
+        if (end == null) {
+            throw new IllegalArgumentException("End date must be specified.");
+        }
+        
+        final Date startDate = DateUtil.getBeginOfDay(start);
+        final Date endDate = DateUtil.getEndOfDay(end);
         final Long departmentId = userProfileBean.getCurrentUser().getDepartment().getId();
         final Locale reportLocale = localeService.getReportLocale();
         final UIPreferences preferences = getPreferences();
 
         add(new Label("title", new ResourceModel("title")));
-        add(new Label("report.name", new StringResourceModel("report.name", null, new Object[]{day})));
+        add(new Label("report.name", new StringResourceModel("report.name", null, 
+                new Object[]{departmentDAO.getDepartmentName(departmentId, reportLocale), startDate, endDate})));
 
-        SortableDataProvider<CargosInDayReport> dataProvider = new SortableDataProvider<CargosInDayReport>() {
+        SortableDataProvider<RegionalControlReport> dataProvider = new SortableDataProvider<RegionalControlReport>() {
 
             private IModel<Integer> sizeModel = new LoadableDetachableModel<Integer>() {
 
@@ -93,7 +101,7 @@ public final class CargosInDayReportPage extends TemplatePage {
             };
 
             @Override
-            public Iterator<? extends CargosInDayReport> iterator(int first, int count) {
+            public Iterator<? extends RegionalControlReport> iterator(int first, int count) {
                 SortParam sortParam = getSort();
                 preferences.putPreference(UIPreferences.PreferenceType.SORT_ORDER, SORT_ORDER_KEY, sortParam.isAscending());
                 preferences.putPreference(UIPreferences.PreferenceType.SORT_PROPERTY, SORT_PROPERTY_KEY, sortParam.getProperty());
@@ -108,56 +116,59 @@ public final class CargosInDayReportPage extends TemplatePage {
             }
 
             @Override
-            public IModel<CargosInDayReport> model(CargosInDayReport object) {
-                return new Model<CargosInDayReport>(object);
+            public IModel<RegionalControlReport> model(RegionalControlReport object) {
+                return new Model<RegionalControlReport>(object);
             }
         };
         //sort property and ordering
         String sortPropertyFromPreferences = preferences.getPreference(UIPreferences.PreferenceType.SORT_PROPERTY, SORT_PROPERTY_KEY, String.class);
-        String sortProperty = sortPropertyFromPreferences != null ? sortPropertyFromPreferences : CargosInDayReportDAO.OrderBy.CARGO_TYPE.getName();
+        String sortProperty = sortPropertyFromPreferences != null ? sortPropertyFromPreferences : RegionalControlReportDAO.OrderBy.CARGO_ARRIVED.getName();
 
         Boolean sortOrderFromPreferences = preferences.getPreference(UIPreferences.PreferenceType.SORT_ORDER, SORT_ORDER_KEY, Boolean.class);
         boolean asc = sortOrderFromPreferences != null ? sortOrderFromPreferences : true;
         dataProvider.setSort(sortProperty, asc);
 
-        final DataView<CargosInDayReport> list = new DataView<CargosInDayReport>("list", dataProvider, 1) {
+        final DataView<RegionalControlReport> list = new DataView<RegionalControlReport>("list", dataProvider, 1) {
 
             @Override
-            protected void populateItem(Item<CargosInDayReport> item) {
-                CargosInDayReport report = item.getModelObject();
+            protected void populateItem(Item<RegionalControlReport> item) {
+                RegionalControlReport report = item.getModelObject();
 
-                item.add(new Label("cargoTypeName", report.getCargoTypeName()));
+                item.add(new Label("cargoArrived", CellFormatter.formatCargoArrived(report.getCargoArrived(), reportLocale)));
                 item.add(new Label("cargoProducerName", report.getCargoProducerName()));
                 item.add(new Label("cargoReceiverName", report.getCargoReceiverName()));
-                item.add(new Label("cargoSenderName", report.getCargoSenderName()));
-                item.add(new Label("isCar", CellFormatter.formatExistenceData(report.getCar())));
-                item.add(new Label("isShip", CellFormatter.formatExistenceData(report.getShip())));
-                item.add(new Label("isContainer", CellFormatter.formatExistenceData(report.getContainer())));
-                item.add(new Label("isCarriage", CellFormatter.formatExistenceData(report.getCarriage())));
-                item.add(new Label("isAircraft", CellFormatter.formatExistenceData(report.getAircraft())));
-                item.add(new Label("count", CellFormatter.formatCountData(report.getCount(), report.getUnitTypeName())));
+                item.add(new Label("cargoTypeName", CellFormatter.formatCargoType(report.getCargoTypeName(), report.getCargoTypeCode())));
+                item.add(new Label("count", CellFormatter.formatCount(report.getCount(), report.getUnitTypeName())));
+                item.add(new Label("movementType", report.getMovementTypeName()));
             }
         };
 
-        addOrderByLink(this, "report.header.cargo_type", CargosInDayReportDAO.OrderBy.CARGO_TYPE.getName(), dataProvider, list);
-        addOrderByLink(this, "report.header.cargo_producer", CargosInDayReportDAO.OrderBy.CARGO_PRODUCER.getName(), dataProvider, list);
-        addOrderByLink(this, "report.header.cargo_receiver", CargosInDayReportDAO.OrderBy.CARGO_RECEIVER.getName(), dataProvider, list);
-        addOrderByLink(this, "report.header.cargo_sender", CargosInDayReportDAO.OrderBy.CARGO_SENDER.getName(), dataProvider, list);
+        addOrderByLink(this, "report.header.cargoArrived", RegionalControlReportDAO.OrderBy.CARGO_ARRIVED.getName(), dataProvider, list);
+        addOrderByLink(this, "report.header.cargo_producer", RegionalControlReportDAO.OrderBy.CARGO_PRODUCER.getName(), dataProvider, list);
+        addOrderByLink(this, "report.header.cargo_receiver", RegionalControlReportDAO.OrderBy.CARGO_RECEIVER.getName(), dataProvider, list);
+        addOrderByLink(this, "report.header.cargo_type", RegionalControlReportDAO.OrderBy.CARGO_TYPE.getName(), dataProvider, list);
 
         add(list);
         add(new PagingNavigator("navigator", list, "itemsPerPage", preferences, PAGE_NUMBER_KEY));
 
-        IBehavior dayAttribute = new SimpleAttributeModifier("name", CargosInDayReportServlet.DAY_KEY);
+        IBehavior startDateAttribute = new SimpleAttributeModifier("name", RegionalControlReportServlet.START_DATE_KEY);
+        IBehavior endDateAttribute = new SimpleAttributeModifier("name", RegionalControlReportServlet.END_DATE_KEY);
 
         //pdf parameters
-        HiddenField<String> pdfDay = new HiddenField<String>("pdfDay", new Model<String>(dateConverter.toString(day)));
-        pdfDay.add(dayAttribute);
-        add(pdfDay);
+        HiddenField<String> pdfStartDate = new HiddenField<String>("pdfStartDate", new Model<String>(dateConverter.toString(start)));
+        pdfStartDate.add(startDateAttribute);
+        add(pdfStartDate);
+        HiddenField<String> pdfEndDate = new HiddenField<String>("pdfEndDate", new Model<String>(dateConverter.toString(end)));
+        pdfEndDate.add(endDateAttribute);
+        add(pdfEndDate);
 
         //text parameters
-        HiddenField<String> textDay = new HiddenField<String>("textDay", new Model<String>(dateConverter.toString(day)));
-        textDay.add(dayAttribute);
-        add(textDay);
+        HiddenField<String> textStartDate = new HiddenField<String>("textStartDate", new Model<String>(dateConverter.toString(start)));
+        textStartDate.add(startDateAttribute);
+        add(textStartDate);
+        HiddenField<String> textEndDate = new HiddenField<String>("textEndDate", new Model<String>(dateConverter.toString(end)));
+        textEndDate.add(endDateAttribute);
+        add(textEndDate);
     }
 
     private void addOrderByLink(MarkupContainer parent, String id, String sortProperty, ISortStateLocator sortStateLocator, final IPageable list) {
@@ -177,7 +188,5 @@ public final class CargosInDayReportPage extends TemplatePage {
         toolbarButtons.add(new PrintButton(id, ExportType.TEXT, "textForm"));
         return toolbarButtons;
     }
-
-
 }
 

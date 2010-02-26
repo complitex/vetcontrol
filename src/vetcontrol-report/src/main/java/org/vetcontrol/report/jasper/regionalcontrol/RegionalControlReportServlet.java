@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.vetcontrol.report.jasper.cargosinday;
+package org.vetcontrol.report.jasper.regionalcontrol;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,9 +30,10 @@ import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.export.JRTextExporterParameter;
-import org.vetcontrol.report.entity.CargosInDayReport;
+import org.vetcontrol.report.entity.RegionalControlReport;
 import org.vetcontrol.report.service.LocaleService;
-import org.vetcontrol.report.service.dao.CargosInDayReportDAO;
+import org.vetcontrol.report.service.dao.DepartmentDAO;
+import org.vetcontrol.report.service.dao.RegionalControlReportDAO;
 import org.vetcontrol.report.util.DateConverter;
 import org.vetcontrol.report.util.jasper.ExportType;
 import org.vetcontrol.report.util.jasper.ExportTypeUtil;
@@ -45,19 +46,22 @@ import org.vetcontrol.web.security.SecurityRoles;
  *
  * @author Artem
  */
-@WebServlet(name = "CargosInDayReportServlet", urlPatterns = {"/CargosInDayReportServlet"})
-@RolesAllowed({SecurityRoles.LOCAL_REPORT})
-public class CargosInDayReportServlet extends HttpServlet {
+@WebServlet(name = "RegionalControlReportServlet", urlPatterns = {"/RegionalControlReportServlet"})
+@RolesAllowed({SecurityRoles.REGIONAL_REPORT})
+public class RegionalControlReportServlet extends HttpServlet {
 
-    public static final String DAY_KEY = "day";
+    public static final String START_DATE_KEY = "startDate";
+    public static final String END_DATE_KEY = "endDate";
     @EJB
-    private CargosInDayReportDAO reportDAO;
+    private RegionalControlReportDAO reportDAO;
     @EJB
     private LocaleService localeService;
     @EJB
     private DateConverter dateConverter;
     @EJB
     private UserProfileBean userProfileBean;
+    @EJB
+    private DepartmentDAO departmentDAO;
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -66,29 +70,33 @@ public class CargosInDayReportServlet extends HttpServlet {
             if (exportType == null) {
                 return;
             }
-            Date day = getDay(request);
-            Date startDate = DateUtil.getBeginOfDay(day);
-            Date endDate = DateUtil.getEndOfDay(day);
+            Date start = getStart(request);
+            Date end = getEnd(request);
+            Date startDate = DateUtil.getBeginOfDay(start);
+            Date endDate = DateUtil.getEndOfDay(end);
             Long departmentId = userProfileBean.getCurrentUser().getDepartment().getId();
             Locale reportLocale = localeService.getReportLocale();
+            String departmentName = departmentDAO.getDepartmentName(departmentId, reportLocale);
 
             ServletOutputStream servletOutputStream = response.getOutputStream();
             InputStream reportStream = null;
             Map<String, Object> params = new HashMap<String, Object>();
-            params.put("date", day);
+            params.put("startDate", startDate);
+            params.put("endDate", endDate);
+            params.put("department", departmentName);
             params.put(JRParameter.REPORT_LOCALE, reportLocale);
 
             JRDataSource dataSource = new JRBeanCollectionDataSource(getAll(departmentId, reportLocale, startDate, endDate));
             switch (exportType) {
                 case PDF:
-                    reportStream = getClass().getResourceAsStream("pdf/cargos_in_day_report.jasper");
+                    reportStream = getClass().getResourceAsStream("pdf/regional_control_report.jasper");
                     JasperRunManager.runReportToPdfStream(reportStream, servletOutputStream, params, dataSource);
                     response.setContentType("application/pdf");
                     servletOutputStream.flush();
                     servletOutputStream.close();
                     break;
                 case TEXT:
-                    reportStream = getClass().getResourceAsStream("text/cargos_in_day_report.jasper");
+                    reportStream = getClass().getResourceAsStream("text/regional_control_report.jasper");
                     JasperPrint jasperPrint = JasperFillManager.fillReport(reportStream, params, dataSource);
 
                     JRTextExporter textExporter = new JRTextExporter();
@@ -116,12 +124,16 @@ public class CargosInDayReportServlet extends HttpServlet {
         }
     }
 
-    private Date getDay(HttpServletRequest request) {
-        return dateConverter.toDate(request.getParameter(DAY_KEY).trim());
+    private Date getStart(HttpServletRequest request) {
+        return dateConverter.toDate(request.getParameter(START_DATE_KEY).trim());
     }
 
-    private List<CargosInDayReport> getAll(Long departmentId, Locale reportLocale, Date stratDate, Date endDate){
+    private Date getEnd(HttpServletRequest request) {
+        return dateConverter.toDate(request.getParameter(END_DATE_KEY).trim());
+    }
+
+    private List<RegionalControlReport> getAll(Long departmentId, Locale reportLocale, Date stratDate, Date endDate) {
         int size = reportDAO.size(departmentId, reportLocale, stratDate, endDate);
-        return reportDAO.getAll(departmentId, reportLocale, stratDate, endDate, 0, size, CargosInDayReportDAO.OrderBy.CARGO_TYPE.getName(), true);
+        return reportDAO.getAll(departmentId, reportLocale, stratDate, endDate, 0, size, RegionalControlReportDAO.OrderBy.CARGO_ARRIVED.getName(), true);
     }
 }

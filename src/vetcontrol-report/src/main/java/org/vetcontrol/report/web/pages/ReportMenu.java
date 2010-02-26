@@ -11,7 +11,6 @@ import java.util.Locale;
 import org.apache.wicket.Application;
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.authorization.strategies.role.IRoleCheckingStrategy;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.ITemplateLink;
@@ -22,7 +21,7 @@ import org.vetcontrol.web.template.TemplateWebApplication;
  *
  * @author Artem
  */
-@AuthorizeInstantiation({SecurityRoles.LOCAL_AND_REGIONAL_REPORT, SecurityRoles.LOCAL_REPORT})
+@AuthorizeInstantiation({SecurityRoles.LOCAL_AND_REGIONAL_REPORT})
 public class ReportMenu extends ResourceTemplateMenu {
 
     @Override
@@ -78,6 +77,30 @@ public class ReportMenu extends ResourceTemplateMenu {
                 @Override
                 public String getTagId() {
                     return "cargos_in_day_report";
+                }
+            });
+        }
+        if(application.hasAnyRole(SecurityRoles.REGIONAL_REPORT)){
+            links.add(new ITemplateLink() {
+
+                @Override
+                public String getLabel(Locale locale) {
+                    return getString(ReportMenu.class, locale, "regional_control_report");
+                }
+
+                @Override
+                public Class<? extends Page> getPage() {
+                    return RegionalControlReportForm.class;
+                }
+
+                @Override
+                public PageParameters getParameters() {
+                    return PageParameters.NULL;
+                }
+
+                @Override
+                public String getTagId() {
+                    return "regional_control_report";
                 }
             });
         }

@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.vetcontrol.report.util;
+package org.vetcontrol.report.util.movementtypes;
 
 import java.util.Locale;
 import org.vetcontrol.util.DateUtil;
