@@ -89,6 +89,8 @@ CREATE TABLE `countrybook` (
   `code` varchar(2) NOT NULL,
   `name` bigint(20) NOT NULL,
   `updated` timestamp NOT NULL DEFAULT NOW(),
+  /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
+  `disabled` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `FK_countrybook_name` (`name`),
   CONSTRAINT `FK_countrybook_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -107,6 +109,8 @@ CREATE TABLE `registered_products` (
   `date` date NOT NULL,
   `country_id` bigint(20) NOT NULL,
   `updated` timestamp NOT NULL DEFAULT NOW(),
+ /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
+  `disabled` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `FK_registeredproducts_name` (`name`),
   CONSTRAINT `FK_registeredproducts_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
@@ -126,6 +130,8 @@ CREATE TABLE `vehicletypes` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
+ /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
+  `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_vehicletypes_name` (`name`),
     CONSTRAINT `FK_vehicletypes_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -139,6 +145,8 @@ CREATE TABLE  `department` (
     `name` bigint(20) NOT NULL,
     `parent_id` bigint(20) NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
+ /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
+  `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_department_name` (`name`),
     CONSTRAINT `FK_department_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
@@ -153,6 +161,8 @@ CREATE TABLE  `cargo_sender` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
+ /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
+  `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_cargo_sender_name` (`name`),
     CONSTRAINT `FK_cargo_sender_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -165,6 +175,8 @@ CREATE TABLE  `cargo_receiver` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
+ /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
+  `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_cargo_receiver_name` (`name`),
     CONSTRAINT `FK_cargo_receiver_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -177,6 +189,8 @@ CREATE TABLE  `customs_point` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
+ /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
+  `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_customs_point_name` (`name`),
     CONSTRAINT `FK_customs_point_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -189,6 +203,8 @@ CREATE TABLE  `movement_type` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
+ /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
+  `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_movement_type_name` (`name`),
     CONSTRAINT `FK_movement_type_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -201,6 +217,8 @@ CREATE TABLE  `cargo_producer` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
+ /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
+  `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_producer_name` (`name`),
     CONSTRAINT `FK_producer_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -214,6 +232,8 @@ CREATE TABLE  `cargo_type` (
     `name` bigint(20) NOT NULL,
     `ukt_zed_code` VARCHAR(10) NOT NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
+ /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
+  `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     UNIQUE KEY `code` (`ukt_zed_code`),
     KEY `FK_cargo_type_name` (`name`),
@@ -242,6 +262,8 @@ CREATE TABLE  `cargo_mode` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
+ /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
+  `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_cargo_mode_name` (`name`),
     CONSTRAINT `FK_cargo_mode_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -269,6 +291,8 @@ CREATE TABLE  `unit_type` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
+ /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
+  `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_unit_type_name` (`name`),
     CONSTRAINT `FK_unit_type_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -281,6 +305,8 @@ CREATE TABLE  `job` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
+ /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
+  `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_job_name` (`name`),
     CONSTRAINT `FK_job_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -298,6 +324,8 @@ CREATE TABLE  `prohibition_country` (
     `region` bigint(20) NOT NULL,
     `target` bigint(20) NOT NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
+ /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
+  `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_prohibition_country_country_ref` (`country_id`),
     CONSTRAINT `FK_prohibition_country_country_ref` FOREIGN KEY (`country_id`) REFERENCES `countrybook` (`id`),
@@ -316,6 +344,8 @@ CREATE TABLE  `arrest_reason` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
+ /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
+  `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_arrest_reason_name` (`name`),
     CONSTRAINT `FK_arrest_reason_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -328,6 +358,8 @@ CREATE TABLE  `bad_epizootic_situation` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
+ /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
+  `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_bad_epizootic_situation_name` (`name`),
     CONSTRAINT `FK_bad_epizootic_situation_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -340,6 +372,8 @@ CREATE TABLE  `tariff` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
+ /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
+  `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_tariff_name` (`name`),
     CONSTRAINT `FK_tariff_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -352,6 +386,8 @@ CREATE TABLE  `passing_border_point` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
+ /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
+  `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_passing_border_point_name` (`name`),
     CONSTRAINT `FK_passing_border_point_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
@@ -364,6 +400,8 @@ CREATE TABLE  `addressbook` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
+ /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
+  `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_addressbook_name` (`name`),
     CONSTRAINT `FK_addressbook_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)

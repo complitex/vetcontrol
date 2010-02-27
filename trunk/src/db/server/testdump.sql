@@ -156,23 +156,23 @@ INSERT INTO `stringculture`(`id`, `locale`, `value`) VALUES
 
 UPDATE `generator` SET `generatorValue` = 73 WHERE `generatorName` = 'books';
 
-INSERT INTO `unit_type` VALUES (1,52, CURRENT_TIMESTAMP),(2,53, CURRENT_TIMESTAMP),(3,54, CURRENT_TIMESTAMP),(4,55, CURRENT_TIMESTAMP),(5,56, CURRENT_TIMESTAMP),(6,62, CURRENT_TIMESTAMP);
+INSERT INTO `unit_type`(`id`, `name`) VALUES (1,52),(2,53),(3,54),(4,55),(5,56),(6,62);
 
-INSERT INTO `cargo_type` VALUES (1,57,'2602000000', CURRENT_TIMESTAMP),(2,58,'2603000000', CURRENT_TIMESTAMP),(3,59,'2605000000', CURRENT_TIMESTAMP);
+INSERT INTO `cargo_type`(`id`, `name`, `ukt_zed_code`) VALUES (1,57,'2602000000'),(2,58,'2603000000'),(3,59,'2605000000');
 
-INSERT INTO `cargo_mode` VALUES (1,71, CURRENT_TIMESTAMP), (2,72, CURRENT_TIMESTAMP), (3,73, CURRENT_TIMESTAMP);
+INSERT INTO `cargo_mode`(`id`, `name`) VALUES (1,71), (2,72), (3,73);
 
 INSERT INTO `cargo_mode_cargo_type` VALUES (1, 1, CURRENT_TIMESTAMP), (1, 2, CURRENT_TIMESTAMP);
 
 INSERT INTO `cargo_mode_unit_type` VALUES (1, 1, CURRENT_TIMESTAMP);
 
-INSERT INTO `cargo_receiver` VALUES (1, 43, CURRENT_TIMESTAMP),(2,44, CURRENT_TIMESTAMP),(3,45, CURRENT_TIMESTAMP);
+INSERT INTO `cargo_receiver`(`id`, `name`) VALUES (1, 43),(2,44),(3,45);
 
-INSERT INTO `cargo_sender` VALUES (1,46, CURRENT_TIMESTAMP),(2,47, CURRENT_TIMESTAMP),(3,48, CURRENT_TIMESTAMP);
+INSERT INTO `cargo_sender`(`id`, `name`) VALUES (1,46),(2,47),(3,48);
 
-INSERT INTO `passing_border_point` VALUES (1,68, CURRENT_TIMESTAMP),(2,69, CURRENT_TIMESTAMP),(3,70, CURRENT_TIMESTAMP);
+INSERT INTO `passing_border_point`(`id`, `name`) VALUES (1,68),(2,69),(3,70);
 
-INSERT INTO `cargo_producer` VALUES (1,49, CURRENT_TIMESTAMP),(2,50, CURRENT_TIMESTAMP),(3,51, CURRENT_TIMESTAMP);
+INSERT INTO `cargo_producer`(`id`, `name`) VALUES (1,49),(2,50),(3,51);
 
 INSERT INTO `document_cargo` VALUES (1,30,'2010-01-15 17:59:09',NULL,1,1, 'транспорт 1',1,2,3,1,'примечание 3','задержан 2'),
                                     (2,30, '2010-02-15 17:48:00', NULL, 1,1, 'транспорт 2', 1,2,3,1, 'примечание','задержан'),
