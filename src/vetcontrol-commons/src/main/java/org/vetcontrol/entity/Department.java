@@ -75,12 +75,13 @@ public class Department extends Localizable{
 
     @Override
     public Query getInsertQuery(EntityManager em){
-        return em.createNativeQuery("insert into department (id, `name`, parent_id, updated) " +
-                "value (:id, :name, :parent_id, :updated)")
+        return em.createNativeQuery("insert into department (id, `name`, parent_id, updated, disabled) " +
+                "value (:id, :name, :parent_id, :updated, :disabled)")
                 .setParameter("id", id)
                 .setParameter("name", name)
                 .setParameter("parent_id", parent != null ? parent.getId() : null)
-                .setParameter("updated", updated);
+                .setParameter("updated", updated)
+                .setParameter("disabled", disabled);
     }
     
     @Override

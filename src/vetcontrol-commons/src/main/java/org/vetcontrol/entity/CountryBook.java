@@ -54,12 +54,13 @@ public class CountryBook extends Localizable {
 
     @Override
     public Query getInsertQuery(EntityManager em){
-        return em.createNativeQuery("insert into countrybook (id, `name`, code, updated) " +
-                "value (:id, :name, :code, :updated)")
+        return em.createNativeQuery("insert into countrybook (id, `name`, code, updated, disabled) " +
+                "value (:id, :name, :code, :updated, :disabled)")
                 .setParameter("id", id)
                 .setParameter("name", name)
                 .setParameter("code", code)
-                .setParameter("updated", updated);
+                .setParameter("updated", updated)
+                .setParameter("disabled", disabled);
     }
 }
 
