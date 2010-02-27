@@ -16,6 +16,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.vetcontrol.util.book.entity.annotation.ValidProperty;
 
 /**
  * 2.4.3.6 Справочник перечня запретов по странам
@@ -25,17 +26,19 @@ import java.util.List;
 @Entity
 @Table(name = "prohibition_country")
 @XmlRootElement
-public class Prohibition implements ILongId, IUpdated, IQuery {
+public class Prohibition implements ILongId, IUpdated, IQuery, IDisabled {
 
     private Long id;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -143,29 +146,45 @@ public class Prohibition implements ILongId, IUpdated, IQuery {
     public void setTargets(List<StringCulture> targets) {
         this.targets = targets;
     }
+    private Date updated;
 
     @Temporal(TemporalType.TIMESTAMP)
     @XmlTransient
-    private Date updated;
-
+    @Override
     public Date getUpdated() {
         return updated;
     }
 
+    @Override
     public void setUpdated(Date updated) {
         this.updated = updated;
     }
 
     @Override
-    public Query getInsertQuery(EntityManager em){
-        return em.createNativeQuery("insert into prohibition_country (id, `date`, `number`, country_id, reason, region, target, updated) " +
-                "value (:id, :date, :number, :country_id, :reason, :region, :target, :updated)")
+    public Query getInsertQuery(EntityManager em) {
+        return em.createNativeQuery("insert into prohibition_country (id, `date`, `number`, country_id, reason, region, target, updated, disabled) "
+                + "value (:id, :date, :number, :country_id, :reason, :region, :target, :updated, :disabled)")
                 .setParameter("date", date)
                 .setParameter("number", number)
                 .setParameter("country_id", country.getId())
                 .setParameter("reason", reason)
                 .setParameter("region", region)
                 .setParameter("target", target)
-                .setParameter("updated", updated);
+                .setParameter("updated", updated)
+                .setParameter("disabled", disabled);
+    }
+    private boolean disabled;
+
+    //TODO: remove  @ValidProperty(false) and adjust UI.
+    @ValidProperty(false)
+    @Column(name = "disabled")
+    @Override
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    @Override
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 }

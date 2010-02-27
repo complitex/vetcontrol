@@ -136,14 +136,15 @@ public class RegisteredProducts extends Localizable{
     @Override
     public Query getInsertQuery(EntityManager em){
         return em.createNativeQuery("insert into registered_products (id, `date`, `classificator`, cargo_producer_id, " +
-                "regnumber, `name`, country_id, updated) " +
-                "value (:id, :date, :classificator, :cargo_producer_id, :regnumber, :name, :country_id, :updated)")
+                "regnumber, `name`, country_id, updated, disabled) " +
+                "value (:id, :date, :classificator, :cargo_producer_id, :regnumber, :name, :country_id, :updated, :disabled)")
                 .setParameter("date", date)
                 .setParameter("classificator", classificator)
                 .setParameter("cargo_producer_id", cargoProducer.getId())
                 .setParameter("name", name)
                 .setParameter("country_id", country.getId())
-                .setParameter("updated", updated);
+                .setParameter("updated", updated)
+                .setParameter("disabled", disabled);
     }
 
 }
