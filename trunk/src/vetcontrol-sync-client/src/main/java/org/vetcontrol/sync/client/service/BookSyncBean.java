@@ -16,7 +16,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import static org.vetcontrol.sync.client.service.ClientFactory.createJSONClient;
@@ -92,10 +91,10 @@ public class BookSyncBean extends SyncInfo{
     }
 
     @Asynchronous
-    public Future<SyncStatus> asynchronousProcess() throws ExecutionException {
+    public Future<String> asynchronousProcess(){
         process();
 
-        return new AsyncResult<SyncStatus>(SyncStatus.COMPLETE);
+        return new AsyncResult<String>("COMPLETE");
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

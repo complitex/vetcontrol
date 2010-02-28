@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.Client;
 import org.vetcontrol.sync.NotRegisteredException;
 
+import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -26,6 +27,9 @@ public class ClientBean {
 
     @PersistenceContext
     private EntityManager em;
+
+    @EJB(beanName = "LogBean")
+    private LogBean logBean;
 
     public Client getCurrentClient() throws NotRegisteredException {
         if (currentClient == null){

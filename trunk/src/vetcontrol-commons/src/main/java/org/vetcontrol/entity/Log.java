@@ -16,7 +16,7 @@ public class Log implements Serializable{
     }
 
     public static enum EVENT {
-        SYSTEM_START, SYSTEM_STOP, USER_LOGIN, USER_LOGOUT, LIST, VIEW, CREATE, EDIT, REMOVE
+        SYSTEM_START, SYSTEM_STOP, USER_LOGIN, USER_LOGOUT, LIST, VIEW, CREATE, EDIT, REMOVE, SYNC
     }
 
     public static enum STATUS {

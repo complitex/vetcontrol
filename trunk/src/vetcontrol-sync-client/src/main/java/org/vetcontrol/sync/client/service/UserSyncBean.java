@@ -44,10 +44,10 @@ public class UserSyncBean extends SyncInfo{
     }
 
     @Asynchronous
-    public Future<SyncStatus> asynchronousProcess() throws ExecutionException {
+    public Future<String> asynchronousProcess() throws ExecutionException {
         process();
 
-        return new AsyncResult<SyncStatus>(SyncStatus.COMPLETE);
+        return new AsyncResult<String>("COMPLETE");
     }
 
     private void processUser(){
