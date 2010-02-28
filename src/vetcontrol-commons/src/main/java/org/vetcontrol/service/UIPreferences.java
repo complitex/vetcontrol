@@ -20,8 +20,7 @@ public class UIPreferences implements Serializable {
 
     public enum PreferenceType {
 
-        SORT_PROPERTY(true), SORT_ORDER(true), PAGE_NUMBER(true), FILTER(true), LOCALE(false), PAGE_SIZE(false),
-        SYNC(true);
+        SORT_PROPERTY(true), SORT_ORDER(true), PAGE_NUMBER(true), FILTER(true), LOCALE(false), PAGE_SIZE(false);
         private boolean sessionOnly;
 
         private PreferenceType(boolean sessionOnly) {

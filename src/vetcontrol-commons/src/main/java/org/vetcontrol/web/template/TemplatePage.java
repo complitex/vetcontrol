@@ -156,7 +156,7 @@ public abstract class TemplatePage extends WebPage {
         }
     }
 
-    //Загрузка списка классов меню из файла конфирурации и их создание
+    //Загрузка списка классов меню из файла конфигурации и их создание
     private List<ITemplateMenu> newTemplateMenus() {
         List<String> classes = ((TemplateWebApplication) getApplication()).getTemplateLoader().getMenuClassNames();
         List<ITemplateMenu> templateMenus = new ArrayList<ITemplateMenu>();
@@ -169,13 +169,8 @@ public abstract class TemplatePage extends WebPage {
                     ITemplateMenu templateMenu = (ITemplateMenu) menuClass.newInstance();
                     templateMenus.add(templateMenu);
                 }
-            } catch (ClassNotFoundException e) {
-                //TODO add log
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                log.warn("Меню не найдено [{}]", e.getLocalizedMessage());
             }
         }
 

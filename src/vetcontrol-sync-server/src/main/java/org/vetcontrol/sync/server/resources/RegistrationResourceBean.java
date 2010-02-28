@@ -31,7 +31,7 @@ import static org.vetcontrol.entity.Log.MODULE.SYNC_SERVER;
 @Stateless
 public class RegistrationResourceBean {
     private static final Logger log = LoggerFactory.getLogger(RegistrationResourceBean.class);
-    private static final ResourceBundle rb = ResourceBundle.getBundle("org.vetcontrol.sync.server.resources.RegistrationResourceBean");
+    private static final ResourceBundle rb = ResourceBundle.getBundle("org.vetcontrol.sync.server.resources.ResourceBeans");
 
     @PersistenceContext
     private EntityManager em;
