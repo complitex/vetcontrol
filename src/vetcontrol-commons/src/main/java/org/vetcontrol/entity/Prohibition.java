@@ -8,6 +8,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.vetcontrol.util.book.entity.annotation.BookReference;
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
+import org.vetcontrol.util.book.entity.annotation.ValidProperty;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlIDREF;
@@ -16,7 +17,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.vetcontrol.util.book.entity.annotation.ValidProperty;
 
 /**
  * 2.4.3.6 Справочник перечня запретов по странам
@@ -164,6 +164,7 @@ public class Prohibition implements ILongId, IUpdated, IQuery, IDisabled {
     public Query getInsertQuery(EntityManager em) {
         return em.createNativeQuery("insert into prohibition_country (id, `date`, `number`, country_id, reason, region, target, updated, disabled) "
                 + "value (:id, :date, :number, :country_id, :reason, :region, :target, :updated, :disabled)")
+                .setParameter("id", id)
                 .setParameter("date", date)
                 .setParameter("number", number)
                 .setParameter("country_id", country.getId())
@@ -173,6 +174,22 @@ public class Prohibition implements ILongId, IUpdated, IQuery, IDisabled {
                 .setParameter("updated", updated)
                 .setParameter("disabled", disabled);
     }
+
+    @Override
+    public Query getUpdateQuery(EntityManager em) {
+        return em.createNativeQuery("update prohibition_country set `date` = :date, `number` = :number, country_id = :country_id, " +
+                "reason = :reason, region = :region, target = :target, updated = :updated, disabled = :disabled where id = :id")
+                .setParameter("id", id)
+                .setParameter("date", date)
+                .setParameter("number", number)
+                .setParameter("country_id", country.getId())
+                .setParameter("reason", reason)
+                .setParameter("region", region)
+                .setParameter("target", target)
+                .setParameter("updated", updated)
+                .setParameter("disabled", disabled);
+    }
+
     private boolean disabled;
 
     //TODO: remove  @ValidProperty(false) and adjust UI.

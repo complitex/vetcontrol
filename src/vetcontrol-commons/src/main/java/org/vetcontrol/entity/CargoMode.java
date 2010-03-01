@@ -76,4 +76,9 @@ public class CargoMode extends Localizable {
     public Query getInsertQuery(EntityManager em) {
         return getInsertQuery(em, "cargo_mode");
     }
+
+    @Override
+    public Query getUpdateQuery(EntityManager em) {
+        return getUpdateQuery(em, "cargo_mode");
+    }
 }

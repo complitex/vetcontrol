@@ -191,6 +191,22 @@ public class User implements ILongId, IUpdated, IQuery{
     }
 
     @Override
+    public Query getUpdateQuery(EntityManager em){
+        return em.createNativeQuery("update user set login = :login, _password = :_password, first_name = :first_name, " +
+                "middle_name = :middle_name, last_name = :last_name, job_id = :job_id, department_id = :department_id, " +
+                "updated = :updated where id = :id")
+                .setParameter("id", id)
+                .setParameter("login", login)
+                .setParameter("_password", password)
+                .setParameter("first_name", firstName)
+                .setParameter("middle_name", middleName)
+                .setParameter("last_name", lastName)
+                .setParameter("job_id", job != null ? job.getId() : null)
+                .setParameter("department_id", department.getId())
+                .setParameter("updated", updated);
+    }
+
+    @Override
     public String toString() {
         return new StringBuilder().append("[hash: ").append(Integer.toHexString(hashCode()))
                 .append(", id: ").append(id)

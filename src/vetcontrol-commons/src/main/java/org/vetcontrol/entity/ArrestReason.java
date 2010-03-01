@@ -35,4 +35,9 @@ public class ArrestReason extends Localizable{
     public Query getInsertQuery(EntityManager em){
         return getInsertQuery(em, "arrest_reason");
     }
+
+    @Override
+    public Query getUpdateQuery(EntityManager em) {
+        return getUpdateQuery(em, "arrest_reason");
+    }
 }

@@ -36,4 +36,9 @@ public class CustomsPoint extends Localizable{
     public Query getInsertQuery(EntityManager em){
         return getInsertQuery(em, "customs_point");
     }
+
+    @Override
+    public Query getUpdateQuery(EntityManager em) {
+        return getUpdateQuery(em, "customs_point");
+    }
 }

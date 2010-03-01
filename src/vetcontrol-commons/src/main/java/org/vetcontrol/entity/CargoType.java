@@ -55,6 +55,17 @@ public class CargoType extends Localizable {
     }
 
     @Override
+    public Query getUpdateQuery(EntityManager em){
+        return em.createNativeQuery("update cargo_type set `name` = :name, ukt_zed_code = :ukt_zed_code, " +
+                "updated = :updated, disabled = :disabled where id = :id")
+                .setParameter("id", id)
+                .setParameter("name", name)
+                .setParameter("updated", updated)
+                .setParameter("ukt_zed_code", uktZedCode)
+                .setParameter("disabled", disabled);
+    }
+
+    @Override
     public String toString() {
         return getCode();
     }

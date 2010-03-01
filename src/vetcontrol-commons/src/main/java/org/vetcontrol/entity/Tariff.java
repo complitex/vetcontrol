@@ -35,4 +35,9 @@ public class Tariff extends Localizable{
     public Query getInsertQuery(EntityManager em){
         return getInsertQuery(em, "tariff");
     }
+
+    @Override
+    public Query getUpdateQuery(EntityManager em) {
+        return getUpdateQuery(em, "tariff");
+    }
 }

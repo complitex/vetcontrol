@@ -151,6 +151,14 @@ public class CargoModeCargoType implements IUpdated, IQuery, IEmbeddedId<CargoMo
                 .setParameter("updated", updated);
     }
 
+    @Override
+    public Query getUpdateQuery(EntityManager em) {
+        return em.createNativeQuery("update cargo_mode_cargo_type set updated = :updated  " +
+                "where cargo_mode_id = :cargo_mode_id and cargo_type_id = :cargo_type_id")
+                .setParameter("cargo_mode_id", id.cargoModeId)
+                .setParameter("cargo_type_id", id.cargoTypeId)
+                .setParameter("updated", updated);
+    }
 
     @Override
     public String toString() {
