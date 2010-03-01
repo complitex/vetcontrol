@@ -18,7 +18,7 @@ import java.util.Date;
 @Table(name = "usergroup")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class UserGroup implements Serializable, IUpdated, IQuery {
+public class UserGroup implements Serializable, IUpdated, IQuery, ILongId {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @XmlID @XmlJavaTypeAdapter(LongAdapter.class)
@@ -74,6 +74,16 @@ public class UserGroup implements Serializable, IUpdated, IQuery {
                 .setParameter("usergroup", securityGroup.name())
                 .setParameter("login", login)
                 .setParameter("updated", updated);    
+    }
+
+    @Override
+    public Query getUpdateQuery(EntityManager em){
+        return em.createNativeQuery("update `usergroup` set `usergroup` = :usergroup, login = :login, " +
+                "updated = :updated where id = :id")
+                .setParameter("id", id)
+                .setParameter("usergroup", securityGroup.name())
+                .setParameter("login", login)
+                .setParameter("updated", updated);
     }
 
     @Override

@@ -9,4 +9,6 @@ import javax.persistence.Query;
  */
 public interface IQuery {
     public Query getInsertQuery(EntityManager em);
+
+    public Query getUpdateQuery(EntityManager em);
 }

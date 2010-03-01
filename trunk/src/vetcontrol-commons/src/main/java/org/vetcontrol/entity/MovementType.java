@@ -37,4 +37,9 @@ public class MovementType extends Localizable{
     public Query getInsertQuery(EntityManager em){
         return getInsertQuery(em, "movement_type");
     }
+
+    @Override
+    public Query getUpdateQuery(EntityManager em) {
+        return getUpdateQuery(em, "movement_type");
+    }
 }

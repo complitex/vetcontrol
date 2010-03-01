@@ -83,6 +83,17 @@ public class Department extends Localizable{
                 .setParameter("updated", updated)
                 .setParameter("disabled", disabled);
     }
+
+    @Override
+    public Query getUpdateQuery(EntityManager em){
+        return em.createNativeQuery("update department set `name` = :name, parent_id = :parent_id, " +
+                "updated = :updated, disabled = :disabled where id = :id")
+                .setParameter("id", id)
+                .setParameter("name", name)
+                .setParameter("parent_id", parent != null ? parent.getId() : null)
+                .setParameter("updated", updated)
+                .setParameter("disabled", disabled);
+    }
     
     @Override
     public String toString() {

@@ -39,4 +39,9 @@ public class VehicleType extends Localizable{
     public Query getInsertQuery(EntityManager em){
         return getInsertQuery(em, "vehicletypes");
     }
+
+    @Override
+    public Query getUpdateQuery(EntityManager em) {
+        return getUpdateQuery(em, "vehicletypes");
+    }
 }

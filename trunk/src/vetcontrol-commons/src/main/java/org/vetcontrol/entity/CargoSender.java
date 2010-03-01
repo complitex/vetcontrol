@@ -37,4 +37,9 @@ public class CargoSender extends Localizable{
     public Query getInsertQuery(EntityManager em){
         return getInsertQuery(em, "cargo_sender");
     }
+
+    @Override
+    public Query getUpdateQuery(EntityManager em) {
+        return getUpdateQuery(em, "cargo_sender");
+    }
 }

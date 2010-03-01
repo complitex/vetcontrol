@@ -39,6 +39,11 @@ public class UnitType extends Localizable {
     }
 
     @Override
+    public Query getUpdateQuery(EntityManager em) {
+        return getUpdateQuery(em, "unit_type");
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof UnitType) {
             UnitType that = (UnitType) obj;

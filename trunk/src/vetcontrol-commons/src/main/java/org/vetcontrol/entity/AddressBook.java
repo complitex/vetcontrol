@@ -35,4 +35,9 @@ public class AddressBook extends Localizable{
     public Query getInsertQuery(EntityManager em){
         return getInsertQuery(em, "addressbook");
     }
+
+    @Override
+    public Query getUpdateQuery(EntityManager em) {
+        return getUpdateQuery(em, "addressbook");
+    }
 }

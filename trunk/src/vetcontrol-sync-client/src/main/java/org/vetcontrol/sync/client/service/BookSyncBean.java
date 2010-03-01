@@ -120,13 +120,14 @@ public class BookSyncBean extends SyncInfo{
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            log.debug("Synchronizing: {}", book.toString());
+
             sync(new SyncEvent(count, index++, book));
 
             book.setUpdated(syncUpdated);
 
+            log.debug("Synchronizing: {}", book.toString());
             if (isPersisted(book)){
-                em.merge(book);
+                book.getUpdateQuery(em).executeUpdate();
             }else{
                 book.getInsertQuery(em).executeUpdate();
             }
@@ -147,17 +148,17 @@ public class BookSyncBean extends SyncInfo{
     }
 
     private boolean isPersisted(Object obj){
-        if (obj instanceof ILongId){
-            ILongId book = (ILongId) obj;
+        Object id = null;
 
-            return em.createQuery("select count(b) from " + book.getClass().getSimpleName() + " b where b.id = :id", Long.class)
-                    .setParameter("id", book.getId())
-                    .getSingleResult() == 1;
+        if (obj instanceof ILongId){
+            id = ((ILongId) obj).getId();
         }else if (obj instanceof IEmbeddedId){
-            return em.find(obj.getClass(), ((IEmbeddedId)obj).getId()) != null;
+            id = ((IEmbeddedId) obj).getId();
         }
 
-        throw new IllegalArgumentException();
+        return em.createQuery("select count(*) from " + obj.getClass().getSimpleName() + " b where b.id = :id", Long.class)
+                    .setParameter("id", id)
+                    .getSingleResult() > 0;
     }
 
     private Date getUpdated(Class<? extends IUpdated> book){

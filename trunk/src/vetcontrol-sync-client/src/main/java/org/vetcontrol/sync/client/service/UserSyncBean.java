@@ -3,9 +3,7 @@ package org.vetcontrol.sync.client.service;
 import com.sun.jersey.api.client.GenericType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vetcontrol.entity.IUpdated;
-import org.vetcontrol.entity.User;
-import org.vetcontrol.entity.UserGroup;
+import org.vetcontrol.entity.*;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.sync.Count;
 import org.vetcontrol.sync.SyncRequestEntity;
@@ -65,10 +63,10 @@ public class UserSyncBean extends SyncInfo{
 
             user.setUpdated(syncUpdated);
 
-            if (em.find(User.class, user.getId()) == null){
-                user.getInsertQuery(em).executeUpdate();
+            if (isPersisted(user)){
+                user.getUpdateQuery(em).executeUpdate();
             }else{
-                em.merge(user);
+                user.getInsertQuery(em).executeUpdate();
             }
         }
 
@@ -102,15 +100,29 @@ public class UserSyncBean extends SyncInfo{
 
             userGroup.setUpdated(syncUpdated);
 
-            if (em.find(UserGroup.class, userGroup.getId()) == null){
-                userGroup.getInsertQuery(em).executeUpdate();
+            if (isPersisted(userGroup)){
+                userGroup.getUpdateQuery(em).executeUpdate();                
             }else{
-                em.merge(userGroup);
+                userGroup.getInsertQuery(em).executeUpdate();
             }
         }
 
         complete(new SyncEvent(index, UserGroup.class));
         log.debug("++++++++++++++++++++ Synchronizing Complete: User Group +++++++++++++++++++\n");
+    }
+
+    private boolean isPersisted(Object obj){
+        Object id = null;
+
+        if (obj instanceof ILongId){
+            id = ((ILongId) obj).getId();
+        }else if (obj instanceof IEmbeddedId){
+            id = ((IEmbeddedId) obj).getId();
+        }
+
+        return em.createQuery("select count(*) from " + obj.getClass().getSimpleName() + " b where b.id = :id", Long.class)
+                    .setParameter("id", id)
+                    .getSingleResult() == 1;
     }
 
     private Date getUpdated(Class<? extends IUpdated> entity){

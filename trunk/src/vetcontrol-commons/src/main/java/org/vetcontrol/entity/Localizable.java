@@ -108,6 +108,14 @@ public abstract class Localizable implements ILongId, IUpdated, IQuery, IDisable
                 .setParameter("disabled", disabled);
     }
 
+    protected Query getUpdateQuery(EntityManager em, String table){
+        return em.createNativeQuery("update " + table + " set `name` = :name, updated = :updated, disabled = :disabled where `id` = :id")
+                .setParameter("id", id)
+                .setParameter("name", name)
+                .setParameter("updated", updated)
+                .setParameter("disabled", disabled);
+    }
+
     @Override
     public String toString() {
         return "[hash: " + Integer.toHexString(hashCode()) +

@@ -92,16 +92,28 @@ public class SyncBean{
         processing = true;
 
         try {
+            SyncMessage message = new SyncMessage();
+            message.setName(rb.getString("sync.client.sync.client"));
+            message.setMessage(rb.getString("sync.client.sync.before_start"));
+            syncMessages.add(message);
+
+            //Синхронизация справочников и пользователей 
             bookSyncBean.process();
             userSyncBean.process();
+
+            message = new SyncMessage();
+            message.setName(rb.getString("sync.client.sync.client"));
+            message.setMessage(rb.getString("sync.client.sync.after_complete"));
+            syncMessages.add(message);
         } catch (EJBException exception) {
             SyncMessage message = new SyncMessage();
 
             try {
-                throw exception.getCausedByException();
+                throw ((EJBException)exception.getCausedByException()).getCausedByException();
             } catch (NotRegisteredException e) {
                 String m = rb.getString("sync.client.error.not_registered");
 
+                message.setName(rb.getString("sync.client.sync.error"));
                 message.setMessage(m);
 
                 log.error(m);
@@ -109,11 +121,13 @@ public class SyncBean{
             } catch (UniformInterfaceException e){
                 String m = e.getResponse().getEntity(String.class);
 
+                message.setName(rb.getString("sync.client.sync.error"));
                 message.setMessage(m);
 
                 log.error(m);
                 logBean.error(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, SyncBean.class, null, m);
             } catch (Exception e) {
+                message.setName(rb.getString("sync.client.sync.error"));
                 message.setMessage(e.getLocalizedMessage());
 
                 log.error(e.getLocalizedMessage(), e);

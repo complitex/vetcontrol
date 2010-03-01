@@ -62,6 +62,17 @@ public class CountryBook extends Localizable {
                 .setParameter("updated", updated)
                 .setParameter("disabled", disabled);
     }
+
+    @Override
+    public Query getUpdateQuery(EntityManager em){
+        return em.createNativeQuery("update countrybook set `name` = :name, code = :code, updated = :updated, " +
+                "disabled = :disabled where id = :id")
+                .setParameter("id", id)
+                .setParameter("name", name)
+                .setParameter("code", code)
+                .setParameter("updated", updated)
+                .setParameter("disabled", disabled);
+    }
 }
 
 

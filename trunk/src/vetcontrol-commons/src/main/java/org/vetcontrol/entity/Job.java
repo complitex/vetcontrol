@@ -39,4 +39,9 @@ public class Job extends Localizable {
     public Query getInsertQuery(EntityManager em){
         return getInsertQuery(em, "job");
     }
+
+    @Override
+    public Query getUpdateQuery(EntityManager em) {
+        return getUpdateQuery(em, "job");
+    }
 }
