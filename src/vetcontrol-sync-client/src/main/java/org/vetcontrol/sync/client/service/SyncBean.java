@@ -1,12 +1,16 @@
 package org.vetcontrol.sync.client.service;
 
+import com.sun.jersey.api.client.UniformInterfaceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vetcontrol.entity.Client;
+import org.vetcontrol.entity.Log;
+import org.vetcontrol.service.LogBean;
+import org.vetcontrol.sync.NotRegisteredException;
 import org.vetcontrol.util.DateUtil;
 
 import javax.ejb.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.Future;
 
 /**
@@ -16,11 +20,16 @@ import java.util.concurrent.Future;
 @Singleton(name = "SyncBean")
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class SyncBean{
+    private static final Logger log = LoggerFactory.getLogger(SyncBean.class);
+
     @EJB(beanName = "BookSyncBean")
     BookSyncBean bookSyncBean;
 
     @EJB(beanName = "UserSyncBean")
     UserSyncBean userSyncBean;
+
+    @EJB(beanName = "LogBean")
+    LogBean logBean;
 
     private ResourceBundle rb;
 
@@ -34,9 +43,8 @@ public class SyncBean{
         public void start(SyncEvent syncEvent) {
             SyncMessage message = new SyncMessage();
             String key = ((Class)syncEvent.getObject()).getCanonicalName();
-            message.setDate(DateUtil.getCurrentDate());
             message.setName(rb.containsKey(key) ? rb.getString(key) : key);
-            message.setMessage("Подключение к серверу... " + syncEvent.getCount());
+            message.setMessage(rb.getString("sync.client.sync.start"));
 
             syncMessages.add(message);
         }
@@ -45,14 +53,22 @@ public class SyncBean{
         public void sync(SyncEvent syncEvent) {
             SyncMessage message = syncMessages.get(syncMessages.size()-1);
             message.setDate(DateUtil.getCurrentDate());
-            message.setMessage("Синхронизация... " + syncEvent.getIndex() + " из " + syncEvent.getCount());
+            message.setMessage(rb.getString("sync.client.sync.process") + " " +
+                    ((syncEvent.getIndex()*100) / syncEvent.getCount()) + "%");
         }
 
         @Override
         public void complete(SyncEvent syncEvent) {
             SyncMessage message = syncMessages.get(syncMessages.size()-1);
             message.setDate(DateUtil.getCurrentDate());
-            message.setMessage("Успешно синхронизировано: " + syncEvent.getCount());
+
+            String m = syncEvent.getCount() > 0
+                    ? rb.getString("sync.client.sync.complete") + " " + syncEvent.getCount()
+                    : rb.getString("sync.client.sync.complete.skip");
+            message.setMessage(m);
+
+            log.info("Синхронизация объекта: {}. " + m, syncEvent.getObject());
+            logBean.info(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, SyncBean.class, (Class)syncEvent.getObject(), m);
         }
     };
 
@@ -78,15 +94,41 @@ public class SyncBean{
         try {
             bookSyncBean.process();
             userSyncBean.process();
-        } catch (Exception e) {
+        } catch (EJBException exception) {
             SyncMessage message = new SyncMessage();
-            message.setDate(DateUtil.getCurrentDate());
-            message.setMessage("Ошибка: " + e.getLocalizedMessage());
+
+            try {
+                throw exception.getCausedByException();
+            } catch (NotRegisteredException e) {
+                String m = rb.getString("sync.client.error.not_registered");
+
+                message.setMessage(m);
+
+                log.error(m);
+                logBean.error(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, SyncBean.class, Client.class, m);
+            } catch (UniformInterfaceException e){
+                String m = e.getResponse().getEntity(String.class);
+
+                message.setMessage(m);
+
+                log.error(m);
+                logBean.error(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, SyncBean.class, null, m);
+            } catch (Exception e) {
+                message.setMessage(e.getLocalizedMessage());
+
+                log.error(e.getLocalizedMessage(), e);
+                logBean.error(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, SyncBean.class, null, e.getLocalizedMessage());                
+            }
+
             syncMessages.add(message);
         }
 
         processing = false;
 
         return new AsyncResult<String>("COMPLETE");
+    }
+
+    public Date getLastSync(){
+        return logBean.getLastDate(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, Log.STATUS.OK);        
     }
 }

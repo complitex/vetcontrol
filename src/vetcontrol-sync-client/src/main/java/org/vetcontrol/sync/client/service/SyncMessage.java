@@ -1,5 +1,7 @@
 package org.vetcontrol.sync.client.service;
 
+import org.vetcontrol.util.DateUtil;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -8,7 +10,7 @@ import java.util.Date;
  *         Date: 26.02.2010 19:31:47
  */
 public class SyncMessage implements Serializable{
-    private Date date;
+    private Date date = DateUtil.getCurrentDate();
     private String name;
     private String message;
 

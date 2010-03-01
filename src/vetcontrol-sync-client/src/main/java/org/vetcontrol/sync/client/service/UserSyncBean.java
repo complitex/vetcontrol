@@ -11,16 +11,12 @@ import org.vetcontrol.sync.Count;
 import org.vetcontrol.sync.SyncRequestEntity;
 import org.vetcontrol.util.DateUtil;
 
-import javax.ejb.AsyncResult;
-import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.ejb.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import static org.vetcontrol.sync.client.service.ClientFactory.createJSONClient;
 
@@ -28,7 +24,7 @@ import static org.vetcontrol.sync.client.service.ClientFactory.createJSONClient;
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 16.02.2010 20:49:06
  */
-@Stateless(name = "UserSyncBean")
+@Singleton(name = "UserSyncBean")
 public class UserSyncBean extends SyncInfo{
     private static final Logger log = LoggerFactory.getLogger(UserSyncBean.class);
 
@@ -41,13 +37,6 @@ public class UserSyncBean extends SyncInfo{
     public void process(){
         processUser();
         processUserGroups();
-    }
-
-    @Asynchronous
-    public Future<String> asynchronousProcess() throws ExecutionException {
-        process();
-
-        return new AsyncResult<String>("COMPLETE");
     }
 
     private void processUser(){

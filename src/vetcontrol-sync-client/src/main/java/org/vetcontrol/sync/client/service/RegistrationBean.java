@@ -5,6 +5,7 @@ import org.vetcontrol.entity.Department;
 import org.vetcontrol.entity.Synchronized;
 import org.vetcontrol.util.DateUtil;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -21,6 +22,9 @@ public class RegistrationBean {
     @PersistenceContext
     private EntityManager em;
 
+    @EJB(beanName = "UserSyncBean")
+    UserSyncBean userSyncBean;
+
     public Client processRegistration(Client client){
         client =  createJSONClient("/registration").post(Client.class, client);
 
@@ -28,12 +32,14 @@ public class RegistrationBean {
                 .setParameter("mac", client.getMac())
                 .executeUpdate();
 
-        //commit        
         client.setSyncStatus(Synchronized.SyncStatus.SYNCHRONIZED);
         client.setUpdated(DateUtil.getCurrentDate());
 
         client.getInsertQuery(em).executeUpdate();
 
+        userSyncBean.process();
+
+        //commit
         createJSONClient("/registration/commit").put(client.getSecureKey());
 
         return client;

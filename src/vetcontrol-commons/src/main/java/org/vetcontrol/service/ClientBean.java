@@ -23,6 +23,8 @@ import java.net.UnknownHostException;
 public class ClientBean {
     private static final Logger log = LoggerFactory.getLogger(ClientBean.class);
 
+    private static final String SERVER_SECURE_KEY = "b2627dab45b9455e947f9755861aea10";
+
     private Client currentClient;
 
     @PersistenceContext
@@ -33,6 +35,15 @@ public class ClientBean {
 
     public Client getCurrentClient() throws NotRegisteredException {
         if (currentClient == null){
+            //server
+            try {
+                return em.createQuery("select c from Client c where c.secureKey = :secureKey", Client.class)
+                        .setParameter("secureKey", SERVER_SECURE_KEY).getSingleResult();
+            } catch (Exception e) {
+                //nothing
+            }
+
+            //client
             String mac = getCurrentMAC();
             if (mac != null){
                 try {
