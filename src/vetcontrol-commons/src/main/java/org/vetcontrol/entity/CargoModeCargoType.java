@@ -25,7 +25,7 @@ public class CargoModeCargoType implements IUpdated, IQuery, IEmbeddedId<CargoMo
 
         @Column(name = "cargo_mode_id")
         private Long cargoModeId;
-        @Column(name = "cargo_type_id", unique = true)
+        @Column(name = "cargo_type_id")
         private Long cargoTypeId;
 
         public Id() {

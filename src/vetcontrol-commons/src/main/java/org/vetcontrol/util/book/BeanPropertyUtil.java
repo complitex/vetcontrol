@@ -19,7 +19,6 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -165,7 +164,7 @@ public class BeanPropertyUtil {
         return result;
     }
 
-    public static void addLocalization(Serializable bookEntry, List<Locale> supportedLocales) {
+    public static void addLocalization(Object bookEntry, List<Locale> supportedLocales) {
         try {
             BeanInfo beanInfo = Introspector.getBeanInfo(bookEntry.getClass());
             PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
@@ -234,15 +233,20 @@ public class BeanPropertyUtil {
         return mappedProperties;
     }
 
-    public static Object getPropertyValue(Object target, String propertyName) throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        BeanInfo beanInfo = Introspector.getBeanInfo(target.getClass());
-        PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
-        for (PropertyDescriptor prop : props) {
-            if (prop.getName().equals(propertyName)) {
-                return prop.getReadMethod().invoke(target);
+    public static Object getPropertyValue(Object target, String propertyName) {
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(target.getClass());
+            PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
+            for (PropertyDescriptor prop : props) {
+                if (prop.getName().equals(propertyName)) {
+                    return prop.getReadMethod().invoke(target);
+                }
             }
+            throw new RuntimeException("Property '" + propertyName + "' was not found in type " + target.getClass());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        throw new RuntimeException("Property '" + propertyName + "' was not found in type " + target.getClass());
+
     }
 
     public static String getPropertyAsString(Object propertyValue, Property property, Locale systemLocale) {
@@ -378,8 +382,8 @@ public class BeanPropertyUtil {
                     }
                 } else if (prop.isLocalizable()) {
                     //do nothing.
-                } else if(prop.isBookReference()) {
-                    
+                } else if (prop.isBookReference()) {
+
                     Object value = getPropertyValue(book, prop.getName());
                     if (value != null) {
                         Object ID = getPropertyValue(value, "id");
@@ -421,12 +425,26 @@ public class BeanPropertyUtil {
 
     public static void updateVersionIfNecessary(Object book, BookHash initialHash) {
         try {
-            //TODO: add time zone shift
             Date updated = DateUtil.getCurrentDate();
 
             BookHash newHash = hash(book);
 
-            if (isNewBook(book) || !newHash.getBookHash().equals(initialHash.getBookHash())) {
+            if (isNewBook(book)) {
+                setPropertyValue(book, getVersionPropertyName(), updated);
+                for (Property prop : getProperties(book.getClass())) {
+                    if (prop.isLocalizable()) {
+                        List<StringCulture> strings = (List<StringCulture>) getPropertyValue(book, prop.getName());
+                        if (strings != null) {
+                            for (StringCulture stringCulture : strings) {
+                                stringCulture.setUpdated(updated);
+                            }
+                        }
+                    }
+                }
+                return;
+            }
+
+            if (!newHash.getBookHash().equals(initialHash.getBookHash())) {
                 setPropertyValue(book, getVersionPropertyName(), updated);
             }
 
@@ -449,15 +467,37 @@ public class BeanPropertyUtil {
         }
     }
 
-    private static String getVersionPropertyName() {
+    public static String getVersionPropertyName() {
         return "updated";
     }
 
-    private static boolean isNewBook(Object book) {
+    public static boolean isNewBook(Object book) {
         try {
             return getPropertyValue(book, "id") == null;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void clearBook(Object book) {
+        try {
+            setPropertyValue(book, "id", null);
+            for (Property prop : getProperties(book.getClass())) {
+                if (prop.isLocalizable()) {
+                    List<StringCulture> strings = (List<StringCulture>) getPropertyValue(book, prop.getName());
+                    if (strings != null) {
+                        for (StringCulture stringCulture : strings) {
+                            stringCulture.getId().setId(null);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String getDisabledPropertyName() {
+        return "disabled";
     }
 }

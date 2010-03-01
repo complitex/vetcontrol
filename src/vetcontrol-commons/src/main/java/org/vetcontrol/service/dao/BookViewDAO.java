@@ -27,6 +27,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import org.vetcontrol.util.book.entity.ShowBooksMode;
 
 /**
  *
@@ -49,24 +50,21 @@ public class BookViewDAO implements IBookViewDAO {
     }
 
     @Override
-    public <T> Long size(T example) {
+    public <T> Long size(T example, ShowBooksMode showBooksMode) {
         Session session = HibernateSessionTransformer.getSession(getEntityManager());
         try {
-//            DetachedCriteria query = query(example, null);
-//            return (Long) query.getExecutableCriteria(session).setProjection(Projections.rowCount()).uniqueResult();
-            return (Long) queryForSize(session, example).uniqueResult();
+            return (Long) queryForSize(session, example, showBooksMode).uniqueResult();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public <T> List<T> getContent(T example, int first, int count, String sortProperty, boolean isAscending, Locale locale) {
+    public <T> List<T> getContent(T example, int first, int count, String sortProperty, boolean isAscending, Locale locale, ShowBooksMode showBooksMode) {
         Session session = HibernateSessionTransformer.getSession(getEntityManager());
         try {
-//            DetachedCriteria query = query(example, sortProperty, isAscending);
-//            List<T> results = query.getExecutableCriteria(session).setFirstResult(first).setMaxResults(count).list();
-            List<T> results = queryForContent(session, example, sortProperty, isAscending, locale).setFirstResult(first).setMaxResults(count).list();
+            List<T> results = queryForContent(session, example, sortProperty, isAscending, locale, showBooksMode).
+                    setFirstResult(first).setMaxResults(count).list();
             addLocalizationSupport(results);
             return results;
         } catch (Exception e) {
@@ -75,13 +73,11 @@ public class BookViewDAO implements IBookViewDAO {
     }
 
     @Override
-    public <T> List<T> getContent(Class<T> bookClass) {
+    public <T> List<T> getContent(Class<T> bookClass, ShowBooksMode showBooksMode) {
         Session session = HibernateSessionTransformer.getSession(getEntityManager());
         try {
             T example = bookClass.newInstance();
-//            DetachedCriteria query = query(example, null);
-//            List<T> results = query.getExecutableCriteria(session).setFirstResult(0).list();
-            List<T> results = queryForContent(session, example, null, null, null).setFirstResult(0).list();
+            List<T> results = queryForContent(session, example, null, null, null, showBooksMode).setFirstResult(0).list();
             addLocalizationSupport(results);
             return results;
         } catch (Exception e) {
@@ -225,7 +221,9 @@ public class BookViewDAO implements IBookViewDAO {
         return query;
     }
 
-    private <T> QueryWithParameters createQuery(T example, String sortProperty, Boolean isAscending, Locale locale, boolean size) throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    private <T> QueryWithParameters createQuery(T example, String sortProperty, Boolean isAscending, Locale locale, boolean size,
+            ShowBooksMode showBooksMode)
+            throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Class bookType = example.getClass();
         Property sortProp = BeanPropertyUtil.getPropertyByName(bookType, sortProperty);
 
@@ -263,6 +261,16 @@ public class BookViewDAO implements IBookViewDAO {
         //where expression
         query.append("WHERE (1=1) ");
         Map<String, Object> queryParameters = new HashMap<String, Object>();
+
+        //disabed/enabled/all filter
+        switch (showBooksMode) {
+            case ALL:
+                break;
+            default:
+                query.append(" AND a.").append(BeanPropertyUtil.getDisabledPropertyName()).append(" = :disabled ");
+                queryParameters.put("disabled", showBooksMode.equals(ShowBooksMode.ENABLED) ? Boolean.FALSE : Boolean.TRUE);
+                break;
+        }
 
         //join condition
         String localeParameter = "currentLocale";
@@ -430,14 +438,16 @@ public class BookViewDAO implements IBookViewDAO {
         private Map<String, Object> parameters;
     }
 
-    private <T> Query queryForContent(Session session, T example, String sortProperty, Boolean isAscending, Locale locale) throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        QueryWithParameters queryWithParameters = createQuery(example, sortProperty, isAscending, locale, false);
+    private <T> Query queryForContent(Session session, T example, String sortProperty, Boolean isAscending, Locale locale, ShowBooksMode showBooksMode)
+            throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        QueryWithParameters queryWithParameters = createQuery(example, sortProperty, isAscending, locale, false, showBooksMode);
         Query q = applyParameters(session, queryWithParameters);
         return q;
     }
 
-    private <T> Query queryForSize(Session session, T example) throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        QueryWithParameters queryWithParameters = createQuery(example, null, null, null, true);
+    private <T> Query queryForSize(Session session, T example, ShowBooksMode showBooksMode) throws IntrospectionException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException {
+        QueryWithParameters queryWithParameters = createQuery(example, null, null, null, true, showBooksMode);
         Query q = applyParameters(session, queryWithParameters);
         return q;
     }
