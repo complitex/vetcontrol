@@ -9,14 +9,16 @@ import org.vetcontrol.sync.Count;
 import org.vetcontrol.sync.SyncRequestEntity;
 import org.vetcontrol.util.DateUtil;
 
-import javax.ejb.*;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 import static org.vetcontrol.sync.client.service.ClientFactory.createJSONClient;
 
@@ -24,7 +26,7 @@ import static org.vetcontrol.sync.client.service.ClientFactory.createJSONClient;
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 17.02.2010 15:16:39
  */
-@Stateless(name = "BookSyncBean")
+@Singleton(name = "BookSyncBean")
 public class BookSyncBean extends SyncInfo{
     private static final Logger log = LoggerFactory.getLogger(BookSyncBean.class);
 
@@ -88,13 +90,6 @@ public class BookSyncBean extends SyncInfo{
             //noinspection unchecked
             processBook(book);
         }
-    }
-
-    @Asynchronous
-    public Future<String> asynchronousProcess(){
-        process();
-
-        return new AsyncResult<String>("COMPLETE");
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

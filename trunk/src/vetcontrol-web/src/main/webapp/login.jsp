@@ -1,4 +1,21 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+
+<%
+    try {
+        javax.naming.InitialContext context = new javax.naming.InitialContext();
+        org.vetcontrol.service.ClientBean cb = (org.vetcontrol.service.ClientBean) context.lookup("java:module/ClientBean");
+        try {
+            cb.getCurrentClient();
+        } catch (Exception e) {
+            if (e.getCause() instanceof org.vetcontrol.sync.NotRegisteredException){
+                response.sendRedirect("?wicket:bookmarkablePage=:org.vetcontrol.sync.client.web.pages.RegistrationPage");
+            }
+        }
+    } catch (javax.naming.NamingException e) {
+        e.printStackTrace();
+    }
+%>
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
    "http://www.w3.org/TR/html4/loose.dtd">
 

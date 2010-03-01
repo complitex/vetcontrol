@@ -67,6 +67,14 @@ public class LogBean {
         log(module, event, controllerClass, null, STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser());
     }
 
+    public void info(String login, MODULE module, EVENT event, Class controllerClass, Class modelClass, String description){
+        log(module, event, controllerClass, modelClass, STATUS.OK, description, DateUtil.getCurrentDate(), getUser(login));
+    }
+
+    public void error(String login, MODULE module, EVENT event, Class controllerClass, Class modelClass, String description){
+        log(module, event, controllerClass, modelClass, STATUS.ERROR, description, DateUtil.getCurrentDate(), getUser(login));
+    }
+
     public void info(String login, MODULE module, EVENT event, Class controllerClass, String description){
         log(module, event, controllerClass, null, STATUS.OK, description, DateUtil.getCurrentDate(), getUser(login));
     }
@@ -112,6 +120,19 @@ public class LogBean {
     private User getCurrentUser(){
         try {
             return getUser(sctx.getCallerPrincipal().getName());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public Date getLastDate(MODULE module, EVENT event, STATUS status){
+        try {
+            return entityManager.createQuery("select max(l.date) from Log l where l.module = :module " +
+                    "and l.event = :event and l.status = :status", Date.class)
+                    .setParameter("module", module)
+                    .setParameter("event", event)
+                    .setParameter("status", status)
+                    .getSingleResult();
         } catch (Exception e) {
             return null;
         }

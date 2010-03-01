@@ -52,6 +52,14 @@ public class SyncPage extends TemplatePage{
         container = new WebMarkupContainer("container");
         add(container);
 
+        //Дата последней успешной синхронизации
+        Date lastSync = syncBean.getLastSync();
+        if (lastSync != null){
+            add(DateLabel.forDatePattern("lastSync", new Model<Date>(lastSync), "dd.MM.yy HH:mm:ss"));
+        }else{
+            add(new Label("lastSync", getString("sync.client.last_sync.null")));
+        }
+
         //Статус процесса синхронизации
         listView = new ListView<SyncMessage>("list", syncBean.getSyncMessages()){
 

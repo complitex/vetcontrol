@@ -3,6 +3,7 @@ package org.vetcontrol.web.security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.Log;
+import org.vetcontrol.entity.User;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.util.DateUtil;
 
@@ -52,7 +53,7 @@ public class SecurityWebListener implements HttpSessionListener, ServletRequestL
         long end = event.getSession().getLastAccessedTime();                        
         String d = "Длительность сессии: " + DateUtil.getTimeDiff(start, end);
 
-        logBean.info(Log.MODULE.COMMONS, Log.EVENT.USER_LOGOUT, SecurityWebListener.class, d);        
+        logBean.info(Log.MODULE.COMMONS, Log.EVENT.USER_LOGOUT, SecurityWebListener.class,  User.class, d);        
         log.info("Сессия пользователя деактивированна [" + d + "]");
     }
 
@@ -71,7 +72,7 @@ public class SecurityWebListener implements HttpSessionListener, ServletRequestL
             String d = "IP: " + request.getRemoteAddr();
             String login = request.getUserPrincipal().getName();
 
-            logBean.info(login, Log.MODULE.COMMONS, Log.EVENT.USER_LOGIN, SecurityWebListener.class, d);
+            logBean.info(login, Log.MODULE.COMMONS, Log.EVENT.USER_LOGIN, SecurityWebListener.class, User.class, d);
             log.info("Пользователь авторизирован [login: " + login + ", " + d + "]");
         }
     }

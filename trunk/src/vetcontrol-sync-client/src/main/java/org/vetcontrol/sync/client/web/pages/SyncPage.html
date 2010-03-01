@@ -12,13 +12,18 @@
 
     <div id="messages" wicket:id="messages"></div>
 
+    <div style="margin: 10px">
+        <span style="font-weight:bold;"><wicket:message key="sync.client.last_sync"/>: </span>
+        <span wicket:id="lastSync"></span>
+    </div>
+
     <div wicket:id="container">
         <table  border="0" cellspacing="0" cellpadding="0" class="tbColor">
             <thead>
             <tr>
-                <th>Время</th>
-                <th>Объект</th>
-                <th>Статус</th>
+                <th><wicket:message key="sync.client.time"/></th>
+                <th><wicket:message key="sync.client.object"/></th>
+                <th><wicket:message key="sync.client.message"/></th>
             </tr>
             </thead>
             <tbody>
