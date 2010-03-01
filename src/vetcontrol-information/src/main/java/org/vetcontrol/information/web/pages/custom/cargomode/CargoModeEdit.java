@@ -49,7 +49,6 @@ import org.vetcontrol.information.web.component.edit.LocalizableTextPanel;
 import org.vetcontrol.information.web.component.edit.SaveUpdateConfirmationDialog;
 import org.vetcontrol.information.web.model.DisplayBookClassModel;
 import org.vetcontrol.service.LogBean;
-import org.vetcontrol.service.dao.IBookViewDAO;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.util.book.BeanPropertyUtil;

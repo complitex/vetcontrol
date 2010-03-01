@@ -5,6 +5,7 @@
 package org.vetcontrol.information.web.component.edit;
 
 import java.util.Locale;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -26,19 +27,23 @@ public final class LocalizableTextPanel extends Panel {
         add(new ListView("localizableStrings", model) {
 
             @Override
-            protected void populateItem(ListItem listItem) {
-                StringCulture culture = (StringCulture) listItem.getModelObject();
+            protected void populateItem(ListItem item) {
+                StringCulture culture = (StringCulture) item.getModelObject();
                 Property currentProp = prop.clone();
 
                 Label label = new Label("lang", new Locale(culture.getId().getLocale()).getDisplayLanguage(getLocale()));
-                listItem.add(label);
+                item.add(label);
 
                 if (!(new Locale(culture.getId().getLocale()).getLanguage().equalsIgnoreCase(systemLocale.getLanguage()))) {
                     currentProp.setNullable(true);
                 }
 
                 TextPanel textPanel = new TextPanel("textPanel", new PropertyModel(culture, "value"), currentProp);
-                listItem.add(textPanel);
+                item.add(textPanel);
+
+                WebMarkupContainer requiredContainer = new WebMarkupContainer("bookFieldRequired");
+                requiredContainer.setVisible(!currentProp.isNullable());
+                item.add(requiredContainer);
             }
         });
     }
