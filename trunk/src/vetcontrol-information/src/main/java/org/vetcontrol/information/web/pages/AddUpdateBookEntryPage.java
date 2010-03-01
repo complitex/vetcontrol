@@ -109,7 +109,6 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
                 item.add(new Label("bookFieldDesc", new DisplayPropertyLocalizableModel(prop, this)));
 
                 WebMarkupContainer requiredContainer = new WebMarkupContainer("bookFieldRequired");
-                requiredContainer.setVisible(!prop.isNullable());
                 item.add(requiredContainer);
 
                 boolean isSimpleText = false;
@@ -138,6 +137,8 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
                 } else if (prop.getType().equals(boolean.class) || prop.getType().equals(Boolean.class)) {
                     isBoolean = true;
                 }
+
+                requiredContainer.setVisible(isLocalizableText ? false : !prop.isNullable());
 
                 IModel m = new PropertyModel(bookEntry, prop.getName());
 
