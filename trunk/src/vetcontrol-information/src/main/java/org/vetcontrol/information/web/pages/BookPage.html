@@ -5,13 +5,24 @@ and open the template in the editor.
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
     <head>
-        <wicket:head><title wicket:id="title"></title></wicket:head>
-    </head>
-    <body>
-    <wicket:extend>
-            <div>
-                <span wicket:id="bookContent"></span>
-            </div>
-    </wicket:extend>
+    <wicket:head><title wicket:id="title"></title></wicket:head>
+</head>
+<body>
+<wicket:extend>
+    <form wicket:id="filterForm">
+        <h1 style="float: left">
+            <span wicket:id="bookName"></span>
+        </h1>
+        <div style="float: right">
+            <span wicket:id="showBooksModePanel"></span>
+        </div>
+        <br/>
+        <table class="tbColor bookContent" cellspacing="0" cellpadding="0" border="0" wicket:id="table">
+        </table>
+        <input wicket:id="focus-tracker" type="hidden"/>
+        <div wicket:id="focus-restore"></div>
+    </form>
+    <div wicket:id="navigator"></div>
+</wicket:extend>
 </body>
 </html>
