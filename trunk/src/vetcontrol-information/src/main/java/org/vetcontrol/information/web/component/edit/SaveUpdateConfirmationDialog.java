@@ -5,9 +5,9 @@
 package org.vetcontrol.information.web.component.edit;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.odlabs.wiquery.ui.core.JsScopeUiEvent;
 import org.odlabs.wiquery.ui.dialog.Dialog;
 
 /**
@@ -24,13 +24,14 @@ public abstract class SaveUpdateConfirmationDialog extends Panel {
     }
 
     private void init() {
+        add(CSSPackageResource.getHeaderContribution(SaveUpdateConfirmationDialog.class, SaveUpdateConfirmationDialog.class.getSimpleName() + ".css"));
+
         dialog = new Dialog("dialog");
         dialog.setModal(true);
         dialog.setWidth(600);
 //        dialog.setCloseOnEscape(false);
 //        dialog.setOpenEvent(JsScopeUiEvent.quickScope("$('.ui-dialog-titlebar-close').hide()"));
 
-//        Form confirmationForm = new Form("confirmationForm");
         Link update = new Link("update") {
 
             @Override
@@ -48,7 +49,6 @@ public abstract class SaveUpdateConfirmationDialog extends Panel {
         dialog.add(update);
         dialog.add(createNew);
         add(dialog);
-//        dialog.add(confirmationForm);
     }
 
     public abstract void update();

@@ -1,0 +1,22 @@
+/* 
+    Document   : SaveUpdateConfirmationDialog
+    Created on : Mar 1, 2010, 3:48:31 PM
+    Author     : Artem
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+.confirm_dialog_update, .confirm_dialog_createNew{
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.confirm_dialog_createNew{
+    padding-left: 20px;
+}
+
