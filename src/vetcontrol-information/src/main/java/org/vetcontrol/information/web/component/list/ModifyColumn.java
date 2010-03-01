@@ -1,5 +1,6 @@
 package org.vetcontrol.information.web.component.list;
 
+import java.io.Serializable;
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterForm;
@@ -8,19 +9,23 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 
-class ModifyColumn implements IFilteredColumn, IColumn {
+public abstract class ModifyColumn implements IFilteredColumn, IColumn {
 
     private Class bookClass;
-    private ISelectable selectable;
 
-    public ModifyColumn(Class bookClass, ISelectable selectable) {
+    public ModifyColumn(Class bookClass) {
         this.bookClass = bookClass;
-        this.selectable = selectable;
     }
 
     @Override
     public void populateItem(Item cellItem, String componentId, IModel rowModel) {
-        cellItem.add(new EditPanel(componentId, rowModel, selectable));
+        cellItem.add(new EditPanel(componentId, rowModel) {
+
+            @Override
+            protected void selected(Serializable bean) {
+                ModifyColumn.this.selected(bean);
+            }
+        });
     }
 
     @Override
@@ -48,4 +53,6 @@ class ModifyColumn implements IFilteredColumn, IColumn {
     @Override
     public void detach() {
     }
+
+    protected abstract void selected(Serializable bean);
 }

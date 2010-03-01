@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import org.hibernate.jdbc.Work;
-import org.junit.Test;
+import org.vetcontrol.util.book.entity.ShowBooksMode;
 
 /**
  *
@@ -208,7 +208,7 @@ public class BooksTest {
         List books;
         //test 1
         example = new CountryBook();
-        books = bookDAO.getContent(example, 0, 2, "names", true, new Locale("ru"));
+        books = bookDAO.getContent(example, 0, 2, "names", true, new Locale("ru"), ShowBooksMode.ENABLED);
         Assert.assertEquals(2, books.size());
 
 //        //test 2
@@ -316,7 +316,7 @@ public class BooksTest {
         d.setNames(Arrays.asList(sc));
         example.setDepartment(d);
 
-        List<User> list = bookViewDAO.getContent(example, 0, 1, "department", true, Locale.ENGLISH);
+        List<User> list = bookViewDAO.getContent(example, 0, 1, "department", true, Locale.ENGLISH, ShowBooksMode.ENABLED);
         for (User b : list) {
             System.out.println(b.getLogin());
         }

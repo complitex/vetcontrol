@@ -19,7 +19,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
+import javax.persistence.TemporalType;
 import org.hibernate.Session;
+import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.util.book.service.HibernateSessionTransformer;
 
 /**
@@ -53,7 +55,7 @@ public class BookDAO extends BookViewDAO implements IBookDAO {
         }
     }
 
-    private void saveOrUpdateLocalizableStrings(Map<PropertyDescriptor, PropertyDescriptor> mappedProperties, PropertyDescriptor prop, 
+    private void saveOrUpdateLocalizableStrings(Map<PropertyDescriptor, PropertyDescriptor> mappedProperties, PropertyDescriptor prop,
             Serializable book, Session session) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         PropertyDescriptor mappedProperty = mappedProperties.get(prop);
         Method getter = prop.getReadMethod();
@@ -75,5 +77,26 @@ public class BookDAO extends BookViewDAO implements IBookDAO {
             session.saveOrUpdate(culture);
         }
     }
-    
+
+    @Override
+    public void disable(Serializable book) {
+        try {
+            StringBuilder updateQuery = new StringBuilder().append("UPDATE ").
+                    append(book.getClass().getSimpleName()).
+                    append(" a SET a.").
+                    append(BeanPropertyUtil.getDisabledPropertyName()).
+                    append(" = TRUE").
+                    append(", a.").
+                    append(BeanPropertyUtil.getVersionPropertyName()).
+                    append(" = :updated").
+                    append(" WHERE a.id = :id");
+            getEntityManager().createQuery(updateQuery.toString()).
+                    setParameter("updated", DateUtil.getCurrentDate(), TemporalType.TIMESTAMP).
+                    setParameter("id", BeanPropertyUtil.getPropertyValue(book, "id")).
+                    executeUpdate();
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

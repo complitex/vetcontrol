@@ -6,33 +6,38 @@
 </head>
 <body>
 <wicket:extend>
-    <h1><span wicket:id="caption"></span></h1>
-
     <form wicket:id="filterForm">
+        <h1 style="float: left">
+            <span wicket:id="bookName"></span>
+        </h1>
+        <div style="float: right">
+            <span wicket:id="showBooksModePanel"></span>
+        </div>
+        <br/>
         <table class="tbColor bookContent" cellspacing="0" cellpadding="0" border="0">
             <thead>
                 <tr>
                     <th wicket:id="nameHeader">
-                        <wicket:message key="cargoMode.list.name.header"/>
-                    </th>
-                    <th wicket:id="uktzedHeader">
-                        <wicket:message key="cargoMode.list.uktzed.header"/>
-                    </th>
-                    <th>
-                       <input class="btnSmall"  wicket:id="clear" type="submit" wicket:message="value:cargoMode.list.clear"/>
-                    </th>
-                </tr>
-                <tr>
-                    <th>
-                        <input type="text" wicket:id="name" style="width: 100%"/>
-                    </th>
-                    <th>
-                        <input type="text" wicket:id="uktzed" style="width: 100%"/>
-                    </th>
-                    <th class="center">
-                        <input class="btnSmall default" type="submit" wicket:message="value:cargoMode.list.go"/>
-                    </th>
-                </tr>
+            <wicket:message key="cargoMode.list.name.header"/>
+            </th>
+            <th wicket:id="uktzedHeader">
+            <wicket:message key="cargoMode.list.uktzed.header"/>
+            </th>
+            <th>
+                <input class="btnSmall"  wicket:id="clear" type="submit" wicket:message="value:cargoMode.list.clear"/>
+            </th>
+            </tr>
+            <tr>
+                <th>
+                    <input type="text" wicket:id="name" style="width: 100%"/>
+                </th>
+                <th>
+                    <input type="text" wicket:id="uktzed" style="width: 100%"/>
+                </th>
+                <th class="center">
+                    <input class="btnSmall default" type="submit" wicket:message="value:cargoMode.list.go"/>
+                </th>
+            </tr>
             </thead>
             <tbody>
                 <tr wicket:id="cargoModes">

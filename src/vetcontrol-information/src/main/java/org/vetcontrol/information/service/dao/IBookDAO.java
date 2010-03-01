@@ -21,4 +21,6 @@ public interface IBookDAO extends IBookViewDAO {
 
     void saveOrUpdate(Serializable book);
 
+    void disable(Serializable book);
+
 }

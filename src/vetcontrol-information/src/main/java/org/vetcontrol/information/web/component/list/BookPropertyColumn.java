@@ -23,7 +23,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.lang.PropertyResolver;
 import org.apache.wicket.util.string.Strings;
-import org.vetcontrol.information.service.fasade.pages.BookPageFasade;
 import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.information.util.web.Constants;
 import org.vetcontrol.information.util.web.ResourceUtil;
@@ -31,6 +30,7 @@ import org.vetcontrol.information.web.model.AutoCompleteBookReferenceModel;
 import org.vetcontrol.util.book.Property;
 import org.vetcontrol.information.web.model.StringCultureModel;
 import org.vetcontrol.service.dao.IBookViewDAO;
+import org.vetcontrol.util.book.entity.ShowBooksMode;
 import org.vetcontrol.util.book.entity.annotation.UIType;
 
 /**
@@ -100,7 +100,7 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
         } else if (property.isBookReference()) {
             if (property.getUiType().equals(UIType.SELECT)) {
                 return new ChoiceFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form,
-                        bookViewDAO.getContent(property.getType()),
+                        bookViewDAO.getContent(property.getType(), ShowBooksMode.ENABLED),
                         new BookChoiceRenderer(property, systemLocale), false);
             } else if (property.getUiType().equals(UIType.AUTO_COMPLETE)) {
                 return new TextFilter(componentId,

@@ -32,6 +32,7 @@ import org.vetcontrol.service.dao.IBookViewDAO;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.util.book.Property;
+import org.vetcontrol.util.book.entity.ShowBooksMode;
 
 /**
  *
@@ -120,7 +121,8 @@ public class AutoCompleteSelectPanel<T> extends Panel {
                 protected List<T> getChoiceList(String searchTextInput) {
                     if (!Strings.isEmpty(searchTextInput)) {
                         exampleModel.setObject(searchTextInput);
-                        return bookViewDAO.getContent(example, 0, Constants.AUTO_COMPLETE_TEXT_FIELD_MAX_ITEMS, prop.getName(), true, systemLocale);
+                        return bookViewDAO.getContent(example, 0, Constants.AUTO_COMPLETE_TEXT_FIELD_MAX_ITEMS, prop.getName(), true, systemLocale,
+                                ShowBooksMode.ENABLED);
                     } else {
                         return Collections.emptyList();
                     }

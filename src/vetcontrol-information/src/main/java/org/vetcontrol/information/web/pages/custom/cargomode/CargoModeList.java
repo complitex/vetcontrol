@@ -19,6 +19,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -30,10 +31,12 @@ import org.vetcontrol.information.service.dao.CargoModeDAO.OrderBy;
 import org.vetcontrol.information.util.web.Constants;
 import org.vetcontrol.information.util.web.cargomode.CargoModeFilterBean;
 import org.vetcontrol.information.web.component.list.EditPanel;
-import org.vetcontrol.information.web.component.list.ISelectable;
+import org.vetcontrol.information.web.component.list.ShowBooksModePanel;
 import org.vetcontrol.information.web.model.DisplayBookClassModel;
 import org.vetcontrol.service.UIPreferences;
+import org.vetcontrol.service.UIPreferences.PreferenceType;
 import org.vetcontrol.service.dao.ILocaleDAO;
+import org.vetcontrol.util.book.entity.ShowBooksMode;
 import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
 import org.vetcontrol.web.component.paging.PagingNavigator;
 import org.vetcontrol.web.component.toolbar.AddItemButton;
@@ -46,7 +49,7 @@ import org.vetcontrol.web.template.TemplatePage;
  * @author Artem
  */
 @AuthorizeInstantiation(SecurityRoles.INFORMATION_VIEW)
-public class CargoModeList extends TemplatePage implements ISelectable {
+public class CargoModeList extends TemplatePage {
 
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
@@ -56,7 +59,7 @@ public class CargoModeList extends TemplatePage implements ISelectable {
     private static final String SORT_PROPERTY_KEY = CargoModeList.class.getSimpleName() + "_SORT_PROPERTY";
     private static final String SORT_ORDER_KEY = CargoModeList.class.getSimpleName() + "_SORT_ORDER";
     private static final String FILTER_KEY = CargoModeList.class.getSimpleName() + "_FILTER";
-
+    private static final String SHOW_BOOKS_MODE_KEY = CargoModeList.class.getSimpleName() + "_SHOW_BOOKS_MODE";
     static final MetaDataKey<CargoMode> SELECTED_BOOK_ENTRY = new MetaDataKey<CargoMode>() {
     };
 
@@ -69,12 +72,19 @@ public class CargoModeList extends TemplatePage implements ISelectable {
 
             //title
             add(new Label("title", new DisplayBookClassModel(CargoMode.class)));
-            add(new Label("caption", new DisplayBookClassModel(CargoMode.class)));
+            Label bookName = new Label("bookName", new DisplayBookClassModel(CargoMode.class));
 
             final UIPreferences preferences = getPreferences();
 
+            ShowBooksMode showBooksModeFromPreferences = preferences.getPreference(PreferenceType.SHOW_BOOKS_MODE,
+                    SHOW_BOOKS_MODE_KEY, ShowBooksMode.class);
+            final IModel<ShowBooksMode> showBooksModeModel = new Model(showBooksModeFromPreferences != null ? showBooksModeFromPreferences
+                    : ShowBooksMode.ENABLED);
+
+            Panel showBooksModePanel = new ShowBooksModePanel("showBooksModePanel", showBooksModeModel);
+
             //Фильтр
-            CargoModeFilterBean filterObject = preferences.getPreference(UIPreferences.PreferenceType.FILTER,
+            CargoModeFilterBean filterObject = preferences.getPreference(PreferenceType.FILTER,
                     FILTER_KEY, CargoModeFilterBean.class);
             if (filterObject == null) {
                 filterObject = newCargoModeFilterBean();
@@ -91,6 +101,7 @@ public class CargoModeList extends TemplatePage implements ISelectable {
             };
 
             clear.setDefaultFormProcessing(false);
+            filterForm.add(bookName);
             filterForm.add(clear);
             filterForm.add(new TextField<String>("name"));
             filterForm.add(new TextField<String>("uktzed"));
@@ -103,16 +114,17 @@ public class CargoModeList extends TemplatePage implements ISelectable {
                     CargoModeDAO.OrderBy sort = OrderBy.valueOf(getSort().getProperty());
                     boolean asc = getSort().isAscending();
 
-                    preferences.putPreference(UIPreferences.PreferenceType.SORT_PROPERTY, SORT_PROPERTY_KEY, getSort().getProperty());
-                    preferences.putPreference(UIPreferences.PreferenceType.SORT_ORDER, SORT_ORDER_KEY, asc);
-                    preferences.putPreference(UIPreferences.PreferenceType.FILTER, FILTER_KEY, filterModel.getObject());
+                    preferences.putPreference(PreferenceType.SORT_PROPERTY, SORT_PROPERTY_KEY, getSort().getProperty());
+                    preferences.putPreference(PreferenceType.SORT_ORDER, SORT_ORDER_KEY, asc);
+                    preferences.putPreference(PreferenceType.FILTER, FILTER_KEY, filterModel.getObject());
+                    preferences.putPreference(PreferenceType.SHOW_BOOKS_MODE, SHOW_BOOKS_MODE_KEY, showBooksModeModel.getObject());
 
-                    return cargoModeDAO.getAll(filterModel.getObject(), first, count, sort, asc, getLocale()).iterator();
+                    return cargoModeDAO.getAll(filterModel.getObject(), first, count, sort, asc, getLocale(), showBooksModeModel.getObject()).iterator();
                 }
 
                 @Override
                 public int size() {
-                    return cargoModeDAO.size(filterModel.getObject(), getLocale());
+                    return cargoModeDAO.size(filterModel.getObject(), getLocale(), showBooksModeModel.getObject());
                 }
 
                 @Override
@@ -133,9 +145,17 @@ public class CargoModeList extends TemplatePage implements ISelectable {
                     CargoMode cargoMode = item.getModelObject();
                     item.add(getNameLabel(cargoMode));
                     item.add(getUktzedLabel(cargoMode));
-                    item.add(new EditPanel("edit", item.getModel(), CargoModeList.this));
+                    item.add(new EditPanel("edit", item.getModel()) {
+
+                        @Override
+                        protected void selected(Serializable bean) {
+                            goToEditPage(bean);
+                        }
+                    });
                 }
             };
+            filterForm.add(bookName);
+            filterForm.add(showBooksModePanel);
             filterForm.add(cargoModes);
 
             addOrderByBorder(filterForm, "nameHeader", OrderBy.NAME.name(), dataProvider, cargoModes);
@@ -191,11 +211,6 @@ public class CargoModeList extends TemplatePage implements ISelectable {
 
     private CargoModeFilterBean newCargoModeFilterBean() {
         return new CargoModeFilterBean();
-    }
-
-    @Override
-    public void selected(Serializable bean) {
-        goToEditPage(bean);
     }
 
     private void goToEditPage(Serializable entry) {

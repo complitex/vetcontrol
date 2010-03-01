@@ -26,6 +26,8 @@ import org.vetcontrol.entity.Deleted;
 import org.vetcontrol.entity.UnitType;
 import org.vetcontrol.information.util.web.cargomode.CargoModeFilterBean;
 import org.vetcontrol.util.DateUtil;
+import org.vetcontrol.util.book.BeanPropertyUtil;
+import org.vetcontrol.util.book.entity.ShowBooksMode;
 import org.vetcontrol.util.book.service.HibernateSessionTransformer;
 
 /**
@@ -51,13 +53,14 @@ public class CargoModeDAO {
         return new HashMap<String, Object>();
     }
 
-    public List<CargoMode> getAll(CargoModeFilterBean filter, int first, int count, OrderBy orderBy, boolean asc, Locale currentLocale) {
+    public List<CargoMode> getAll(CargoModeFilterBean filter, int first, int count, OrderBy orderBy, boolean asc, Locale currentLocale,
+            ShowBooksMode showBooksMode) {
         Map<String, Object> params = newParams();
-        String query = select(false, params, currentLocale);
-        query += where(filter, params);
-        query += orderBy(orderBy, asc);
+        StringBuilder query = select(false, params, currentLocale);
+        query.append(where(filter, params, showBooksMode));
+        query.append(orderBy(orderBy, asc));
 
-        TypedQuery<CargoMode> typedQuery = entityManager.createQuery(query, CargoMode.class);
+        TypedQuery<CargoMode> typedQuery = entityManager.createQuery(query.toString(), CargoMode.class);
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             typedQuery.setParameter(entry.getKey(), entry.getValue());
         }
@@ -65,56 +68,67 @@ public class CargoModeDAO {
         return cargoModes;
     }
 
-    private String select(boolean forSize, Map<String, Object> params, Locale currentLocale) {
+    private StringBuilder select(boolean forSize, Map<String, Object> params, Locale currentLocale) {
         params.put("locale", currentLocale.getLanguage());
-        String prefix = "SELECT ";
+        StringBuilder prefix = new StringBuilder("SELECT ");
         String suffix = " FROM CargoMode cm, StringCulture sc LEFT JOIN cm.cargoModeCargoTypes cmct LEFT JOIN cmct.cargoType ct "
                 + "WHERE cm.name = sc.id.id AND sc.id.locale = :locale ";
+        String body = "";
         if (forSize) {
-            return prefix + " COUNT(DISTINCT cm) " + suffix;
+            body = " COUNT(DISTINCT cm) ";
         } else {
-            return prefix + " DISTINCT cm " + suffix;
+            body = " DISTINCT cm ";
         }
+
+        return prefix.append(body).append(suffix);
     }
 
-    private String where(CargoModeFilterBean filter, Map<String, Object> params) {
-        String where = "";
+    private StringBuilder where(CargoModeFilterBean filter, Map<String, Object> params, ShowBooksMode showBooksMode) {
+        StringBuilder where = new StringBuilder();
+        switch (showBooksMode) {
+            case ALL:
+                break;
+            default:
+                where.append(" AND cm." + BeanPropertyUtil.getDisabledPropertyName() + " = :disabled ");
+                params.put("disabled", showBooksMode.equals(ShowBooksMode.ENABLED) ? Boolean.FALSE : Boolean.TRUE);
+                break;
+        }
         if (filter != null) {
             if (!Strings.isEmpty(filter.getName())) {
-                where += " AND cm.name IN (SELECT sc_name.id.id FROM StringCulture sc_name WHERE sc_name.value LIKE :name) ";
+                where.append(" AND cm.name IN (SELECT sc_name.id.id FROM StringCulture sc_name WHERE sc_name.value LIKE :name) ");
                 params.put("name", "%" + filter.getName() + "%");
             }
             if (!Strings.isEmpty(filter.getUktzed())) {
-                where += " AND ct.code LIKE :uktzed ";
+                where.append(" AND ct.code LIKE :uktzed ");
                 params.put("uktzed", "%" + filter.getUktzed() + "%");
             }
         }
         return where;
     }
 
-    private String orderBy(OrderBy orderBy, boolean asc) {
-        String order = " ORDER BY ";
+    private StringBuilder orderBy(OrderBy orderBy, boolean asc) {
+        StringBuilder order = new StringBuilder(" ORDER BY ");
         switch (orderBy) {
             case ID:
-                order += " cm.id ";
+                order.append(" cm.id ");
                 break;
             case NAME:
-                order += " sc.value ";
+                order.append(" sc.value ");
                 break;
             case UKTZED:
-                order += " ct.code ";
+                order.append(" ct.code ");
                 break;
         }
-        order += asc ? " ASC" : " DESC";
+        order.append(asc ? " ASC" : " DESC");
         return order;
     }
 
-    public int size(CargoModeFilterBean filter, Locale currentLocale) {
+    public int size(CargoModeFilterBean filter, Locale currentLocale, ShowBooksMode showBooksMode) {
         Map<String, Object> params = newParams();
-        String query = select(true, params, currentLocale);
-        query += where(filter, params);
+        StringBuilder query = select(true, params, currentLocale);
+        query.append(where(filter, params, showBooksMode));
 
-        TypedQuery<Long> typedQuery = entityManager.createQuery(query, Long.class);
+        TypedQuery<Long> typedQuery = entityManager.createQuery(query.toString(), Long.class);
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             typedQuery.setParameter(entry.getKey(), entry.getValue());
         }
@@ -219,9 +233,12 @@ public class CargoModeDAO {
 
     public List<CargoType> getAvailableCargoTypes(String search, int count, Long cargoModeId, List<CargoType> exclude) {
         StringBuilder query = new StringBuilder("SELECT DISTINCT ct FROM CargoType ct "
-                + "WHERE ct.code LIKE :search AND ct.id NOT IN (SELECT cmct.id.cargoTypeId FROM CargoModeCargoType cmct ");
+                + "WHERE ct." + BeanPropertyUtil.getDisabledPropertyName() + " = FALSE AND ct.code LIKE :search "
+                + "AND ct.id NOT IN (SELECT cmct.id.cargoTypeId FROM CargoModeCargoType cmct WHERE "
+                + " FALSE = (SELECT cm." + BeanPropertyUtil.getDisabledPropertyName() + " FROM CargoMode cm WHERE "
+                + "cm.id = cmct.id.cargoModeId) ");
         if (cargoModeId != null) {
-            query.append("WHERE cmct.id.cargoModeId != :cargoModeId");
+            query.append(" AND cmct.id.cargoModeId != :cargoModeId");
         }
         query.append(")");
 
@@ -238,7 +255,8 @@ public class CargoModeDAO {
         }
         query.append(" ORDER BY ct.code");
 
-        TypedQuery<CargoType> typedQuery = entityManager.createQuery(query.toString(), CargoType.class).setParameter("search", "%" + search + "%").
+        TypedQuery<CargoType> typedQuery = entityManager.createQuery(query.toString(), CargoType.class).
+                setParameter("search", "%" + search + "%").
                 setMaxResults(count);
         if (cargoModeId != null) {
             typedQuery.setParameter("cargoModeId", cargoModeId);
@@ -247,10 +265,11 @@ public class CargoModeDAO {
     }
 
     public List<UnitType> getAvailableUnitTypes(List<UnitType> exclude) {
-        StringBuilder query = new StringBuilder("SELECT DISTINCT ut FROM UnitType ut");
+        StringBuilder query = new StringBuilder("SELECT DISTINCT ut FROM UnitType ut "
+                + "WHERE ut." + BeanPropertyUtil.getDisabledPropertyName() + " = FALSE ");
 
         if (exclude != null && !exclude.isEmpty()) {
-            query.append(" WHERE ut.id NOT IN (");
+            query.append(" AND ut.id NOT IN (");
             for (int i = 0; i < exclude.size(); i++) {
                 UnitType unitTypeToExclude = exclude.get(i);
                 query.append(unitTypeToExclude.getId());
