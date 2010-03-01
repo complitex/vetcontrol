@@ -20,7 +20,7 @@ public class UIPreferences implements Serializable {
 
     public enum PreferenceType {
 
-        SORT_PROPERTY(true), SORT_ORDER(true), PAGE_NUMBER(true), FILTER(true), LOCALE(false), PAGE_SIZE(false);
+        SORT_PROPERTY(true), SORT_ORDER(true), PAGE_NUMBER(true), FILTER(true), LOCALE(false), PAGE_SIZE(false), SHOW_BOOKS_MODE(true);
         private boolean sessionOnly;
 
         private PreferenceType(boolean sessionOnly) {
@@ -31,18 +31,16 @@ public class UIPreferences implements Serializable {
             return sessionOnly;
         }
     }
-
     private User currentUser;
-
     private Map<PreferenceType, Map<String, Object>> sessionPreferences = new EnumMap<PreferenceType, Map<String, Object>>(PreferenceType.class);
 
     public UIPreferences() {
     }
 
-    private UserProfileBean getUserProfileBean(){
-         try {
+    private UserProfileBean getUserProfileBean() {
+        try {
             InitialContext context = new InitialContext();
-            return (UserProfileBean)context.lookup("java:module/UserProfileBean");
+            return (UserProfileBean) context.lookup("java:module/UserProfileBean");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -93,7 +91,7 @@ public class UIPreferences implements Serializable {
         }
     }
 
-    private Object getValueFromDBIfNecessary(PreferenceType type, Object defaultValue){
+    private Object getValueFromDBIfNecessary(PreferenceType type, Object defaultValue) {
         initCurrentUser();
         switch (type) {
             case LOCALE:

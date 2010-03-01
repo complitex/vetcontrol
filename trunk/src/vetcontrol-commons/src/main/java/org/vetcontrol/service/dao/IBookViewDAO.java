@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import javax.ejb.Local;
 import javax.persistence.EntityManager;
+import org.vetcontrol.util.book.entity.ShowBooksMode;
 
 /**
  *
@@ -17,11 +18,11 @@ import javax.persistence.EntityManager;
 @Local
 public interface IBookViewDAO {
 
-    <T> List<T> getContent(T example, int first, int count, String sortProperty, boolean isAscending, Locale locale);
+    <T> List<T> getContent(T example, int first, int count, String sortProperty, boolean isAscending, Locale locale, ShowBooksMode showBooksMode);
 
-    <T> List<T> getContent(Class<T> bookClass);
+    <T> List<T> getContent(Class<T> bookClass, ShowBooksMode showBooksMode);
 
-    <T> Long size(T example);
+    <T> Long size(T example, ShowBooksMode showBooksMode);
 
     void addLocalizationSupport(Object entity);
 
