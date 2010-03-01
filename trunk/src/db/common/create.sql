@@ -248,7 +248,7 @@ CREATE TABLE  `cargo_mode_cargo_type` (
     `cargo_type_id` bigint(20) NOT NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`cargo_mode_id`, `cargo_type_id`),
-    UNIQUE KEY `cargo_type_id` (`cargo_type_id`),
+--    UNIQUE KEY `cargo_type_id` (`cargo_type_id`),
     KEY `FK_cargo_mode_cargo_type_cargo_mode_id` (`cargo_mode_id`),
     CONSTRAINT `FK_cargo_mode_cargo_type_cargo_mode_id` FOREIGN KEY (`cargo_mode_id`) REFERENCES `cargo_mode` (`id`),
     KEY `FK_cargo_mode_cargo_type_cargo_type_id` (`cargo_type_id`),
