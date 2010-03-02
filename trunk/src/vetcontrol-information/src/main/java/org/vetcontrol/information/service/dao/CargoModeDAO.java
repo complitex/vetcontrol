@@ -167,7 +167,7 @@ public class CargoModeDAO {
                     }
 
                     DeletedEmbeddedId deleted = createDeletedEntry(cargoMode.getId(), CargoModeCargoType.class, toRemove.get(i));
-                    entityManager.persist(deleted);
+                    entityManager.merge(deleted);
                 }
                 query.append(")");
 
@@ -203,7 +203,7 @@ public class CargoModeDAO {
                         query.append(", ");
                     }
                     DeletedEmbeddedId deleted = createDeletedEntry(cargoMode.getId(), CargoModeUnitType.class, toRemove.get(i));
-                    entityManager.persist(deleted);
+                    entityManager.merge(deleted);
                 }
                 query.append(")");
                 entityManager.createQuery(query.toString()).setParameter("cargoMode", cargoMode).executeUpdate();
