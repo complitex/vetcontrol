@@ -69,6 +69,10 @@ public class DateUtil {
         return Calendar.getInstance().get(Calendar.YEAR);
     }
 
+    public static int getCurrentMonth(){
+        return Calendar.getInstance().get(Calendar.MONTH);
+    }
+
     public static Date getBeginOfDay(Date date){
         Calendar c = Calendar.getInstance();
 
