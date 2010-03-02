@@ -23,6 +23,9 @@ public class DeletedEmbeddedId implements Serializable {
 
     public static class Id implements Serializable {
 
+        public Id() {
+        }
+
         public Id(String id, String entity) {
             this.id = id;
             this.entity = entity;
@@ -57,8 +60,6 @@ public class DeletedEmbeddedId implements Serializable {
             hash = 73 * hash + (this.entity != null ? this.entity.hashCode() : 0);
             return hash;
         }
-
-
     }
     @EmbeddedId
     private Id id;
@@ -89,5 +90,4 @@ public class DeletedEmbeddedId implements Serializable {
 
     public DeletedEmbeddedId() {
     }
-
 }
