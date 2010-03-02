@@ -247,10 +247,14 @@ public class DocumentCargoBean {
     }
 
     public List<Department> getChildDepartments(Department department){
-        return entityManager.createQuery("select d from Department d where d.parent = :department " +
-                "or d.parent.parent = :department or d = :department", Department.class)
+        List<Department> list = entityManager.createQuery("select d from Department d where d.parent = :department " +
+                "or d.parent.parent = :department", Department.class)
                 .setParameter("department", department)
                 .getResultList();
+
+        list.add(0, department);
+
+        return list;
     }
 
 }
