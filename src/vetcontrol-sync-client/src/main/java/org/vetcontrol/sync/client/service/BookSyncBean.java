@@ -113,14 +113,7 @@ public class BookSyncBean extends SyncInfo{
         for (T book : books){
             //skip null
             if (isSkip(book)) continue;
-                         
-            //TODO test
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
+           
             sync(new SyncEvent(count, index++, book));
 
             book.setUpdated(syncUpdated);

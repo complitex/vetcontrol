@@ -18,6 +18,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -87,6 +88,10 @@ public class SecurityWebListener implements HttpSessionListener, ServletRequestL
         }
 
         return sessions;
+    }
+    
+    public static synchronized Collection<HttpSession> getSessions(){
+        return activeSession.values();
     }
 
     @Override

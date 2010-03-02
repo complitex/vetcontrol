@@ -5,11 +5,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.Client;
 import org.vetcontrol.entity.Log;
+import org.vetcontrol.entity.User;
+import org.vetcontrol.entity.UserGroup;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.sync.NotRegisteredException;
 import org.vetcontrol.util.DateUtil;
+import org.vetcontrol.web.security.SecurityWebListener;
 
 import javax.ejb.*;
+import javax.servlet.http.HttpSession;
 import java.util.*;
 import java.util.concurrent.Future;
 
@@ -37,6 +41,8 @@ public class SyncBean{
 
     private List<SyncMessage> syncMessages = new ArrayList<SyncMessage>();
 
+    private boolean logout = false;
+
     private ISyncListener syncListener = new ISyncListener(){
 
         @Override
@@ -55,6 +61,7 @@ public class SyncBean{
             message.setDate(DateUtil.getCurrentDate());
             message.setMessage(rb.getString("sync.client.sync.process") + " " +
                     ((syncEvent.getIndex()*100) / syncEvent.getCount()) + "%");
+
         }
 
         @Override
@@ -66,6 +73,16 @@ public class SyncBean{
                     ? rb.getString("sync.client.sync.complete") + " " + syncEvent.getCount()
                     : rb.getString("sync.client.sync.complete.skip");
             message.setMessage(m);
+
+            //Деактивация сессии пользователя
+            if ((User.class.equals(syncEvent.getObject()) || UserGroup.class.equals(syncEvent.getObject()))
+                    && syncEvent.getCount() > 0){
+                message = new SyncMessage();
+                message.setName(rb.getString("sync.client.sync.client"));
+                message.setMessage(rb.getString("sync.client.sync.logoff"));
+                syncMessages.add(message);
+                logout = true;
+            }
 
             log.info("Синхронизация объекта: {}. " + m, syncEvent.getObject());
             logBean.info(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, SyncBean.class, (Class)syncEvent.getObject(), m);
@@ -105,6 +122,18 @@ public class SyncBean{
             message.setName(rb.getString("sync.client.sync.client"));
             message.setMessage(rb.getString("sync.client.sync.after_complete"));
             syncMessages.add(message);
+
+            if (logout){
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    log.error(e.getLocalizedMessage());
+                }
+                for(HttpSession session : SecurityWebListener.getSessions()){
+                    session.invalidate();
+                }
+                logout = false;
+            }
         } catch (EJBException exception) {
             SyncMessage message = new SyncMessage();
 
@@ -143,6 +172,6 @@ public class SyncBean{
     }
 
     public Date getLastSync(){
-        return logBean.getLastDate(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, Log.STATUS.OK);        
+        return logBean.getLastDate(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, Log.STATUS.OK);
     }
 }
