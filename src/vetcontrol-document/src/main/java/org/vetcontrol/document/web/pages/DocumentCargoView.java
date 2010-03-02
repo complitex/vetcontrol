@@ -110,7 +110,16 @@ public class DocumentCargoView extends TemplatePage{
         add(new Label("document.cargo.passingBorderPoint", dc.getPassingBorderPoint().getDisplayName(getLocale(), system)));
         add(new Label("document.cargo.detention_details", dc.getDetentionDetails()));
         add(new Label("document.cargo.details", dc.getDetails()));
-        add(new Label("document.cargo.creator_name", dc.getCreator().getFullName()));
+
+        String fullCreator =  dc.getCreator().getFullName();
+        if (dc.getCreator().getJob() != null){
+            fullCreator += ", " + dc.getCreator().getJob().getDisplayName(getLocale(), localeDAO.systemLocale());
+        }
+        if (dc.getDepartment() != null && !dc.getDepartment().getId().equals(dc.getCreator().getDepartment().getId())){
+            fullCreator += ", " + dc.getCreator().getDepartment().getDisplayName(getLocale(), localeDAO.systemLocale());
+        }
+        add(new Label("document.cargo.creator_name", fullCreator));
+
         add(new Label("document.cargo.department", dc.getCreator().getDepartment().getDisplayName(getLocale(), system)));
         add(new DateLabel("document.cargo.created", new Model<Date>(dc.getCreated()), new StyleDateConverter(true)));
 

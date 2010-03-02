@@ -63,6 +63,9 @@ public class DocumentCargo implements Serializable{
     @Column(name = "details", length = 255)
     private String details;
 
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     public Long getId() {
         return id;
@@ -174,5 +177,13 @@ public class DocumentCargo implements Serializable{
 
     public void setDetails(String details) {
         this.details = details;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 }

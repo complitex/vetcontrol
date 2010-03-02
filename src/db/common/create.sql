@@ -439,6 +439,7 @@ CREATE TABLE `document_cargo` (
   `cargo_receiver_id` bigint(20) NOT NULL,
   `cargo_producer_id` bigint(20) NOT NULL,
   `passing_border_point_id` bigint(20) DEFAULT NULL,
+  `department_id` bigint(20) NOT NULL,
   `details` varchar(255) DEFAULT NULL,
   `detention_details` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -448,12 +449,14 @@ CREATE TABLE `document_cargo` (
   KEY `FK_cargo_receiver` (`cargo_receiver_id`),
   KEY `FK_cargo_producer` (`cargo_producer_id`),
   KEY `FK_passing_border_point` (`passing_border_point_id`),
+  KEY `FK_department` (`department_id`),
   CONSTRAINT `FK_movement_type` FOREIGN KEY (`movement_type_id`) REFERENCES `movement_type` (`id`),
   CONSTRAINT `FK_vehicle_type` FOREIGN KEY (`vehicle_type_id`) REFERENCES `vehicletypes` (`id`),
   CONSTRAINT `FK_cargo_sender` FOREIGN KEY (`cargo_sender_id`) REFERENCES `cargo_sender` (`id`),
   CONSTRAINT `FK_cargo_receiver` FOREIGN KEY (`cargo_receiver_id`) REFERENCES `cargo_receiver` (`id`),
   CONSTRAINT `FK_cargo_producer` FOREIGN KEY (`cargo_producer_id`) REFERENCES `cargo_producer` (`id`),
   CONSTRAINT `FK_passing_border_point` FOREIGN KEY (`passing_border_point_id`) REFERENCES `passing_border_point` (`id`)
+  CONSTRAINT `FK_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `log`;
