@@ -185,7 +185,8 @@ public class BookResourceBean {
             logBean.info(Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, BookResourceBean.class, entity,
                     rb.getString("info.sync.processed"), client.getId(), list.size(), r.getRemoteHost(), client.getIp());
 
-            log.info(rb.getString("info.sync.processed.log"), new Object[]{client.getId(), list.size(), r.getRemoteHost(), client.getIp()});
+            log.info("Синхронизация " + entity.getSimpleName() + ". " + rb.getString("info.sync.processed.log"),
+                    new Object[]{client.getId(), list.size(), r.getRemoteHost(), client.getIp()});
         }
 
         return list;

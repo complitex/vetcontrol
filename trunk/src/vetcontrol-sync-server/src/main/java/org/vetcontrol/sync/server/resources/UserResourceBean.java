@@ -74,7 +74,8 @@ public class UserResourceBean {
                     rb.getString("info.sync.processed"), client.getId(), list.size(),
                     r.getRemoteHost(), client.getIp());
 
-            log.info(rb.getString("info.sync.processed.log"), new Object[]{client.getId(), list.size(), r.getRemoteHost(), client.getIp()});
+            log.info("Синхронизация пользователей. " + rb.getString("info.sync.processed.log"),
+                    new Object[]{client.getId(), list.size(), r.getRemoteHost(), client.getIp()});
         }
 
         return new GenericEntity<List<User>>(list){};

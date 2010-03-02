@@ -130,7 +130,7 @@ public class SyncBean{
 
             if (logout){
                 try {
-                    Thread.sleep(30000);
+                    Thread.sleep(15000);
                 } catch (InterruptedException e) {
                     log.error(e.getLocalizedMessage());
                 }

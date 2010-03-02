@@ -3,11 +3,13 @@ package org.vetcontrol.sync.server.resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.Client;
+import org.vetcontrol.entity.DeletedLongId;
 import org.vetcontrol.entity.Log;
 import org.vetcontrol.entity.UserGroup;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.sync.Count;
+import org.vetcontrol.sync.ID;
 import org.vetcontrol.sync.SyncRequestEntity;
 
 import javax.ejb.EJB;
@@ -20,6 +22,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -74,17 +77,57 @@ public class UserGroupResourceBean {
                     rb.getString("info.sync.processed"), client.getId(), list.size(),
                     r.getRemoteHost(), client.getIp());
 
-            log.info(rb.getString("info.sync.processed.log"), new Object[]{client.getId(), list.size(), r.getRemoteHost(), client.getIp()});
+            log.info("Синхронизация групп пользователей. " + rb.getString("info.sync.processed.log"),
+                    new Object[]{client.getId(), list.size(), r.getRemoteHost(), client.getIp()});
         }
 
         return new GenericEntity<List<UserGroup>>(list){};
     }
 
     @POST @Path("/count")
-    public Count getUserGroupsCount(SyncRequestEntity requestEntity, @Context HttpServletRequest request){
+    public Count getUserGroupsCount(SyncRequestEntity requestEntity, @Context HttpServletRequest r){
         return new Count(em.createQuery("select count(ug) from UserGroup ug, User u " +
                 "where ug.login = u.login and u.department = :department and ug.updated >= :updated", Long.class)
-                .setParameter("department", getClient(requestEntity, request).getDepartment())
+                .setParameter("department", getClient(requestEntity, r).getDepartment())
+                .setParameter("updated", requestEntity.getUpdated())
+                .getSingleResult().intValue());
+    }
+
+    @POST @Path("/deleted/list")
+    public GenericEntity<List<ID>> getDeletedUserGroups(SyncRequestEntity requestEntity, @Context HttpServletRequest r){
+        Client client = getClient(requestEntity, r);
+
+        List<Long> list = em.createQuery("select d.id.id from DeletedLongId d " +
+                "where d.id.entity = :entity and d.deleted >= :updated", Long.class)
+                .setParameter("entity", UserGroup.class.getCanonicalName())
+                .setParameter("updated", requestEntity.getUpdated())
+                .getResultList();
+
+        List<ID> ids = new ArrayList<ID>(list.size());
+
+        for (Long id : list){
+            ids.add(new ID(id));
+        }
+
+        if (!list.isEmpty()){
+            logBean.info(Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, UserGroupResourceBean.class, DeletedLongId.class,
+                    rb.getString("info.sync.processed"), client.getId(), list.size(),
+                    r.getRemoteHost(), client.getIp());
+
+            log.info("Синхронизация удаленных групп пользователей. " + rb.getString("info.sync.processed.log"), 
+                    new Object[]{client.getId(), list.size(), r.getRemoteHost(), client.getIp()});
+        }
+
+        return new GenericEntity<List<ID>>(ids){};
+    }
+
+    @POST @Path("/deleted/count")
+    public Count getDeletedUserGroupsCount(SyncRequestEntity requestEntity, @Context HttpServletRequest r){
+        getClient(requestEntity, r);
+
+        return new Count( em.createQuery("select count(*) from DeletedLongId d " +
+                "where d.id.entity = :entity and d.deleted >= :updated", Long.class)
+                .setParameter("entity", UserGroup.class.getCanonicalName())
                 .setParameter("updated", requestEntity.getUpdated())
                 .getSingleResult().intValue());
     }
