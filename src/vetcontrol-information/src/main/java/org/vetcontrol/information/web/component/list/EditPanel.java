@@ -1,27 +1,31 @@
 package org.vetcontrol.information.web.component.list;
 
 import java.io.Serializable;
-import org.apache.wicket.authorization.strategies.role.metadata.MetaDataRoleAuthorizationStrategy;
+import org.apache.wicket.Application;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.vetcontrol.util.book.BeanPropertyUtil;
-import org.vetcontrol.web.security.SecurityRoles;
+import org.vetcontrol.information.util.web.CanEditUtil;
+import org.vetcontrol.web.template.TemplateWebApplication;
 
 public abstract class EditPanel extends Panel {
 
     public EditPanel(String id, final IModel<? extends Serializable> model) {
         super(id, model);
-        Link editLink = new Link("edit") {
+        Link editLink = new Link("editLink") {
 
             @Override
             public void onClick() {
                 selected(model.getObject());
             }
         };
-        MetaDataRoleAuthorizationStrategy.authorize(editLink, RENDER, SecurityRoles.INFORMATION_EDIT);
-        boolean disabled = (Boolean)BeanPropertyUtil.getPropertyValue(model.getObject(), BeanPropertyUtil.getDisabledPropertyName());
-        editLink.setVisible(!disabled);
+        WebMarkupContainer edit = new WebMarkupContainer("edit");
+        edit.setVisible(CanEditUtil.canEdit(model.getObject()));
+        editLink.add(edit);
+        WebMarkupContainer view = new WebMarkupContainer("view");
+        view.setVisible(!CanEditUtil.canEdit(model.getObject()));
+        editLink.add(view);
         add(editLink);
     }
 

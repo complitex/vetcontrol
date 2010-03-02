@@ -21,7 +21,7 @@ import org.vetcontrol.util.book.Property;
  */
 public final class LocalizableTextPanel extends Panel {
 
-    public LocalizableTextPanel(String id, IModel model, final Property prop, final Locale systemLocale) {
+    public LocalizableTextPanel(String id, IModel model, final Property prop, final Locale systemLocale, final boolean enabled) {
         super(id);
 
         add(new ListView("localizableStrings", model) {
@@ -38,7 +38,7 @@ public final class LocalizableTextPanel extends Panel {
                     currentProp.setNullable(true);
                 }
 
-                TextPanel textPanel = new TextPanel("textPanel", new PropertyModel(culture, "value"), currentProp);
+                TextPanel textPanel = new TextPanel("textPanel", new PropertyModel(culture, "value"), currentProp, enabled);
                 item.add(textPanel);
 
                 WebMarkupContainer requiredContainer = new WebMarkupContainer("bookFieldRequired");

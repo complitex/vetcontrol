@@ -9,7 +9,6 @@ import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.vetcontrol.information.util.web.Constants;
 import org.vetcontrol.util.book.Property;
@@ -53,14 +52,13 @@ public final class TextPanel extends Panel {
 //        }
 //    }
 
-    public TextPanel(String id, IModel model, Property prop) {
+    public TextPanel(String id, IModel model, Property prop, boolean enabled) {
         super(id);
 
         IModel labelModel = new DisplayPropertyLocalizableModel(prop, this);
 
-//        TextModel textModel = new TextModel(model);
-
         TextField textField = new TextField("textField", model);
+        textField.setEnabled(enabled);
         textField.setLabel(labelModel);
         textField.setRequired(!prop.isNullable());
 
@@ -69,6 +67,7 @@ public final class TextPanel extends Panel {
         }
 
         TextArea textArea = new TextArea("textArea", model);
+        textArea.setEnabled(enabled);
         textArea.setLabel(labelModel);
         textArea.setRequired(!prop.isNullable());
 

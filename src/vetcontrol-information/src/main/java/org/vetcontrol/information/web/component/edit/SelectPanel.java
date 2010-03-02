@@ -19,11 +19,12 @@ import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
  */
 public final class SelectPanel extends Panel {
 
-    public SelectPanel(String id, IModel model, final Property property, List books, final Locale systemLocale) {
+    public SelectPanel(String id, IModel model, final Property property, List books, final Locale systemLocale, boolean enabled) {
         super(id);
 
         BookChoiceRenderer choiceRenderer = new BookChoiceRenderer(property, systemLocale);
         DropDownChoice dropDownChoice = new DropDownChoice("select", model, books, choiceRenderer);
+        dropDownChoice.setEnabled(enabled);
         dropDownChoice.setLabel(new DisplayPropertyLocalizableModel(property, this));
         if (property.isNullable()) {
             dropDownChoice.setNullValid(true);

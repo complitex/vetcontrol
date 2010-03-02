@@ -53,7 +53,7 @@ public class AutoCompleteSelectPanel<T> extends Panel {
     private final T example;
     private AbstractAutoCompleteTextField<T> autoCompleteTextField;
 
-    public AutoCompleteSelectPanel(String id, final IModel<T> model, final Property property) {
+    public AutoCompleteSelectPanel(String id, final IModel<T> model, final Property property, boolean enabled) {
         super(id);
 
         try {
@@ -148,6 +148,7 @@ public class AutoCompleteSelectPanel<T> extends Panel {
                     }
                 }
             };
+            autoCompleteTextField.setEnabled(enabled);
             autoCompleteTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
                 @Override

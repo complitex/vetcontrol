@@ -17,10 +17,11 @@ import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
  */
 public final class DatePanel extends Panel {
 
-    public DatePanel(String id, IModel model, Property prop) {
+    public DatePanel(String id, IModel model, Property prop, boolean enabled) {
         super(id);
 
         DatePicker<Date> dateField = new DatePicker<Date>("dateField", model);
+        dateField.setEnabled(enabled);
         dateField.setLabel(new DisplayPropertyLocalizableModel(prop, this));
         dateField.setButtonImage("images/calendar.gif");
         dateField.setButtonImageOnly(true);
