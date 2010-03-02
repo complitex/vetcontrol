@@ -24,7 +24,7 @@ import static org.vetcontrol.entity.Log.*;
  *         Date: 28.01.2010 13:26:15
  */
 @Stateless(name = "LogBean")
-@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class LogBean {
     private static final Logger log = LoggerFactory.getLogger(LogBean.class);
 
@@ -52,6 +52,11 @@ public class LogBean {
     }
 
     public void info(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description){
+        log(module, event, controllerClass, modelClass, STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser());
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void infoTxRequired(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description){
         log(module, event, controllerClass, modelClass, STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser());
     }
 

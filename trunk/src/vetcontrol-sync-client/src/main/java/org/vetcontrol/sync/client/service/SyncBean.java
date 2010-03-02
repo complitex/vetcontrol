@@ -82,10 +82,13 @@ public class SyncBean{
                 message.setMessage(rb.getString("sync.client.sync.logoff"));
                 syncMessages.add(message);
                 logout = true;
+
+                logBean.infoTxRequired(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, SyncBean.class, (Class)syncEvent.getObject(), m);
+            }else{
+                logBean.info(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, SyncBean.class, (Class)syncEvent.getObject(), m);
             }
 
-            log.info("Синхронизация объекта: {}. " + m, syncEvent.getObject());
-            logBean.info(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, SyncBean.class, (Class)syncEvent.getObject(), m);
+            log.info("Синхронизация объекта: {}. " + m, syncEvent.getObject());            
         }
     };
 
@@ -125,7 +128,7 @@ public class SyncBean{
 
             if (logout){
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(30000);
                 } catch (InterruptedException e) {
                     log.error(e.getLocalizedMessage());
                 }
