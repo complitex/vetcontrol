@@ -85,6 +85,11 @@ public class DocumentCargoEdit extends FormTemplatePage {
         //Проверка доступа к данным        
         User currentUser = userProfileBean.getCurrentUser();
 
+        //Установка подразделения по умолчанию
+        if (dc.getId() == null){
+            dc.setDepartment(currentUser.getDepartment());
+        }
+
         if (id == null && !hasAnyRole(DOCUMENT_CREATE)) {
             log.error("Пользователю запрещен доступ на создание карточки на груз: " + currentUser.toString());
             logBean.error(DOCUMENT, CREATE, DocumentCargoEdit.class, DocumentCargo.class, "Доступ запрещен");
@@ -304,18 +309,24 @@ public class DocumentCargoEdit extends FormTemplatePage {
         l_creator.setVisible(visible);
         form.add(l_creator);
 
-        Label creator = new Label("creator", visible ? dc.getCreator().getFullName() : "");
+        String fullCreator = "";
+        if (visible){
+            fullCreator =  dc.getCreator().getFullName();
+            if (dc.getCreator().getJob() != null){
+                fullCreator += ", " + dc.getCreator().getJob().getDisplayName(getLocale(), localeDAO.systemLocale());
+            }
+            if (dc.getDepartment() != null && !dc.getDepartment().getId().equals(dc.getCreator().getDepartment().getId())){
+                fullCreator += ", " + dc.getCreator().getDepartment().getDisplayName(getLocale(), localeDAO.systemLocale());
+            }
+        }
+                
+        Label creator = new Label("creator", fullCreator);
         creator.setVisible(visible);
         form.add(creator);
 
         //Подразделение
-        Label l_department = new Label("l_department", new ResourceModel("document.cargo.department"));
-        l_department.setVisible(visible);
-        form.add(l_department);
-
-        Label department = new Label("department", visible ? dc.getCreator().getDepartment().getDisplayName(getLocale(), localeDAO.systemLocale()) : "");
-        department.setVisible(visible);
-        form.add(department);
+        DropDownChoice ddcDepartment = addDropDownChoice(form, "document.cargo.department", Department.class, documentCargoModel, "department");
+        ddcDepartment.setEnabled(hasAnyRole(DOCUMENT_DEP_CHILD_EDIT));
 
         //Дата создания
         Label l_created = new Label("l_created", new ResourceModel("document.cargo.created"));
