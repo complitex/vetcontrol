@@ -40,6 +40,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.vetcontrol.entity.ILongId;
 import org.vetcontrol.entity.Log;
 import org.vetcontrol.information.service.dao.IBookDAO;
+import org.vetcontrol.information.util.web.CanEditUtil;
 import org.vetcontrol.information.web.component.edit.AutoCompleteSelectPanel;
 import org.vetcontrol.information.web.component.edit.BooleanPanel;
 import org.vetcontrol.information.web.component.edit.DatePanel;
@@ -57,7 +58,7 @@ import org.vetcontrol.web.component.toolbar.DisableItemButton;
  *
  * @author Artem
  */
-@AuthorizeInstantiation(SecurityRoles.INFORMATION_EDIT)
+@AuthorizeInstantiation(SecurityRoles.INFORMATION_VIEW)
 public class AddUpdateBookEntryPage extends FormTemplatePage {
 
     private static final Logger log = LoggerFactory.getLogger(AddUpdateBookEntryPage.class);
@@ -149,20 +150,21 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
                 Panel autoCompleteSelectPanel = new EmptyPanel("autoCompleteSelectPanel");
                 Panel booleanPanel = new EmptyPanel("booleanPanel");
 
+
                 //choose what panel is editable:
                 if (isSimpleText) {
-                    textPanel = new TextPanel("textPanel", m, prop);
+                    textPanel = new TextPanel("textPanel", m, prop, CanEditUtil.canEdit(bookEntry));
                 } else if (isLocalizableText) {
-                    localizableTextPanel = new LocalizableTextPanel("localizableTextPanel", m, prop, systemLocale);
+                    localizableTextPanel = new LocalizableTextPanel("localizableTextPanel", m, prop, systemLocale, CanEditUtil.canEdit(bookEntry));
                 } else if (isDate) {
-                    datePanel = new DatePanel("datePanel", m, prop);
+                    datePanel = new DatePanel("datePanel", m, prop, CanEditUtil.canEdit(bookEntry));
                 } else if (isSelectable) {
                     selectablePanel = new SelectPanel("selectablePanel", m, prop, bookDAO.getContent(prop.getType(), ShowBooksMode.ENABLED),
-                            systemLocale);
+                            systemLocale, CanEditUtil.canEdit(bookEntry));
                 } else if (isAutoComplete) {
-                    autoCompleteSelectPanel = new AutoCompleteSelectPanel("autoCompleteSelectPanel", m, prop);
+                    autoCompleteSelectPanel = new AutoCompleteSelectPanel("autoCompleteSelectPanel", m, prop, CanEditUtil.canEdit(bookEntry));
                 } else if (isBoolean) {
-                    booleanPanel = new BooleanPanel("booleanPanel", m, prop);
+                    booleanPanel = new BooleanPanel("booleanPanel", m, prop, CanEditUtil.canEdit(bookEntry));
                 }
 
                 item.add(datePanel);
@@ -197,7 +199,7 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
         };
         add(confirmationDialog);
 
-        form.add(new AjaxSubmitLink("saveOrUpdateBook") {
+        AjaxSubmitLink saveOrUpdateBook = new AjaxSubmitLink("saveOrUpdateBook") {
 
             @Override
             public void onSubmit(AjaxRequestTarget target, Form<?> form) {
@@ -213,15 +215,29 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
             protected void onError(AjaxRequestTarget target, Form<?> form) {
                 target.addComponent(messages);
             }
-        });
+        };
+        saveOrUpdateBook.setVisible(CanEditUtil.canEdit(bookEntry));
+        form.add(saveOrUpdateBook);
 
-        form.add(new Link("cancel") {
+        Link cancel = new Link("cancel") {
 
             @Override
             public void onClick() {
                 goToBooksPage(bookTypeName);
             }
-        });
+        };
+        cancel.setVisible(CanEditUtil.canEdit(bookEntry));
+        form.add(cancel);
+
+        Link back = new Link("back") {
+
+            @Override
+            public void onClick() {
+                goToBooksPage(bookTypeName);
+            }
+        };
+        back.setVisible(!CanEditUtil.canEdit(bookEntry));
+        form.add(back);
 
     }
 
@@ -277,7 +293,7 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
 
             @Override
             protected void onBeforeRender() {
-                if (BeanPropertyUtil.isNewBook(bookEntry)) {
+                if (BeanPropertyUtil.isNewBook(bookEntry) || !CanEditUtil.canEdit(bookEntry)) {
                     setVisible(false);
                 }
                 super.onBeforeRender();

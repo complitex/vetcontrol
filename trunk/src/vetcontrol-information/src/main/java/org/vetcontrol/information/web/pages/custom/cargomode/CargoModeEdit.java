@@ -15,6 +15,7 @@ import org.apache.wicket.Response;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
+import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AbstractAutoCompleteTextRenderer;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteSettings;
 import org.apache.wicket.markup.ComponentTag;
@@ -43,6 +44,7 @@ import org.vetcontrol.entity.Log;
 import org.vetcontrol.entity.UnitType;
 import org.vetcontrol.information.service.dao.CargoModeDAO;
 import org.vetcontrol.information.service.dao.IBookDAO;
+import org.vetcontrol.information.util.web.CanEditUtil;
 import org.vetcontrol.information.util.web.Constants;
 import org.vetcontrol.information.web.component.edit.AbstractAutoCompleteTextField;
 import org.vetcontrol.information.web.component.edit.LocalizableTextPanel;
@@ -55,12 +57,14 @@ import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.util.book.BookHash;
 import org.vetcontrol.web.component.toolbar.DisableItemButton;
 import org.vetcontrol.web.component.toolbar.ToolbarButton;
+import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.FormTemplatePage;
 
 /**
  *
  * @author Artem
  */
+@AuthorizeInstantiation(SecurityRoles.INFORMATION_VIEW)
 public final class CargoModeEdit extends FormTemplatePage {
 
     private class UnitTypesChoiceContainer extends WebMarkupContainer {
@@ -136,6 +140,7 @@ public final class CargoModeEdit extends FormTemplatePage {
                         public void detach() {
                         }
                     }, new UnitTypesModel(cargoMode, cargoModeUnitType), renderer);
+            unitTypeSelect.setEnabled(CanEditUtil.canEdit(cargoModeModel.getObject()));
             unitTypeSelect.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
                 @Override
@@ -251,7 +256,7 @@ public final class CargoModeEdit extends FormTemplatePage {
                     }
                 }
             };
-
+            autoCompleteTextField.setEnabled(CanEditUtil.canEdit(cargoModeModel.getObject()));
             autoCompleteTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
                 @Override
@@ -318,7 +323,7 @@ public final class CargoModeEdit extends FormTemplatePage {
         form.add(new LocalizableTextPanel("name",
                 new PropertyModel(cargoModeModel, "names"),
                 BeanPropertyUtil.getPropertyByName(CargoMode.class, "names"),
-                systemLocale));
+                systemLocale, CanEditUtil.canEdit(cargoModeModel.getObject())));
 
         //list of associated cargo types.
         final WebMarkupContainer cargoTypesContainer = new WebMarkupContainer("cargoTypesContainer");
@@ -339,6 +344,7 @@ public final class CargoModeEdit extends FormTemplatePage {
             }
         };
         addCargoType.setDefaultFormProcessing(false);
+        addCargoType.setVisible(CanEditUtil.canEdit(cargoModeModel.getObject()));
         cargoTypesContainer.add(addCargoType);
 
         final ListView<CargoModeCargoType> cargoTypes = new ListView<CargoModeCargoType>("cargoTypes",
@@ -393,6 +399,7 @@ public final class CargoModeEdit extends FormTemplatePage {
                     }
                 };
                 deleteCargoType.setDefaultFormProcessing(false);
+                deleteCargoType.setVisible(CanEditUtil.canEdit(cargoModeModel.getObject()));
                 item.add(deleteCargoType);
             }
         };
@@ -418,6 +425,7 @@ public final class CargoModeEdit extends FormTemplatePage {
             }
         };
         addUnitType.setDefaultFormProcessing(false);
+        addUnitType.setVisible(CanEditUtil.canEdit(cargoModeModel.getObject()));
         unitTypesContainer.add(addUnitType);
 
         final ListView<CargoModeUnitType> unitTypes = new ListView<CargoModeUnitType>("unitTypes",
@@ -473,6 +481,7 @@ public final class CargoModeEdit extends FormTemplatePage {
                     }
                 };
                 deleteUnitType.setDefaultFormProcessing(false);
+                deleteUnitType.setVisible(CanEditUtil.canEdit(cargoModeModel.getObject()));
                 item.add(deleteUnitType);
             }
         };
@@ -506,58 +515,71 @@ public final class CargoModeEdit extends FormTemplatePage {
         };
         add(confirmationDialog);
         //save and cancel links.
-        form.add(
-                new AjaxSubmitLink("save") {
+        AjaxSubmitLink save = new AjaxSubmitLink("save") {
 
-                    @Override
-                    public void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                        if (validate()) {
-                            if (cargoModeModel.getObject().getId() == null) {
-                                //new entry
-                                saveOrUpdate(cargoModeModel, initial);
-                                setResponsePage(CargoModeList.class);
-                            } else {
-                                confirmationDialog.open(target);
-                            }
-
-                        } else {
-                            target.addComponent(messages);
-                            target.addComponent(form);
-                        }
+            @Override
+            public void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                if (validate()) {
+                    if (cargoModeModel.getObject().getId() == null) {
+                        //new entry
+                        saveOrUpdate(cargoModeModel, initial);
+                        setResponsePage(CargoModeList.class);
+                    } else {
+                        confirmationDialog.open(target);
                     }
 
-                    @Override
-                    protected void onError(AjaxRequestTarget target, Form<?> form) {
-                        target.addComponent(messages);
-                    }
+                } else {
+                    target.addComponent(messages);
+                    target.addComponent(form);
+                }
+            }
 
-                    private boolean validate() {
-                        boolean validated = true;
-                        for (CargoModeCargoType cargoModeCargoType : cargoModeModel.getObject().getCargoModeCargoTypes()) {
-                            CargoType cargoType = cargoModeCargoType.getCargoType();
-                            if (cargoType == null) {
-                                validated = false;
-                                error(getString(CARGO_TYPE_INCORRECT));
-                            }
-                        }
-                        for (CargoModeUnitType cargoModeUnitType : cargoModeModel.getObject().getCargoModeUnitTypes()) {
-                            UnitType unitType = cargoModeUnitType.getUnitType();
-                            if (unitType == null) {
-                                validated = false;
-                                error(getString(UNIT_TYPE_INCORRECT));
-                            }
-                        }
-                        return validated;
-                    }
-                });
+            @Override
+            protected void onError(AjaxRequestTarget target, Form<?> form) {
+                target.addComponent(messages);
+            }
 
-        form.add(new Link("cancel") {
+            private boolean validate() {
+                boolean validated = true;
+                for (CargoModeCargoType cargoModeCargoType : cargoModeModel.getObject().getCargoModeCargoTypes()) {
+                    CargoType cargoType = cargoModeCargoType.getCargoType();
+                    if (cargoType == null) {
+                        validated = false;
+                        error(getString(CARGO_TYPE_INCORRECT));
+                    }
+                }
+                for (CargoModeUnitType cargoModeUnitType : cargoModeModel.getObject().getCargoModeUnitTypes()) {
+                    UnitType unitType = cargoModeUnitType.getUnitType();
+                    if (unitType == null) {
+                        validated = false;
+                        error(getString(UNIT_TYPE_INCORRECT));
+                    }
+                }
+                return validated;
+            }
+        };
+        save.setVisible(CanEditUtil.canEdit(cargoModeModel.getObject()));
+        form.add(save);
+
+        Link cancel = new Link("cancel") {
 
             @Override
             public void onClick() {
                 setResponsePage(CargoModeList.class);
             }
-        });
+        };
+        cancel.setVisible(CanEditUtil.canEdit(cargoModeModel.getObject()));
+        form.add(cancel);
+
+        Link back = new Link("back") {
+
+            @Override
+            public void onClick() {
+                setResponsePage(CargoModeList.class);
+            }
+        };
+        back.setVisible(!CanEditUtil.canEdit(cargoModeModel.getObject()));
+        form.add(back);
     }
 
     private void saveOrUpdate(IModel<CargoMode> cargoModeModel, BookHash initial) {
@@ -609,7 +631,7 @@ public final class CargoModeEdit extends FormTemplatePage {
 
             @Override
             protected void onBeforeRender() {
-                if (cargoModeModel.getObject().getId() == null) {
+                if (cargoModeModel.getObject().getId() == null || !CanEditUtil.canEdit(cargoModeModel.getObject())) {
                     setVisible(false);
                 }
                 super.onBeforeRender();
