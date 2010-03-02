@@ -22,7 +22,7 @@ import org.vetcontrol.entity.CargoMode;
 import org.vetcontrol.entity.CargoModeCargoType;
 import org.vetcontrol.entity.CargoModeUnitType;
 import org.vetcontrol.entity.CargoType;
-import org.vetcontrol.entity.Deleted;
+import org.vetcontrol.entity.DeletedEmbeddedId;
 import org.vetcontrol.entity.UnitType;
 import org.vetcontrol.information.util.web.cargomode.CargoModeFilterBean;
 import org.vetcontrol.util.DateUtil;
@@ -166,7 +166,7 @@ public class CargoModeDAO {
                         query.append(", ");
                     }
 
-                    Deleted deleted = createDeletedEntry(cargoMode.getId(), CargoModeCargoType.class, toRemove.get(i));
+                    DeletedEmbeddedId deleted = createDeletedEntry(cargoMode.getId(), CargoModeCargoType.class, toRemove.get(i));
                     entityManager.persist(deleted);
                 }
                 query.append(")");
@@ -202,7 +202,7 @@ public class CargoModeDAO {
                     if (i < toRemove.size() - 1) {
                         query.append(", ");
                     }
-                    Deleted deleted = createDeletedEntry(cargoMode.getId(), CargoModeUnitType.class, toRemove.get(i));
+                    DeletedEmbeddedId deleted = createDeletedEntry(cargoMode.getId(), CargoModeUnitType.class, toRemove.get(i));
                     entityManager.persist(deleted);
                 }
                 query.append(")");
@@ -223,11 +223,11 @@ public class CargoModeDAO {
         }
     }
 
-    private Deleted createDeletedEntry(Long cargoModeId, Class entityType, Long id) {
-        Deleted deleted = new Deleted();
-        deleted.setId(String.valueOf(cargoModeId) + DELETED_PRIMARY_KEY_SEPARATOR + String.valueOf(id));
-        deleted.setEntity(entityType.getName());
-        deleted.setDeleted(DateUtil.getCurrentDate());
+    private DeletedEmbeddedId createDeletedEntry(Long cargoModeId, Class entityType, Long id) {
+        DeletedEmbeddedId.Id ID =
+                new DeletedEmbeddedId.Id(String.valueOf(cargoModeId) + DELETED_PRIMARY_KEY_SEPARATOR + String.valueOf(id),
+                entityType.getName());
+        DeletedEmbeddedId deleted = new DeletedEmbeddedId(ID, DateUtil.getCurrentDate());
         return deleted;
     }
 
