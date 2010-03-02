@@ -85,6 +85,7 @@ public class BookSyncBean extends SyncInfo{
         this.initial = initial;
     }
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void process(){
         for (Class book : syncBooks){
             //noinspection unchecked
@@ -104,25 +105,28 @@ public class BookSyncBean extends SyncInfo{
                 .post(Count.class, new SyncRequestEntity(secureKey, getUpdated(bookClass))).getCount();
         start(new SyncEvent(count, bookClass));
 
-        @SuppressWarnings({"unchecked"})
-        List<T> books = ClientFactory.createJSONClient("/book/" + bookClass.getSimpleName() + "/list")
-                .post((GenericType<List<T>>)genericTypeMap.get(bookClass), new SyncRequestEntity(secureKey, getUpdated(bookClass)));
-
-        //Сохранение в базу данных списка
         int index = 0;
-        for (T book : books){
-            //skip null
-            if (isSkip(book)) continue;
-           
-            sync(new SyncEvent(count, index++, book));
+        if (count > 0) {
+            @SuppressWarnings({"unchecked"})
+            List<T> books = ClientFactory.createJSONClient("/book/" + bookClass.getSimpleName() + "/list")
+                    .post((GenericType<List<T>>)genericTypeMap.get(bookClass), new SyncRequestEntity(secureKey, getUpdated(bookClass)));
 
-            book.setUpdated(syncUpdated);
+            //Сохранение в базу данных списка
+            index = 0;
+            for (T book : books){
+                //skip null
+                if (isSkip(book)) continue;
 
-            log.debug("Synchronizing: {}", book.toString());
-            if (isPersisted(book)){
-                book.getUpdateQuery(em).executeUpdate();
-            }else{
-                book.getInsertQuery(em).executeUpdate();
+                sync(new SyncEvent(count, index++, book));
+
+                book.setUpdated(syncUpdated);
+
+                log.debug("Synchronizing: {}", book.toString());
+                if (isPersisted(book)){
+                    book.getUpdateQuery(em).executeUpdate();
+                }else{
+                    book.getInsertQuery(em).executeUpdate();
+                }
             }
         }
 
