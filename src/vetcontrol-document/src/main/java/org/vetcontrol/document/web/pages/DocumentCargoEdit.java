@@ -325,8 +325,33 @@ public class DocumentCargoEdit extends FormTemplatePage {
         form.add(creator);
 
         //Подразделение
-        DropDownChoice ddcDepartment = addDropDownChoice(form, "document.cargo.department", Department.class, documentCargoModel, "department");
+        List<Department> list = null;
+
+        try {
+            list = documentCargoBean.getChildDepartments(currentUser.getDepartment());
+        } catch (Exception e) {
+            log.error("Ошибка загрузки списка дочерних подразделений:", e);
+            logBean.error(DOCUMENT, VIEW, DocumentCargoEdit.class, Department.class, "Ошибка загрузки данных из базы данных");
+        }
+
+        DropDownChoice<Department> ddcDepartment = new DropDownChoice<Department>("document.cargo.department",
+                new PropertyModel<Department>(documentCargoModel, "department"), list,
+                new IChoiceRenderer<Department>() {
+
+                    @Override
+                    public Object getDisplayValue(Department department) {
+                        return department.getDisplayName(getLocale(), localeDAO.systemLocale());
+                    }
+
+                    @Override
+                    public String getIdValue(Department department, int index) {
+                        return String.valueOf(department.getId());
+                    }
+                });
+
+        ddcDepartment.setRequired(false);
         ddcDepartment.setEnabled(hasAnyRole(DOCUMENT_DEP_CHILD_EDIT));
+        form.add(ddcDepartment);
 
         //Дата создания
         Label l_created = new Label("l_created", new ResourceModel("document.cargo.created"));
