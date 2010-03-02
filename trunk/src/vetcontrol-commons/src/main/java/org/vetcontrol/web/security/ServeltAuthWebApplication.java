@@ -1,23 +1,19 @@
 package org.vetcontrol.web.security;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.RedirectToUrlException;
-import org.apache.wicket.RequestCycle;
+import org.apache.wicket.*;
 import org.apache.wicket.authorization.IUnauthorizedComponentInstantiationListener;
 import org.apache.wicket.authorization.UnauthorizedInstantiationException;
 import org.apache.wicket.authorization.strategies.role.IRoleCheckingStrategy;
 import org.apache.wicket.authorization.strategies.role.RoleAuthorizationStrategy;
 import org.apache.wicket.authorization.strategies.role.Roles;
+import org.apache.wicket.markup.html.form.persistence.CookieValuePersister;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebRequestCycle;
-
-import javax.servlet.http.HttpServletRequest;
-import org.apache.wicket.RestartResponseException;
-import org.apache.wicket.Session;
-import org.apache.wicket.markup.html.form.persistence.CookieValuePersister;
 import org.apache.wicket.util.string.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru

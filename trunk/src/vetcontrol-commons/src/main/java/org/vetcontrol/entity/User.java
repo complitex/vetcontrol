@@ -47,8 +47,7 @@ public class User implements ILongId, IUpdated, IQuery{
 
     @ManyToOne
     @JoinColumn(name = "job_id")
-//    @XmlIDREF
-    @XmlTransient
+    @XmlIDREF
     private Job job;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -261,16 +260,29 @@ public class User implements ILongId, IUpdated, IQuery{
         if ((this.lastName == null) ? (other.lastName != null) : !this.lastName.equals(other.lastName)) {
             return false;
         }
+        if ((job != null && other.job == null) || (job == null && other.job != null)){
+            return false;
+        }
         if (this.job != null && other.job != null) {
-            if (!this.job.getId().equals(other.job.getId()) && (this.job.getId() == null || !this.job.getId().equals(other.job.getId()))) {
+            if ((job.getId() != null && other.job.getId() == null) || (job.getId() == null && other.job.getId() != null)){
                 return false;
             }
+            if (job.getId() != null && other.job.getId() != null && !job.getId().equals(other.job.getId())){
+                return false;
+            }
+        }
+        if ((department != null && other.department == null) || (department == null && other.department != null)){
+            return false;
         }
         if (this.department != null && other.department != null) {
-            if (!this.department.getId().equals(other.department.getId()) && (this.department.getId() == null || !this.department.getId().equals(other.department.getId()))) {
+            if ((department.getId() != null && other.department.getId() == null) || (department.getId() == null && other.department.getId() != null)){
+                return false;
+            }
+            if (department.getId() != null && other.department.getId() != null && !department.getId().equals(other.department.getId())){
                 return false;
             }
         }
+
         return true;
     }
 

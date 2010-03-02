@@ -4,6 +4,7 @@ import org.vetcontrol.entity.Department;
 import org.vetcontrol.entity.Job;
 import org.vetcontrol.entity.User;
 import org.vetcontrol.entity.UserGroup;
+import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.web.security.SecurityRoles;
 
 import javax.annotation.security.RolesAllowed;
@@ -117,15 +118,17 @@ public class UserBean {
         for (UserGroup userGroup : user.getUserGroups()) {
             if (userGroup.getId() == null) {
                 userGroup.setLogin(user.getLogin());
+                userGroup.setUpdated(DateUtil.getCurrentDate());
             }
         }
 
         if (user.getId() == null) {
+            user.setUpdated(DateUtil.getCurrentDate());
             entityManager.persist(user);
         } else {
-            User currentUser = entityManager.find(User.class, user.getId());
-            entityManager.detach(currentUser);
-            for (UserGroup db : currentUser.getUserGroups()) {
+            User dbUser = entityManager.find(User.class, user.getId());
+            entityManager.detach(dbUser);
+            for (UserGroup db : dbUser.getUserGroups()) {
                 boolean delete = true;
                 for (UserGroup model : user.getUserGroups()) {
                     if (model.getSecurityGroup().equals(db.getSecurityGroup())) {
@@ -135,10 +138,15 @@ public class UserBean {
                 }
 
                 if (delete) {
+                    //TODO move to deleted table
                     entityManager.createQuery("delete from UserGroup ug where ug.id = :id")
                             .setParameter("id", db.getId())
                             .executeUpdate();                                                        
                 }
+            }
+
+            if (!dbUser.equals(user)){
+                user.setUpdated(DateUtil.getCurrentDate());                
             }
 
             entityManager.merge(user);

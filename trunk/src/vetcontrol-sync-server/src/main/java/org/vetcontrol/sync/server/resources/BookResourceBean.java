@@ -174,14 +174,7 @@ public class BookResourceBean {
                 .setParameter("updated", re.getUpdated()).getSingleResult().intValue());
     }
 
-    private <T> List<T> getList(Class<T> entity, SyncRequestEntity re, HttpServletRequest r){
-        //TODO test
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+    private <T> List<T> getList(Class<T> entity, SyncRequestEntity re, HttpServletRequest r){         
         Client client = getClient(re, r);
 
         List<T> list = em.createQuery("select e from "+ entity.getSimpleName() + " e where e.updated >= :updated", entity)
