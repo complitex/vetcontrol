@@ -74,15 +74,17 @@ public class SyncBean{
                     : rb.getString("sync.client.sync.complete.skip");
             message.setMessage(m);
 
-            //Деактивация сессии пользователя
-            if ((User.class.equals(syncEvent.getObject()) || UserGroup.class.equals(syncEvent.getObject()))
-                    && syncEvent.getCount() > 0){
-                message = new SyncMessage();
-                message.setName(rb.getString("sync.client.sync.client"));
-                message.setMessage(rb.getString("sync.client.sync.logoff"));
-                syncMessages.add(message);
-                logout = true;
+            if (User.class.equals(syncEvent.getObject()) || UserGroup.class.equals(syncEvent.getObject())){
+                //Деактивация сессии пользователя
+                if (syncEvent.getCount() > 0){
+                    message = new SyncMessage();
+                    message.setName(rb.getString("sync.client.sync.client"));
+                    message.setMessage(rb.getString("sync.client.sync.logoff"));
+                    syncMessages.add(message);
+                    logout = true;
+                }
 
+                //fix insert log lock by user
                 logBean.infoTxRequired(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, SyncBean.class, (Class)syncEvent.getObject(), m);
             }else{
                 logBean.info(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, SyncBean.class, (Class)syncEvent.getObject(), m);
