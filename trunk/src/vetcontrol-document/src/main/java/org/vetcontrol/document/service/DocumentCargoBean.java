@@ -1,6 +1,7 @@
 package org.vetcontrol.document.service;
 
 import org.vetcontrol.entity.Cargo;
+import org.vetcontrol.entity.Department;
 import org.vetcontrol.entity.DocumentCargo;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.util.DateUtil;
@@ -244,4 +245,12 @@ public class DocumentCargoBean {
     public <T> List<T> getList(Class<T> _class){
         return entityManager.createQuery("from " + _class.getSimpleName(), _class).getResultList();
     }
+
+    public List<Department> getChildDepartments(Department department){
+        return entityManager.createQuery("select d from Department d where d.parent = :department " +
+                "or d.parent.parent = :department or d = :department", Department.class)
+                .setParameter("department", department)
+                .getResultList();
+    }
+
 }
