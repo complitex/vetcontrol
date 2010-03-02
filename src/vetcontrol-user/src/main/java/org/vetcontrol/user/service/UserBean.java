@@ -1,9 +1,6 @@
 package org.vetcontrol.user.service;
 
-import org.vetcontrol.entity.Department;
-import org.vetcontrol.entity.Job;
-import org.vetcontrol.entity.User;
-import org.vetcontrol.entity.UserGroup;
+import org.vetcontrol.entity.*;
 import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.web.security.SecurityRoles;
 
@@ -12,6 +9,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -128,6 +126,10 @@ public class UserBean {
         } else {
             User dbUser = entityManager.find(User.class, user.getId());
             entityManager.detach(dbUser);
+
+            //Удаление групп пользователей
+            List<Long> deletedIds = new ArrayList<Long>();
+
             for (UserGroup db : dbUser.getUserGroups()) {
                 boolean delete = true;
                 for (UserGroup model : user.getUserGroups()) {
@@ -138,7 +140,8 @@ public class UserBean {
                 }
 
                 if (delete) {
-                    //TODO move to deleted table
+                    deletedIds.add(db.getId());
+
                     entityManager.createQuery("delete from UserGroup ug where ug.id = :id")
                             .setParameter("id", db.getId())
                             .executeUpdate();                                                        
@@ -149,7 +152,27 @@ public class UserBean {
                 user.setUpdated(DateUtil.getCurrentDate());                
             }
 
+            //Сохранение пользователя и групп
             entityManager.merge(user);
+
+            //Копирование удаленных групп в таблицу удаленных элементов
+            List<Long> addedIds = new ArrayList<Long>();
+
+            for (UserGroup ug : user.getUserGroups()){
+                addedIds.add(ug.getId());
+                deletedIds.remove(ug.getId());
+            }
+
+            for (Long id : deletedIds){
+                entityManager.merge(new DeletedLongId(id, UserGroup.class.getCanonicalName(), DateUtil.getCurrentDate()));
+            }
+
+            for (Long id : addedIds){
+                entityManager.createQuery("delete from DeletedLongId where id.id = :id and id.entity = :entity")
+                        .setParameter("id", id)
+                        .setParameter("entity", UserGroup.class.getCanonicalName())
+                        .executeUpdate();
+            }
         }
     }
 
