@@ -1,13 +1,11 @@
 package org.vetcontrol.information.web.component.list;
 
 import java.io.Serializable;
-import org.apache.wicket.Application;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.vetcontrol.information.util.web.CanEditUtil;
-import org.vetcontrol.web.template.TemplateWebApplication;
 
 public abstract class EditPanel extends Panel {
 
