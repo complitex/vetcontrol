@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.vetcontrol.report.util.movementtypes;
 
 import java.util.Locale;
@@ -19,14 +18,22 @@ public enum Month {
     private Month(int number) {
         this.number = number;
     }
-
     private int number;
 
-    public String getDisplayName(Locale locale){
+    public String getDisplayName(Locale locale) {
         return DateUtil.getDisplayMonth(number, locale);
     }
 
     public int getNumber() {
         return number;
+    }
+
+    public static Month valueOf(int monthNumber) {
+        for (Month month : values()) {
+            if (month.getNumber() == monthNumber) {
+                return month;
+            }
+        }
+        return null;
     }
 }

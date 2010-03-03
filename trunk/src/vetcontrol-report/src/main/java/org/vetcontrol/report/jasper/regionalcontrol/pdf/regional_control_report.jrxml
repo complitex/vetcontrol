@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="org/vetcontrol/report/jasper/regionalcontrol/regional_control_report">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<import value="org.vetcontrol.util.DateUtil"/>
 	<import value="org.vetcontrol.report.util.regionalcontrol.CellFormatter"/>
 	<import value="java.text.MessageFormat"/>
-	<style name="base" isDefault="true" hAlign="Center" vAlign="Middle" fontSize="7" isStrikeThrough="false" pdfFontName="org/vetcontrol/report/fonts/DejaVuSerif.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true">
-		<box>
+	<style name="base" isDefault="true" hAlign="Left" vAlign="Top" fontSize="7" isStrikeThrough="false" pdfFontName="org/vetcontrol/report/fonts/DejaVuSerif.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true">
+		<box topPadding="1" leftPadding="2">
 			<pen lineWidth="0.5" lineStyle="Solid"/>
 		</box>
 	</style>
-	<style name="Header" isDefault="false" hAlign="Center" vAlign="Middle" fontSize="7" pdfFontName="org/vetcontrol/report/fonts/DejaVuSerif-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true">
-		<box>
+	<style name="Header" isDefault="false" hAlign="Center" vAlign="Top" fontSize="7" pdfFontName="org/vetcontrol/report/fonts/DejaVuSerif-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true">
+		<box leftPadding="2" rightPadding="2" topPadding="1">
 			<pen lineWidth="0.5" lineStyle="Solid"/>
 		</box>
 	</style>
@@ -25,51 +28,65 @@
 	<field name="movementTypeName" class="java.lang.String"/>
 	<field name="cargoArrived" class="java.util.Date"/>
 	<field name="cargoTypeCode" class="java.lang.String"/>
+	<variable name="rowNumber" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[$F{cargoTypeName}]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.lang.Integer(0)]]></initialValueExpression>
+	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="14" splitType="Stretch">
+		<band height="44" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Title" x="17" y="0" width="525" height="9"/>
+				<reportElement style="Title" x="17" y="24" width="525" height="9"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{title}, $P{department},
+				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{report.name}, $P{department},
                                     DateUtil.format($P{startDate}, $P{REPORT_LOCALE}),
-                                    DateUtil.format($P{endDate}, $P{REPORT_LOCALE}))]]></textFieldExpression>
+                DateUtil.format($P{endDate}, $P{REPORT_LOCALE}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Title" x="191" y="12" width="185" height="12"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{title}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
 	<pageHeader>
-		<band height="28" splitType="Stretch">
+		<band height="106" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Header" x="17" y="0" width="49" height="28"/>
+				<reportElement style="Header" x="41" y="0" width="47" height="106"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.header.cargoArrived}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Header" x="66" y="0" width="92" height="28"/>
+				<reportElement style="Header" x="88" y="0" width="95" height="106"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.header.cargo_producer}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Header" x="158" y="0" width="112" height="28"/>
+				<reportElement style="Header" x="183" y="0" width="97" height="106"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.header.cargo_receiver}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Header" x="270" y="0" width="135" height="28"/>
+				<reportElement style="Header" x="280" y="0" width="125" height="106"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.header.cargo_type}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Header" x="405" y="0" width="63" height="28"/>
+				<reportElement style="Header" x="405" y="0" width="63" height="106"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.header.count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Header" x="468" y="0" width="74" height="28"/>
+				<reportElement style="Header" x="468" y="0" width="74" height="106"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.header.movement_type}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header" x="17" y="0" width="24" height="106"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.header.number}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -79,34 +96,39 @@
 	<detail>
 		<band height="20" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
-				<reportElement x="66" y="0" width="92" height="20"/>
+				<reportElement stretchType="RelativeToTallestObject" x="88" y="0" width="95" height="20"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{cargoProducerName}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="17" y="0" width="49" height="20"/>
+				<reportElement stretchType="RelativeToTallestObject" x="41" y="0" width="47" height="20"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.formatCargoArrived($F{cargoArrived}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="158" y="0" width="112" height="20"/>
+				<reportElement stretchType="RelativeToTallestObject" x="183" y="0" width="97" height="20"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{cargoReceiverName}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="270" y="0" width="135" height="20"/>
+				<reportElement stretchType="RelativeToTallestObject" x="280" y="0" width="125" height="20"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.formatCargoType($F{cargoTypeName}, $F{cargoTypeCode})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="405" y="0" width="63" height="20"/>
+				<reportElement stretchType="RelativeToTallestObject" x="405" y="0" width="63" height="20"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.formatCount($F{count}, $F{unitTypeName})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="468" y="0" width="74" height="20"/>
+				<reportElement stretchType="RelativeToTallestObject" x="468" y="0" width="74" height="20"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{movementTypeName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="17" y="0" width="24" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{rowNumber}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

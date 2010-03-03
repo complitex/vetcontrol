@@ -19,10 +19,10 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.vetcontrol.entity.Department;
 import org.vetcontrol.report.service.dao.DepartmentDAO;
-import org.vetcontrol.report.service.dao.MovementTypesReportDAO;
 import org.vetcontrol.report.util.movementtypes.Month;
 import org.vetcontrol.report.web.components.DepartmentPicker;
 import org.vetcontrol.report.web.components.MonthPicker;
+import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.FormTemplatePage;
 
@@ -33,8 +33,6 @@ import org.vetcontrol.web.template.FormTemplatePage;
 @AuthorizeInstantiation(SecurityRoles.LOCAL_AND_REGIONAL_REPORT)
 public final class MovementTypesReportForm extends FormTemplatePage {
 
-    @EJB(name = "MovementTypesReportDAO")
-    private MovementTypesReportDAO reportDAO;
     @EJB(name = "DepartmentDAO")
     private DepartmentDAO departmentDAO;
     static final MetaDataKey<Integer> MONTH_KEY = new MetaDataKey<Integer>() {
@@ -50,7 +48,12 @@ public final class MovementTypesReportForm extends FormTemplatePage {
         add(new Label("title", new ResourceModel("title")));
         add(new FeedbackPanel("messages"));
 
-        final IModel<Month> month = new Model<Month>() {
+        final IModel<Month> month = new Model<Month>(Month.valueOf(DateUtil.getCurrentMonth())) {
+
+            @Override
+            public Month getObject() {
+                return Month.valueOf(getSession().getMetaData(MONTH_KEY));
+            }
 
             @Override
             public void setObject(Month object) {

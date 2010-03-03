@@ -2,8 +2,8 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.vetcontrol.report.web.components;
+
 import java.util.Arrays;
 import java.util.List;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -17,11 +17,11 @@ import org.vetcontrol.report.util.movementtypes.Month;
  * @author Artem
  */
 public final class MonthPicker extends Panel {
-    public MonthPicker(String id, final IModel<Month> model) {
-        super (id);
 
-        List<Month> choices = Arrays.asList(Month.JAN, Month.FEB, Month.MAR, Month.APR, Month.MAY, Month.JUN,
-        Month.JUL, Month.AUG, Month.SEP, Month.OCT, Month.NOV, Month.DEC);
+    public MonthPicker(String id, final IModel<Month> model) {
+        super(id);
+
+        List<Month> choices = Arrays.asList(Month.values());
 
         IChoiceRenderer<Month> renderer = new IChoiceRenderer<Month>() {
 

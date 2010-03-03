@@ -38,8 +38,8 @@ import org.vetcontrol.report.util.cargosinday.CellFormatter;
 import org.vetcontrol.report.util.DateConverter;
 import org.vetcontrol.report.util.jasper.ExportType;
 import org.vetcontrol.report.web.components.PrintButton;
+import org.vetcontrol.report.web.components.RowNumberLabel;
 import org.vetcontrol.service.UIPreferences;
-import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
 import org.vetcontrol.web.component.paging.PagingNavigator;
@@ -51,15 +51,13 @@ import org.vetcontrol.web.template.TemplatePage;
  *
  * @author Artem
  */
-@AuthorizeInstantiation(SecurityRoles.LOCAL_REPORT)
+@AuthorizeInstantiation(SecurityRoles.LOCAL_AND_REGIONAL_REPORT)
 public final class CargosInDayReportPage extends TemplatePage {
 
     @EJB(name = "CargosInDayReportDAO")
     private CargosInDayReportDAO reportDAO;
     @EJB(name = "LocaleService")
     private LocaleService localeService;
-    @EJB(name = "UserProfileBean")
-    private UserProfileBean userProfileBean;
     @EJB(name = "DateConverter")
     private DateConverter dateConverter;
     private static final String PAGE_NUMBER_KEY = CargosInDayReportPage.class.getSimpleName() + "_PAGE_NUMBER";
@@ -75,10 +73,13 @@ public final class CargosInDayReportPage extends TemplatePage {
         if (day == null) {
             throw new IllegalArgumentException("Day must be specified.");
         }
+        final Long departmentId = getSession().getMetaData(CargosInDayReportForm.DEPARTMENT_KEY);
+        if (departmentId == null) {
+            throw new IllegalArgumentException("Department must be specified.");
+        }
 
         final Date startDate = DateUtil.getBeginOfDay(day);
         final Date endDate = DateUtil.getEndOfDay(day);
-        final Long departmentId = userProfileBean.getCurrentUser().getDepartment().getId();
         final Locale reportLocale = localeService.getReportLocale();
         final UIPreferences preferences = getPreferences();
 
@@ -136,6 +137,8 @@ public final class CargosInDayReportPage extends TemplatePage {
             protected void populateItem(Item<CargosInDayReport> item) {
                 CargosInDayReport report = item.getModelObject();
 
+                item.add(new RowNumberLabel("rowNumber", item));
+
                 item.add(new Label("cargoTypeName", report.getCargoTypeName()));
                 item.add(new Label("cargoProducerName", report.getCargoProducerName()));
                 item.add(new Label("cargoReceiverName", report.getCargoReceiverName()));
@@ -158,16 +161,23 @@ public final class CargosInDayReportPage extends TemplatePage {
         add(new PagingNavigator("navigator", list, "itemsPerPage", preferences, PAGE_NUMBER_KEY));
 
         IBehavior dayAttribute = new SimpleAttributeModifier("name", CargosInDayReportServlet.DAY_KEY);
+        IBehavior departmentAttribute = new SimpleAttributeModifier("name", CargosInDayReportServlet.DEPARTMENT_KEY);
 
         //pdf parameters
         HiddenField<String> pdfDay = new HiddenField<String>("pdfDay", new Model<String>(dateConverter.toString(day)));
         pdfDay.add(dayAttribute);
         add(pdfDay);
+        HiddenField<Long> pdfDepartment = new HiddenField<Long>("pdfDepartment", new Model<Long>(departmentId));
+        pdfDepartment.add(departmentAttribute);
+        add(pdfDepartment);
 
         //text parameters
         HiddenField<String> textDay = new HiddenField<String>("textDay", new Model<String>(dateConverter.toString(day)));
         textDay.add(dayAttribute);
         add(textDay);
+        HiddenField<Long> textDepartment = new HiddenField<Long>("textDepartment", new Model<Long>(departmentId));
+        textDepartment.add(departmentAttribute);
+        add(textDepartment);
     }
 
     private void addOrderByLink(MarkupContainer parent, String id, String sortProperty, ISortStateLocator sortStateLocator, final IPageable list) {
