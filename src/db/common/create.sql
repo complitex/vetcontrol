@@ -455,8 +455,8 @@ CREATE TABLE `document_cargo` (
   CONSTRAINT `FK_cargo_sender` FOREIGN KEY (`cargo_sender_id`) REFERENCES `cargo_sender` (`id`),
   CONSTRAINT `FK_cargo_receiver` FOREIGN KEY (`cargo_receiver_id`) REFERENCES `cargo_receiver` (`id`),
   CONSTRAINT `FK_cargo_producer` FOREIGN KEY (`cargo_producer_id`) REFERENCES `cargo_producer` (`id`),
-  CONSTRAINT `FK_passing_border_point` FOREIGN KEY (`passing_border_point_id`) REFERENCES `passing_border_point` (`id`)
-  CONSTRAINT `FK_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`)
+  CONSTRAINT `FK_passing_border_point` FOREIGN KEY (`passing_border_point_id`) REFERENCES `passing_border_point` (`id`),
+  CONSTRAINT `FK_department_` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `log`;
