@@ -31,7 +31,7 @@ public class PDFExportDemo {
 
             System.out.println("Filling report..." + System.getProperty("user.dir"));
             JasperRunManager.runReportToPdfFile(
-                    "target/classes/org/vetcontrol/report/jasper/movementtypes/pdf/movement_types_report.jasper",
+                    "target/classes/org/vetcontrol/report/jasper/regionalcontrol/pdf/regional_control_report.jasper",
                     "report.pdf",
                     parameterMap, new JREmptyDataSource());
             System.out.println("Done!");
