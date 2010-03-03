@@ -36,7 +36,6 @@ import org.vetcontrol.report.util.jasper.ExportType;
 import org.vetcontrol.report.util.jasper.ExportTypeUtil;
 import org.vetcontrol.report.util.jasper.JRCacheableDataSource;
 import org.vetcontrol.report.util.jasper.TextExporterConstants;
-import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.web.security.SecurityRoles;
 
@@ -45,18 +44,17 @@ import org.vetcontrol.web.security.SecurityRoles;
  * @author Artem
  */
 @WebServlet(name = "CargosInDayReportServlet", urlPatterns = {"/CargosInDayReportServlet"})
-@RolesAllowed({SecurityRoles.LOCAL_REPORT})
+@RolesAllowed({SecurityRoles.LOCAL_AND_REGIONAL_REPORT})
 public class CargosInDayReportServlet extends HttpServlet {
 
     public static final String DAY_KEY = "day";
+    public static final String DEPARTMENT_KEY = "department";
     @EJB
     private CargosInDayReportDAO reportDAO;
     @EJB
     private LocaleService localeService;
     @EJB
     private DateConverter dateConverter;
-    @EJB
-    private UserProfileBean userProfileBean;
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -68,7 +66,7 @@ public class CargosInDayReportServlet extends HttpServlet {
             Date day = getDay(request);
             Date startDate = DateUtil.getBeginOfDay(day);
             Date endDate = DateUtil.getEndOfDay(day);
-            Long departmentId = userProfileBean.getCurrentUser().getDepartment().getId();
+            Long departmentId = getDepartment(request);
             Locale reportLocale = localeService.getReportLocale();
 
             ServletOutputStream servletOutputStream = response.getOutputStream();
@@ -122,5 +120,9 @@ public class CargosInDayReportServlet extends HttpServlet {
 
     private Date getDay(HttpServletRequest request) {
         return dateConverter.toDate(request.getParameter(DAY_KEY).trim());
+    }
+
+    private Long getDepartment(HttpServletRequest request) {
+        return Long.valueOf(request.getParameter(DEPARTMENT_KEY).trim());
     }
 }

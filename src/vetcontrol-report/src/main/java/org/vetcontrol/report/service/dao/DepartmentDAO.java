@@ -37,9 +37,9 @@ public class DepartmentDAO {
     }
 
     public List<Department> getAvailableDepartments() {
-        Department currentDepartment = userProfileBean.getCurrentUser().getDepartment();
+        Department userDepartment = userProfileBean.getCurrentUser().getDepartment();
         List<Department> availableDepartments = new ArrayList<Department>();
-        children(currentDepartment, availableDepartments);
+        children(userDepartment, availableDepartments);
         return availableDepartments;
     }
 

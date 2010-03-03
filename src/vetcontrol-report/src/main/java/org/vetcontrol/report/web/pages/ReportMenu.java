@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.vetcontrol.report.web.pages;
 
 import java.util.ArrayList;
@@ -54,33 +53,31 @@ public class ReportMenu extends ResourceTemplateMenu {
                 return "movement_types_report";
             }
         });
+        links.add(new ITemplateLink() {
 
-        TemplateWebApplication application = (TemplateWebApplication)Application.get();
-        if(application.hasAnyRole(SecurityRoles.LOCAL_REPORT)){
-            links.add(new ITemplateLink() {
+            @Override
+            public String getLabel(Locale locale) {
+                return getString(ReportMenu.class, locale, "cargos_in_day_report");
+            }
 
-                @Override
-                public String getLabel(Locale locale) {
-                    return getString(ReportMenu.class, locale, "cargos_in_day_report");
-                }
+            @Override
+            public Class<? extends Page> getPage() {
+                return CargosInDayReportForm.class;
+            }
 
-                @Override
-                public Class<? extends Page> getPage() {
-                    return CargosInDayReportForm.class;
-                }
+            @Override
+            public PageParameters getParameters() {
+                return PageParameters.NULL;
+            }
 
-                @Override
-                public PageParameters getParameters() {
-                    return PageParameters.NULL;
-                }
+            @Override
+            public String getTagId() {
+                return "cargos_in_day_report";
+            }
+        });
 
-                @Override
-                public String getTagId() {
-                    return "cargos_in_day_report";
-                }
-            });
-        }
-        if(application.hasAnyRole(SecurityRoles.REGIONAL_REPORT)){
+        TemplateWebApplication application = (TemplateWebApplication) Application.get();
+        if (application.hasAnyRole(SecurityRoles.REGIONAL_REPORT)) {
             links.add(new ITemplateLink() {
 
                 @Override
@@ -112,5 +109,4 @@ public class ReportMenu extends ResourceTemplateMenu {
     public String getTagId() {
         return "reports_menu";
     }
-
 }

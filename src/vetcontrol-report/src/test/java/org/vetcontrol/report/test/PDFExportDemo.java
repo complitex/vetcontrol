@@ -21,11 +21,11 @@ public class PDFExportDemo {
         try {
             HashMap parameterMap = new HashMap();
             parameterMap.put(JRParameter.REPORT_LOCALE, Locale.getDefault());
-//            parameterMap.put("endDate", new Date());
-//            parameterMap.put("month", "Январь");
-//            parameterMap.put("year", "2010");
+            parameterMap.put("endDate", new Date());
+            parameterMap.put("month", "Январь");
+            parameterMap.put("year", "2010");
             parameterMap.put("department", "Кодимский ПДВСКН");
-//            parameterMap.put("date", new Date());
+            parameterMap.put("date", new Date());
             parameterMap.put("startDate", new Date());
             parameterMap.put("endDate", new Date());
 

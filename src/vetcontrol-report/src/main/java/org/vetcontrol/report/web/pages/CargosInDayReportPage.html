@@ -6,40 +6,45 @@
     </head>
     <body>
         <wicket:extend>
-            <h1>
-                <span wicket:id="report.name"></span>
-            </h1>
+            <center>
+                <h1>
+                    <span wicket:id="report.name"></span>
+                </h1>
+            </center>
             <table class="tbColor" border="0" cellpadding="0" cellspacing="0">
                 <thead>
                     <tr>
-                        <th wicket:id="report.header.cargo_type">
-                            <wicket:message key="report.header.cargo_type"/>
+                        <th valign="top" class="center" rowspan="2">
+                            <wicket:message key="report.header.number"/>
                         </th>
-                        <th wicket:id="report.header.cargo_producer">
-                            <wicket:message key="report.header.cargo_producer"/>
+                        <th valign="top" class="center" rowspan="2">
+                            <span wicket:id="report.header.cargo_type">
+                                <wicket:message key="report.header.cargo_type"/>
+                            </span>
                         </th>
-                        <th wicket:id="report.header.cargo_receiver">
-                            <wicket:message key="report.header.cargo_receiver"/>
+                        <th valign="top" class="center" rowspan="2">
+                            <span wicket:id="report.header.cargo_producer">
+                                <wicket:message key="report.header.cargo_producer"/>
+                            </span>
                         </th>
-                        <th wicket:id="report.header.cargo_sender">
-                            <wicket:message key="report.header.cargo_sender"/>
+                        <th valign="top" class="center" rowspan="2">
+                            <span wicket:id="report.header.cargo_receiver">
+                                <wicket:message key="report.header.cargo_receiver"/>
+                            </span>
                         </th>
-                        <th colspan="5">
+                        <th valign="top" class="center" rowspan="2">
+                            <span wicket:id="report.header.cargo_sender">
+                                <wicket:message key="report.header.cargo_sender"/>
+                            </span>
+                        </th>
+                        <th colspan="5" valign="top" class="center">
                             <wicket:message key="report.header.vehicle_type"/>
                         </th>
-                        <th>
+                        <th valign="top" class="center" rowspan="2">
                             <wicket:message key="report.header.count"/>
                         </th>
                     </tr>
                     <tr>
-                        <th>
-                        </th>
-                        <th>
-                        </th>
-                        <th>
-                        </th>
-                        <th>
-                        </th>
                         <th class="center vertical">
                             <wicket:message key="report.header.vehicle_type.car"/>
                         </th>
@@ -55,12 +60,13 @@
                         <th class="center vertical">
                             <wicket:message key="report.header.vehicle_type.aircraft"/>
                         </th>
-                        <th>
-                        </th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr wicket:id="list">
+                        <td>
+                            <span wicket:id="rowNumber"></span>
+                        </td>
                         <td>
                             <span wicket:id="cargoTypeName"></span>
                         </td>
@@ -112,14 +118,16 @@
                 </div>
                 <div class="referenceToExport">
                     <form id="pdfForm" target="_blank" method="post" action="CargosInDayReportServlet">
-                    <input type="hidden" value="pdf" name="ExportType"/>
+                        <input type="hidden" value="pdf" name="ExportType"/>
                         <input wicket:id="pdfDay" type="hidden"/>
+                        <input wicket:id="pdfDepartment" type="hidden"/>
                     </form>
                 </div>
                 <div class="referenceToExport">
                     <form id="textForm" target="_blank" method="post" action="CargosInDayReportServlet">
                         <input type="hidden" value="text" name="ExportType"/>
                         <input wicket:id="textDay" type="hidden"/>
+                        <input wicket:id="textDepartment" type="hidden"/>
                     </form>
                 </div>
             </div>

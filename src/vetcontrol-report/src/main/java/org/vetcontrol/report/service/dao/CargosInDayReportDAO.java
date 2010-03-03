@@ -20,7 +20,7 @@ import org.vetcontrol.web.security.SecurityRoles;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@RolesAllowed(SecurityRoles.LOCAL_REPORT)
+@RolesAllowed(SecurityRoles.LOCAL_AND_REGIONAL_REPORT)
 public class CargosInDayReportDAO extends AbstractReportDAO<CargosInDayReport> {
 
     public static enum OrderBy {

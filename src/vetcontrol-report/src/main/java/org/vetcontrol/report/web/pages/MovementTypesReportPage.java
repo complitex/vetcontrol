@@ -36,6 +36,7 @@ import org.vetcontrol.report.service.dao.MovementTypesReportDAO;
 import org.vetcontrol.report.util.jasper.ExportType;
 import org.vetcontrol.report.util.movementtypes.CellFormatter;
 import org.vetcontrol.report.web.components.PrintButton;
+import org.vetcontrol.report.web.components.RowNumberLabel;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UIPreferences.PreferenceType;
 import org.vetcontrol.util.DateUtil;
@@ -132,6 +133,8 @@ public final class MovementTypesReportPage extends TemplatePage {
             @Override
             protected void populateItem(Item<MovementTypesReport> item) {
                 MovementTypesReport report = item.getModelObject();
+
+                item.add(new RowNumberLabel("rowNumber", item));
 
                 item.add(new Label("cargoModeName", report.getCargoModeName()));
 
