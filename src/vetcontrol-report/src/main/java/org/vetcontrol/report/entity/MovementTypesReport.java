@@ -2,11 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.vetcontrol.report.entity;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 
 /**
  *
@@ -16,16 +14,14 @@ public class MovementTypesReport implements Serializable {
 
     private String cargoModeName;
     private String unitTypeName;
-
-    private BigInteger export;
-    private BigInteger imprt;
-    private BigInteger transit;
-    private BigInteger importTransit;
-
-    private BigInteger exportInCurrentMonth;
-    private BigInteger imprtInCurrentMonth;
-    private BigInteger transitInCurrentMonth;
-    private BigInteger importTransitInCurrentMonth;
+    private Number export;
+    private Number imprt;
+    private Number transit;
+    private Number importTransit;
+    private Number exportInCurrentMonth;
+    private Number imprtInCurrentMonth;
+    private Number transitInCurrentMonth;
+    private Number importTransitInCurrentMonth;
 
     public String getCargoModeName() {
         return cargoModeName;
@@ -43,68 +39,67 @@ public class MovementTypesReport implements Serializable {
         this.unitTypeName = unitTypeName;
     }
 
-    public BigInteger getExport() {
+    public Number getExport() {
         return export;
     }
 
-    public void setExport(BigInteger export) {
+    public void setExport(Number export) {
         this.export = export;
     }
 
-    public BigInteger getExportInCurrentMonth() {
+    public Number getExportInCurrentMonth() {
         return exportInCurrentMonth;
     }
 
-    public void setExportInCurrentMonth(BigInteger exportInCurrentMonth) {
+    public void setExportInCurrentMonth(Number exportInCurrentMonth) {
         this.exportInCurrentMonth = exportInCurrentMonth;
     }
 
-    public BigInteger getImportTransit() {
+    public Number getImportTransit() {
         return importTransit;
     }
 
-    public void setImportTransit(BigInteger importTransit) {
+    public void setImportTransit(Number importTransit) {
         this.importTransit = importTransit;
     }
 
-    public BigInteger getImportTransitInCurrentMonth() {
+    public Number getImportTransitInCurrentMonth() {
         return importTransitInCurrentMonth;
     }
 
-    public void setImportTransitInCurrentMonth(BigInteger importTransitInCurrentMonth) {
+    public void setImportTransitInCurrentMonth(Number importTransitInCurrentMonth) {
         this.importTransitInCurrentMonth = importTransitInCurrentMonth;
     }
 
-    public BigInteger getImprt() {
+    public Number getImprt() {
         return imprt;
     }
 
-    public void setImprt(BigInteger imprt) {
+    public void setImprt(Number imprt) {
         this.imprt = imprt;
     }
 
-    public BigInteger getImprtInCurrentMonth() {
+    public Number getImprtInCurrentMonth() {
         return imprtInCurrentMonth;
     }
 
-    public void setImprtInCurrentMonth(BigInteger imprtInCurrentMonth) {
+    public void setImprtInCurrentMonth(Number imprtInCurrentMonth) {
         this.imprtInCurrentMonth = imprtInCurrentMonth;
     }
 
-    public BigInteger getTransit() {
+    public Number getTransit() {
         return transit;
     }
 
-    public void setTransit(BigInteger transit) {
+    public void setTransit(Number transit) {
         this.transit = transit;
     }
 
-    public BigInteger getTransitInCurrentMonth() {
+    public Number getTransitInCurrentMonth() {
         return transitInCurrentMonth;
     }
 
-    public void setTransitInCurrentMonth(BigInteger transitInCurrentMonth) {
+    public void setTransitInCurrentMonth(Number transitInCurrentMonth) {
         this.transitInCurrentMonth = transitInCurrentMonth;
     }
-
 }

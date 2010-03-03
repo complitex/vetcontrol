@@ -28,16 +28,16 @@
 
             FROM cargo c
             LEFT JOIN document_cargo d ON c.document_cargo_id = d.id
-            WHERE d.creator_id IN (SELECT u.id FROM `user` u WHERE u.department_id = :department) AND d.created >= :startDate AND d.created <= :endDate
+            WHERE d.department_id = :department AND d.created >= :startDate AND d.created <= :endDate
             ORDER BY {0} {1}
         ]]>
     </entry>
-     <entry key="size">
+    <entry key="size">
         <![CDATA[
             SELECT COUNT(*)
             FROM cargo c
             LEFT JOIN document_cargo d ON c.document_cargo_id = d.id
-            WHERE d.creator_id IN (SELECT u.id FROM `user` u WHERE u.department_id = :department) AND d.created >= :startDate AND d.created <= :endDate
+            WHERE d.department_id = :department AND d.created >= :startDate AND d.created <= :endDate
         ]]>
     </entry>
 </properties>

@@ -4,7 +4,6 @@
  */
 package org.vetcontrol.report.web.pages;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -83,10 +82,12 @@ public final class MovementTypesReportPage extends TemplatePage {
         final Date endDate = DateUtil.getLastDateOfMonth(month);
 
         add(new Label("title", new ResourceModel("title")));
-        add(new Label("report.name.params", new StringResourceModel("report.name.params", null,
-                new Object[]{DateUtil.getDisplayMonth(month, reportLocale).toLowerCase(), String.valueOf(DateUtil.getCurrrentYear()),
+        add(new Label("report.name", new StringResourceModel("report.name", null,
+                new Object[]{DateUtil.getDisplayMonth(month, reportLocale).toLowerCase(), String.valueOf(DateUtil.getCurrentYear()),
                     departmentDAO.getDepartmentName(departmentId, reportLocale)})));
         add(new Label("report.header.all", new StringResourceModel("report.header.all", null, new Object[]{endDate})));
+        add(new Label("report.header.inCurrentMonth", new StringResourceModel("report.header.inCurrentMonth", null,
+                new Object[]{DateUtil.getDisplayMonth(month, reportLocale).toLowerCase()})));
 
         SortableDataProvider<MovementTypesReport> dataProvider = new SortableDataProvider<MovementTypesReport>() {
 
@@ -183,7 +184,7 @@ public final class MovementTypesReportPage extends TemplatePage {
 
     }
 
-    private String getFormattedReportData(BigInteger data, String unitTypeName) {
+    private String getFormattedReportData(Number data, String unitTypeName) {
         return CellFormatter.format(data, unitTypeName);
     }
 

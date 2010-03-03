@@ -71,7 +71,7 @@ public class MovementTypesReportServlet extends HttpServlet {
             Locale reportLocale = localeService.getReportLocale();
 
             String monthAsString = DateUtil.getDisplayMonth(month, reportLocale).toLowerCase();
-            String year = String.valueOf(DateUtil.getCurrrentYear());
+            String year = String.valueOf(DateUtil.getCurrentYear());
             String departmentName = departmentDAO.getDepartmentName(departmentId, reportLocale);
 
             ServletOutputStream servletOutputStream = response.getOutputStream();

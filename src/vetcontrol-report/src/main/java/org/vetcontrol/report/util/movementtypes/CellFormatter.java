@@ -4,15 +4,13 @@
  */
 package org.vetcontrol.report.util.movementtypes;
 
-import java.math.BigInteger;
-
 /**
  *
  * @author Artem
  */
 public class CellFormatter {
 
-    public static String format(BigInteger data, String unitTypeName) {
+    public static String format(Number data, String unitTypeName) {
         long value = data.longValue();
         if (value == 0) {
             return "";
