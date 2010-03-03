@@ -489,7 +489,7 @@ CREATE TABLE `client` (
   `mac` varchar(64) NOT NULL,
   `secure_key` varchar(64) NOT NULL,
   `created` timestamp NOT NULL,
-  `updated` timestamp,
+  `updated` timestamp NOT NULL,
   `department_id` bigint(20) NOT NULL,
   `sync_status` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id`),
