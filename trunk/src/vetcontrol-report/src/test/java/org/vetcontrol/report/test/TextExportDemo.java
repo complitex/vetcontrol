@@ -28,7 +28,7 @@ public class TextExportDemo {
             parameterMap.put(JRParameter.REPORT_LOCALE, Locale.getDefault());
             parameterMap.put("date", new Date());
             parameterMap.put("endDate", new Date());
-            parameterMap.put("month", "Январь");
+            parameterMap.put("month", "январь");
             parameterMap.put("year", "2010");
             parameterMap.put("department", "Кодимский ПДВСКН");
 
@@ -37,7 +37,7 @@ public class TextExportDemo {
 
             System.out.println("Filling report..." + System.getProperty("user.dir"));
             JasperPrint jasperPrint = JasperFillManager.fillReport(
-                    "target/classes/org/vetcontrol/report/jasper/regionalcontrol/text/regional_control_report.jasper",
+                    "target/classes/org/vetcontrol/report/jasper/movementtypes/text/movement_types_report.jasper",
                     parameterMap, new JREmptyDataSource());
 
             JRTextExporter textExporter = new JRTextExporter();

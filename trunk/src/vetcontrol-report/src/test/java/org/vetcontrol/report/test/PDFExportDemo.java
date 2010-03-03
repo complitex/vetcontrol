@@ -22,7 +22,7 @@ public class PDFExportDemo {
             HashMap parameterMap = new HashMap();
             parameterMap.put(JRParameter.REPORT_LOCALE, Locale.getDefault());
             parameterMap.put("endDate", new Date());
-            parameterMap.put("month", "Январь");
+            parameterMap.put("month", "январь");
             parameterMap.put("year", "2010");
             parameterMap.put("department", "Кодимский ПДВСКН");
             parameterMap.put("date", new Date());
@@ -31,7 +31,7 @@ public class PDFExportDemo {
 
             System.out.println("Filling report..." + System.getProperty("user.dir"));
             JasperRunManager.runReportToPdfFile(
-                    "target/classes/org/vetcontrol/report/jasper/regionalcontrol/pdf/regional_control_report.jasper",
+                    "target/classes/org/vetcontrol/report/jasper/movementtypes/pdf/movement_types_report.jasper",
                     "report.pdf",
                     parameterMap, new JREmptyDataSource());
             System.out.println("Done!");
