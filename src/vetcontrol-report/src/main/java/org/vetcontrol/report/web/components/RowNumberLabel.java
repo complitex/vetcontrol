@@ -21,9 +21,6 @@ public class RowNumberLabel extends Label {
             @Override
             public String getObject() {
                 DataView<?> dataView = (DataView) item.getParent();
-                if (dataView == null) {
-                    throw new RuntimeException("NULL");
-                }
                 String rowNumberLabel = String.valueOf(getViewOffset(dataView) + item.getIndex() + 1);
                 return rowNumberLabel;
             }
