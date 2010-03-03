@@ -65,7 +65,7 @@ public class DateUtil {
         return dateFormat.format(date);
     }
 
-    public static int getCurrrentYear(){
+    public static int getCurrentYear(){
         return Calendar.getInstance().get(Calendar.YEAR);
     }
 
