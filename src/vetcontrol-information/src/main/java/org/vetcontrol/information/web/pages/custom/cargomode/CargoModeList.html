@@ -7,13 +7,20 @@
 <body>
 <wicket:extend>
     <form wicket:id="filterForm">
-        <h1 style="float: left">
-            <span wicket:id="bookName"></span>
-        </h1>
-        <div style="float: right">
-            <span wicket:id="showBooksModePanel"></span>
-        </div>
-        <br/>
+        <table cellpadding="0" cellspacing="0" border="0" class="bookContentHeader">
+            <tr>
+                <td align="left">
+                    <h1>
+                        <span wicket:id="bookName"></span>
+                    </h1>
+                </td>
+                <td align="right">
+                    <div>
+                        <span wicket:id="showBooksModePanel"></span>
+                    </div>
+                </td>
+            </tr>
+        </table>
         <table class="tbColor bookContent" cellspacing="0" cellpadding="0" border="0">
             <thead>
                 <tr>

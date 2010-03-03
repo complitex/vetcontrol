@@ -177,6 +177,10 @@ input.btnMiddle {
 }
 
 /* стили для справочников */
+table.bookContentHeader{
+    width: 100%;
+    padding-bottom: 6px;
+}
 .bookContent td {text-align: center;}
 .bookContent th {text-align: center;}
 .filter-td input[type="text"]{
