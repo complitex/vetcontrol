@@ -23,7 +23,7 @@
         FROM cargo c
         LEFT JOIN cargo_mode_cargo_type cmct ON cmct.cargo_type_id = c.cargo_type_id
         LEFT JOIN unit_type ut ON c.unit_type_id = ut.id
-        LEFT JOIN document_cargo dc ON dc.id = c.document_cargo_id
+        JOIN document_cargo dc ON (c.document_cargo_id = dc.id AND c.client_id = dc.client_id AND c.department_id = dc.department_id)
         LEFT JOIN movement_type mt ON mt.id = dc.movement_type_id
         WHERE dc.created>= :startDate AND dc.created <= :endDate AND dc.department_id = :department
         GROUP BY cmct.cargo_mode_id, ut.id
@@ -36,7 +36,8 @@
                                 FROM cargo c
                                 LEFT JOIN cargo_mode_cargo_type cmct ON cmct.cargo_type_id = c.cargo_type_id
                                 LEFT JOIN unit_type ut ON c.unit_type_id = ut.id
-                                LEFT JOIN document_cargo dc ON dc.id = c.document_cargo_id
+                                JOIN document_cargo dc ON
+                                    (c.document_cargo_id = dc.id AND c.client_id = dc.client_id AND c.department_id = dc.department_id)
                                 LEFT JOIN movement_type mt ON mt.id = dc.movement_type_id
                                 WHERE dc.created>= :startDate AND dc.created <= :endDate AND dc.department_id = :department
                                 GROUP BY cmct.cargo_mode_id, ut.id) report
