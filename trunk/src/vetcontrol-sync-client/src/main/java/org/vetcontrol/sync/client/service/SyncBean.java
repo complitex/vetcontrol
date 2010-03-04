@@ -31,6 +31,8 @@ public class SyncBean{
 
     @EJB(beanName = "UserSyncBean")
     UserSyncBean userSyncBean;
+    @EJB(beanName = "DocumentCargoSyncBean")
+    private DocumentCargoSyncBean documentCargoSyncBean;
 
     @EJB(beanName = "LogBean")
     LogBean logBean;
@@ -107,9 +109,9 @@ public class SyncBean{
         rb = ResourceBundle.getBundle("org.vetcontrol.sync.client.service.SyncBean", locale);
         syncMessages.clear();
 
-        bookSyncBean.setInitial(true);
         bookSyncBean.setSyncListener(syncListener);
         userSyncBean.setSyncListener(syncListener);
+        documentCargoSyncBean.setSyncListener(syncListener);
 
         processing = true;
 
@@ -119,9 +121,14 @@ public class SyncBean{
             message.setMessage(rb.getString("sync.client.sync.before_start"));
             syncMessages.add(message);
 
-            //Синхронизация справочников и пользователей 
+            //Синхронизация справочников
             bookSyncBean.process();
+
+            //Синхронизация пользователей
             userSyncBean.process();
+
+            //Синхронизация документов
+            documentCargoSyncBean.process();
 
             message = new SyncMessage();
             message.setName(rb.getString("sync.client.sync.client"));
@@ -143,7 +150,10 @@ public class SyncBean{
             SyncMessage message = new SyncMessage();
 
             try {
-                throw ((EJBException)exception.getCausedByException()).getCausedByException();
+                if (exception.getCausedByException() instanceof EJBException){
+                    throw ((EJBException)exception.getCausedByException()).getCausedByException();
+                }
+                throw exception.getCausedByException();
             } catch (NotRegisteredException e) {
                 String m = rb.getString("sync.client.error.not_registered");
 

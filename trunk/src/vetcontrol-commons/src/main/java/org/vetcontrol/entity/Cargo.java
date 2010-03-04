@@ -1,7 +1,7 @@
 package org.vetcontrol.entity;
 
 import javax.persistence.*;
-import java.io.Serializable;
+import javax.xml.bind.annotation.*;
 import java.util.Date;
 
 /**
@@ -13,7 +13,9 @@ import java.util.Date;
 @Entity
 @Table(name = "cargo")
 @IdClass(ClientEntityId.class)
-public class Cargo implements Serializable{
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+public class Cargo extends Synchronized implements IUpdated{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
@@ -22,11 +24,13 @@ public class Cargo implements Serializable{
     @Id
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
+    @XmlIDREF
     private Client client;
 
     @Id
     @ManyToOne
     @JoinColumn(name = "department_id", nullable = false)
+    @XmlIDREF
     private Department department;
 
     @ManyToOne
@@ -34,6 +38,7 @@ public class Cargo implements Serializable{
             @JoinColumn(name = "document_cargo_id", referencedColumnName = "id", insertable = false, updatable = false),
             @JoinColumn(name = "department_id", referencedColumnName = "department_id", insertable = false, updatable = false),
             @JoinColumn(name = "client_id", referencedColumnName = "client_id", insertable = false, updatable = false)})
+    @XmlTransient
     private DocumentCargo documentCargo;
 
     @Column(name = "document_cargo_id")
@@ -41,10 +46,12 @@ public class Cargo implements Serializable{
 
     @ManyToOne
     @JoinColumn(name = "cargo_type_id")
+    @XmlIDREF
     private CargoType cargoType;
 
     @ManyToOne
     @JoinColumn(name = "unit_type_id")
+    @XmlIDREF
     private UnitType unitType;
 
     @Column(name = "count")
@@ -57,11 +64,16 @@ public class Cargo implements Serializable{
     @Column(name = "certificate_date")
     private Date certificateDate;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updated;
+
     @PrePersist @PreUpdate
     protected void preUpdate(){
-        documentCargoId = documentCargo.getId();
-        client = documentCargo.getClient();
-        department = documentCargo.getDepartment();
+        if (documentCargo != null){
+            documentCargoId = documentCargo.getId();
+            client = documentCargo.getClient();
+            department = documentCargo.getDepartment();
+        }
     }
 
     public Long getId() {
@@ -145,10 +157,19 @@ public class Cargo implements Serializable{
         this.certificateDate = certificateDate;
     }
 
+    public Date getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Date updated) {
+        this.updated = updated;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Cargo)) return false;
+        if (!super.equals(o)) return false;
 
         Cargo cargo = (Cargo) o;
 
@@ -162,23 +183,29 @@ public class Cargo implements Serializable{
         if (department != null ? !department.equals(cargo.department) : cargo.department != null) return false;
         if (documentCargo != null ? !documentCargo.equals(cargo.documentCargo) : cargo.documentCargo != null)
             return false;
+        if (documentCargoId != null ? !documentCargoId.equals(cargo.documentCargoId) : cargo.documentCargoId != null)
+            return false;
         if (id != null ? !id.equals(cargo.id) : cargo.id != null) return false;
         if (unitType != null ? !unitType.equals(cargo.unitType) : cargo.unitType != null) return false;
+        if (updated != null ? !updated.equals(cargo.updated) : cargo.updated != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
+        int result = super.hashCode();
+        result = 31 * result + (id != null ? id.hashCode() : 0);
         result = 31 * result + (client != null ? client.hashCode() : 0);
         result = 31 * result + (department != null ? department.hashCode() : 0);
         result = 31 * result + (documentCargo != null ? documentCargo.hashCode() : 0);
+        result = 31 * result + (documentCargoId != null ? documentCargoId.hashCode() : 0);
         result = 31 * result + (cargoType != null ? cargoType.hashCode() : 0);
         result = 31 * result + (unitType != null ? unitType.hashCode() : 0);
         result = 31 * result + (count != null ? count.hashCode() : 0);
         result = 31 * result + (certificateDetails != null ? certificateDetails.hashCode() : 0);
         result = 31 * result + (certificateDate != null ? certificateDate.hashCode() : 0);
+        result = 31 * result + (updated != null ? updated.hashCode() : 0);
         return result;
     }
 }

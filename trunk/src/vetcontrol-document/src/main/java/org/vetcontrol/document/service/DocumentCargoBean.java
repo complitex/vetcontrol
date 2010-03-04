@@ -65,11 +65,15 @@ public class DocumentCargoBean {
             }
             
             documentCargo.setUpdated(DateUtil.getCurrentDate());
+            documentCargo.setSyncStatus(Synchronized.SyncStatus.NOT_SYNCHRONIZED);
 
             documentCargo = em.merge(documentCargo);
 
             for (Cargo c : cargos){
                 c.setDocumentCargo(documentCargo);
+                c.setSyncStatus(Synchronized.SyncStatus.NOT_SYNCHRONIZED);
+                c.setUpdated(DateUtil.getCurrentDate());
+
                 em.merge(c);
                 em.flush();
                 em.clear();
@@ -77,9 +81,8 @@ public class DocumentCargoBean {
 
             documentCargo.setCargos(cargos);
         }else{
-            Client client = clientBean.getCurrentClient();
-            documentCargo.setClient(client);               
-
+            documentCargo.setClient(clientBean.getCurrentClient());
+            documentCargo.setSyncStatus(Synchronized.SyncStatus.NOT_SYNCHRONIZED);
             documentCargo.setCreator(userProfileBean.getCurrentUser());
             documentCargo.setCreated(DateUtil.getCurrentDate());
 
@@ -90,6 +93,9 @@ public class DocumentCargoBean {
             
             for (Cargo c : cargos){
                 c.setDocumentCargo(documentCargo);
+                c.setSyncStatus(Synchronized.SyncStatus.NOT_SYNCHRONIZED);
+                c.setUpdated(DateUtil.getCurrentDate());
+                
                 em.persist(c);
                 em.flush();
                 em.clear();                

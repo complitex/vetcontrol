@@ -41,7 +41,12 @@ public class UserSyncBean extends SyncInfo{
         processUserGroups();
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void processTxRequied(){
+        processUser();
+        processUserGroups();
+    }
+
     private void processUser(){
         String secureKey = clientBean.getCurrentSecureKey();
         Date syncUpdated = DateUtil.getCurrentDate();
@@ -82,7 +87,6 @@ public class UserSyncBean extends SyncInfo{
         log.debug("++++++++++++++++++++ Synchronizing Complete: User +++++++++++++++++++\n");
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private void processUserGroups(){
         String secureKey = clientBean.getCurrentSecureKey();
         Date syncUpdated = DateUtil.getCurrentDate();

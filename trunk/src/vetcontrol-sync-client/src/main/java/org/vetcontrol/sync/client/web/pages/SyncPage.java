@@ -65,9 +65,13 @@ public class SyncPage extends TemplatePage{
 
             @Override
             protected void populateItem(ListItem<SyncMessage> item) {
-                item.add(DateLabel.forDatePattern("date", new Model<Date>(item.getModelObject().getDate()), "dd.MM.yy HH:mm:ss"));
-                item.add(new Label("name", item.getModelObject().getName()));
-                item.add(new Label("message", item.getModelObject().getMessage()));
+                try {
+                    item.add(DateLabel.forDatePattern("date", new Model<Date>(item.getModelObject().getDate()), "dd.MM.yy HH:mm:ss"));
+                    item.add(new Label("name", item.getModelObject().getName()));
+                    item.add(new Label("message", item.getModelObject().getMessage()));
+                } catch (Exception e) {
+                    //nothing
+                }
             }
         };
         container.add(listView);
