@@ -9,20 +9,33 @@ import java.util.List;
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 12.01.2010 13:52:01
+ *
+ * Сущность объектно-реляционного отображения карточки на груз
  */
 @Entity
 @Table(name = "document_cargo")
+@IdClass(ClientEntityId.class)
 public class DocumentCargo implements Serializable{
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "client_id")
+    private Client client;
+
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "creator_id")
     private User creator;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date created;       
+    private Date created;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
@@ -38,7 +51,7 @@ public class DocumentCargo implements Serializable{
     @Column(name = "vehicle_details", length = 255)
     private String vehicleDetails;
 
-    @OneToMany(mappedBy = "documentCargo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "documentCargo")
     private List<Cargo> cargos = new ArrayList<Cargo>();
 
     @ManyToOne(optional = false)
@@ -63,16 +76,28 @@ public class DocumentCargo implements Serializable{
     @Column(name = "details", length = 255)
     private String details;
 
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "department_id")
-    private Department department;
-
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     public User getCreator() {
@@ -179,11 +204,61 @@ public class DocumentCargo implements Serializable{
         this.details = details;
     }
 
-    public Department getDepartment() {
-        return department;
+    public String getDisplayId(){
+        return (department != null ? department.getId() : "0") + "." +
+               (client != null ? client.getId() : "0")  + "." + id;        
     }
 
-    public void setDepartment(Department department) {
-        this.department = department;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DocumentCargo)) return false;
+
+        DocumentCargo that = (DocumentCargo) o;
+
+        if (cargoProducer != null ? !cargoProducer.equals(that.cargoProducer) : that.cargoProducer != null)
+            return false;
+        if (cargoReceiver != null ? !cargoReceiver.equals(that.cargoReceiver) : that.cargoReceiver != null)
+            return false;
+        if (cargoSender != null ? !cargoSender.equals(that.cargoSender) : that.cargoSender != null) return false;
+        if (cargos != null ? !cargos.equals(that.cargos) : that.cargos != null) return false;
+        if (client != null ? !client.equals(that.client) : that.client != null) return false;
+        if (created != null ? !created.equals(that.created) : that.created != null) return false;
+        if (creator != null ? !creator.equals(that.creator) : that.creator != null) return false;
+        if (department != null ? !department.equals(that.department) : that.department != null) return false;
+        if (details != null ? !details.equals(that.details) : that.details != null) return false;
+        if (detentionDetails != null ? !detentionDetails.equals(that.detentionDetails) : that.detentionDetails != null)
+            return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (movementType != null ? !movementType.equals(that.movementType) : that.movementType != null) return false;
+        if (passingBorderPoint != null ? !passingBorderPoint.equals(that.passingBorderPoint) : that.passingBorderPoint != null)
+            return false;
+        if (updated != null ? !updated.equals(that.updated) : that.updated != null) return false;
+        if (vehicleDetails != null ? !vehicleDetails.equals(that.vehicleDetails) : that.vehicleDetails != null)
+            return false;
+        if (vehicleType != null ? !vehicleType.equals(that.vehicleType) : that.vehicleType != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (client != null ? client.hashCode() : 0);
+        result = 31 * result + (department != null ? department.hashCode() : 0);
+        result = 31 * result + (creator != null ? creator.hashCode() : 0);
+        result = 31 * result + (created != null ? created.hashCode() : 0);
+        result = 31 * result + (updated != null ? updated.hashCode() : 0);
+        result = 31 * result + (movementType != null ? movementType.hashCode() : 0);
+        result = 31 * result + (vehicleType != null ? vehicleType.hashCode() : 0);
+        result = 31 * result + (vehicleDetails != null ? vehicleDetails.hashCode() : 0);
+        result = 31 * result + (cargos != null ? cargos.hashCode() : 0);
+        result = 31 * result + (cargoSender != null ? cargoSender.hashCode() : 0);
+        result = 31 * result + (cargoReceiver != null ? cargoReceiver.hashCode() : 0);
+        result = 31 * result + (cargoProducer != null ? cargoProducer.hashCode() : 0);
+        result = 31 * result + (passingBorderPoint != null ? passingBorderPoint.hashCode() : 0);
+        result = 31 * result + (detentionDetails != null ? detentionDetails.hashCode() : 0);
+        result = 31 * result + (details != null ? details.hashCode() : 0);
+        return result;
     }
 }

@@ -13,10 +13,7 @@ import org.apache.wicket.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.document.service.DocumentCargoBean;
-import org.vetcontrol.entity.Cargo;
-import org.vetcontrol.entity.Department;
-import org.vetcontrol.entity.DocumentCargo;
-import org.vetcontrol.entity.User;
+import org.vetcontrol.entity.*;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.web.template.TemplatePage;
@@ -47,7 +44,10 @@ public class DocumentCargoView extends TemplatePage{
     public DocumentCargoView(final PageParameters parameters) {
         super();
 
-        final Long id = parameters.getAsLong("document_cargo_id");
+        final ClientEntityId id = documentCargoBean.getDocumentCargoId(
+                parameters.getAsLong("document_cargo_id"),
+                parameters.getAsLong("client_id"),
+                parameters.getAsLong("department_id"));
 
         LoadableDetachableModel<DocumentCargo> model = new LoadableDetachableModel<DocumentCargo>(){
 
@@ -120,7 +120,7 @@ public class DocumentCargoView extends TemplatePage{
         }
         add(new Label("document.cargo.creator_name", fullCreator));
 
-        add(new Label("document.cargo.department", dc.getCreator().getDepartment().getDisplayName(getLocale(), system)));
+        add(new Label("document.cargo.department", dc.getDepartment().getDisplayName(getLocale(), system)));
         add(new DateLabel("document.cargo.created", new Model<Date>(dc.getCreated()), new StyleDateConverter(true)));
 
         ListView<Cargo> dataView = new ListView<Cargo>("document.cargo.cargo_list", dc.getCargos()){

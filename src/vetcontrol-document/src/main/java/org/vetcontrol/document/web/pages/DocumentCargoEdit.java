@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.vetcontrol.document.service.DocumentCargoBean;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.CargoTypeBean;
+import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
@@ -31,9 +32,7 @@ import javax.ejb.EJB;
 import java.util.Date;
 import java.util.List;
 
-import static org.vetcontrol.entity.Log.EVENT.CREATE;
-import static org.vetcontrol.entity.Log.EVENT.EDIT;
-import static org.vetcontrol.entity.Log.EVENT.VIEW;
+import static org.vetcontrol.entity.Log.EVENT.*;
 import static org.vetcontrol.entity.Log.MODULE.DOCUMENT;
 import static org.vetcontrol.web.security.SecurityRoles.*;
 
@@ -53,6 +52,8 @@ public class DocumentCargoEdit extends FormTemplatePage {
     private CargoTypeBean cargoTypeBean;
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
+    @EJB(name = "ClientBean")
+    private ClientBean clientBean;
 
     @EJB(name = "LogBean")
     private LogBean logBean;
@@ -64,17 +65,21 @@ public class DocumentCargoEdit extends FormTemplatePage {
 
     public DocumentCargoEdit(final PageParameters parameters) {
         super();
-        init(parameters.getAsLong("document_cargo_id"));
+
+        init(documentCargoBean.getDocumentCargoId(
+                parameters.getAsLong("document_cargo_id"),
+                parameters.getAsLong("client_id"),
+                parameters.getAsLong("department_id")));
     }
 
-    private void init(final Long id) {
+    private void init(final ClientEntityId id) {
         //Модель данных
         DocumentCargo dc;
         try {
             dc = (id != null) ? documentCargoBean.loadDocumentCargo(id) : new DocumentCargo();
         } catch (Exception e) {
             log.error("Карточка на груз по id = " + id + " не найдена", e);
-            getSession().error("Карточка на груз №" + id + " не найдена");
+            getSession().error("Карточка на груз № " + id + " не найдена");
             logBean.error(DOCUMENT, EDIT, DocumentCargoEdit.class, DocumentCargo.class,
                     "Карточка не найдена. ID: " + id);
 
@@ -128,7 +133,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
             @Override
             public String getObject() {
                 return (id != null)
-                        ? getString("document.cargo.edit.title.edit") + id
+                        ? getString("document.cargo.edit.title.edit") + " " + id
                         : getString("document.cargo.edit.title.create");
             }
         };
@@ -157,17 +162,20 @@ public class DocumentCargoEdit extends FormTemplatePage {
                     documentCargoBean.save(getModelObject());
                     setResponsePage(DocumentCargoList.class);
                     if (id == null) {
-                        getSession().info(getString("document.cargo.edit.message.added", getModel()));
+                        getSession().info(new StringResourceModel("document.cargo.edit.message.added", this, null,
+                                new Object[]{getModelObject().getDisplayId()}).getString());
                     } else {
-                        getSession().info(getString("document.cargo.edit.message.saved", getModel()));
+                        getSession().info(new StringResourceModel("document.cargo.edit.message.saved", this, null,
+                                new Object[]{id}).getString());
                     }
 
                     logBean.info(DOCUMENT, id == null ? CREATE : EDIT, DocumentCargoEdit.class, DocumentCargo.class,
-                                "ID: " + getModelObject().getId());
+                            "ID: " + getModelObject().getDisplayId());
                 } catch (Exception e) {
-                    getSession().info(getString("document.cargo.edit.message.save.error", getModel()));
+                    getSession().error(new StringResourceModel("document.cargo.edit.message.save.error", this, null,
+                            new Object[]{id}).getString());
 
-                    log.error("Ошибка сохранения карточки на груз №" + getModelObject().getId(), e);
+                    log.error("Ошибка сохранения карточки на груз № " + getModelObject().getDisplayId(), e);
 
                     logBean.error(DOCUMENT, id == null ? CREATE : EDIT, DocumentCargoEdit.class,
                             DocumentCargo.class, "Ошибка сохранения в базу данных");
@@ -265,7 +273,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
                             li.add(childs);
                         }
 
-                        list.getModelObject().remove(remove);                         
+                        list.getModelObject().remove(remove);
                         item.getParent().get(last_index).remove();
 
                         target.addComponent(cargoContainer);
@@ -319,7 +327,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
                 fullCreator += ", " + dc.getCreator().getDepartment().getDisplayName(getLocale(), localeDAO.systemLocale());
             }
         }
-                
+
         Label creator = new Label("creator", fullCreator);
         creator.setVisible(visible);
         form.add(creator);
@@ -329,11 +337,15 @@ public class DocumentCargoEdit extends FormTemplatePage {
 
         try {
             list = documentCargoBean.getChildDepartments(currentUser.getDepartment());
+            if (!list.contains(dc.getDepartment())){
+                list.add(dc.getDepartment());
+            }
         } catch (Exception e) {
             log.error("Ошибка загрузки списка дочерних подразделений:", e);
             logBean.error(DOCUMENT, VIEW, DocumentCargoEdit.class, Department.class, "Ошибка загрузки данных из базы данных");
         }
 
+        //Если роль редактировать подразделение то отобразить выпадающий список иначе статический текс
         DropDownChoice<Department> ddcDepartment = new DropDownChoice<Department>("document.cargo.department",
                 new PropertyModel<Department>(documentCargoModel, "department"), list,
                 new IChoiceRenderer<Department>() {
@@ -349,9 +361,14 @@ public class DocumentCargoEdit extends FormTemplatePage {
                     }
                 });
 
-        ddcDepartment.setRequired(false);
-        ddcDepartment.setEnabled(hasAnyRole(DOCUMENT_DEP_CHILD_EDIT));
+        ddcDepartment.setRequired(true);
+        ddcDepartment.setVisible(hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) && id == null);
         form.add(ddcDepartment);
+
+        Label departmentLabel = new Label("document.cargo.department.label", dc.getDepartment()
+                .getDisplayName(getLocale(), localeDAO.systemLocale()));
+        departmentLabel.setVisible(!hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) || id != null);
+        form.add(departmentLabel);
 
         //Дата создания
         Label l_created = new Label("l_created", new ResourceModel("document.cargo.created"));

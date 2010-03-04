@@ -66,20 +66,27 @@ public class CargoType extends Localizable {
     }
 
     @Override
-    public String toString() {
-        return getCode();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CargoType)) return false;
+        if (!super.equals(o)) return false;
+
+        CargoType cargoType = (CargoType) o;
+
+        if (uktZedCode != null ? !uktZedCode.equals(cargoType.uktZedCode) : cargoType.uktZedCode != null) return false;
+
+        return true;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof CargoType) {
-            CargoType that = (CargoType) obj;
-            if (getId() != null) {
-                return getId().equals(that.getId());
-            } else {
-                return that.getId() == null;
-            }
-        }
-        return false;
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (uktZedCode != null ? uktZedCode.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return getCode();
     }
 }

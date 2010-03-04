@@ -165,6 +165,35 @@ public class RegisteredProducts extends Localizable{
                 .setParameter("disabled", disabled);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RegisteredProducts)) return false;
+        if (!super.equals(o)) return false;
+
+        RegisteredProducts that = (RegisteredProducts) o;
+
+        if (cargoProducer != null ? !cargoProducer.equals(that.cargoProducer) : that.cargoProducer != null)
+            return false;
+        if (classificator != null ? !classificator.equals(that.classificator) : that.classificator != null)
+            return false;
+        if (country != null ? !country.equals(that.country) : that.country != null) return false;
+        if (date != null ? !date.equals(that.date) : that.date != null) return false;
+        if (regnumber != null ? !regnumber.equals(that.regnumber) : that.regnumber != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (classificator != null ? classificator.hashCode() : 0);
+        result = 31 * result + (cargoProducer != null ? cargoProducer.hashCode() : 0);
+        result = 31 * result + (regnumber != null ? regnumber.hashCode() : 0);
+        result = 31 * result + (date != null ? date.hashCode() : 0);
+        result = 31 * result + (country != null ? country.hashCode() : 0);
+        return result;
+    }
 }
 
 

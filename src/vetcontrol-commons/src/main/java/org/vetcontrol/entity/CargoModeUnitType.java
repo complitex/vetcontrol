@@ -154,6 +154,30 @@ public class CargoModeUnitType implements IQuery, IUpdated, IEmbeddedId<CargoMod
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CargoModeUnitType)) return false;
+
+        CargoModeUnitType that = (CargoModeUnitType) o;
+
+        if (cargoMode != null ? !cargoMode.equals(that.cargoMode) : that.cargoMode != null) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (unitType != null ? !unitType.equals(that.unitType) : that.unitType != null) return false;
+        if (updated != null ? !updated.equals(that.updated) : that.updated != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (cargoMode != null ? cargoMode.hashCode() : 0);
+        result = 31 * result + (unitType != null ? unitType.hashCode() : 0);
+        result = 31 * result + (updated != null ? updated.hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "cmId = "+id.cargoModeId + " utId = "+id.unitTypeId;
     }

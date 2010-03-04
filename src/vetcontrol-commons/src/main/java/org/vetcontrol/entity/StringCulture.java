@@ -84,6 +84,28 @@ public class StringCulture implements IUpdated, IQuery, IEmbeddedId<StringCultur
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof StringCulture)) return false;
+
+        StringCulture that = (StringCulture) o;
+
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (updated != null ? !updated.equals(that.updated) : that.updated != null) return false;
+        if (value != null ? !value.equals(that.value) : that.value != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (value != null ? value.hashCode() : 0);
+        result = 31 * result + (updated != null ? updated.hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "[hash: " + Integer.toHexString(hashCode()) +
                 ", id: " + id.getId() +
