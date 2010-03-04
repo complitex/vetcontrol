@@ -472,6 +472,7 @@ CREATE TABLE  `cargo` (
 DROP TABLE IF EXISTS `log`;
 CREATE TABLE  `log` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `client_id` bigint(20) NULL,
   `date` datetime DEFAULT NULL,
   `user_id` bigint(20) DEFAULT NULL,
   `controller_class` varchar(255) DEFAULT NULL,
@@ -489,7 +490,9 @@ CREATE TABLE  `log` (
   KEY `Index_module` (`module`),
   KEY `Index_status` (`status`),
   KEY `Index_description` (`description`),
-  CONSTRAINT `FK_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+  CONSTRAINT `FK_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  KEY `FK_log_client_id` (`client_id`),
+  CONSTRAINT `FK_log_client_id` FOREIGN KEY (`client_id`) REFERENCES `client` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `client`;
