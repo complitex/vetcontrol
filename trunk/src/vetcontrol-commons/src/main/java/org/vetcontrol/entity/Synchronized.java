@@ -31,4 +31,21 @@ public class Synchronized {
     public void setSyncStatus(SyncStatus syncStatus) {
         this.syncStatus = syncStatus;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Synchronized)) return false;
+
+        Synchronized that = (Synchronized) o;
+
+        if (syncStatus != that.syncStatus) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return syncStatus != null ? syncStatus.hashCode() : 0;
+    }
 }

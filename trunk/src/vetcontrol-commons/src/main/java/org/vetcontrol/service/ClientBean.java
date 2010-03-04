@@ -5,8 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.Client;
 import org.vetcontrol.sync.NotRegisteredException;
 
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
+import javax.ejb.*;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;

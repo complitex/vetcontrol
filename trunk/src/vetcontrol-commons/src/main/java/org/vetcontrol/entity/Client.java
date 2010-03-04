@@ -41,7 +41,7 @@ public class Client extends Synchronized implements ILongId{
     private Date created;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "updated")
+    @Column(name = "updated", nullable = false)
     private Date updated;
 
     public Long getId() {
@@ -111,6 +111,38 @@ public class Client extends Synchronized implements ILongId{
                .setParameter("created", created)
                .setParameter("updated", updated)
                .setParameter("syncStatus", syncStatus.name());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Client)) return false;
+        if (!super.equals(o)) return false;
+
+        Client client = (Client) o;
+
+        if (created != null ? !created.equals(client.created) : client.created != null) return false;
+        if (department != null ? !department.equals(client.department) : client.department != null) return false;
+        if (id != null ? !id.equals(client.id) : client.id != null) return false;
+        if (ip != null ? !ip.equals(client.ip) : client.ip != null) return false;
+        if (mac != null ? !mac.equals(client.mac) : client.mac != null) return false;
+        if (secureKey != null ? !secureKey.equals(client.secureKey) : client.secureKey != null) return false;
+        if (updated != null ? !updated.equals(client.updated) : client.updated != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (id != null ? id.hashCode() : 0);
+        result = 31 * result + (department != null ? department.hashCode() : 0);
+        result = 31 * result + (ip != null ? ip.hashCode() : 0);
+        result = 31 * result + (mac != null ? mac.hashCode() : 0);
+        result = 31 * result + (secureKey != null ? secureKey.hashCode() : 0);
+        result = 31 * result + (created != null ? created.hashCode() : 0);
+        result = 31 * result + (updated != null ? updated.hashCode() : 0);
+        return result;
     }
 
     @Override

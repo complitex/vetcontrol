@@ -6,7 +6,6 @@ import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInst
 import org.apache.wicket.datetime.StyleDateConverter;
 import org.apache.wicket.datetime.markup.html.basic.DateLabel;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
-import org.apache.wicket.extensions.markup.html.repeater.data.sort.OrderByBorder;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
@@ -16,6 +15,7 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.odlabs.wiquery.ui.datepicker.DatePicker;
 import org.vetcontrol.document.service.DocumentCargoBean;
 import org.vetcontrol.document.service.DocumentCargoFilter;
@@ -24,6 +24,7 @@ import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.web.component.BookmarkablePageLinkPanel;
+import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
 import org.vetcontrol.web.component.paging.PagingNavigator;
 import org.vetcontrol.web.component.toolbar.AddDocumentButton;
 import org.vetcontrol.web.component.toolbar.ToolbarButton;
@@ -32,8 +33,6 @@ import org.vetcontrol.web.template.TemplatePage;
 import javax.ejb.EJB;
 import java.util.*;
 import java.util.Locale;
-import org.apache.wicket.model.ResourceModel;
-import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
 
 import static org.vetcontrol.document.service.DocumentCargoBean.OrderBy;
 import static org.vetcontrol.web.security.SecurityRoles.*;
@@ -156,7 +155,7 @@ public class DocumentCargoList extends TemplatePage{
         };
         String sortPropertyFromPreferences = preferences.getPreference(UIPreferences.PreferenceType.SORT_PROPERTY, SORT_PROPERTY_KEY, String.class);
         Boolean sortOrderFromPreferences = preferences.getPreference(UIPreferences.PreferenceType.SORT_ORDER, SORT_ORDER_KEY, Boolean.class);
-        String sortProp = sortPropertyFromPreferences != null ? sortPropertyFromPreferences : OrderBy.ID.name();
+        String sortProp = sortPropertyFromPreferences != null ? sortPropertyFromPreferences : OrderBy.CREATED.name();
         boolean asc = sortOrderFromPreferences != null ? sortOrderFromPreferences : true;
         dataProvider.setSort(sortProp, asc);
 
@@ -166,8 +165,12 @@ public class DocumentCargoList extends TemplatePage{
             @Override
             protected void populateItem(Item<DocumentCargo> item) {
                 DocumentCargo dc = item.getModelObject();
-                item.add(new BookmarkablePageLinkPanel<DocumentCargo>("id", String.valueOf(dc.getId()),
-                        DocumentCargoView.class, new PageParameters("document_cargo_id=" + dc.getId())));
+
+                PageParameters pageParameters = new PageParameters("document_cargo_id=" + dc.getId() + "," +
+                        "client_id=" + dc.getClient().getId() + "," + "department_id=" + dc.getDepartment().getId());
+
+                item.add(new BookmarkablePageLinkPanel<DocumentCargo>("id", dc.getDisplayId(),
+                        DocumentCargoView.class, pageParameters));
                 item.add(new Label("movementType", dc.getMovementType().getDisplayName(getLocale(), systemLocale)));
                 item.add(new Label("vehicleType", dc.getVehicleType().getDisplayName(getLocale(), systemLocale)));
                 item.add(new Label("vehicleDetails", dc.getVehicleDetails()));
@@ -177,10 +180,10 @@ public class DocumentCargoList extends TemplatePage{
                 item.add(new DateLabel("created", new Model<Date>(dc.getCreated()), new StyleDateConverter(true)));
                 if (canEdit(dc)){
                     item.add(new BookmarkablePageLinkPanel<DocumentCargo>("action", getString("document.cargo.list.edit"),
-                            DocumentCargoEdit.class, new PageParameters("document_cargo_id=" + dc.getId())));
+                            DocumentCargoEdit.class, pageParameters));
                 }else{
                     item.add(new BookmarkablePageLinkPanel<DocumentCargo>("action", getString("document.cargo.list.view"),
-                        DocumentCargoView.class, new PageParameters("document_cargo_id=" + dc.getId())));
+                            DocumentCargoView.class, pageParameters));
                 }
             }
         };

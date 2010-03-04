@@ -1,8 +1,7 @@
 package org.vetcontrol.document.service;
 
-import org.vetcontrol.entity.Cargo;
-import org.vetcontrol.entity.Department;
-import org.vetcontrol.entity.DocumentCargo;
+import org.vetcontrol.entity.*;
+import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.web.security.SecurityRoles;
@@ -10,10 +9,8 @@ import org.vetcontrol.web.security.SecurityRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
+import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -28,21 +25,26 @@ public class DocumentCargoBean {
     }
 
     @PersistenceContext
-    private EntityManager entityManager;
+    private EntityManager em;
 
     @EJB(beanName = "UserProfileBean")
     private UserProfileBean userProfileBean;
+    @EJB(beanName = "ClientBean")
+    private ClientBean clientBean;
 
-    public DocumentCargo loadDocumentCargo(Long id){
-        DocumentCargo documentCargo = entityManager.find(DocumentCargo.class, id);
+    public DocumentCargo loadDocumentCargo(ClientEntityId id){
+        DocumentCargo documentCargo = em.find(DocumentCargo.class, id);
         //load collection
         documentCargo.getCargos().size();
         return documentCargo;
     }
 
-    public void save(DocumentCargo documentCargo){                       
+    public void save(DocumentCargo documentCargo){
+        List<Cargo> cargos = documentCargo.getCargos();
+        documentCargo.setCargos(null);
+
         if (documentCargo.getId() != null){
-            List<Cargo> dbCargos = entityManager
+            List<Cargo> dbCargos = em
                     .createQuery("from Cargo dc where dc.documentCargo = :documentCargo", Cargo.class)
                     .setParameter("documentCargo", documentCargo)
                     .getResultList();
@@ -50,7 +52,7 @@ public class DocumentCargoBean {
             for (Cargo db : dbCargos){
                 boolean remove = true;
 
-                for (Cargo ui : documentCargo.getCargos()){
+                for (Cargo ui : cargos){
                     if (db.getId().equals(ui.getId())){
                         remove = false;
                         break;
@@ -58,21 +60,49 @@ public class DocumentCargoBean {
                 }
 
                 if (remove){
-                    entityManager.remove(db);
+                    em.remove(db);
                 }
             }
+            
             documentCargo.setUpdated(DateUtil.getCurrentDate());
-            entityManager.merge(documentCargo);
+
+            documentCargo = em.merge(documentCargo);
+
+            for (Cargo c : cargos){
+                c.setDocumentCargo(documentCargo);
+                em.merge(c);
+                em.flush();
+                em.clear();
+            }
+
+            documentCargo.setCargos(cargos);
         }else{
+            Client client = clientBean.getCurrentClient();
+            documentCargo.setClient(client);               
+
             documentCargo.setCreator(userProfileBean.getCurrentUser());
             documentCargo.setCreated(DateUtil.getCurrentDate());
-            entityManager.persist(documentCargo);
+
+            em.persist(documentCargo);
+            em.flush();
+            documentCargo.setId(getLastInsertId());
+            em.clear();                                        
+            
+            for (Cargo c : cargos){
+                c.setDocumentCargo(documentCargo);
+                em.persist(c);
+                em.flush();
+                em.clear();                
+            }
         }
     }
-      
+
+    private Long getLastInsertId(){
+        return ((BigInteger) em.createNativeQuery("select LAST_INSERT_ID()").getSingleResult()).longValue();
+    }
 
     public Long getDocumentCargosSize(DocumentCargoFilter filter){
-        Query query = entityManager.createQuery("select count(distinct dc) from DocumentCargo dc "
+        Query query = em.createQuery("select count(distinct dc) from DocumentCargo dc "
                 + getJoin(filter, null)
                 + getWhere(filter));
         setParameters(filter, query);
@@ -87,7 +117,7 @@ public class DocumentCargoBean {
         String order = "";
         switch (orderBy){
             case ID:
-                order += " order by dc.id";
+                order += " order by dc.department, dc.client, dc.id ";
                 break;
             case MOVEMENT_TYPE:
                 order += getOrderLocaleFilter("movementType");
@@ -113,7 +143,7 @@ public class DocumentCargoBean {
         }
         order += (asc ? " asc" : " desc");
        
-        TypedQuery<DocumentCargo> query = entityManager.createQuery(select + where + order, DocumentCargo.class);
+        TypedQuery<DocumentCargo> query = em.createQuery(select + where + order, DocumentCargo.class);
         setParameters(filter, query);
 
         return query.setFirstResult(first).setMaxResults(count).getResultList();
@@ -161,12 +191,12 @@ public class DocumentCargoBean {
 
             if (filter.getDepartment() != null){
                 if (filter.isChildDepartments()){
-                    where += " and (dc.creator.department = :department" +
-                            " or dc.creator.department.parent = :department " +
+                    where += " and (dc.department = :department" +
+                            " or dc.department.parent = :department " +
                             " or exists(select 1 from Department d where d.parent = :department" +
-                            " and d.id = dc.creator.department.parent.id))";
+                            " and d.id = dc.department.parent.id))";
                 }else{
-                    where += " and dc.creator.department = :department";
+                    where += " and dc.department = :department";
                 }
             }
 
@@ -243,11 +273,11 @@ public class DocumentCargoBean {
     }
 
     public <T> List<T> getList(Class<T> _class){
-        return entityManager.createQuery("from " + _class.getSimpleName(), _class).getResultList();
+        return em.createQuery("from " + _class.getSimpleName(), _class).getResultList();
     }
 
     public List<Department> getChildDepartments(Department department){
-        List<Department> list = entityManager.createQuery("select d from Department d where d.parent = :department " +
+        List<Department> list = em.createQuery("select d from Department d where d.parent = :department " +
                 "or d.parent.parent = :department", Department.class)
                 .setParameter("department", department)
                 .getResultList();
@@ -255,6 +285,14 @@ public class DocumentCargoBean {
         list.add(0, department);
 
         return list;
+    }
+
+    public ClientEntityId getDocumentCargoId(Long id, Long clientId, Long departmentId){
+        try {
+            return new ClientEntityId(id, em.find(Client.class, clientId), em.find(Department.class, departmentId));
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

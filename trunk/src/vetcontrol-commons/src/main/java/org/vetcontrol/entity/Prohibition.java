@@ -204,4 +204,38 @@ public class Prohibition implements ILongId, IUpdated, IQuery, IDisabled {
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Prohibition)) return false;
+
+        Prohibition that = (Prohibition) o;
+
+        if (disabled != that.disabled) return false;
+        if (country != null ? !country.equals(that.country) : that.country != null) return false;
+        if (date != null ? !date.equals(that.date) : that.date != null) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (number != null ? !number.equals(that.number) : that.number != null) return false;
+        if (reason != null ? !reason.equals(that.reason) : that.reason != null) return false;
+        if (region != null ? !region.equals(that.region) : that.region != null) return false;
+        if (target != null ? !target.equals(that.target) : that.target != null) return false;
+        if (updated != null ? !updated.equals(that.updated) : that.updated != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (date != null ? date.hashCode() : 0);
+        result = 31 * result + (number != null ? number.hashCode() : 0);
+        result = 31 * result + (country != null ? country.hashCode() : 0);
+        result = 31 * result + (reason != null ? reason.hashCode() : 0);
+        result = 31 * result + (region != null ? region.hashCode() : 0);
+        result = 31 * result + (target != null ? target.hashCode() : 0);
+        result = 31 * result + (updated != null ? updated.hashCode() : 0);
+        result = 31 * result + (disabled ? 1 : 0);
+        return result;
+    }
 }
