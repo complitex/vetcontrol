@@ -39,91 +39,106 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="51" splitType="Stretch">
+		<band height="40" splitType="Stretch">
 			<textField>
-				<reportElement style="Title" x="180" y="8" width="185" height="19"/>
+				<reportElement style="Title" x="190" y="8" width="185" height="9"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{title}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Title" x="38" y="27" width="502" height="19"/>
+				<reportElement style="Title" x="38" y="17" width="502" height="9"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{report.name}, $P{month}, $P{year}, $P{department})]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="14" y="26" width="526" height="9"/>
+				<textElement/>
+				<text><![CDATA[____________________________________________________________________________________________________________________________________]]></text>
+			</staticText>
 		</band>
 	</title>
 	<pageHeader>
-		<band height="69" splitType="Stretch">
+		<band height="46" splitType="Stretch">
 			<staticText>
-				<reportElement style="Header" x="38" y="0" width="101" height="19"/>
+				<reportElement style="Header" x="38" y="0" width="101" height="9"/>
 				<textElement/>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Header" x="38" y="19" width="101" height="37"/>
+				<reportElement style="Header" x="38" y="27" width="101" height="10"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{cargoMode}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Header" x="139" y="0" width="206" height="19"/>
+				<reportElement style="Header" x="139" y="0" width="206" height="9"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{on}, DateUtil.format($P{endDate}, $P{REPORT_LOCALE}))]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Header" x="139" y="19" width="51" height="37"/>
+				<reportElement style="Header" x="139" y="27" width="51" height="10"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{export}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Header" x="190" y="19" width="40" height="37"/>
+				<reportElement style="Header" x="190" y="27" width="40" height="10"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{import}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Header" x="230" y="19" width="45" height="37"/>
+				<reportElement style="Header" x="230" y="27" width="45" height="10"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{transit}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Header" x="275" y="19" width="70" height="37"/>
+				<reportElement style="Header" x="275" y="27" width="70" height="10"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{importTransit}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Header" x="387" y="19" width="40" height="37"/>
+				<reportElement style="Header" x="387" y="27" width="40" height="10"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{import}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Header" x="427" y="19" width="45" height="37"/>
+				<reportElement style="Header" x="427" y="27" width="45" height="10"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{transit}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Header" x="472" y="19" width="68" height="37"/>
+				<reportElement style="Header" x="472" y="27" width="68" height="10"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{importTransit}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Header" x="345" y="0" width="195" height="19"/>
+				<reportElement style="Header" x="345" y="0" width="195" height="9"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{inCurrentMonth}, $P{month})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Header" x="345" y="19" width="42" height="37"/>
+				<reportElement style="Header" x="345" y="27" width="42" height="10"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{export}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="14" y="56" width="526" height="13"/>
+				<reportElement x="14" y="37" width="526" height="9"/>
 				<textElement/>
 				<text><![CDATA[____________________________________________________________________________________________________________________________________]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Header" x="14" y="0" width="24" height="56"/>
+				<reportElement style="Header" x="14" y="0" width="24" height="37"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{number}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="51" y="9" width="294" height="9"/>
+				<textElement/>
+				<text><![CDATA[______________________________________________________________________]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="356" y="9" width="172" height="9"/>
+				<textElement/>
+				<text><![CDATA[___________________________________________]]></text>
+			</staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>
