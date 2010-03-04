@@ -2,86 +2,89 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml"  xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
-<head>
-    <wicket:head><title wicket:id="title"></title></wicket:head>
-</head>
+    <head>
+        <wicket:head><title wicket:id="title"></title></wicket:head>
+    </head>
 
-<body>
-<wicket:extend>
-
-    <div>
-        <h1 wicket:id="header"></h1>
-                
-        <script type="text/javascript">
-            $(document).ready(function() {
-                $("form input, form select").live('keypress', function (e) {
-                    if ($(this).parents('form').find('button[type=submit].default, input[type=submit].default').length <= 0)
-                        return true;
-                    if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
-                        $(this).parents('form').find('button[type=submit].default, input[type=submit].default').click();
-                        return false;
-                    } else {
-                        return true;
-                    }
-                });
-            });
-        </script>
-
-        <form id="filter_form" action="#" wicket:id="filter_form">
-            <table  border="0" cellspacing="0" cellpadding="0" class="tbColor table_input">
-                <thead>
-                <tr>
-                    <th class="center" wicket:id="order_date"><wicket:message key="logging.log.date"/></th>
-                    <th class="center" wicket:id="order_login"><wicket:message key="logging.log.login"/></th>
-                    <th class="center" wicket:id="order_controllerClass"><wicket:message key="logging.log.controllerClass"/></th>
-                    <th class="center" wicket:id="order_modelClass"><wicket:message key="logging.log.modelClass"/></th>
-                    <th class="center" wicket:id="order_module"><wicket:message key="logging.log.module"/></th>
-                    <th class="center" wicket:id="order_event"><wicket:message key="logging.log.event"/></th>
-                    <th class="center" wicket:id="order_status"><wicket:message key="logging.log.status"/></th>
-                    <th class="center" wicket:id="order_description"><wicket:message key="logging.log.description"/></th>
-                    <th class="center">
-                        <input class="btnSmall"  wicket:id="filter_reset" type="submit" wicket:message="value:logging.log.filter.clear"/>
-                    </th>
-                </tr>
-                <tr>                    
-                     <th class="center">
-                        <div style="width:102px">
-                            <input style="width:80px" type="text" wicket:id="date"/>
-                        </div>
-                    </th>
-                    <th class="center"><input type="text" wicket:id="login"/></th>
-                    <th class="center"><select wicket:id="controllerClass"></select></th>
-                    <th class="center"><select wicket:id="modelClass"></select></th>
-                    <th class="center"><select wicket:id="module"></select></th>
-                    <th class="center"><select wicket:id="event"></select></th>
-                    <th class="center"><select wicket:id="status"></select></th>
-                    <th class="center"><input type="text" wicket:id="description"/></th>
-
-                    <th class="center">
-                        <input class="btnSmall default" type="submit" wicket:message="value:logging.log.filter.go" tabindex="0" />
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr wicket:id="logs">                    
-                    <td><span wicket:id="date"></span></td>
-                    <td><span wicket:id="login"></span></td>
-                    <td><span wicket:id="controllerClass"></span></td>
-                    <td><span wicket:id="modelClass"></span></td>
-                    <td><span wicket:id="module"></span></td>
-                    <td><span wicket:id="event"></span></td>
-                    <td><span wicket:id="status"></span></td>
-                    <td colspan="2"><span wicket:id="description"></span></td>                    
-                </tr>
-                </tbody>
-            </table>
+    <body>
+        <wicket:extend>
 
             <div>
-                <span wicket:id="navigator">[dataview navigator]</span>
-            </div>
-        </form>
-    </div>
+                <h1 wicket:id="header"></h1>
 
-</wicket:extend>
-</body>
+                <script type="text/javascript">
+                    $(document).ready(function() {
+                        $("form input, form select").live('keypress', function (e) {
+                            if ($(this).parents('form').find('button[type=submit].default, input[type=submit].default').length <= 0)
+                                return true;
+                            if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+                                $(this).parents('form').find('button[type=submit].default, input[type=submit].default').click();
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        });
+                    });
+                </script>
+
+                <form id="filter_form" action="#" wicket:id="filter_form">
+                    <table  border="0" cellspacing="0" cellpadding="0" class="tbColor table_input">
+                        <thead>
+                            <tr>
+                                <th class="center" wicket:id="order_date"><wicket:message key="logging.log.date"/></th>
+                                <th class="center" wicket:id="order_login"><wicket:message key="logging.log.login"/></th>
+                                <th class="center" wicket:id="order_client"><wicket:message key="logging.log.client"/></th>
+                                <th class="center" wicket:id="order_controllerClass"><wicket:message key="logging.log.controllerClass"/></th>
+                                <th class="center" wicket:id="order_modelClass"><wicket:message key="logging.log.modelClass"/></th>
+                                <th class="center" wicket:id="order_module"><wicket:message key="logging.log.module"/></th>
+                                <th class="center" wicket:id="order_event"><wicket:message key="logging.log.event"/></th>
+                                <th class="center" wicket:id="order_status"><wicket:message key="logging.log.status"/></th>
+                                <th class="center" wicket:id="order_description"><wicket:message key="logging.log.description"/></th>
+                                <th class="center">
+                                    <input class="btnSmall"  wicket:id="filter_reset" type="submit" wicket:message="value:logging.log.filter.clear"/>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="center">
+                                    <div style="width:102px">
+                                        <input style="width:80px" type="text" wicket:id="date"/>
+                                    </div>
+                                </th>
+                                <th class="center"><input type="text" wicket:id="login"/></th>
+                                <th class="center"><input type="text" wicket:id="client"/></th>
+                                <th class="center"><select wicket:id="controllerClass"></select></th>
+                                <th class="center"><select wicket:id="modelClass"></select></th>
+                                <th class="center"><select wicket:id="module"></select></th>
+                                <th class="center"><select wicket:id="event"></select></th>
+                                <th class="center"><select wicket:id="status"></select></th>
+                                <th class="center"><input type="text" wicket:id="description"/></th>
+
+                                <th class="center">
+                                    <input class="btnSmall default" type="submit" wicket:message="value:logging.log.filter.go" tabindex="0" />
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr wicket:id="logs">
+                                <td><span wicket:id="date"></span></td>
+                                <td><span wicket:id="login"></span></td>
+                                <td class="center"><span wicket:id="client"></span></td>
+                                <td><span wicket:id="controllerClass"></span></td>
+                                <td><span wicket:id="modelClass"></span></td>
+                                <td><span wicket:id="module"></span></td>
+                                <td><span wicket:id="event"></span></td>
+                                <td><span wicket:id="status"></span></td>
+                                <td colspan="2"><span wicket:id="description"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div>
+                        <span wicket:id="navigator">[dataview navigator]</span>
+                    </div>
+                </form>
+            </div>
+
+        </wicket:extend>
+    </body>
 </html>

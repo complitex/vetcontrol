@@ -198,7 +198,7 @@ table.bookContentHeader{
     margin-bottom:20px;
 }
 
-.table_input input, .table_input select{
+.table_input input[type="text"], .table_input select{
     width:100%;    
 }
 

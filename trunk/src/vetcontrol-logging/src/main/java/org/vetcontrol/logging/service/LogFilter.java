@@ -9,24 +9,18 @@ import java.util.Date;
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 27.01.2010 11:54:14
  */
-public class LogFilter implements Serializable{ 
+public class LogFilter implements Serializable {
+
     private Long id;
-
     private Date date;
-
     private String login;
-
     private String controllerClass;
-
     private String modelClass;
-
     private Log.MODULE module;
-
     private Log.EVENT event;
-
     private Log.STATUS status;
-
     private String description;
+    private String client;
 
     public Long getId() {
         return id;
@@ -98,5 +92,13 @@ public class LogFilter implements Serializable{
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getClient() {
+        return client;
+    }
+
+    public void setClient(String client) {
+        this.client = client;
     }
 }
