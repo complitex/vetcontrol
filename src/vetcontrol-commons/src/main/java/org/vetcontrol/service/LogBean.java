@@ -15,9 +15,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.text.MessageFormat;
 import java.util.Date;
+import javax.ejb.EJB;
+import org.vetcontrol.entity.Client;
+import org.vetcontrol.sync.NotRegisteredException;
 
 import static org.vetcontrol.entity.Log.*;
-
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -26,13 +28,14 @@ import static org.vetcontrol.entity.Log.*;
 @Stateless(name = "LogBean")
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class LogBean {
-    private static final Logger log = LoggerFactory.getLogger(LogBean.class);
 
+    private static final Logger logger = LoggerFactory.getLogger(LogBean.class);
     @PersistenceContext
     private EntityManager entityManager;
-
     @Resource
     private SessionContext sctx;
+    @EJB
+    private ClientBean clientBean;
 
     /**
      * Use MessageFormat. http://java.sun.com/j2se/1.5.0/docs/api/java/text/MessageFormat.html
@@ -43,61 +46,64 @@ public class LogBean {
      * @param description pattern
      * @param args arguments for pattern
      */
-    public void info(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description, Object... args){
-        log(module, event, controllerClass, modelClass, STATUS.OK, MessageFormat.format(description, args), DateUtil.getCurrentDate(), getCurrentUser());
+    public void info(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description, Object... args) {
+        log(module, event, controllerClass, modelClass, STATUS.OK, MessageFormat.format(description, args), DateUtil.getCurrentDate(),
+                getCurrentUser(), getCurrentClient());
     }
 
-    public void error(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description, Object... args){
-        log(module, event, controllerClass, modelClass, STATUS.ERROR, MessageFormat.format(description, args), DateUtil.getCurrentDate(), getCurrentUser());
+    public void error(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description, Object... args) {
+        log(module, event, controllerClass, modelClass, STATUS.ERROR, MessageFormat.format(description, args), DateUtil.getCurrentDate(),
+                getCurrentUser(), getCurrentClient());
     }
 
-    public void info(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description){
-        log(module, event, controllerClass, modelClass, STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser());
+    public void info(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description) {
+        log(module, event, controllerClass, modelClass, STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser(), getCurrentClient());
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void infoTxRequired(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description){
-        log(module, event, controllerClass, modelClass, STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser());
+    public void infoTxRequired(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description) {
+        log(module, event, controllerClass, modelClass, STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser(), getCurrentClient());
     }
 
-    public void error(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description){
-        log(module, event, controllerClass, modelClass, STATUS.ERROR, description, DateUtil.getCurrentDate(), getCurrentUser());
+    public void error(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description) {
+        log(module, event, controllerClass, modelClass, STATUS.ERROR, description, DateUtil.getCurrentDate(), getCurrentUser(), getCurrentClient());
     }
 
-    public void info(MODULE module, EVENT event, Class controllerClass, String description){
-        log(module, event, controllerClass, null, STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser());
+    public void info(MODULE module, EVENT event, Class controllerClass, String description) {
+        log(module, event, controllerClass, null, STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser(), getCurrentClient());
     }
 
-    public void error(MODULE module, EVENT event, Class controllerClass, String description){
-        log(module, event, controllerClass, null, STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser());
+    public void error(MODULE module, EVENT event, Class controllerClass, String description) {
+        log(module, event, controllerClass, null, STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser(), getCurrentClient());
     }
 
-    public void info(String login, MODULE module, EVENT event, Class controllerClass, Class modelClass, String description){
-        log(module, event, controllerClass, modelClass, STATUS.OK, description, DateUtil.getCurrentDate(), getUser(login));
+    public void info(String login, MODULE module, EVENT event, Class controllerClass, Class modelClass, String description) {
+        log(module, event, controllerClass, modelClass, STATUS.OK, description, DateUtil.getCurrentDate(), getUser(login), getCurrentClient());
     }
 
-    public void error(String login, MODULE module, EVENT event, Class controllerClass, Class modelClass, String description){
-        log(module, event, controllerClass, modelClass, STATUS.ERROR, description, DateUtil.getCurrentDate(), getUser(login));
+    public void error(String login, MODULE module, EVENT event, Class controllerClass, Class modelClass, String description) {
+        log(module, event, controllerClass, modelClass, STATUS.ERROR, description, DateUtil.getCurrentDate(), getUser(login), getCurrentClient());
     }
 
-    public void info(String login, MODULE module, EVENT event, Class controllerClass, String description){
-        log(module, event, controllerClass, null, STATUS.OK, description, DateUtil.getCurrentDate(), getUser(login));
+    public void info(String login, MODULE module, EVENT event, Class controllerClass, String description) {
+        log(module, event, controllerClass, null, STATUS.OK, description, DateUtil.getCurrentDate(), getUser(login), getCurrentClient());
     }
 
-    public void error(String login, MODULE module, EVENT event, Class controllerClass, String description){
-        log(module, event, controllerClass, null, STATUS.ERROR, description, DateUtil.getCurrentDate(), getUser(login));
+    public void error(String login, MODULE module, EVENT event, Class controllerClass, String description) {
+        log(module, event, controllerClass, null, STATUS.ERROR, description, DateUtil.getCurrentDate(), getUser(login), getCurrentClient());
     }
 
     private void log(MODULE module, EVENT event, Class controllerClass, Class modelClass, Log.STATUS status,
-                     String description, Date date, User user){
+            String description, Date date, User user, Client client) {
         Log log = new Log();
 
         log.setDate(date);
         log.setUser(user);
-        if (controllerClass != null){
+        log.setClient(client);
+        if (controllerClass != null) {
             log.setControllerClass(controllerClass.getName());
         }
-        if (modelClass != null){
+        if (modelClass != null) {
             log.setModelClass(modelClass.getName());
         }
         log.setModule(module);
@@ -108,21 +114,19 @@ public class LogBean {
         try {
             entityManager.persist(log);
         } catch (Exception e) {
-            LogBean.log.error("Ошибка сохранения лога в базу данных", e);
+            LogBean.logger.error("Ошибка сохранения лога в базу данных", e);
         }
     }
 
-    private User getUser(String login){
+    private User getUser(String login) {
         try {
-            return entityManager.createQuery("from User u where u.login = :login", User.class)
-                    .setParameter("login", login)
-                    .getSingleResult();
+            return entityManager.createQuery("from User u where u.login = :login", User.class).setParameter("login", login).getSingleResult();
         } catch (Exception e) {
             return null;
         }
     }
 
-    private User getCurrentUser(){
+    private User getCurrentUser() {
         try {
             return getUser(sctx.getCallerPrincipal().getName());
         } catch (Exception e) {
@@ -130,16 +134,21 @@ public class LogBean {
         }
     }
 
-    public Date getLastDate(MODULE module, EVENT event, STATUS status){
+    public Date getLastDate(MODULE module, EVENT event, STATUS status) {
         try {
-            return entityManager.createQuery("select max(l.date) from Log l where l.module = :module " +
-                    "and l.event = :event and l.status = :status", Date.class)
-                    .setParameter("module", module)
-                    .setParameter("event", event)
-                    .setParameter("status", status)
-                    .getSingleResult();
+            return entityManager.createQuery("select max(l.date) from Log l where l.module = :module "
+                    + "and l.event = :event and l.status = :status", Date.class).setParameter("module", module).setParameter("event", event).setParameter("status", status).getSingleResult();
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private Client getCurrentClient() {
+        try {
+            return clientBean.getCurrentClient();
+        } catch (NotRegisteredException e) {
+            return null;
+        }
+
     }
 }

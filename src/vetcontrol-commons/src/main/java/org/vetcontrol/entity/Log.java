@@ -56,6 +56,10 @@ public class Log implements Serializable{
     @Column(name = "description")
     private String description;
 
+    @ManyToOne
+    @JoinColumn(name="client_id")
+    private Client client;
+
     public Long getId() {
         return id;
     }
@@ -127,4 +131,13 @@ public class Log implements Serializable{
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
 }
