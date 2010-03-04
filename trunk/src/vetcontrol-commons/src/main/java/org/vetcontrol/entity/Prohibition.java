@@ -192,7 +192,6 @@ public class Prohibition implements ILongId, IUpdated, IQuery, IDisabled {
 
     private boolean disabled;
 
-    //TODO: remove  @ValidProperty(false) and adjust UI.
     @ValidProperty(false)
     @Column(name = "disabled")
     @Override
