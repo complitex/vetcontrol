@@ -4,7 +4,6 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.datetime.markup.html.basic.DateLabel;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
-import org.apache.wicket.extensions.markup.html.repeater.data.sort.OrderByBorder;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
@@ -27,6 +26,8 @@ import javax.ejb.EJB;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
+import org.vetcontrol.entity.Client;
+import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -34,11 +35,11 @@ import java.util.Iterator;
  */
 @AuthorizeInstantiation({SecurityRoles.LOGGING_VIEW})
 public class LogList extends TemplatePage {
-    private static final String PAGE_NUMBER_KEY = LogList.class.getSimpleName()+"_PAGE_NUMBER";
+
+    private static final String PAGE_NUMBER_KEY = LogList.class.getSimpleName() + "_PAGE_NUMBER";
     private static final String SORT_PROPERTY_KEY = LogList.class.getSimpleName() + "_SORT_PROPERTY";
     private static final String SORT_ORDER_KEY = LogList.class.getSimpleName() + "_SORT_ORDER";
     private static final String FILTER_KEY = LogList.class.getSimpleName() + "_FILTER";
-
     @EJB(name = "LogListBean")
     private LogListBean logListBean;
 
@@ -53,7 +54,7 @@ public class LogList extends TemplatePage {
         //Фильтр модель
         LogFilter filterObject = preferences.getPreference(UIPreferences.PreferenceType.FILTER, FILTER_KEY, LogFilter.class);
 
-        if (filterObject == null){
+        if (filterObject == null) {
             filterObject = new LogFilter();
         }
 
@@ -63,7 +64,8 @@ public class LogList extends TemplatePage {
         final Form<LogFilter> filterForm = new Form<LogFilter>("filter_form", filterModel);
         add(filterForm);
 
-        Button filter_reset = new Button("filter_reset"){
+        Button filter_reset = new Button("filter_reset") {
+
             @Override
             public void onSubmit() {
                 filterForm.clearInput();
@@ -72,7 +74,7 @@ public class LogList extends TemplatePage {
         };
         filter_reset.setDefaultFormProcessing(false);
         filterForm.add(filter_reset);
-                
+
         //Date
         DatePicker<Date> date = new DatePicker<Date>("date");
         date.setButtonImage("images/calendar.gif");
@@ -83,9 +85,12 @@ public class LogList extends TemplatePage {
         //Login
         filterForm.add(new TextField<String>("login"));
 
+        //Client
+        filterForm.add(new TextField<String>("client"));
+
         //Controller Class
         filterForm.add(new DropDownChoice<String>("controllerClass", logListBean.getControllerClasses(),
-                new IChoiceRenderer<String>(){
+                new IChoiceRenderer<String>() {
 
                     @Override
                     public Object getDisplayValue(String object) {
@@ -100,7 +105,7 @@ public class LogList extends TemplatePage {
 
         //Model Class
         filterForm.add(new DropDownChoice<String>("modelClass", logListBean.getModelClasses(),
-                new IChoiceRenderer<String>(){
+                new IChoiceRenderer<String>() {
 
                     @Override
                     public Object getDisplayValue(String object) {
@@ -115,7 +120,7 @@ public class LogList extends TemplatePage {
 
         //Module
         filterForm.add(new DropDownChoice<Log.MODULE>("module", Arrays.asList(Log.MODULE.values()),
-                new IChoiceRenderer<Log.MODULE>(){
+                new IChoiceRenderer<Log.MODULE>() {
 
                     @Override
                     public Object getDisplayValue(Log.MODULE object) {
@@ -130,7 +135,7 @@ public class LogList extends TemplatePage {
 
         //Event
         filterForm.add(new DropDownChoice<Log.EVENT>("event", Arrays.asList(Log.EVENT.values()),
-                new IChoiceRenderer<Log.EVENT>(){
+                new IChoiceRenderer<Log.EVENT>() {
 
                     @Override
                     public Object getDisplayValue(Log.EVENT object) {
@@ -145,7 +150,7 @@ public class LogList extends TemplatePage {
 
         //Status
         filterForm.add(new DropDownChoice<Log.STATUS>("status", Arrays.asList(Log.STATUS.values()),
-                new IChoiceRenderer<Log.STATUS>(){
+                new IChoiceRenderer<Log.STATUS>() {
 
                     @Override
                     public Object getDisplayValue(Log.STATUS object) {
@@ -162,7 +167,7 @@ public class LogList extends TemplatePage {
         filterForm.add(new TextField<String>("description"));
 
         //Модель данных списка элементов журнала событий
-        final SortableDataProvider<Log> dataProvider = new SortableDataProvider<Log>(){
+        final SortableDataProvider<Log> dataProvider = new SortableDataProvider<Log>() {
 
             @Override
             public Iterator<? extends Log> iterator(int first, int count) {
@@ -194,13 +199,14 @@ public class LogList extends TemplatePage {
         dataProvider.setSort(sortProp, asc);
 
         //Таблица журнала событий
-        DataView<Log> dataView = new DataView<Log>("logs", dataProvider, 1){
+        DataView<Log> dataView = new DataView<Log>("logs", dataProvider, 1) {
 
             @Override
             protected void populateItem(Item<Log> item) {
                 Log log = item.getModelObject();
-                item.add(DateLabel.forDatePattern("date", new Model<Date>(log.getDate()),"dd.MM.yy HH:mm:ss"));
+                item.add(DateLabel.forDatePattern("date", new Model<Date>(log.getDate()), "dd.MM.yy HH:mm:ss"));
                 item.add(new Label("login", log.getUser() != null ? log.getUser().getLogin() : "SYSTEM"));
+                item.add(new Label("client", getClientAsString(log.getClient())));
                 item.add(new Label("controllerClass", getStringOrKey(log.getControllerClass())));
                 item.add(new Label("modelClass", getStringOrKey(log.getModelClass())));
                 item.add(new Label("module", getStringOrKey(log.getModule().name())));
@@ -214,6 +220,7 @@ public class LogList extends TemplatePage {
         //Сортировка
         addOrderByBorder(filterForm, "order_date", LogListBean.OrderBy.DATE.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_login", LogListBean.OrderBy.LOGIN.name(), dataProvider, dataView);
+        addOrderByBorder(filterForm, "order_client", LogListBean.OrderBy.CLIENT.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_controllerClass", LogListBean.OrderBy.CONTROLLER_CLASS.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_modelClass", LogListBean.OrderBy.MODEL_CLASS.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_module", LogListBean.OrderBy.MODULE.name(), dataProvider, dataView);
@@ -225,12 +232,19 @@ public class LogList extends TemplatePage {
         filterForm.add(new PagingNavigator("navigator", dataView, "itemsPerPage", preferences, PAGE_NUMBER_KEY));
     }
 
-    private String getStringOrKey(String key){
+    private String getStringOrKey(String key) {
         return key != null ? getString(key, null, key) : "";
     }
 
-    private void addOrderByBorder(MarkupContainer container, String id, String property, ISortStateLocator stateLocator, final DataView dateView){
-        container.add(new OrderByBorder(id, property, stateLocator) {
+    private String getClientAsString(Client client) {
+        if (client == null) {
+            return "";
+        }
+        return client.getId() != null ? String.valueOf(client.getId()) : "";
+    }
+
+    private void addOrderByBorder(MarkupContainer container, String id, String property, ISortStateLocator stateLocator, final DataView dateView) {
+        container.add(new ArrowOrderByBorder(id, property, stateLocator) {
 
             @Override
             protected void onSortChanged() {
