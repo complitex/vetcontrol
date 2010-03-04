@@ -27,7 +27,7 @@
                             AND sc.locale= :locale) AS unitTypeName
 
             FROM cargo c
-            LEFT JOIN document_cargo d ON c.document_cargo_id = d.id
+            JOIN document_cargo d ON (c.document_cargo_id = d.id AND c.client_id = d.client_id AND c.department_id = d.department_id)
             WHERE d.department_id = :department AND d.created >= :startDate AND d.created <= :endDate
             ORDER BY {0} {1}
         ]]>
@@ -36,7 +36,7 @@
         <![CDATA[
             SELECT COUNT(*)
             FROM cargo c
-            LEFT JOIN document_cargo d ON c.document_cargo_id = d.id
+            JOIN document_cargo d ON (c.document_cargo_id = d.id AND c.client_id = d.client_id AND c.department_id = d.department_id)
             WHERE d.department_id = :department AND d.created >= :startDate AND d.created <= :endDate
         ]]>
     </entry>
