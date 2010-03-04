@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import org.vetcontrol.document.service.DocumentCargoBean;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.CargoTypeBean;
-import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
@@ -52,9 +51,6 @@ public class DocumentCargoEdit extends FormTemplatePage {
     private CargoTypeBean cargoTypeBean;
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
-    @EJB(name = "ClientBean")
-    private ClientBean clientBean;
-
     @EJB(name = "LogBean")
     private LogBean logBean;
 
@@ -91,7 +87,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
         User currentUser = userProfileBean.getCurrentUser();
 
         //Установка подразделения по умолчанию
-        if (dc.getId() == null){
+        if (dc.getId() == null) {
             dc.setDepartment(currentUser.getDepartment());
         }
 
@@ -318,12 +314,12 @@ public class DocumentCargoEdit extends FormTemplatePage {
         form.add(l_creator);
 
         String fullCreator = "";
-        if (visible){
-            fullCreator =  dc.getCreator().getFullName();
-            if (dc.getCreator().getJob() != null){
+        if (visible) {
+            fullCreator = dc.getCreator().getFullName();
+            if (dc.getCreator().getJob() != null) {
                 fullCreator += ", " + dc.getCreator().getJob().getDisplayName(getLocale(), localeDAO.systemLocale());
             }
-            if (dc.getDepartment() != null && !dc.getDepartment().getId().equals(dc.getCreator().getDepartment().getId())){
+            if (dc.getDepartment() != null && !dc.getDepartment().getId().equals(dc.getCreator().getDepartment().getId())) {
                 fullCreator += ", " + dc.getCreator().getDepartment().getDisplayName(getLocale(), localeDAO.systemLocale());
             }
         }
@@ -337,7 +333,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
 
         try {
             list = documentCargoBean.getChildDepartments(currentUser.getDepartment());
-            if (!list.contains(dc.getDepartment())){
+            if (!list.contains(dc.getDepartment())) {
                 list.add(dc.getDepartment());
             }
         } catch (Exception e) {
@@ -365,8 +361,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
         ddcDepartment.setVisible(hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) && id == null);
         form.add(ddcDepartment);
 
-        Label departmentLabel = new Label("document.cargo.department.label", dc.getDepartment()
-                .getDisplayName(getLocale(), localeDAO.systemLocale()));
+        Label departmentLabel = new Label("document.cargo.department.label", dc.getDepartment().getDisplayName(getLocale(), localeDAO.systemLocale()));
         departmentLabel.setVisible(!hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) || id != null);
         form.add(departmentLabel);
 
@@ -382,7 +377,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
         form.add(created);
     }
 
-    private <T extends Localizable> DropDownChoice<T> addDropDownChoice(WebMarkupContainer container, String id, Class<T> bookClass, IModel<DocumentCargo>  model, String property){
+    private <T extends Localizable> DropDownChoice<T> addDropDownChoice(WebMarkupContainer container, String id, Class<T> bookClass, IModel<DocumentCargo> model, String property) {
         List<T> list = null;
 
         try {
