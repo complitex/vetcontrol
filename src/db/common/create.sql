@@ -455,6 +455,7 @@ CREATE TABLE  `cargo` (
   `count` int(11) NOT NULL,
   `certificate_date` date NOT NULL,
   `certificate_details` varchar(255) NOT NULL,
+  `updated` timestamp DEFAULT NOW(),
   PRIMARY KEY (`id`,`department_id`,`client_id`),
   KEY `FK_department_1` (`department_id`),
   KEY `FK_client_1` (`client_id`),

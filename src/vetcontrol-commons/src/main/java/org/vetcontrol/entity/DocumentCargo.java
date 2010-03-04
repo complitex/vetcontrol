@@ -1,7 +1,7 @@
 package org.vetcontrol.entity;
 
 import javax.persistence.*;
-import java.io.Serializable;
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,7 +15,9 @@ import java.util.List;
 @Entity
 @Table(name = "document_cargo")
 @IdClass(ClientEntityId.class)
-public class DocumentCargo implements Serializable{
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+public class DocumentCargo extends Synchronized implements IUpdated{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,15 +25,18 @@ public class DocumentCargo implements Serializable{
     @Id
     @ManyToOne
     @JoinColumn(name = "client_id")
+    @XmlIDREF
     private Client client;
 
     @Id
     @ManyToOne
     @JoinColumn(name = "department_id")
+    @XmlIDREF
     private Department department;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "creator_id")
+    @XmlIDREF
     private User creator;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -42,32 +47,39 @@ public class DocumentCargo implements Serializable{
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "movement_type_id")
+    @XmlIDREF
     private MovementType movementType;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "vehicle_type_id")
+    @XmlIDREF
     private VehicleType vehicleType;
 
     @Column(name = "vehicle_details", length = 255)
     private String vehicleDetails;
 
     @OneToMany(mappedBy = "documentCargo")
+    @XmlTransient
     private List<Cargo> cargos = new ArrayList<Cargo>();
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "cargo_sender_id")
+    @XmlIDREF
     private CargoSender cargoSender;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "cargo_receiver_id")
+    @XmlIDREF
     private CargoReceiver cargoReceiver;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "cargo_producer_id")
+    @XmlIDREF
     private CargoProducer cargoProducer;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "passing_border_point_id")
+    @XmlIDREF
     private PassingBorderPoint passingBorderPoint;
 
     @Column(name = "detention_details", length = 255)
@@ -213,6 +225,7 @@ public class DocumentCargo implements Serializable{
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof DocumentCargo)) return false;
+        if (!super.equals(o)) return false;
 
         DocumentCargo that = (DocumentCargo) o;
 
@@ -243,7 +256,8 @@ public class DocumentCargo implements Serializable{
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
+        int result = super.hashCode();
+        result = 31 * result + (id != null ? id.hashCode() : 0);
         result = 31 * result + (client != null ? client.hashCode() : 0);
         result = 31 * result + (department != null ? department.hashCode() : 0);
         result = 31 * result + (creator != null ? creator.hashCode() : 0);

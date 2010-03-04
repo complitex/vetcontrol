@@ -7,13 +7,14 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 15.02.2010 16:19:22
  */
 @MappedSuperclass
-public class Synchronized {
+public class Synchronized implements Serializable{
     public static enum SyncStatus{
         SYNCHRONIZED, NOT_SYNCHRONIZED, PROCESSING
     }

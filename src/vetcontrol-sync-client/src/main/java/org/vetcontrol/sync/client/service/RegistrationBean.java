@@ -37,7 +37,7 @@ public class RegistrationBean {
 
         client.getInsertQuery(em).executeUpdate();
 
-        userSyncBean.process();
+        userSyncBean.processTxRequied();
 
         //commit
         createJSONClient("/registration/commit").put(client.getSecureKey());
