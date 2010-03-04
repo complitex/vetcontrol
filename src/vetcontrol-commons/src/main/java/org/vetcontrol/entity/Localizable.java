@@ -87,7 +87,6 @@ public abstract class Localizable implements ILongId, IUpdated, IQuery, IDisable
 
     protected boolean disabled;
 
-    //TODO: remove  @ValidProperty(false) and adjust UI.
     @ValidProperty(false)
     @Column(name="disabled")
     @Override
