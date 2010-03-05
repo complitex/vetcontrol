@@ -11,12 +11,21 @@
    Syntax recommendation http://www.w3.org/TR/REC-CSS2/
 */
 
-.confirm_dialog_update, .confirm_dialog_createNew{
-    font-size: 15px;
-    font-weight: bold;
+.confirm_dialog_update{
+    width:156px !important;
 }
 
 .confirm_dialog_createNew{
-    padding-left: 20px;
+    width:210px !important;
+}
+
+.ui-dialog{
+    background:#C4CDD4 url(../images/formFrame-t.gif) repeat-x scroll 0 0 !important;
+    padding: 0px 0px 0px 0px !important;
+}
+
+.ui-corner-all { 
+    -moz-border-radius: 0px !important;
+    -webkit-border-radius: 0px !important;
 }
 
