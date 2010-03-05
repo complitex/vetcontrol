@@ -4,15 +4,44 @@
     <body>
         <wicket:panel>
             <div wicket:id="dialog">
-                <h3>
+                <h2 class="confirm_dialog_message">
                     <wicket:message key="info"/>
-                </h3>
-                <a wicket:id="update" class="confirm_dialog_update">
-                    <wicket:message key="update"/>
-                </a>
-                <a wicket:id="createNew" class="confirm_dialog_createNew">
-                    <wicket:message key="createNew"/>
-                </a>
+                </h2>
+                <table cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                        <td>
+                            <table cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td>
+                                        <div class="btnLeft"></div>
+                                    </td>
+                                    <td>
+                                        <input type="button" wicket:id="update" class="btnCenter confirm_dialog_update" wicket:message="value:update"/>
+                                    </td>
+                                    <td>
+                                        <div class="btnRight"></div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>
+                            <table cellpadding="0" cellspacing="0" border="0" style="padding-left: 20px">
+                                <tr>
+                                    <td>
+                                        <div class="btnLeft"></div>
+                                    </td>
+                                    <td>
+                                        <input type="button" wicket:id="createNew" class="btnCenter confirm_dialog_createNew"
+                                               wicket:message="value:createNew"/>
+                                    </td>
+                                    <td>
+                                        <div class="btnRight"></div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </wicket:panel>
     </body>

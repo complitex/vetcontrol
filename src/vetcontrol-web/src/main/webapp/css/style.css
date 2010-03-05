@@ -153,6 +153,30 @@ input.btnMiddle {
     cursor:pointer;
 }
 
+.btnLeft{
+    height:26px;
+    width: 5px;
+    background:url('../images/btn-big-left.gif') no-repeat #007AAE;
+}
+
+.btnRight{
+    height:26px;
+    width: 5px;
+    background:url('../images/btn-big-right.gif') no-repeat #007AAE;
+}
+
+input.btnCenter{
+    height:26px;
+    border:0;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor:pointer;
+    background:url('../images/btn-big-center.gif') repeat-x #007AAE;
+    padding: 0px 0px 0px 0px;
+}
+
 .blue { color: #007AAE; }
 
 .PageNavigator{

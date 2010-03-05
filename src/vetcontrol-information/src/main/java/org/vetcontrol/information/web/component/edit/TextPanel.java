@@ -9,6 +9,7 @@ import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.vetcontrol.information.util.web.Constants;
 import org.vetcontrol.util.book.Property;
@@ -51,7 +52,6 @@ public final class TextPanel extends Panel {
 //        public void detach() {
 //        }
 //    }
-
     public TextPanel(String id, IModel model, Property prop, boolean enabled) {
         super(id);
 
