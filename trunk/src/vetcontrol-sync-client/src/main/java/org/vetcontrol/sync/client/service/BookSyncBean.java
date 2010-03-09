@@ -39,7 +39,7 @@ public class BookSyncBean extends SyncInfo{
 
     private boolean initial = false;
 
-    private final Class[] syncBooks = new Class[]{
+    public final static Class[] syncBooks = new Class[]{
             StringCulture.class,
             AddressBook.class, ArrestReason.class, CargoMode.class, CargoProducer.class, CargoReceiver.class,
             CargoSender.class, CargoType.class, CountryBook.class, CountryWithBadEpizooticSituation.class,
@@ -95,7 +95,7 @@ public class BookSyncBean extends SyncInfo{
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    private <T extends IQuery & IUpdated> void processBook(Class<T> bookClass) {
+    public <T extends IQuery & IUpdated> void processBook(Class<T> bookClass) {
         String secureKey = clientBean.getCurrentSecureKey();
         Date syncUpdated = DateUtil.getCurrentDate();
 
@@ -107,13 +107,16 @@ public class BookSyncBean extends SyncInfo{
         start(new SyncEvent(count, bookClass));
 
         int index = 0;
+
+        Date updated = getUpdated(bookClass);
+        
         for (int i = 0; i <= count/MAX_RESULTS; ++i) {
             @SuppressWarnings({"unchecked"})
-            List<T> books = ClientFactory.createJSONClient("/book/" + bookClass.getSimpleName() + "/list/" + MAX_RESULTS)
-                    .post((GenericType<List<T>>)genericTypeMap.get(bookClass), new SyncRequestEntity(secureKey, getUpdated(bookClass)));
+            List<T> books = ClientFactory.createJSONClient("/book/" + bookClass.getSimpleName() +
+                    "/list/" + i*MAX_RESULTS + "/" + MAX_RESULTS)
+                    .post((GenericType<List<T>>)genericTypeMap.get(bookClass), new SyncRequestEntity(secureKey, updated));
 
             //Сохранение в базу данных списка
-            index = 0;
             for (T book : books){
                 //skip null
                 if (isSkip(book)) continue;
