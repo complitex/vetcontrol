@@ -122,7 +122,10 @@ public class SyncBean{
             syncMessages.add(message);
 
             //Синхронизация справочников
-            bookSyncBean.process();
+            for (Class book : BookSyncBean.syncBooks){
+                //noinspection unchecked
+                bookSyncBean.processBook(book);
+            }
 
             //Синхронизация пользователей
             userSyncBean.process();
