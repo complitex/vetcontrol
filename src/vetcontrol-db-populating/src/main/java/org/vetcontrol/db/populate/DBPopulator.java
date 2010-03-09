@@ -38,7 +38,7 @@ import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.util.book.Property;
 
-public class BooksPopulator {
+public class DBPopulator {
 
     private static final String PERSISTENCE_UNIT_NAME = "populate.server";
     private EntityManagerFactory managerFactory;
@@ -78,12 +78,12 @@ public class BooksPopulator {
         }
     }
 
-    public BooksPopulator() {
+    public DBPopulator() {
         managerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
     }
 
     public static void main(String[] args) {
-        new BooksPopulator().populate();
+        new DBPopulator().populate();
     }
 
     private void populate() {
