@@ -73,8 +73,8 @@ public class UserGroupResourceBean {
                 .getResultList();
 
         if (!list.isEmpty()){
-            logBean.info(Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, UserGroupResourceBean.class, UserGroup.class,
-                    rb.getString("info.sync.processed"), client.getId(), list.size(),
+            logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, UserGroupResourceBean.class, UserGroup.class,
+                    rb.getString("info.sync.processed"), list.size(),
                     r.getRemoteHost(), client.getIp());
 
             log.info("Синхронизация групп пользователей. " + rb.getString("info.sync.processed.log"),
@@ -110,8 +110,8 @@ public class UserGroupResourceBean {
         }
 
         if (!list.isEmpty()){
-            logBean.info(Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, UserGroupResourceBean.class, DeletedLongId.class,
-                    rb.getString("info.sync.processed"), client.getId(), list.size(),
+            logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, UserGroupResourceBean.class, DeletedLongId.class,
+                    rb.getString("info.sync.processed"), list.size(),
                     r.getRemoteHost(), client.getIp());
 
             log.info("Синхронизация удаленных групп пользователей. " + rb.getString("info.sync.processed.log"), 

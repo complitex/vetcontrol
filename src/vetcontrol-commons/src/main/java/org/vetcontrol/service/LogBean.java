@@ -2,22 +2,18 @@ package org.vetcontrol.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vetcontrol.entity.Client;
 import org.vetcontrol.entity.Log;
 import org.vetcontrol.entity.User;
+import org.vetcontrol.sync.NotRegisteredException;
 import org.vetcontrol.util.DateUtil;
 
 import javax.annotation.Resource;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.ejb.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.text.MessageFormat;
 import java.util.Date;
-import javax.ejb.EJB;
-import org.vetcontrol.entity.Client;
-import org.vetcontrol.sync.NotRegisteredException;
 
 import static org.vetcontrol.entity.Log.*;
 
@@ -34,7 +30,7 @@ public class LogBean {
     private EntityManager entityManager;
     @Resource
     private SessionContext sctx;
-    @EJB
+    @EJB(beanName = "ClientBean")
     private ClientBean clientBean;
 
     /**
@@ -51,9 +47,19 @@ public class LogBean {
                 getCurrentUser(), getCurrentClient());
     }
 
+     public void info(Client client, MODULE module, EVENT event, Class controllerClass, Class modelClass, String description, Object... args) {
+        log(module, event, controllerClass, modelClass, STATUS.OK, MessageFormat.format(description, args), DateUtil.getCurrentDate(),
+                getCurrentUser(), client);
+    }
+
     public void error(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description, Object... args) {
         log(module, event, controllerClass, modelClass, STATUS.ERROR, MessageFormat.format(description, args), DateUtil.getCurrentDate(),
                 getCurrentUser(), getCurrentClient());
+    }
+
+     public void error(Client client, MODULE module, EVENT event, Class controllerClass, Class modelClass, String description, Object... args) {
+        log(module, event, controllerClass, modelClass, STATUS.ERROR, MessageFormat.format(description, args), DateUtil.getCurrentDate(),
+                getCurrentUser(), client);
     }
 
     public void info(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description) {

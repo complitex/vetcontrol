@@ -70,8 +70,8 @@ public class UserResourceBean {
                 .getResultList();
 
         if (!list.isEmpty()){
-            logBean.info(Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, UserResourceBean.class, User.class,
-                    rb.getString("info.sync.processed"), client.getId(), list.size(),
+            logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, UserResourceBean.class, User.class,
+                    rb.getString("info.sync.processed"), list.size(),
                     r.getRemoteHost(), client.getIp());
 
             log.info("Синхронизация пользователей. " + rb.getString("info.sync.processed.log"),
