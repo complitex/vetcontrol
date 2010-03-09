@@ -162,7 +162,7 @@
     <build>
         <resources>
             <resource>
-                <filtering>false</filtering>
+                <filtering>true</filtering>
                 <directory>src/main/resources</directory>
                 <excludes>
                     <exclude>
@@ -224,6 +224,10 @@
         <connection.url>jdbc:mysql://localhost:3306/vetcontrol</connection.url>
         <connection.username>artem</connection.username>
         <connection.password>artem</connection.password>
+
+        <test.server.connection.url>jdbc:mysql://localhost:3306/vetcontrol</test.server.connection.url>
+        <test.server.connection.username>artem</test.server.connection.username>
+        <test.server.connection.password>artem</test.server.connection.password>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
