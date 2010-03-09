@@ -142,10 +142,12 @@ public class UserSyncBean extends SyncInfo{
                     try {
                         userGroup.getInsertQuery(em).executeUpdate();
                     } catch (Exception e) {
+                        //remove duplicates
                         em.createQuery("delete from UserGroup where login = :login and securityGroup = :securityGroup")
                                 .setParameter("login", userGroup.getLogin())
                                 .setParameter("securityGroup", userGroup.getSecurityGroup())
                                 .executeUpdate();
+                        userGroup.getUpdateQuery(em).executeUpdate();
                     }
                 }
             }

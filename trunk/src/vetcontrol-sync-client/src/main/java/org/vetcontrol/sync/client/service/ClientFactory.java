@@ -2,8 +2,10 @@ package org.vetcontrol.sync.client.service;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.UniformInterface;
+import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.sun.jersey.api.client.filter.LoggingFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.sync.JSONResolver;
@@ -38,9 +40,11 @@ public class ClientFactory {
             log.error(e.getLocalizedMessage(), e);
         }
 
-        return Client.create(clientConfig)
-                .resource(syncServerUrl + path)
-                .accept(MediaType.APPLICATION_JSON)
-                .type(MediaType.APPLICATION_JSON_TYPE);
+        WebResource webResource = Client.create(clientConfig).resource(syncServerUrl + path);
+        webResource.addFilter(new LoggingFilter());
+//        webResource.addFilter(new GZIPContentEncodingFilter());
+
+        return webResource.accept(MediaType.APPLICATION_JSON).type(MediaType.APPLICATION_JSON_TYPE);
+
     }
 }
