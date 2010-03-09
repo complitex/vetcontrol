@@ -20,20 +20,21 @@ import java.net.UnknownHostException;
  */
 @Singleton(name = "ClientBean")
 public class ClientBean {
+
     private static final Logger log = LoggerFactory.getLogger(ClientBean.class);
-
     private static final String SERVER_SECURE_KEY = "b2627dab45b9455e947f9755861aea10";
-
     private Client currentClient;
-
-    @PersistenceContext
     private EntityManager em;
 
+    @PersistenceContext
+    public void setEntityManager(EntityManager em) {
+        this.em = em;
+    }
     @EJB(beanName = "LogBean")
     private LogBean logBean;
 
     public Client getCurrentClient() throws NotRegisteredException {
-        if (currentClient == null){
+        if (currentClient == null) {
             //server
             try {
                 currentClient =  em.createQuery("select c from Client c where c.secureKey = :secureKey", Client.class)
@@ -46,11 +47,9 @@ public class ClientBean {
 
             //client
             String mac = getCurrentMAC();
-            if (mac != null){
+            if (mac != null) {
                 try {
-                    currentClient = em.createQuery("select c from Client c where c.mac = :mac", Client.class)
-                            .setParameter("mac", mac)
-                            .getSingleResult();
+                    currentClient = em.createQuery("select c from Client c where c.mac = :mac", Client.class).setParameter("mac", mac).getSingleResult();
                 } catch (NoResultException e) {
                     throw new NotRegisteredException();
                 }
@@ -68,18 +67,18 @@ public class ClientBean {
         return getCurrentClient().getSecureKey();
     }
 
-    public String getCurrentMAC(){
+    public String getCurrentMAC() {
         try {
             NetworkInterface networkInterface = NetworkInterface.getByInetAddress(InetAddress.getLocalHost());
 
             String mac = "";
-            if (networkInterface.getHardwareAddress() != null){
-                for (byte m  : networkInterface.getHardwareAddress()){
+            if (networkInterface.getHardwareAddress() != null) {
+                for (byte m : networkInterface.getHardwareAddress()) {
                     mac += String.format("%02x-", m);
                 }
             }
-            if (!mac.isEmpty()){
-                mac = mac.substring(0, mac.length()-1).toUpperCase();
+            if (!mac.isEmpty()) {
+                mac = mac.substring(0, mac.length() - 1).toUpperCase();
                 return mac;
             }
         } catch (SocketException e) {
@@ -90,7 +89,7 @@ public class ClientBean {
         return null;
     }
 
-    public String getCurrentIP(){
+    public String getCurrentIP() {
         try {
             return InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {
@@ -99,9 +98,7 @@ public class ClientBean {
         return null;
     }
 
-    public Client getClient(String secureKey){
-        return em.createQuery("select c from Client c where c.secureKey = :secureKey", Client.class)
-                .setParameter("secureKey", secureKey)
-                .getSingleResult();
+    public Client getClient(String secureKey) {
+        return em.createQuery("select c from Client c where c.secureKey = :secureKey", Client.class).setParameter("secureKey", secureKey).getSingleResult();
     }
 }

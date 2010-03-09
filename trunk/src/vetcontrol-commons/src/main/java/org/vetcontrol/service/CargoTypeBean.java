@@ -9,7 +9,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
-import javax.persistence.NonUniqueResultException;
 import org.vetcontrol.entity.CargoMode;
 import org.vetcontrol.util.book.BeanPropertyUtil;
 
@@ -20,8 +19,12 @@ import org.vetcontrol.util.book.BeanPropertyUtil;
 @Stateless(name = "CargoTypeBean")
 public class CargoTypeBean {
 
-    @PersistenceContext
     private EntityManager entityManager;
+
+    @PersistenceContext
+    public void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     public List<CargoType> getCargoTypesByName(String filter, int count) {
         return entityManager.createQuery("select distinct(ct) from CargoType ct left join ct.namesMap n where n like :filter"
