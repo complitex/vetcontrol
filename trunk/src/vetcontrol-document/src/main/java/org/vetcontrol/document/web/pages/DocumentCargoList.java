@@ -20,6 +20,7 @@ import org.odlabs.wiquery.ui.datepicker.DatePicker;
 import org.vetcontrol.document.service.DocumentCargoBean;
 import org.vetcontrol.document.service.DocumentCargoFilter;
 import org.vetcontrol.entity.*;
+import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
@@ -57,10 +58,14 @@ public class DocumentCargoList extends TemplatePage{
     @EJB(name = "UserProfileBean")
     UserProfileBean userProfileBean;
 
+    @EJB(name = "ClientBean")
+    ClientBean clientBean;
+
     public DocumentCargoList() {
         super();
 
         final Locale systemLocale = localeDAO.systemLocale();
+        final boolean server = clientBean.isServer();
 
         add(new Label("title", new ResourceModel("document.cargo.list.title")));
         add(new Label("header", new ResourceModel("document.cargo.list.title")));
@@ -129,6 +134,23 @@ public class DocumentCargoList extends TemplatePage{
         created.setShowOn(DatePicker.ShowOnEnum.BOTH);
         filterForm.add(created);
 
+        DropDownChoice<Synchronized.SyncStatus> ddcSyncStatus =
+                new DropDownChoice<Synchronized.SyncStatus>("syncStatus", Arrays.asList(Synchronized.SyncStatus.values()),
+                new IChoiceRenderer<Synchronized.SyncStatus>(){
+
+                    @Override
+                    public Object getDisplayValue(Synchronized.SyncStatus object) {
+                        return getString(object.name());
+                    }
+
+                    @Override
+                    public String getIdValue(Synchronized.SyncStatus object, int index) {
+                        return object.name();
+                    }
+                });
+        ddcSyncStatus.setVisible(!server);
+        filterForm.add(ddcSyncStatus);
+
         //Модель данных списка карточек на груз
         final SortableDataProvider<DocumentCargo> dataProvider = new SortableDataProvider<DocumentCargo>(){
             @Override
@@ -160,7 +182,7 @@ public class DocumentCargoList extends TemplatePage{
         dataProvider.setSort(sortProp, asc);
 
         //Таблица документов
-        DataView<DocumentCargo> dataView = new DataView<DocumentCargo>("documents", dataProvider, 1){
+        final DataView<DocumentCargo> dataView = new DataView<DocumentCargo>("documents", dataProvider, 1){
 
             @Override
             protected void populateItem(Item<DocumentCargo> item) {
@@ -178,7 +200,11 @@ public class DocumentCargoList extends TemplatePage{
                 item.add(new Label("cargoReceiver", dc.getCargoReceiver().getDisplayName(getLocale(), systemLocale)));
                 item.add(new Label("cargoProducer", dc.getCargoProducer().getDisplayName(getLocale(), systemLocale)));
                 item.add(new DateLabel("created", new Model<Date>(dc.getCreated()), new StyleDateConverter(true)));
-                if (canEdit(dc)){
+
+                Label syncStatus = new Label("syncStatus", getString(dc.getSyncStatus().name()));
+                syncStatus.setVisible(!server);
+                item.add(syncStatus);
+                if ((server || !dc.getSyncStatus().equals(Synchronized.SyncStatus.SYNCHRONIZED)) && canEdit(dc)){
                     item.add(new BookmarkablePageLinkPanel<DocumentCargo>("action", getString("document.cargo.list.edit"),
                             DocumentCargoEdit.class, pageParameters));
                 }else{
@@ -197,6 +223,15 @@ public class DocumentCargoList extends TemplatePage{
         addOrderByBorder(filterForm, "order_cargoReceiver", OrderBy.CARGO_RECEIVER.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_cargoProducer", OrderBy.CARGO_PRODUCER.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_created", OrderBy.CREATED.name(), dataProvider, dataView);
+
+        ArrowOrderByBorder orderSyncStatus = new ArrowOrderByBorder("order_syncStatus", OrderBy.SYNC_STATUS.name(), dataProvider) {
+            @Override
+            protected void onSortChanged() {
+                dataView.setCurrentPage(0);
+            }
+        };
+        orderSyncStatus.setVisible(!server);
+        filterForm.add(orderSyncStatus);
 
         //Панель ссылок для постраничной навигации        
         filterForm.add(new PagingNavigator("navigator", dataView, "itemsPerPage", getPreferences(), PAGE_NUMBER_KEY));

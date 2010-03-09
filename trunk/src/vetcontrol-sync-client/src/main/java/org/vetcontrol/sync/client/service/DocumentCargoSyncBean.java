@@ -57,20 +57,26 @@ public class DocumentCargoSyncBean extends SyncInfo{
                 .setParameter("syncStatus", Synchronized.SyncStatus.PROCESSING)
                 .getResultList();
 
-        if (documentCargos.size() > 0) {
+        int size = documentCargos.size();
+
+        if (size > 0) {
             createJSONClient("/document/document_cargo").put(new SyncDocumentCargo(secureKey,
                     getUpdated(DocumentCargo.class), documentCargos));
+
+            sync(new SyncEvent(size, 0, DocumentCargo.class));
 
             em.createQuery("update DocumentCargo set syncStatus = :newSyncStatus where syncStatus = :oldSyncStatus")
                     .setParameter("newSyncStatus", Synchronized.SyncStatus.SYNCHRONIZED)
                     .setParameter("oldSyncStatus", Synchronized.SyncStatus.PROCESSING)
                     .executeUpdate();
 
+            sync(new SyncEvent(size, size, DocumentCargo.class));
+
             createJSONClient("/document/document_cargo/commit").put(new SyncRequestEntity(secureKey,
                     getUpdated(DocumentCargo.class)));
         }
 
-        complete(new SyncEvent(0, DocumentCargo.class));
+        complete(new SyncEvent(size, DocumentCargo.class));
         log.debug("++++++++++++++++++++ Synchronizing Complete: DocumentCargo +++++++++++++++++++\n");
     }
 
@@ -92,18 +98,24 @@ public class DocumentCargoSyncBean extends SyncInfo{
                 .setParameter("syncStatus", Synchronized.SyncStatus.PROCESSING)
                 .getResultList();
 
-        if (cargos.size() > 0) {
+        int size = cargos.size();
+
+        if (size > 0) {
             createJSONClient("/document/cargo").put(new SyncCargo(secureKey, getUpdated(Cargo.class), cargos));
+
+            sync(new SyncEvent(size, 0, Cargo.class));
 
             em.createQuery("update Cargo set syncStatus = :newSyncStatus where syncStatus = :oldSyncStatus")
                     .setParameter("newSyncStatus", Synchronized.SyncStatus.SYNCHRONIZED)
                     .setParameter("oldSyncStatus", Synchronized.SyncStatus.PROCESSING)
                     .executeUpdate();
 
+            sync(new SyncEvent(size, size, Cargo.class));
+
             createJSONClient("/document/cargo/commit").put(new SyncRequestEntity(secureKey, getUpdated(Cargo.class)));
         }
 
-        complete(new SyncEvent(0, Cargo.class));
+        complete(new SyncEvent(size, Cargo.class));
         log.debug("++++++++++++++++++++ Synchronizing Complete: DocumentCargo +++++++++++++++++++\n");
     }
 

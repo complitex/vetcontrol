@@ -1,10 +1,7 @@
 package org.vetcontrol.document.service;
 
 
-import org.vetcontrol.entity.Department;
-import org.vetcontrol.entity.MovementType;
-import org.vetcontrol.entity.User;
-import org.vetcontrol.entity.VehicleType;
+import org.vetcontrol.entity.*;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -44,6 +41,8 @@ public class DocumentCargoFilter implements Serializable{
     private Locale currentLocale;
 
     private Locale systemLocale;
+
+    private Synchronized.SyncStatus syncStatus;
 
     public DocumentCargoFilter(Locale currentLocale, Locale systemLocale) {
         this.currentLocale = currentLocale;
@@ -168,5 +167,13 @@ public class DocumentCargoFilter implements Serializable{
 
     public void setSystemLocale(Locale systemLocale) {
         this.systemLocale = systemLocale;
+    }
+
+    public Synchronized.SyncStatus getSyncStatus() {
+        return syncStatus;
+    }
+
+    public void setSyncStatus(Synchronized.SyncStatus syncStatus) {
+        this.syncStatus = syncStatus;
     }
 }

@@ -36,8 +36,10 @@ public class ClientBean {
         if (currentClient == null){
             //server
             try {
-                return em.createQuery("select c from Client c where c.secureKey = :secureKey", Client.class)
+                currentClient =  em.createQuery("select c from Client c where c.secureKey = :secureKey", Client.class)
                         .setParameter("secureKey", SERVER_SECURE_KEY).getSingleResult();
+
+                return currentClient;                
             } catch (Exception e) {
                 //nothing
             }
@@ -56,6 +58,10 @@ public class ClientBean {
         }
 
         return currentClient;
+    }
+    
+    public boolean isServer(){
+        return getCurrentClient() != null && currentClient.getSecureKey().equals(SERVER_SECURE_KEY);
     }
 
     public String getCurrentSecureKey() throws NotRegisteredException {
