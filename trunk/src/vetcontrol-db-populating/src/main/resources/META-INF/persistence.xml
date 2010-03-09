@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+    <persistence-unit name="populate.server" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+
+        <class>org.vetcontrol.entity.Generator</class>
+        <class>org.vetcontrol.entity.CountryBook</class>
+        <class>org.vetcontrol.entity.RegisteredProducts</class>
+        <class>org.vetcontrol.entity.CargoProducer</class>
+        <class>org.vetcontrol.entity.StringCulture</class>
+        <class>org.vetcontrol.entity.CargoType</class>
+        <class>org.vetcontrol.entity.UnitType</class>
+        <class>org.vetcontrol.entity.User</class>
+        <class>org.vetcontrol.entity.Department</class>
+        <class>org.vetcontrol.entity.UserGroup</class>
+        <class>org.vetcontrol.entity.Job</class>
+        <class>org.vetcontrol.entity.VehicleType</class>
+        <class>org.vetcontrol.entity.CargoReceiver</class>
+        <class>org.vetcontrol.entity.CargoSender</class>
+        <class>org.vetcontrol.entity.CustomsPoint</class>
+        <class>org.vetcontrol.entity.MovementType</class>
+        <class>org.vetcontrol.entity.CargoProducer</class>
+        <class>org.vetcontrol.entity.Prohibition</class>
+        <class>org.vetcontrol.entity.Tariff</class>
+        <class>org.vetcontrol.entity.ArrestReason</class>
+        <class>org.vetcontrol.entity.AddressBook</class>
+        <class>org.vetcontrol.entity.PassingBorderPoint</class>
+        <class>org.vetcontrol.entity.CargoMode</class>
+        <class>org.vetcontrol.entity.CargoModeCargoType</class>
+        <class>org.vetcontrol.entity.CargoModeUnitType</class>
+
+        <properties>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
+            <property name="hibernate.connection.username" value="${test.server.connection.username}"/>
+            <property name="hibernate.connection.password" value="${test.server.connection.password}"/>
+            <property name="hibernate.connection.driver_class" value="com.p6spy.engine.spy.P6SpyDriver"/>
+            <!--<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>-->
+            <property name="hibernate.connection.url" value="${test.server.connection.url}"/>
+            <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.format_sql" value="true"/>
+        </properties>
+    </persistence-unit>
+</persistence>
