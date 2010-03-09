@@ -59,14 +59,14 @@ public class DocumentResourceBean {
                 em.merge(documentCargo);
             }
 
-            logBean.info(Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, DocumentCargo.class,
-                    rb.getString("info.sync.processed"), client.getId(), size, r.getRemoteHost(), client.getIp());
+            logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, DocumentCargo.class,
+                    rb.getString("info.sync.processed"), size, r.getRemoteHost(), client.getIp());
 
             log.info("Синхронизация карточек на груз. " + rb.getString("info.sync.processed.log"),
                     new Object[]{client.getId(), size, r.getRemoteHost(), client.getIp()});
         } catch (Exception e) {
-            logBean.error(Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, BookResourceBean.class, DocumentCargo.class,
-                    rb.getString("info.sync.processed"), client.getId(), size, r.getRemoteHost(), client.getIp());
+            logBean.error(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, BookResourceBean.class, DocumentCargo.class,
+                    rb.getString("info.sync.processed"), size, r.getRemoteHost(), client.getIp());
 
             log.error("Синхронизация карточек на груз. " + rb.getString("info.sync.processed.log"),
                     new Object[]{client.getId(), size, r.getRemoteHost(), client.getIp()});
@@ -92,14 +92,14 @@ public class DocumentResourceBean {
                     .setParameter("department", client.getDepartment())
                     .executeUpdate();
 
-            logBean.info(Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC_COMMIT, DocumentResourceBean.class, DocumentCargo.class,
-                    rb.getString("info.sync.commit"), client.getId(), r.getRemoteHost(), client.getIp());
+            logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC_COMMIT, DocumentResourceBean.class, DocumentCargo.class,
+                    rb.getString("info.sync.commit"), r.getRemoteHost(), client.getIp());
 
             log.info("Подтверждение синхронизации карточки на груз. " + rb.getString("info.sync.commit.log"),
                     new Object[]{client.getId(), r.getRemoteHost(), client.getIp()});
         } catch (Exception e) {
-            logBean.error(Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC_COMMIT, DocumentResourceBean.class, DocumentCargo.class,
-                    rb.getString("info.sync.commit"), client.getId(), r.getRemoteHost(), client.getIp());
+            logBean.error(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC_COMMIT, DocumentResourceBean.class, DocumentCargo.class,
+                    rb.getString("info.sync.commit"), r.getRemoteHost(), client.getIp());
 
             log.error("Ошибка подтверждения синхронизации карточки на груз. " + rb.getString("info.sync.commit.log"),
                     new Object[]{client.getId(), r.getRemoteHost(), client.getIp()});
@@ -129,15 +129,15 @@ public class DocumentResourceBean {
                 em.merge(cargo);
             }
 
-            logBean.info(Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, DocumentCargo.class,
-                    rb.getString("info.sync.processed"), client.getId(), syncCargo.getCargos().size(),
+            logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, DocumentCargo.class,
+                    rb.getString("info.sync.processed"), syncCargo.getCargos().size(),
                     r.getRemoteHost(), client.getIp());
 
             log.info("Синхронизация грузов. " + rb.getString("info.sync.processed.log"),
                     new Object[]{client.getId(), size, r.getRemoteHost(), client.getIp()});
         } catch (Exception e) {
-            logBean.error(Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Cargo.class,
-                    rb.getString("info.sync.processed"), client.getId(), size, r.getRemoteHost(), client.getIp());
+            logBean.error(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Cargo.class,
+                    rb.getString("info.sync.processed"), size, r.getRemoteHost(), client.getIp());
 
             log.error("Ошибка синхронизации грузов. " + rb.getString("info.sync.processed.log"),
                     new Object[]{client.getId(), size, r.getRemoteHost(), client.getIp()});
@@ -163,15 +163,15 @@ public class DocumentResourceBean {
                     .setParameter("department", client.getDepartment())
                     .executeUpdate();
 
-            logBean.info(Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC_COMMIT, DocumentResourceBean.class, DocumentCargo.class,
-                    rb.getString("info.sync.commit"), client.getId(), r.getRemoteHost(), client.getIp());
+            logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC_COMMIT, DocumentResourceBean.class, DocumentCargo.class,
+                    rb.getString("info.sync.commit"), r.getRemoteHost(), client.getIp());
 
             log.info("Подтверждение синхронизации грузов. " + rb.getString("info.sync.commit.log"),
                     new Object[]{client.getId(), r.getRemoteHost(), client.getIp()});
 
         } catch (Exception e) {
-            logBean.error(Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC_COMMIT, DocumentResourceBean.class, DocumentCargo.class,
-                    rb.getString("info.sync.commit"), client.getId(), r.getRemoteHost(), client.getIp());
+            logBean.error(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC_COMMIT, DocumentResourceBean.class, DocumentCargo.class,
+                    rb.getString("info.sync.commit"), r.getRemoteHost(), client.getIp());
 
             log.error("Ошибка подтверждения синхронизации грузов. " + rb.getString("info.sync.commit.log"),
                     new Object[]{client.getId(), r.getRemoteHost(), client.getIp()});
@@ -205,7 +205,7 @@ public class DocumentResourceBean {
                 !documentCargo.getDepartment().getId().equals(client.getDepartment().getId())){
             log.error(rb.getString("error.document.check") + "[ip: {}]", r.getRemoteHost());
 
-            logBean.error(Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, DocumentCargo.class,
+            logBean.error(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, DocumentCargo.class,
                     rb.getString("error.document.check") + "[ip: {0}]", r.getRemoteHost());
 
             throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN)
@@ -220,7 +220,7 @@ public class DocumentResourceBean {
                 !cargo.getDepartment().getId().equals(client.getDepartment().getId())){
             log.error(rb.getString("error.document.check") + "[ip: {}]", r.getRemoteHost());
 
-            logBean.error(Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Cargo.class,
+            logBean.error(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Cargo.class,
                     rb.getString("error.document.check") + "[ip: {0}]", r.getRemoteHost());
 
             throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN)
