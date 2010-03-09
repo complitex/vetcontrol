@@ -29,6 +29,7 @@ import static org.vetcontrol.sync.client.service.ClientFactory.createJSONClient;
 @Singleton(name = "BookSyncBean")
 public class BookSyncBean extends SyncInfo{
     private static final Logger log = LoggerFactory.getLogger(BookSyncBean.class);
+    private static final int MAX_RESULTS = 100;
 
     @EJB(beanName = "ClientBean")
     private ClientBean clientBean;
@@ -106,9 +107,9 @@ public class BookSyncBean extends SyncInfo{
         start(new SyncEvent(count, bookClass));
 
         int index = 0;
-        if (count > 0) {
+        for (int i = 0; i <= count/MAX_RESULTS; ++i) {
             @SuppressWarnings({"unchecked"})
-            List<T> books = ClientFactory.createJSONClient("/book/" + bookClass.getSimpleName() + "/list")
+            List<T> books = ClientFactory.createJSONClient("/book/" + bookClass.getSimpleName() + "/list/" + MAX_RESULTS)
                     .post((GenericType<List<T>>)genericTypeMap.get(bookClass), new SyncRequestEntity(secureKey, getUpdated(bookClass)));
 
             //Сохранение в базу данных списка
