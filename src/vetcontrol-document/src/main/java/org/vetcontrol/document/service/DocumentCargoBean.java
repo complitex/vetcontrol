@@ -21,7 +21,7 @@ import java.util.List;
 @RolesAllowed({SecurityRoles.DOCUMENT_CREATE, SecurityRoles.DOCUMENT_EDIT, SecurityRoles.DOCUMENT_DEP_VIEW})
 public class DocumentCargoBean {
     public static enum OrderBy{
-        ID, MOVEMENT_TYPE, VECHICLE_TYPE, VECHICLE_DETAILS, CARGO_RECEIVER, CARGO_SENDER, CARGO_PRODUCER, CREATED
+        ID, MOVEMENT_TYPE, VECHICLE_TYPE, VECHICLE_DETAILS, CARGO_RECEIVER, CARGO_SENDER, CARGO_PRODUCER, CREATED, SYNC_STATUS
     }
 
     @PersistenceContext
@@ -108,7 +108,7 @@ public class DocumentCargoBean {
     }
 
     public Long getDocumentCargosSize(DocumentCargoFilter filter){
-        Query query = em.createQuery("select count(distinct dc) from DocumentCargo dc "
+        Query query = em.createQuery("select count(dc) from DocumentCargo dc "
                 + getJoin(filter, null)
                 + getWhere(filter));
         setParameters(filter, query);
@@ -117,7 +117,7 @@ public class DocumentCargoBean {
     }
                                                                       
     public List<DocumentCargo> getDocumentCargos(DocumentCargoFilter filter, int first, int count, OrderBy orderBy, boolean asc){
-        String select = "select distinct dc from DocumentCargo dc " + getJoin(filter, orderBy);
+        String select = "select dc from DocumentCargo dc " + getJoin(filter, orderBy);
         String where = getWhere(filter);
 
         String order = "";
@@ -145,6 +145,9 @@ public class DocumentCargoBean {
                 break;
             case CREATED:
                 order += " order by dc.created";
+                break;
+            case SYNC_STATUS:
+                order += " order by dc.syncStatus";
                 break;
         }
         order += (asc ? " asc" : " desc");
@@ -245,6 +248,10 @@ public class DocumentCargoBean {
             if (filter.getId() != null){
                 where += " and dc.id = :id";
             }
+
+            if (filter.getSyncStatus() != null){
+                where += " and dc.syncStatus = :syncStatus";
+            }
         }
 
         return where;
@@ -267,6 +274,7 @@ public class DocumentCargoBean {
                 query.setParameter("created", filter.getCreated());
                 query.setParameter("created_end_day", DateUtil.getEndOfDay(filter.getCreated()));
             }
+            addParameter(query, "syncStatus", filter.getSyncStatus());
         }
     }
 

@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.vetcontrol.document.service.DocumentCargoBean;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.CargoTypeBean;
+import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
@@ -53,6 +54,8 @@ public class DocumentCargoEdit extends FormTemplatePage {
     private ILocaleDAO localeDAO;
     @EJB(name = "LogBean")
     private LogBean logBean;
+    @EJB(name = "ClientBean")
+    ClientBean clientBean;
 
     public DocumentCargoEdit() {
         super();
@@ -114,7 +117,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
                 }
             }
 
-            if (!authorized) {
+            if (!authorized || (!clientBean.isServer() && dc.getSyncStatus().equals(Synchronized.SyncStatus.SYNCHRONIZED))) {
                 log.error("Пользователю запрещен доступ редактирование карточки на груз id = " + id + ": "
                         + currentUser.toString());
                 logBean.error(DOCUMENT, EDIT, DocumentCargoEdit.class, DocumentCargo.class,

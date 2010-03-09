@@ -20,7 +20,7 @@ public class Synchronized implements Serializable{
     }
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "sync_status")
+    @Column(name = "sync_status", nullable = false)
     protected SyncStatus syncStatus = SyncStatus.NOT_SYNCHRONIZED;
 
     @XmlTransient
