@@ -9,7 +9,6 @@ import org.vetcontrol.entity.UserGroup;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.sync.Count;
-import org.vetcontrol.sync.ID;
 import org.vetcontrol.sync.SyncRequestEntity;
 
 import javax.ejb.EJB;
@@ -22,7 +21,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -94,20 +92,14 @@ public class UserGroupResourceBean {
     }
 
     @POST @Path("/deleted/list")
-    public GenericEntity<List<ID>> getDeletedUserGroups(SyncRequestEntity requestEntity, @Context HttpServletRequest r){
+    public GenericEntity<List<DeletedLongId>> getDeletedUserGroups(SyncRequestEntity requestEntity, @Context HttpServletRequest r){
         Client client = getClient(requestEntity, r);
 
-        List<Long> list = em.createQuery("select d.id.id from DeletedLongId d " +
-                "where d.id.entity = :entity and d.deleted >= :updated", Long.class)
+        List<DeletedLongId> list = em.createQuery("select d from DeletedLongId d " +
+                "where d.id.entity = :entity and d.deleted >= :updated", DeletedLongId.class)
                 .setParameter("entity", UserGroup.class.getCanonicalName())
                 .setParameter("updated", requestEntity.getUpdated())
                 .getResultList();
-
-        List<ID> ids = new ArrayList<ID>(list.size());
-
-        for (Long id : list){
-            ids.add(new ID(id));
-        }
 
         if (!list.isEmpty()){
             logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, UserGroupResourceBean.class, DeletedLongId.class,
@@ -118,7 +110,7 @@ public class UserGroupResourceBean {
                     new Object[]{client.getId(), list.size(), r.getRemoteHost(), client.getIp()});
         }
 
-        return new GenericEntity<List<ID>>(ids){};
+        return new GenericEntity<List<DeletedLongId>>(list){};
     }
 
     @POST @Path("/deleted/count")

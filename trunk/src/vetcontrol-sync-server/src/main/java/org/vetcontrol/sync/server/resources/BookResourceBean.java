@@ -69,6 +69,15 @@ public class BookResourceBean {
         return  new GenericEntity<List<CargoMode>>(getList(CargoMode.class, re, r, firstResult, maxResults)){};
     }
 
+    @POST @Path("/CargoModeCargoType/deleted/list/{firstResult}/{maxResults}")
+    public GenericEntity<List<DeletedEmbeddedId>> getDeletedCargoModeCargoTypes(
+            SyncRequestEntity re,
+            @Context HttpServletRequest r,
+            @PathParam("maxResults") String maxResults,
+            @PathParam("firstResult") String firstResult){
+        return  new GenericEntity<List<DeletedEmbeddedId>>(getDeleted(CargoModeCargoType.class, re, r, firstResult, maxResults)){};
+    }
+
     @POST @Path("/CargoModeCargoType/list/{firstResult}/{maxResults}")
     public GenericEntity<List<CargoModeCargoType>> getCargoModeCargoTypes(
             SyncRequestEntity re,
@@ -76,6 +85,15 @@ public class BookResourceBean {
             @PathParam("maxResults") String maxResults,
             @PathParam("firstResult") String firstResult){
         return  new GenericEntity<List<CargoModeCargoType>>(getList(CargoModeCargoType.class, re, r, firstResult, maxResults)){};
+    }
+
+    @POST @Path("/CargoModeUnitType/deleted/list/{firstResult}/{maxResults}")
+    public GenericEntity<List<DeletedEmbeddedId>> getDeletedCargoModeUnitType(
+            SyncRequestEntity re,
+            @Context HttpServletRequest r,
+            @PathParam("maxResults") String maxResults,
+            @PathParam("firstResult") String firstResult){
+        return  new GenericEntity<List<DeletedEmbeddedId>>(getDeleted(CargoModeUnitType.class, re, r, firstResult, maxResults)){};
     }
 
     @POST @Path("/CargoModeUnitType/list/{firstResult}/{maxResults}")
@@ -283,6 +301,59 @@ public class BookResourceBean {
         }
 
         List<T> list = query.getResultList();
+
+        if (!list.isEmpty()){
+            logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, BookResourceBean.class, entity,
+                    rb.getString("info.sync.processed"), list.size(), r.getRemoteHost(), client.getIp());
+
+            log.info("Синхронизация " + entity.getSimpleName() + ". " + rb.getString("info.sync.processed.log"),
+                    new Object[]{client.getId(), list.size(), r.getRemoteHost(), client.getIp()});
+        }
+
+        return list;
+    }
+
+    @POST @Path("/{entity}/deleted/count")
+    public Count getDeletedCount(@PathParam("entity") String entity, SyncRequestEntity re, @Context HttpServletRequest r){
+        getClient(re, r);
+
+        String e = null;
+
+        if (entity.equals(CargoModeCargoType.class.getSimpleName())){
+            e = CargoModeCargoType.class.getCanonicalName();
+        }else if (entity.equals(CargoModeUnitType.class.getSimpleName())){
+            e = CargoModeUnitType.class.getCanonicalName();
+        }
+
+        return new Count(em.createQuery("select count(*) from DeletedEmbeddedId d " +
+                "where d.deleted >= :deleted and entity = :entity", Long.class)
+                .setParameter("deleted", re.getUpdated())
+                .setParameter("entity", e)
+                .getSingleResult()
+                .intValue());
+    }
+
+    private List<DeletedEmbeddedId> getDeleted(Class entity,
+                                   SyncRequestEntity re,
+                                   HttpServletRequest r,
+                                   String firstResult,
+                                   String maxResults){
+        Client client = getClient(re, r);
+
+        TypedQuery<DeletedEmbeddedId> query =  em.createQuery("select d from DeletedEmbeddedId d " +
+                "where d.deleted >= :deleted and entity = :entity", DeletedEmbeddedId.class)
+                .setParameter("deleted", re.getUpdated())
+                .setParameter("entity", entity.getCanonicalName());
+
+        if (maxResults != null){
+            query.setMaxResults(Integer.parseInt(maxResults));
+
+        }
+        if (firstResult != null){
+            query.setFirstResult(Integer.parseInt(firstResult));
+        }
+
+        List<DeletedEmbeddedId> list = query.getResultList();
 
         if (!list.isEmpty()){
             logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, BookResourceBean.class, entity,

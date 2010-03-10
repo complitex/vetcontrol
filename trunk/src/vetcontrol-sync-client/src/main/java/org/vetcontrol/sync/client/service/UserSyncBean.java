@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.sync.Count;
-import org.vetcontrol.sync.ID;
 import org.vetcontrol.sync.SyncRequestEntity;
 import org.vetcontrol.util.DateUtil;
 
@@ -105,18 +104,18 @@ public class UserSyncBean extends SyncInfo{
 
         if (count_deleted > 0) {
             //Загрузка с сервера списка идентификаторов удаленных групп пользователей
-            List<ID> ids = createJSONClient("/usergroup/deleted/list").post(new GenericType<List<ID>>(){},
+            List<DeletedLongId> ids = createJSONClient("/usergroup/deleted/list").post(new GenericType<List<DeletedLongId>>(){},
                     new SyncRequestEntity(secureKey, getUpdated(UserGroup.class)));
 
             //Удаление групп пользователей
-            for (ID id : ids){
+            for (DeletedLongId id : ids){
                 //json protocol feature, skip empty entity
-                if (id.getId() == null) continue;
+                if (id.getId() == null || id.getId().getId() == null) continue;
 
-                log.debug("Synchronizing Delete User Group: {}", id);
+                log.debug("Synchronizing Delete User Group: {}", id.getId().getId());
                 sync(new SyncEvent(count_deleted + count_updated, index++, id));
 
-                em.createQuery("delete from UserGroup where id = :id").setParameter("id", id.getId()).executeUpdate();
+                em.createQuery("delete from UserGroup where id = :id").setParameter("id", id.getId().getId()).executeUpdate();
             }
         }
 

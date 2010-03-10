@@ -94,6 +94,81 @@ public class BookSyncBean extends SyncInfo{
         }
     }
 
+    /**
+     * Удаление справочников
+     * @param bookClass класс справочника
+     * @param <T> тип справочника
+     */
+    public <T extends IUpdated> void processDeleted(Class<T> bookClass){
+        String secureKey = clientBean.getCurrentSecureKey();
+        Date syncUpdated = DateUtil.getCurrentDate();
+
+        log.debug("\n==================== Synchronizing Deleted: {} ============================", bookClass.getSimpleName());
+
+        //Количество записей загрузки
+        int count = createJSONClient("/book/" + bookClass.getSimpleName() + "/deleted/count")
+                .post(Count.class, new SyncRequestEntity(secureKey, getUpdated(bookClass))).getCount();
+
+        start(new SyncEvent(count, new DeletedEmbeddedId(new DeletedEmbeddedId.Id(null, bookClass.getCanonicalName()), null)));
+
+        int index = 0;
+
+        Date deleted;
+
+        if (initial){
+            deleted =  new Date(0);
+        }else{
+            deleted = em.createQuery("select max(d.deleted) from DeletedEmbeddedId d where d.id.entity = :entity", Date.class)
+                    .setParameter("entity", bookClass.getCanonicalName())
+                    .getSingleResult();
+
+            if (deleted == null){
+                deleted =  new Date(0);
+            }
+        }
+
+        for (int i = 0; i <= count/MAX_RESULTS; ++i) {           
+            List<DeletedEmbeddedId> ids = ClientFactory.createJSONClient("/book/" + bookClass.getSimpleName() +
+                    "/deleted/list/" + i*MAX_RESULTS + "/" + MAX_RESULTS)
+                    .post(new GenericType<List<DeletedEmbeddedId>>(){}, new SyncRequestEntity(secureKey, deleted));
+
+            //Сохранение в базу данных списка
+            for (DeletedEmbeddedId id : ids){
+                //skip null
+                if (id.getId() == null && id.getId().getId() != null) continue;
+
+                sync(new SyncEvent(count, index++, id));
+
+                String[] s = id.getId().getId().split(":");
+
+                if (bookClass.equals(CargoModeCargoType.class)){
+                    em.createQuery("delete from CargoModeCargoType t " +
+                            "where t.id.cargoModeId = :id1 and t.id.cargoTypeId = :id2")
+                            .setParameter("id1", Long.parseLong(s[0]))
+                            .setParameter("id2", Long.parseLong(s[1]))
+                            .executeUpdate();
+                }else if (bookClass.equals(CargoModeUnitType.class)){
+                    em.createQuery("delete from CargoModeUnitType t " +
+                            "where t.id.cargoModeId = :id1 and t.id.unitTypeId = :id2")
+                            .setParameter("id1", Long.parseLong(s[0]))
+                            .setParameter("id2", Long.parseLong(s[1]))
+                            .executeUpdate();
+                }
+            }
+        }
+
+        if (count > 0){
+            DeletedEmbeddedId deletedEmbeddedId = new DeletedEmbeddedId();
+            deletedEmbeddedId.setId(new DeletedEmbeddedId.Id("sync", bookClass.getCanonicalName()));
+            deletedEmbeddedId.setDeleted(syncUpdated);
+
+            em.merge(deletedEmbeddedId);                        
+        }
+
+        complete(new SyncEvent(index, bookClass));
+        log.debug("++++++++++++++++++++ Synchronizing Deleted Complete: {} +++++++++++++++++++\n", bookClass.getSimpleName());
+    }
+
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public <T extends IQuery & IUpdated> void processBook(Class<T> bookClass) {
         String secureKey = clientBean.getCurrentSecureKey();
