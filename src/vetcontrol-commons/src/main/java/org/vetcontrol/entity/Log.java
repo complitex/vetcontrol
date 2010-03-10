@@ -1,6 +1,10 @@
 package org.vetcontrol.entity;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -10,6 +14,8 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "log")
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Log implements Serializable{
     public static enum MODULE {
         COMMONS, USER, DOCUMENT, INFORMATION, REPORT, SYNC_CLIENT, SYNC_SERVER
@@ -33,6 +39,7 @@ public class Log implements Serializable{
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @XmlIDREF
     private User user;
     
     @Column(name = "controller_class")
@@ -58,6 +65,7 @@ public class Log implements Serializable{
 
     @ManyToOne
     @JoinColumn(name="client_id")
+    @XmlIDREF
     private Client client;
 
     public Long getId() {

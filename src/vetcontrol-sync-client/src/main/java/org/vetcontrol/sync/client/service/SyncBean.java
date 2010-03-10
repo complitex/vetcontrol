@@ -11,6 +11,7 @@ import org.vetcontrol.web.security.SecurityWebListener;
 
 import javax.ejb.*;
 import javax.servlet.http.HttpSession;
+import javax.ws.rs.core.Response;
 import java.util.*;
 import java.util.Locale;
 import java.util.concurrent.Future;
@@ -34,6 +35,9 @@ public class SyncBean{
 
     @EJB(beanName = "LogBean")
     LogBean logBean;
+
+    @EJB(beanName = "LogSyncBean")
+    private LogSyncBean logSyncBean;
 
     private ResourceBundle rb;
 
@@ -104,7 +108,9 @@ public class SyncBean{
     };
 
     public List<SyncMessage> getSyncMessages() {
-        return syncMessages;
+        List<SyncMessage> list = new ArrayList<SyncMessage>(syncMessages);
+        Collections.reverse(list);
+        return list;
     }
 
     public boolean isProcessing(){
@@ -119,6 +125,7 @@ public class SyncBean{
         bookSyncBean.setSyncListener(syncListener);
         userSyncBean.setSyncListener(syncListener);
         documentCargoSyncBean.setSyncListener(syncListener);
+        logSyncBean.setSyncListener(syncListener);
 
         bookSyncBean.setInitial(getLastSync() == null);
 
@@ -147,6 +154,9 @@ public class SyncBean{
 
             //Синхронизация документов
             documentCargoSyncBean.process();
+
+            //Синхронизация лога документов
+            logSyncBean.process();            
 
             message = new SyncMessage();
             message.setName(rb.getString("sync.client.sync.client"));
@@ -184,7 +194,12 @@ public class SyncBean{
                 String m = e.getResponse().getEntity(String.class);
 
                 message.setName(rb.getString("sync.client.sync.error"));
-                message.setMessage(m);
+
+                if (e.getResponse().getStatus() == Response.Status.NOT_FOUND.getStatusCode()){
+                    message.setMessage(rb.getString("NOT_FOUND"));
+                }else{
+                    message.setMessage(m);
+                }
 
                 log.error(m);
                 logBean.error(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, SyncBean.class, null, m);
