@@ -4,7 +4,6 @@
  */
 package org.vetcontrol.db.populate;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.vetcontrol.db.populate.util.GenerateUtil;
@@ -24,7 +23,6 @@ import org.vetcontrol.entity.User;
 import org.vetcontrol.entity.VehicleType;
 import org.vetcontrol.service.CargoTypeBean;
 import org.vetcontrol.service.ClientBean;
-import org.vetcontrol.util.book.service.HibernateSessionTransformer;
 
 /**
  *
@@ -37,7 +35,7 @@ public class ClientPopulator extends AbstractPopulator {
     //count of documents to generate
     private static final int DOCUMENT_COUNT = 10;
     //count of cargos onto one DocumentCargo entry.
-    private static final int CARGO_COUNT = 1;
+    private static final int CARGO_COUNT = 10;
     //Department id of creator of documents.
     private static final Long DEPARTMENT_ID = 17L;
     //User id of creator of documents.
@@ -54,9 +52,6 @@ public class ClientPopulator extends AbstractPopulator {
         clientBean.setEntityManager(getEntityManager());
         cargoTypeBean = new CargoTypeBean();
         cargoTypeBean.setEntityManager(getEntityManager());
-    }
-
-    private void populateDocumentCargo() {
         if (department == null) {
             department = getEntityManager().getReference(Department.class, DEPARTMENT_ID);
         }
@@ -66,7 +61,9 @@ public class ClientPopulator extends AbstractPopulator {
         if (client == null) {
             client = clientBean.getCurrentClient();
         }
+    }
 
+    private void populateDocumentCargo(Date created) {
         DocumentCargo dc = new DocumentCargo();
         dc.setDepartment(department);
         dc.setCreator(creator);
@@ -75,7 +72,8 @@ public class ClientPopulator extends AbstractPopulator {
         dc.setCargoProducer(findAny(CargoProducer.class));
         dc.setCargoReceiver(findAny(CargoReceiver.class));
         dc.setCargoSender(findAny(CargoSender.class));
-        dc.setCreated(new Date());
+        dc.setCreated(created);
+        dc.setUpdated(created);
         dc.setMovementType(findAny(MovementType.class));
         dc.setPassingBorderPoint(findAny(PassingBorderPoint.class));
         dc.setVehicleType(findAny(VehicleType.class));
@@ -84,35 +82,56 @@ public class ClientPopulator extends AbstractPopulator {
         dc.setSyncStatus(SyncStatus.NOT_SYNCHRONIZED);
         dc.setVehicleDetails(GenerateUtil.generateString(255));
 
-        HibernateSessionTransformer.getSession(getEntityManager()).saveOrUpdate(dc);
+        getEntityManager().persist(dc);
+    }
 
-        System.out.println("Dc saved, id = " + dc.getId());
+    private void populateCargo(Long documentCargoId) {
+        Cargo cargo = new Cargo();
+        cargo.setCertificateDate(new Date());
+        cargo.setCertificateDetails(GenerateUtil.generateString(255));
+        cargo.setClient(client);
+        cargo.setCount(GenerateUtil.generateInt(1000));
+        cargo.setDepartment(department);
+        cargo.setDocumentCargoId(documentCargoId);
+        cargo.setSyncStatus(SyncStatus.NOT_SYNCHRONIZED);
 
-        for (int i = 0; i < CARGO_COUNT; i++) {
-            Cargo cargo = new Cargo();
-            cargo.setCertificateDate(new Date());
-            cargo.setCertificateDetails(GenerateUtil.generateString(255));
-            cargo.setClient(client);
-            cargo.setCount(GenerateUtil.generateInt(1000));
-            cargo.setDepartment(department);
-            cargo.setDocumentCargoId(dc.getId());
-            cargo.setSyncStatus(SyncStatus.NOT_SYNCHRONIZED);
-
-            cargo.setCargoType(findAny(CargoType.class));
-            cargo.setUnitType(findAny(UnitType.class));
-
-            getEntityManager().persist(cargo);
+        String size = "SELECT COUNT(DISTINCT ct) FROM CargoModeCargoType cmct JOIN cmct.cargoType ct WHERE "
+                + "EXISTS(SELECT 1 FROM CargoModeUnitType cmut WHERE cmut.id.cargoModeId = cmct.id.cargoModeId)";
+        int count = getEntityManager().createQuery(size, Long.class).getSingleResult().intValue();
+        if (count == 0) {
+            throw new RuntimeException("There are no pertinent cargo types and unit types.");
         }
+        String query = "SELECT ct FROM CargoModeCargoType cmct JOIN cmct.cargoType ct WHERE "
+                + "EXISTS(SELECT 1 FROM CargoModeUnitType cmut WHERE cmut.id.cargoModeId = cmct.id.cargoModeId)";
+        CargoType ct = getEntityManager().createQuery(query, CargoType.class).
+                setFirstResult(GenerateUtil.generateInt(count - 1)).setMaxResults(1).getResultList().get(0);
+        UnitType ut = cargoTypeBean.getUnitTypes(ct).get(0);
+
+        cargo.setCargoType(ct);
+        cargo.setUnitType(ut);
+        getEntityManager().persist(cargo);
     }
 
     @Override
     protected void populate() {
         //document cargos
+        Date now = new Date();
         for (int i = 0; i < DOCUMENT_COUNT; i++) {
             startTransaction();
             initClient();
-            populateDocumentCargo();
+            populateDocumentCargo(now);
             endTransaction();
+        }
+        List<Long> documentCargoIds = getEntityManager().createQuery("SELECT dc.id FROM DocumentCargo dc WHERE dc.created = :created", Long.class).
+                setParameter("created", now).
+                getResultList();
+        for (Long documentCargoId : documentCargoIds) {
+            for (int i = 0; i < CARGO_COUNT; i++) {
+                startTransaction();
+                initClient();
+                populateCargo(documentCargoId);
+                endTransaction();
+            }
         }
     }
 
