@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.persistence.TemporalType;
 import org.hibernate.Session;
 import org.vetcontrol.util.DateUtil;
+import org.vetcontrol.util.book.Property;
 import org.vetcontrol.util.book.service.HibernateSessionTransformer;
 
 /**
@@ -44,37 +45,38 @@ public class BookDAO extends BookViewDAO implements IBookDAO {
     public void saveOrUpdate(Serializable book) {
         try {
             Session session = HibernateSessionTransformer.getSession(getEntityManager());
-            Map<PropertyDescriptor, PropertyDescriptor> mappedProperties = BeanPropertyUtil.getMappedProperties(book.getClass());
-
-            for (PropertyDescriptor prop : mappedProperties.keySet()) {
-                saveOrUpdateLocalizableStrings(mappedProperties, prop, book, session);
-            }
+            saveOrUpdateLocalizableStrings(book, session);
             session.saveOrUpdate(book);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void saveOrUpdateLocalizableStrings(Map<PropertyDescriptor, PropertyDescriptor> mappedProperties, PropertyDescriptor prop,
-            Serializable book, Session session) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-        PropertyDescriptor mappedProperty = mappedProperties.get(prop);
-        Method getter = prop.getReadMethod();
-        List<StringCulture> localizableStrings = (List<StringCulture>) getter.invoke(book);
-        if (!localizableStrings.isEmpty()) {
-            if (localizableStrings.get(0).getId().getId() == null) {
-                long ID = sequence.next();
-                for (StringCulture culture : localizableStrings) {
-                    culture.getId().setId(ID);
+    private void saveOrUpdateLocalizableStrings(Serializable book, Session session) {
+        try {
+            for (Property prop : BeanPropertyUtil.getProperties(book.getClass())) {
+                if (prop.isLocalizable()) {
+                    List<StringCulture> localizableStrings = (List<StringCulture>) BeanPropertyUtil.getPropertyValue(book, prop.getName());
+                    if (!localizableStrings.isEmpty()) {
+                        if (localizableStrings.get(0).getId().getId() == null) {
+                            long ID = sequence.next();
+                            for (StringCulture culture : localizableStrings) {
+                                culture.getId().setId(ID);
 //                    if (Strings.isEmpty(culture.getValue())) {
 //                        culture.setValue(null);
 //                    }
 //                    getEntityManager().merge(culture);
+                            }
+                            BeanPropertyUtil.setPropertyValue(book, prop.getLocalizationForeignKeyProperty(), ID);
+                        }
+                    }
+                    for (StringCulture culture : localizableStrings) {
+                        session.saveOrUpdate(culture);
+                    }
                 }
-                mappedProperty.getWriteMethod().invoke(book, ID);
             }
-        }
-        for (StringCulture culture : localizableStrings) {
-            session.saveOrUpdate(culture);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

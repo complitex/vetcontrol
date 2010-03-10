@@ -89,7 +89,7 @@ public class BookViewDAO implements IBookViewDAO {
     public void addLocalizationSupport(Object entity) {
         Session session = HibernateSessionTransformer.getSession(getEntityManager());
         try {
-            prepareLocalizableStrings(entity, BeanPropertyUtil.getMappedProperties(entity.getClass()), session, 0, 1);
+            prepareLocalizableStrings(entity, session, 0, 1);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -115,48 +115,44 @@ public class BookViewDAO implements IBookViewDAO {
         return q;
     }
 
-    private <T> void prepareLocalizableStrings(T bean, Map<PropertyDescriptor, PropertyDescriptor> mappedProperties, Session session,
-            int currentDepth, int availableDepth) throws IllegalArgumentException, HibernateException, IllegalAccessException, InvocationTargetException, IntrospectionException {
-        if (currentDepth <= availableDepth) {
-            if (bean != null) {
-                for (PropertyDescriptor prop : mappedProperties.keySet()) {
-                    PropertyDescriptor mappedProperty = mappedProperties.get(prop);
-                    Method setter = prop.getWriteMethod();
-                    Object id = mappedProperty.getReadMethod().invoke(bean);
-                    List<StringCulture> strings = session.createCriteria(StringCulture.class).
-                            addOrder(Order.asc("id.locale")).
-                            add(Restrictions.eq("id.id", id)).
-                            list();
+    private <T> void prepareLocalizableStrings(T bean, Session session, int currentDepth, int availableDepth) {
+        try {
+            if (currentDepth <= availableDepth) {
+                if (bean != null) {
+                    for (Property prop : BeanPropertyUtil.getProperties(bean.getClass())) {
+                        if (prop.isLocalizable()) {
+                            Object id = BeanPropertyUtil.getPropertyValue(bean, prop.getLocalizationForeignKeyProperty());
+                            if (id != null) {
+                                List<StringCulture> strings = session.createCriteria(StringCulture.class).
+                                        addOrder(Order.asc("id.locale")).
+                                        add(Restrictions.eq("id.id", id)).
+                                        list();
+                                BeanPropertyUtil.setPropertyValue(bean, prop.getName(), strings);
 //                    for (StringCulture culture : strings) {
 //                        if (culture.getValue() == null) {
 //                            culture.setValue("");
 //                        }
 //                    }
-                    if (strings != null && !strings.isEmpty()) {
-                        mappedProperty.getWriteMethod().invoke(bean, strings.get(0).getId().getId());
-                    }
-                    setter.invoke(bean, strings);
-                }
-
-                for (Property prop : BeanPropertyUtil.getProperties(bean.getClass())) {
-//                        if (prop.isBeanReference()) {
-//                            prepareLocalizableStrings(BeanPropertyUtil.getPropertyValue(currentResult, prop.getName()),
-//                                    BeanPropertyUtil.getMappedProperties(prop.getType()), session, currentDepth + 1, availableDepth);
-//                        }
-                    Class propType = prop.getType();
-                    boolean isSuitableType = true;
-                    for (Class simpleType : BeanPropertyUtil.SIMPLE_TYPIES) {
-                        if (simpleType.isAssignableFrom(propType)) {
-                            isSuitableType = false;
-                            break;
+                            }
+                        } else {
+                            Class propType = prop.getType();
+                            boolean isSuitableType = true;
+                            for (Class simpleType : BeanPropertyUtil.SIMPLE_TYPIES) {
+                                if (simpleType.isAssignableFrom(propType)) {
+                                    isSuitableType = false;
+                                    break;
+                                }
+                            }
+                            if (isSuitableType) {
+                                Object propValue = BeanPropertyUtil.getPropertyValue(bean, prop.getName());
+                                prepareLocalizableStrings(propValue, session, currentDepth + 1, availableDepth);
+                            }
                         }
-                    }
-                    if (isSuitableType) {
-                        Object propValue = BeanPropertyUtil.getPropertyValue(bean, prop.getName());
-                        prepareLocalizableStrings(propValue, BeanPropertyUtil.getMappedProperties(propType), session, currentDepth + 1, availableDepth);
                     }
                 }
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
