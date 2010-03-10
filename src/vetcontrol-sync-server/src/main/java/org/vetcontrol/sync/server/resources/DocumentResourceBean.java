@@ -66,6 +66,8 @@ public class DocumentResourceBean {
 
             log.info("Синхронизация карточек на груз. " + rb.getString("info.sync.processed.log"),
                     new Object[]{client.getId(), size, r.getRemoteHost(), client.getIp()});
+        }catch (WebApplicationException e){            
+            throw e;
         } catch (Exception e) {
             logBean.error(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, BookResourceBean.class, DocumentCargo.class,
                     rb.getString("info.sync.processed"), size, r.getRemoteHost(), client.getIp());
@@ -87,11 +89,10 @@ public class DocumentResourceBean {
 
         try {
             em.createQuery("update DocumentCargo set syncStatus = :newSyncStatus where syncStatus = :oldSyncStatus " +
-                    "and client = :client and department = :department")
+                    "and client = :client")
                     .setParameter("newSyncStatus", Synchronized.SyncStatus.SYNCHRONIZED)
                     .setParameter("oldSyncStatus", Synchronized.SyncStatus.PROCESSING)
                     .setParameter("client", client)
-                    .setParameter("department", client.getDepartment())
                     .executeUpdate();
 
             logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC_COMMIT, DocumentResourceBean.class, DocumentCargo.class,
@@ -160,11 +161,10 @@ public class DocumentResourceBean {
 
         try {
             em.createQuery("update Cargo set syncStatus = :newSyncStatus where syncStatus = :oldSyncStatus " +
-                    "and client = :client and department = :department")
+                    "and client = :client")
                     .setParameter("newSyncStatus", Synchronized.SyncStatus.SYNCHRONIZED)
                     .setParameter("oldSyncStatus", Synchronized.SyncStatus.PROCESSING)
                     .setParameter("client", client)
-                    .setParameter("department", client.getDepartment())
                     .executeUpdate();
 
             logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC_COMMIT, DocumentResourceBean.class, DocumentCargo.class,
@@ -205,8 +205,7 @@ public class DocumentResourceBean {
     }
 
     private void securityCheck(Client client, DocumentCargo documentCargo, HttpServletRequest r){
-        if (!documentCargo.getClient().getId().equals(client.getId()) ||
-                !documentCargo.getDepartment().getId().equals(client.getDepartment().getId())){
+        if (!documentCargo.getClient().getId().equals(client.getId())){
             log.error(rb.getString("error.document.check") + "[ip: {}]", r.getRemoteHost());
 
             logBean.error(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, DocumentCargo.class,
@@ -220,8 +219,7 @@ public class DocumentResourceBean {
     }
 
     private void securityCheck(Client client, Cargo cargo, HttpServletRequest r){
-        if (!cargo.getClient().getId().equals(client.getId()) ||
-                !cargo.getDepartment().getId().equals(client.getDepartment().getId())){
+        if (!cargo.getClient().getId().equals(client.getId())){
             log.error(rb.getString("error.document.check") + "[ip: {}]", r.getRemoteHost());
 
             logBean.error(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Cargo.class,

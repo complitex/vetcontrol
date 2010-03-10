@@ -95,7 +95,7 @@ public class DocumentCargoView extends TemplatePage{
             throw new UnauthorizedInstantiationException(DocumentCargoEdit.class);
         }
 
-        String title = getString("document.cargo.view.title") + id;
+        String title = getString("document.cargo.view.title") + " " + id;
         add(new Label("title", title));
         add(new Label("header", title));
 
