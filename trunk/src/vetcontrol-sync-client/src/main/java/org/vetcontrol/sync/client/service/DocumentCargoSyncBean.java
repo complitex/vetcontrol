@@ -25,7 +25,8 @@ import static org.vetcontrol.sync.client.service.ClientFactory.createJSONClient;
  */
 @Singleton(name = "DocumentCargoSyncBean")
 public class DocumentCargoSyncBean extends SyncInfo{
-     private static final Logger log = LoggerFactory.getLogger(UserSyncBean.class);
+    private static final Logger log = LoggerFactory.getLogger(UserSyncBean.class);
+    private static final int MAX_RESULTS = 100;
 
     @EJB(beanName = "ClientBean")
     private ClientBean clientBean;
@@ -59,11 +60,18 @@ public class DocumentCargoSyncBean extends SyncInfo{
 
         int size = documentCargos.size();
 
-        if (size > 0) {
-            createJSONClient("/document/document_cargo").put(new SyncDocumentCargo(secureKey,
-                    getUpdated(DocumentCargo.class), documentCargos));
+        for (int i = 0; i <= size/MAX_RESULTS; ++i) {
+            int from = i*MAX_RESULTS < size ? i*MAX_RESULTS : size-1;
+            int to  = (i+1)*MAX_RESULTS < size ? (i+1)*MAX_RESULTS : size-1;
 
-            sync(new SyncEvent(size, 0, DocumentCargo.class));
+            if (from == to) break;
+
+            List<DocumentCargo> subList = documentCargos.subList(from, to);
+
+            createJSONClient("/document/document_cargo").put(new SyncDocumentCargo(secureKey,
+                    getUpdated(DocumentCargo.class), subList));
+
+            sync(new SyncEvent(size, from, DocumentCargo.class));
 
             em.createQuery("update DocumentCargo set syncStatus = :newSyncStatus where syncStatus = :oldSyncStatus")
                     .setParameter("newSyncStatus", Synchronized.SyncStatus.SYNCHRONIZED)
@@ -100,10 +108,17 @@ public class DocumentCargoSyncBean extends SyncInfo{
 
         int size = cargos.size();
 
-        if (size > 0) {
-            createJSONClient("/document/cargo").put(new SyncCargo(secureKey, getUpdated(Cargo.class), cargos));
+        for (int i = 0; i <= size/MAX_RESULTS; ++i) {
+            int from = i*MAX_RESULTS < size ? i*MAX_RESULTS : size-1;
+            int to  = (i+1)*MAX_RESULTS < size ? (i+1)*MAX_RESULTS : size-1;
 
-            sync(new SyncEvent(size, 0, Cargo.class));
+            if (from == to) break;
+
+            List<Cargo> subList = cargos.subList(from, to);
+
+            createJSONClient("/document/cargo").put(new SyncCargo(secureKey, getUpdated(Cargo.class), subList));
+
+            sync(new SyncEvent(size, from, Cargo.class));
 
             em.createQuery("update Cargo set syncStatus = :newSyncStatus where syncStatus = :oldSyncStatus")
                     .setParameter("newSyncStatus", Synchronized.SyncStatus.SYNCHRONIZED)
