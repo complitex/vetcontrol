@@ -49,6 +49,8 @@ public class DocumentResourceBean {
 
         try {
             for (DocumentCargo documentCargo : syncDocumentCargo.getDocumentCargos()){
+                if (documentCargo.getId() == null) continue;
+
                 securityCheck(client, documentCargo, r);
 
                 documentCargo.setSyncStatus(Synchronized.SyncStatus.PROCESSING);
@@ -120,6 +122,8 @@ public class DocumentResourceBean {
 
         try {
             for (Cargo cargo : syncCargo.getCargos()){
+                if (cargo.getId() == null) continue;
+
                 securityCheck(client, cargo, r);
 
                 cargo.setSyncStatus(Synchronized.SyncStatus.PROCESSING);
