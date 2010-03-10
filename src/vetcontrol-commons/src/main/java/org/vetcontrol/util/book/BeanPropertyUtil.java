@@ -166,12 +166,9 @@ public class BeanPropertyUtil {
 
     public static void addLocalization(Object bookEntry, List<Locale> supportedLocales) {
         try {
-            BeanInfo beanInfo = Introspector.getBeanInfo(bookEntry.getClass());
-            PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
-            for (PropertyDescriptor propDesc : props) {
-                MappedProperty mappedProperty = propDesc.getReadMethod().getAnnotation(MappedProperty.class);
-                if (mappedProperty != null) {
-                    List<StringCulture> strings = (List<StringCulture>) propDesc.getReadMethod().invoke(bookEntry);
+            for (Property prop : getProperties(bookEntry.getClass())) {
+                if (prop.isLocalizable()) {
+                    List<StringCulture> strings = (List<StringCulture>) getPropertyValue(bookEntry, prop.getName());
 
                     List<StringCulture> toAdd = new ArrayList<StringCulture>();
                     if (strings.size() < supportedLocales.size()) {
@@ -205,7 +202,7 @@ public class BeanPropertyUtil {
                             return o1.getId().getLocale().compareToIgnoreCase(o2.getId().getLocale());
                         }
                     });
-                    propDesc.getWriteMethod().invoke(bookEntry, strings);
+                    setPropertyValue(bookEntry, prop.getName(), strings);
                 }
             }
         } catch (Exception e) {
@@ -213,6 +210,7 @@ public class BeanPropertyUtil {
         }
     }
 
+    @Deprecated
     public static Map<PropertyDescriptor, PropertyDescriptor> getMappedProperties(Class bookType) throws IntrospectionException {
         //List prop to long prop
         Map<PropertyDescriptor, PropertyDescriptor> mappedProperties = new HashMap<PropertyDescriptor, PropertyDescriptor>();
