@@ -39,7 +39,7 @@ public class LogSyncBean extends SyncInfo{
         SyncRequestEntity syncRequestEntity = createJSONClient("/log/last_document")
                 .post(SyncRequestEntity.class, new SyncRequestEntity(secureKey, null));
 
-        List<Log> logs = em.createQuery("select l from Log l where l.date >= :date and l.module = :module", Log.class)
+        List<Log> logs = em.createQuery("select l from Log l where l.date > :date and l.module = :module", Log.class)
                 .setParameter("date", syncRequestEntity.getUpdated())
                 .setParameter("module", Log.MODULE.DOCUMENT)
                 .getResultList();
