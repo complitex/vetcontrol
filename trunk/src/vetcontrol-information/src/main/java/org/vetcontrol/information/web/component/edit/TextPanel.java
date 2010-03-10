@@ -9,7 +9,6 @@ import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.vetcontrol.information.util.web.Constants;
 import org.vetcontrol.util.book.Property;
@@ -21,37 +20,6 @@ import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
  */
 public final class TextPanel extends Panel {
 
-//    private class TextModel implements IModel {
-//
-//        private IModel model;
-//
-//        public TextModel(IModel model) {
-//            this.model = model;
-//        }
-//
-//        @Override
-//        public Object getObject() {
-//            return model.getObject();
-//        }
-//
-//        @Override
-//        public void setObject(Object object) {
-//            if (object instanceof String) {
-//                String objectAsString = (String) object;
-//                if (!Strings.isEqual(objectAsString, (String) model.getObject())) {
-//                    model.setObject(object);
-//                }
-//            } else {
-//                if (object == null || !object.equals(model.getObject())) {
-//                    model.setObject(object);
-//                }
-//            }
-//        }
-//
-//        @Override
-//        public void detach() {
-//        }
-//    }
     public TextPanel(String id, IModel model, Property prop, boolean enabled) {
         super(id);
 
