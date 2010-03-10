@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.Client;
 import org.vetcontrol.entity.Log;
 import org.vetcontrol.entity.User;
-import org.vetcontrol.sync.NotRegisteredException;
 import org.vetcontrol.util.DateUtil;
 
 import javax.annotation.Resource;
@@ -152,7 +151,7 @@ public class LogBean {
     private Client getCurrentClient() {
         try {
             return clientBean.getCurrentClient();
-        } catch (NotRegisteredException e) {
+        } catch (Exception e) {
             return null;
         }
 

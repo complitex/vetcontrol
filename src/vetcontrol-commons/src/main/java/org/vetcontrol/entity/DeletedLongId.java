@@ -1,6 +1,7 @@
 package org.vetcontrol.entity;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -10,10 +11,16 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "deleted_long_id")
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class DeletedLongId  implements Serializable{
     @Embeddable
+    @XmlAccessorType(XmlAccessType.FIELD)
     public static class Id implements Serializable{
+        @XmlValue
         private Long id;
+
+        @XmlTransient
         private String entity;
 
         public Id() {
@@ -75,6 +82,7 @@ public class DeletedLongId  implements Serializable{
     private Id id;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @XmlTransient
     private Date deleted;
 
     public DeletedLongId() {

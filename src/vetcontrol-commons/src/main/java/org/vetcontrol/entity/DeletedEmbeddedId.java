@@ -4,14 +4,10 @@
  */
 package org.vetcontrol.entity;
 
+import javax.persistence.*;
+import javax.xml.bind.annotation.*;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 /**
  *
@@ -19,10 +15,12 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "deleted_embedded_id")
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class DeletedEmbeddedId implements Serializable {
-
+    @Embeddable
+    @XmlAccessorType(XmlAccessType.FIELD)
     public static class Id implements Serializable {
-
         public Id() {
         }
 
@@ -30,10 +28,30 @@ public class DeletedEmbeddedId implements Serializable {
             this.id = id;
             this.entity = entity;
         }
+
         @Column(name = "id")
+        @XmlValue
         private String id;
+
         @Column(name = "entity")
+        @XmlTransient
         private String entity;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getEntity() {
+            return entity;
+        }
+
+        public void setEntity(String entity) {
+            this.entity = entity;
+        }
 
         @Override
         public boolean equals(Object obj) {
@@ -63,8 +81,10 @@ public class DeletedEmbeddedId implements Serializable {
     }
     @EmbeddedId
     private Id id;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "deleted")
+    @XmlTransient
     private Date deleted;
 
     public Date getDeleted() {

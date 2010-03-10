@@ -3,10 +3,7 @@ package org.vetcontrol.sync.client.service;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vetcontrol.entity.Client;
-import org.vetcontrol.entity.Log;
-import org.vetcontrol.entity.User;
-import org.vetcontrol.entity.UserGroup;
+import org.vetcontrol.entity.*;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.sync.NotRegisteredException;
 import org.vetcontrol.util.DateUtil;
@@ -15,6 +12,7 @@ import org.vetcontrol.web.security.SecurityWebListener;
 import javax.ejb.*;
 import javax.servlet.http.HttpSession;
 import java.util.*;
+import java.util.Locale;
 import java.util.concurrent.Future;
 
 /**
@@ -50,8 +48,17 @@ public class SyncBean{
         @Override
         public void start(SyncEvent syncEvent) {
             SyncMessage message = new SyncMessage();
-            String key = ((Class)syncEvent.getObject()).getCanonicalName();
+
+            String key = syncEvent.getObject() instanceof DeletedEmbeddedId
+                    ? ((DeletedEmbeddedId)syncEvent.getObject()).getId().getEntity()
+                    : ((Class)syncEvent.getObject()).getCanonicalName();
+
             message.setName(rb.containsKey(key) ? rb.getString(key) : key);
+
+            if (syncEvent.getObject() instanceof DeletedEmbeddedId){
+                message.setName(message.getName() + " " + rb.getString("sync.client.sync.delete"));
+            }
+
             message.setMessage(rb.getString("sync.client.sync.start"));
 
             syncMessages.add(message);
@@ -113,6 +120,8 @@ public class SyncBean{
         userSyncBean.setSyncListener(syncListener);
         documentCargoSyncBean.setSyncListener(syncListener);
 
+        bookSyncBean.setInitial(getLastSync() == null);
+
         processing = true;
 
         try {
@@ -123,6 +132,12 @@ public class SyncBean{
 
             //Синхронизация справочников
             for (Class book : BookSyncBean.syncBooks){
+                if (book.equals(CargoModeCargoType.class)){
+                    bookSyncBean.processDeleted(CargoModeCargoType.class);
+                } else if (book.equals(CargoModeUnitType.class)){
+                    bookSyncBean.processDeleted(CargoModeUnitType.class);
+                }
+
                 //noinspection unchecked
                 bookSyncBean.processBook(book);
             }
