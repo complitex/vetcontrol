@@ -4,7 +4,6 @@
 
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
@@ -28,7 +27,8 @@ CREATE TABLE  `user` (
   KEY `fk_job` (`job_id`),
   KEY `fk_user_department` (`department_id`),
   CONSTRAINT `fk_job` FOREIGN KEY (`job_id`) REFERENCES `job` (`id`),
-  CONSTRAINT `fk_user_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`)
+  CONSTRAINT `fk_user_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`),
+    KEY `user_updated_INDEX` (`updated`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `usergroup`;
@@ -39,7 +39,8 @@ CREATE TABLE  `usergroup` (
   `updated` TIMESTAMP NOT NULL DEFAULT NOW(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `login_usergroup` (`login`,`usergroup`),
-  CONSTRAINT `fk_user_login` FOREIGN KEY (`login`) REFERENCES `user` (`login`)
+  CONSTRAINT `fk_user_login` FOREIGN KEY (`login`) REFERENCES `user` (`login`),
+  KEY `usergroup_updated_INDEX` (`updated`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 
@@ -77,7 +78,8 @@ CREATE TABLE `stringculture` (
   `locale` varchar(2) NOT NULL,
   `value` varchar(1024) default NULL,
   `updated` timestamp NOT NULL DEFAULT NOW(),
-  PRIMARY KEY  (`id`, `locale`)
+  PRIMARY KEY  (`id`, `locale`),
+    KEY `stringculture_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `countrybook` */
@@ -93,7 +95,8 @@ CREATE TABLE `countrybook` (
   `disabled` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `FK_countrybook_name` (`name`),
-  CONSTRAINT `FK_countrybook_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+  CONSTRAINT `FK_countrybook_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+    KEY `countrybook_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `registeredproducts` */
@@ -119,7 +122,8 @@ CREATE TABLE `registered_products` (
   KEY `FK_registeredproducts_country_ref` (`country_id`),
   CONSTRAINT `FK_registeredproducts_country_ref` FOREIGN KEY (`country_id`) REFERENCES `countrybook` (`id`),
   KEY `FK_registeredproducts_producer_ref` (`cargo_producer_id`),
-  CONSTRAINT `FK_registeredproducts_producer_ref` FOREIGN KEY (`cargo_producer_id`) REFERENCES `cargo_producer` (`id`)
+  CONSTRAINT `FK_registeredproducts_producer_ref` FOREIGN KEY (`cargo_producer_id`) REFERENCES `cargo_producer` (`id`),
+    KEY `registered_products_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `vehicletypes` */
@@ -134,7 +138,8 @@ CREATE TABLE `vehicletypes` (
   `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_vehicletypes_name` (`name`),
-    CONSTRAINT `FK_vehicletypes_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+    CONSTRAINT `FK_vehicletypes_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+    KEY `vehicletypes_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `department` */
@@ -151,7 +156,8 @@ CREATE TABLE  `department` (
     KEY `FK_department_name` (`name`),
     CONSTRAINT `FK_department_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
     KEY `FK_department_parent` (`parent_id`),
-    CONSTRAINT `FK_department_parent` FOREIGN KEY (`parent_id`) REFERENCES `department` (`id`)
+    CONSTRAINT `FK_department_parent` FOREIGN KEY (`parent_id`) REFERENCES `department` (`id`),
+    KEY `department_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `cargo_sender` */
@@ -165,7 +171,8 @@ CREATE TABLE  `cargo_sender` (
   `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_cargo_sender_name` (`name`),
-    CONSTRAINT `FK_cargo_sender_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+    CONSTRAINT `FK_cargo_sender_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+    KEY `cargo_sender_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `cargo_receiver` */
@@ -179,7 +186,8 @@ CREATE TABLE  `cargo_receiver` (
   `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_cargo_receiver_name` (`name`),
-    CONSTRAINT `FK_cargo_receiver_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+    CONSTRAINT `FK_cargo_receiver_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+    KEY `cargo_receiver_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `customs_point` */
@@ -193,7 +201,8 @@ CREATE TABLE  `customs_point` (
   `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_customs_point_name` (`name`),
-    CONSTRAINT `FK_customs_point_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+    CONSTRAINT `FK_customs_point_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+    KEY `customs_point_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `movement_type` */
@@ -207,7 +216,8 @@ CREATE TABLE  `movement_type` (
   `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_movement_type_name` (`name`),
-    CONSTRAINT `FK_movement_type_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+    CONSTRAINT `FK_movement_type_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+    KEY `movement_type_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `cargo_producer` */
@@ -221,7 +231,8 @@ CREATE TABLE  `cargo_producer` (
   `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_producer_name` (`name`),
-    CONSTRAINT `FK_producer_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+    CONSTRAINT `FK_producer_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+    KEY `cargo_producer_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `cargo_type` */
@@ -231,16 +242,18 @@ CREATE TABLE  `cargo_type` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
     `ukt_zed_code` VARCHAR(10) NOT NULL,
-    `updated` timestamp NOT NULL DEFAULT NOW(),
+    `updated` timestamp NOT NULL,
  /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
   `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     UNIQUE KEY `code` (`ukt_zed_code`),
     KEY `FK_cargo_type_name` (`name`),
-    CONSTRAINT `FK_cargo_type_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+    CONSTRAINT `FK_cargo_type_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+    KEY `cargo_type_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `cargo_mode_cargo_type` */
+/* Link table between cargo_mode and cargo_type. */
 
 DROP TABLE IF EXISTS `cargo_mode_cargo_type`;
 CREATE TABLE  `cargo_mode_cargo_type` (
@@ -252,7 +265,8 @@ CREATE TABLE  `cargo_mode_cargo_type` (
     KEY `FK_cargo_mode_cargo_type_cargo_mode_id` (`cargo_mode_id`),
     CONSTRAINT `FK_cargo_mode_cargo_type_cargo_mode_id` FOREIGN KEY (`cargo_mode_id`) REFERENCES `cargo_mode` (`id`),
     KEY `FK_cargo_mode_cargo_type_cargo_type_id` (`cargo_type_id`),
-    CONSTRAINT `FK_cargo_mode_cargo_type_cargo_type_id` FOREIGN KEY (`cargo_type_id`) REFERENCES `cargo_type` (`id`)
+    CONSTRAINT `FK_cargo_mode_cargo_type_cargo_type_id` FOREIGN KEY (`cargo_type_id`) REFERENCES `cargo_type` (`id`),
+    KEY `cargo_mode_cargo_type_updated_INDEX` (`updated`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `cargo_mode` */
@@ -266,7 +280,8 @@ CREATE TABLE  `cargo_mode` (
   `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_cargo_mode_name` (`name`),
-    CONSTRAINT `FK_cargo_mode_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+    CONSTRAINT `FK_cargo_mode_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+    KEY `cargo_mode_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `cargo_mode_unit_type` */
@@ -281,7 +296,8 @@ CREATE TABLE  `cargo_mode_unit_type` (
     KEY `FK_cargo_mode_unit_type_cargo_mode_id` (`cargo_mode_id`),
     CONSTRAINT `FK_cargo_mode_unit_type_cargo_mode_id` FOREIGN KEY (`cargo_mode_id`) REFERENCES `cargo_mode` (`id`),
     KEY `FK_cargo_mode_unit_type_unit_type_id` (`unit_type_id`),
-    CONSTRAINT `FK_cargo_mode_unit_type_unit_type_id` FOREIGN KEY (`unit_type_id`) REFERENCES `unit_type` (`id`)
+    CONSTRAINT `FK_cargo_mode_unit_type_unit_type_id` FOREIGN KEY (`unit_type_id`) REFERENCES `unit_type` (`id`),
+    KEY `cargo_mode_unit_type_updated_INDEX` (`updated`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `unit_type` */
@@ -295,7 +311,8 @@ CREATE TABLE  `unit_type` (
   `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_unit_type_name` (`name`),
-    CONSTRAINT `FK_unit_type_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+    CONSTRAINT `FK_unit_type_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+    KEY `unit_type_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `job` */
@@ -309,7 +326,8 @@ CREATE TABLE  `job` (
   `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_job_name` (`name`),
-    CONSTRAINT `FK_job_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+    CONSTRAINT `FK_job_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+    KEY `job_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `prohibition_country` */
@@ -334,7 +352,8 @@ CREATE TABLE  `prohibition_country` (
     KEY `FK_prohibition_country_region` (`region`),
     CONSTRAINT `FK_prohibition_country_region` FOREIGN KEY (`region`) REFERENCES `stringculture` (`id`),
     KEY `FK_prohibition_country_target` (`target`),
-    CONSTRAINT `FK_prohibition_country_target` FOREIGN KEY (`target`) REFERENCES `stringculture` (`id`)
+    CONSTRAINT `FK_prohibition_country_target` FOREIGN KEY (`target`) REFERENCES `stringculture` (`id`),
+    KEY `prohibition_country_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `arrest_reason` */
@@ -348,7 +367,8 @@ CREATE TABLE  `arrest_reason` (
   `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_arrest_reason_name` (`name`),
-    CONSTRAINT `FK_arrest_reason_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+    CONSTRAINT `FK_arrest_reason_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+    KEY `arrest_reason_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `bad_epizootic_situation` */
@@ -362,7 +382,8 @@ CREATE TABLE  `bad_epizootic_situation` (
   `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_bad_epizootic_situation_name` (`name`),
-    CONSTRAINT `FK_bad_epizootic_situation_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+    CONSTRAINT `FK_bad_epizootic_situation_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+    KEY `bad_epizootic_situation_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `tariff` */
@@ -376,7 +397,8 @@ CREATE TABLE  `tariff` (
   `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_tariff_name` (`name`),
-    CONSTRAINT `FK_tariff_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+    CONSTRAINT `FK_tariff_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+    KEY `tariff_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `passing_border_point` */
@@ -390,7 +412,8 @@ CREATE TABLE  `passing_border_point` (
   `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_passing_border_point_name` (`name`),
-    CONSTRAINT `FK_passing_border_point_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+    CONSTRAINT `FK_passing_border_point_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+    KEY `passing_border_point_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `addressbook` */
@@ -404,7 +427,8 @@ CREATE TABLE  `addressbook` (
   `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_addressbook_name` (`name`),
-    CONSTRAINT `FK_addressbook_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+    CONSTRAINT `FK_addressbook_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+    KEY `addressbook_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*documents*/
@@ -442,7 +466,8 @@ CREATE TABLE `document_cargo` (
   CONSTRAINT `FK_cargo_sender` FOREIGN KEY (`cargo_sender_id`) REFERENCES `cargo_sender` (`id`),
   CONSTRAINT `FK_cargo_receiver` FOREIGN KEY (`cargo_receiver_id`) REFERENCES `cargo_receiver` (`id`),
   CONSTRAINT `FK_cargo_producer` FOREIGN KEY (`cargo_producer_id`) REFERENCES `cargo_producer` (`id`),
-  CONSTRAINT `FK_passing_border_point` FOREIGN KEY (`passing_border_point_id`) REFERENCES `passing_border_point` (`id`)  
+  CONSTRAINT `FK_passing_border_point` FOREIGN KEY (`passing_border_point_id`) REFERENCES `passing_border_point` (`id`),
+    KEY `document_cargo_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `cargo`;
@@ -468,7 +493,8 @@ CREATE TABLE  `cargo` (
   CONSTRAINT `FK_client_1` FOREIGN KEY (`client_id`) REFERENCES `client` (`id`),
   CONSTRAINT `FK_cargo_type` FOREIGN KEY (`cargo_type_id`) REFERENCES `cargo_type` (`id`),
   CONSTRAINT `FK_unit_type` FOREIGN KEY (`unit_type_id`) REFERENCES `unit_type` (`id`),
-  CONSTRAINT `FK_document_cargo` FOREIGN KEY (`document_cargo_id`, `department_id`, `client_id`) REFERENCES `document_cargo` (`id`, `department_id`, `client_id`)
+  CONSTRAINT `FK_document_cargo` FOREIGN KEY (`document_cargo_id`, `department_id`, `client_id`) REFERENCES `document_cargo` (`id`, `department_id`, `client_id`),
+  KEY `cargo_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `log`;
@@ -511,7 +537,8 @@ CREATE TABLE `client` (
   UNIQUE KEY `mac` (`mac`),
   UNIQUE KEY `secure_key` (`secure_key`),
   KEY `FK_department` (`department_id`),
-  CONSTRAINT `FK_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`)
+  CONSTRAINT `FK_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`),
+    KEY `client_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -542,7 +569,6 @@ CREATE TABLE `deleted_long_id` (
   PRIMARY KEY (`id`, `entity`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
