@@ -555,7 +555,8 @@ CREATE TABLE `deleted_embedded_id` (
   `entity` VARCHAR(100) NOT NULL,
   /* Timestamp of deleting. */
   `deleted` TIMESTAMP NOT NULL,
-  PRIMARY KEY (`id`, `entity`)
+  PRIMARY KEY (`id`, `entity`),
+    KEY `deleted_embedded_id_deleted_INDEX` (`deleted`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 /* Table structure for table `deleted_embedded_id`
@@ -566,7 +567,8 @@ CREATE TABLE `deleted_long_id` (
   `id` bigint(20) NOT NULL, /* Long Id of removed entry.*/
   `entity` VARCHAR(100) NOT NULL, /* The name of entity of removed entry. */
   `deleted` TIMESTAMP NOT NULL, /* Time stamp of deleting. */
-  PRIMARY KEY (`id`, `entity`)
+  PRIMARY KEY (`id`, `entity`),
+    KEY `deleted_long_id_deleted_INDEX` (`deleted`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
