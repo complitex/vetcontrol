@@ -44,7 +44,7 @@
 
         <fileSet>
             <directory>db/common</directory>
-            <outputDirectory>sql</outputDirectory>
+            <outputDirectory>client/sql</outputDirectory>
             <includes>
                 <include>*.sql</include>
             </includes>
