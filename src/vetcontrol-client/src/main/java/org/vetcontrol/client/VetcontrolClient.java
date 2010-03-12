@@ -23,24 +23,33 @@ public class VetcontrolClient {
             Server.Builder serverBuilder = new Server.Builder("VetcontrolClient");
 
             EmbeddedFileSystem.Builder efsb = new EmbeddedFileSystem.Builder();
-            efsb.installRoot(new File("install"), true);
+            efsb.installRoot(new File("bin\\glassfish"), true);
             efsb.instanceRoot(new File("domain"));
 
             serverBuilder.embeddedFileSystem(efsb.build());
 
+            serverBuilder.logger(true);
+            serverBuilder.logFile(new File("log/vetcontrol.log"));
+           
             Server server = serverBuilder.build();
 
             server.createPort(8888);
 
-            server.addContainer(ContainerBuilder.Type.all);             
+            server.addContainer(ContainerBuilder.Type.all);
 
-            server.start();
-
-            
+            server.start();            
                              
-            String test = "jdbc:mysql:mxj://localhost:13306/vetcontrol_client?server.basedir=mysql&server.datadir=data" +
-                    "&createDatabaseIfNotExist=true&server.initialize-user=true&server.default-character-set=utf8";
-
+            String test = "jdbc:mysql:mxj://localhost:13306/vetcontrol_client?" +
+                    "server.basedir=bin\\mysql" +
+                    "&server.datadir=data" +
+                    "&createDatabaseIfNotExist=true" +
+                    "&server.initialize-user=true" +
+                    "&server.default-character-set=utf8" +
+                    "&server.innodb_additional_mem_pool_size=2M" +
+                    "&server.innodb_flush_log_at_trx_commit=1" +
+                    "&server.innodb_log_buffer_size=1M" +
+                    "&server.innodb_buffer_pool_size=92M" +                   
+                    "&server.innodb_thread_concurrency=8";
             try {
                 Class.forName("com.mysql.jdbc.Driver");
             } catch (ClassNotFoundException e) {
@@ -70,13 +79,13 @@ public class VetcontrolClient {
 
                 if (create){
                     System.out.println("create tables");
-                    importSQL(conn, new FileInputStream("sql\\create.sql"));
+                    importSQL(conn, new FileInputStream("client\\sql\\create.sql"));
 
                     System.out.println("insert data");
-                    importSQL(conn, new FileInputStream("sql\\insert.sql"));
+                    importSQL(conn, new FileInputStream("client\\sql\\insert.sql"));
 
                     System.out.println("test data");
-                    importSQL(conn, new FileInputStream("sql\\testdump.sql"));
+                    importSQL(conn, new FileInputStream("client\\sql\\testdump.sql"));
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -89,9 +98,7 @@ public class VetcontrolClient {
                 }
             }
 
-            String url = "jdbc\\:mysql\\:mxj\\://localhost\\:13306/vetcontrol_client?createDatabaseIfNotExist\\=true" +
-                   "&server.basedir\\=mysql&server.datadir\\=data&server.initialize-user\\=true" +
-                    "&server.default-character-set\\=utf8";
+            String url = "jdbc\\:mysql\\:mxj\\://localhost\\:13306/vetcontrol_client";
 
             {
                 String command = "create-jdbc-connection-pool";
