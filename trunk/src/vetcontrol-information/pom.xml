@@ -41,7 +41,7 @@
             <groupId>org.wicketstuff</groupId>
             <artifactId>wicket-contrib-javaee</artifactId>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/wicket-contrib-javaee-1.1.jar</systemPath>
+            <systemPath>${project.basedir}/../../lib/wicket-contrib-javaee-1.1.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -108,7 +108,7 @@
             <artifactId>wiquery</artifactId>
             <scope>system</scope>
             <version>1.0</version>
-            <systemPath>${project.basedir}/lib/wiquery-1.0.jar</systemPath>
+            <systemPath>${project.basedir}/../../lib/wiquery-1.0.jar</systemPath>
         </dependency>
 
         <dependency>

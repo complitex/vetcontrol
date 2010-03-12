@@ -31,11 +31,11 @@
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
-            <property name="hibernate.connection.username" value="${test.server.connection.username}"/>
-            <property name="hibernate.connection.password" value="${test.server.connection.password}"/>
+            <property name="hibernate.connection.username" value="vc_user"/>
+            <property name="hibernate.connection.password" value="vc_pass"/>
             <property name="hibernate.connection.driver_class" value="com.p6spy.engine.spy.P6SpyDriver"/>
             <!--<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>-->
-            <property name="hibernate.connection.url" value="${test.server.connection.url}"/>
+            <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/vetcontrol"/>
             <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
             <property name="hibernate.show_sql" value="false"/>
             <property name="hibernate.format_sql" value="true"/>
@@ -77,11 +77,11 @@
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
-            <property name="hibernate.connection.username" value="${test.client.connection.username}"/>
-            <property name="hibernate.connection.password" value="${test.client.connection.password}"/>
+            <property name="hibernate.connection.username" value="vc_client_user"/>
+            <property name="hibernate.connection.password" value="vc_client_pass"/>
             <property name="hibernate.connection.driver_class" value="com.p6spy.engine.spy.P6SpyDriver"/>
             <!--<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>-->
-            <property name="hibernate.connection.url" value="${test.client.connection.url}"/>
+            <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/vetcontrol_client"/>
             <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
             <property name="hibernate.show_sql" value="false"/>
             <property name="hibernate.format_sql" value="true"/>

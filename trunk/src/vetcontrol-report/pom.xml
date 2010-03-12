@@ -82,7 +82,7 @@
             <artifactId>wiquery</artifactId>
             <scope>system</scope>
             <version>1.0</version>
-            <systemPath>${project.basedir}/lib/wiquery-1.0.jar</systemPath>
+            <systemPath>${project.basedir}/../../lib/wiquery-1.0.jar</systemPath>
         </dependency>
     </dependencies>
 
@@ -93,7 +93,7 @@
                 <artifactId>jasperreports-maven-plugin</artifactId>
                 <configuration>
                     <sourceDirectory>src/main/java</sourceDirectory>
-                    <encoding>UTF-8</encoding>
+                    <!--<encoding>UTF-8</encoding> check documentation for encoding--> 
                 </configuration>
                 <executions>
                     <execution>

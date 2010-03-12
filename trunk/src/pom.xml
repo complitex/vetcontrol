@@ -22,6 +22,7 @@
         <module>vetcontrol-sync-server</module>
         <module>vetcontrol-web</module>
         <module>vetcontrol-web-client</module>
+        <module>vetcontrol-client</module>
     </modules>
 
     <dependencyManagement>
@@ -109,7 +110,7 @@
             <dependency>
                 <groupId>org.apache.wicket</groupId>
                 <artifactId>wicket-extensions</artifactId>
-                <version>1.4.5</version>
+                <version>1.4.6</version>
             </dependency>
 
             <!-- Java EE API -->
@@ -205,7 +206,7 @@
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
-                    <encoding>UTF-8</encoding> 
+                    <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
             <!--<plugin>
@@ -216,6 +217,14 @@
                 </configuration>
             </plugin>-->
 
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>assembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <properties>
@@ -251,7 +260,7 @@
             <id>jboss</id>
             <url>http://repository.jboss.com/maven2</url>
         </repository>
-         <repository>
+        <repository>
             <id>jasperReports</id>
             <url>http://jasperreports.sourceforge.net/maven2</url>
         </repository>

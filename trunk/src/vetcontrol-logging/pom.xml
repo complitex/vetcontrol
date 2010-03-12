@@ -41,7 +41,7 @@
             <artifactId>wiquery</artifactId>
             <scope>system</scope>
             <version>1.0</version>
-            <systemPath>${pom.basedir}/../vetcontrol-commons/lib/wiquery-1.0.jar</systemPath>
+            <systemPath>${pom.basedir}/../../lib/wiquery-1.0.jar</systemPath>
         </dependency>
         
         <dependency>

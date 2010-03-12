@@ -4,25 +4,14 @@
  */
 package org.vetcontrol.db.populate;
 
-import java.util.Date;
-import java.util.List;
 import org.vetcontrol.db.populate.util.GenerateUtil;
-import org.vetcontrol.entity.Cargo;
-import org.vetcontrol.entity.CargoProducer;
-import org.vetcontrol.entity.CargoReceiver;
-import org.vetcontrol.entity.CargoSender;
-import org.vetcontrol.entity.CargoType;
-import org.vetcontrol.entity.Client;
-import org.vetcontrol.entity.Department;
-import org.vetcontrol.entity.DocumentCargo;
-import org.vetcontrol.entity.MovementType;
-import org.vetcontrol.entity.PassingBorderPoint;
+import org.vetcontrol.entity.*;
 import org.vetcontrol.entity.Synchronized.SyncStatus;
-import org.vetcontrol.entity.UnitType;
-import org.vetcontrol.entity.User;
-import org.vetcontrol.entity.VehicleType;
 import org.vetcontrol.service.CargoTypeBean;
 import org.vetcontrol.service.ClientBean;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -33,9 +22,9 @@ public class ClientPopulator extends AbstractPopulator {
     /*--------------------------Settings------------------------------------------------------*/
     private static final String CLIENT_PERSISTENCE_UNIT_NAME = "populate.client";
     //count of documents to generate
-    private static final int DOCUMENT_COUNT = 10;
+    private static final int DOCUMENT_COUNT = 100;
     //count of cargos onto one DocumentCargo entry.
-    private static final int CARGO_COUNT = 10;
+    private static final int CARGO_COUNT = 100;
     //Department id of creator of documents.
     private static final Long DEPARTMENT_ID = 17L;
     //User id of creator of documents.

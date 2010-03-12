@@ -1,42 +1,23 @@
 package org.vetcontrol.db.populate;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 import org.vetcontrol.db.populate.util.GenerateUtil;
-import org.vetcontrol.entity.AddressBook;
-import org.vetcontrol.entity.ArrestReason;
-import org.vetcontrol.entity.CargoMode;
-import org.vetcontrol.entity.CargoModeCargoType;
-import org.vetcontrol.entity.CargoModeUnitType;
-import org.vetcontrol.entity.CargoProducer;
-import org.vetcontrol.entity.CargoReceiver;
-import org.vetcontrol.entity.CargoSender;
-import org.vetcontrol.entity.CargoType;
-import org.vetcontrol.entity.CountryBook;
-import org.vetcontrol.entity.CustomsPoint;
-import org.vetcontrol.entity.Job;
-import org.vetcontrol.entity.MovementType;
-import org.vetcontrol.entity.PassingBorderPoint;
-import org.vetcontrol.entity.Prohibition;
-import org.vetcontrol.entity.RegisteredProducts;
-import org.vetcontrol.entity.StringCulture;
-import org.vetcontrol.entity.StringCultureId;
-import org.vetcontrol.entity.Tariff;
-import org.vetcontrol.entity.UnitType;
-import org.vetcontrol.entity.VehicleType;
+import org.vetcontrol.entity.*;
 import org.vetcontrol.information.service.dao.BookDAO;
 import org.vetcontrol.information.service.dao.IBookDAO;
 import org.vetcontrol.information.service.generator.Sequence;
 import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.util.book.Property;
 
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
 public class ServerPopulator extends AbstractPopulator {
 
     /*--------------------------Settings------------------------------------------------------*/
     private static final String SERVER_PERSISTENCE_UNIT_NAME = "populate.server";
     //count of books to generate
-    private static final int BOOK_COUNT = 100;
+    private static final int BOOK_COUNT = 1000;
     //count of CargoModeCargoType entries for one CargoMode to generate. The same true for CargoModeUnitType.
     private static final int LINK_TABLE_ROWS = 2;
     /*--------------------------- End settings -----------------------------------------------*/
