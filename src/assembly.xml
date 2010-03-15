@@ -5,12 +5,20 @@
     <formats>
         <format>dir</format>
     </formats>
+    <files>
+        <file>
+            <source>
+                vetcontrol-client/src/main/resources/logging.properties
+            </source>
+            <outputDirectory>/</outputDirectory>
+        </file>
+    </files>
 
     <moduleSets>
         <moduleSet>
             <includes>
                 <include>org.vetcontrol:vetcontrol-web-client</include>
-            </includes>            
+            </includes>
             <binaries>
                 <unpack>true</unpack>
                 <outputDirectory>client</outputDirectory>
@@ -41,7 +49,16 @@
             <directory>../lib/mysql</directory>
             <outputDirectory>lib</outputDirectory>
         </fileSet>
-
+        <!--<fileSet>
+            <directory>vetcontrol-client/src/main/resources</directory>
+            <includes>
+                <include>
+                    logging.properties
+                </include>
+            </includes>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>-->
+        
         <fileSet>
             <directory>db/common</directory>
             <outputDirectory>client/sql</outputDirectory>
