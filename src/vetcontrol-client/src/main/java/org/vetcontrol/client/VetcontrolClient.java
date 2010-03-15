@@ -45,9 +45,10 @@ public class VetcontrolClient {
                     "&createDatabaseIfNotExist=true" +
                     "&server.initialize-user=true" +
                     "&server.default-character-set=utf8" +
-                    "&server.innodb_additional_mem_pool_size=2M" +
+                    "&server.innodb_additional_mem_pool_size=4M" +
                     "&server.innodb_flush_log_at_trx_commit=1" +
-                    "&server.innodb_log_buffer_size=1M" +
+                    "&server.innodb_lock_wait_timeout=180" +
+                    "&server.innodb_log_buffer_size=2M" +
                     "&server.innodb_buffer_pool_size=92M" +                   
                     "&server.innodb_thread_concurrency=8";
             try {
