@@ -1,6 +1,5 @@
 package org.vetcontrol.document.service;
 
-
 import org.vetcontrol.entity.*;
 
 import java.io.Serializable;
@@ -11,37 +10,23 @@ import java.util.Locale;
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 18.01.2010 22:07:57
  */
-public class DocumentCargoFilter implements Serializable{
-    private Long Id;
+public class DocumentCargoFilter implements Serializable {
 
+    private String id;
     private User creator;
-
     private Date created;
-
     private Department department;
-
     private boolean childDepartments;
-
     private MovementType movementType;
-
     private VehicleType vehicleType;
-
     private String vehicleDetails;
-
     private String cargoSenderName;
-
     private String cargoReceiverName;
-
     private String cargoProducerName;
-
     private String detentionDetails;
-
     private String details;
-        
     private Locale currentLocale;
-
     private Locale systemLocale;
-
     private Synchronized.SyncStatus syncStatus;
 
     public DocumentCargoFilter(Locale currentLocale, Locale systemLocale) {
@@ -49,12 +34,12 @@ public class DocumentCargoFilter implements Serializable{
         this.systemLocale = systemLocale;
     }
 
-    public Long getId() {
-        return Id;
+    public String getId() {
+        return id;
     }
 
-    public void setId(Long id) {
-        Id = id;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public User getCreator() {

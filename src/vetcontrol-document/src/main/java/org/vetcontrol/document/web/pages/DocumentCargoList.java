@@ -95,7 +95,7 @@ public class DocumentCargoList extends TemplatePage{
         filter_reset.setDefaultFormProcessing(false);
         filterForm.add(filter_reset);
 
-        filterForm.add(new TextField<Integer>("id"));
+        filterForm.add(new TextField<String>("id"));
         filterForm.add(new DropDownChoice<MovementType>("movementType", documentCargoBean.getList(MovementType.class),
                 new IChoiceRenderer<MovementType>(){
 
