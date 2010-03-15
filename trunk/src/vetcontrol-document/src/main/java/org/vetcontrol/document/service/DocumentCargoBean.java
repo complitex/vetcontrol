@@ -246,7 +246,7 @@ public class DocumentCargoBean {
             }
 
             if (filter.getId() != null){
-                where += " and dc.id = :id";
+                where += " and concat(concat(concat(dc.department.id, '.'), concat(dc.client.id, '.')), dc.id) like :id";
             }
 
             if (filter.getSyncStatus() != null){
