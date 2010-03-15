@@ -27,6 +27,8 @@ import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvid
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vetcontrol.util.book.entity.ShowBooksMode;
 import org.vetcontrol.information.web.component.list.BookPropertyColumn;
 import org.vetcontrol.information.web.component.list.ModifyColumn;
@@ -119,6 +121,7 @@ public class BookPage extends TemplatePage {
             setSort(sortProp, asc);
         }
     }
+    private final Logger log = LoggerFactory.getLogger(BookPage.class);
     @EJB(name = "BookViewDAO")
     private IBookViewDAO bookViewDAO;
     @EJB(name = "LocaleDAO")
