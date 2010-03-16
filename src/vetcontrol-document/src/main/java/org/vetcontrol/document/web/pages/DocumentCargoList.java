@@ -29,11 +29,11 @@ import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
 import org.vetcontrol.web.component.paging.PagingNavigator;
 import org.vetcontrol.web.component.toolbar.AddDocumentButton;
 import org.vetcontrol.web.component.toolbar.ToolbarButton;
-import org.vetcontrol.web.template.TemplatePage;
 
 import javax.ejb.EJB;
 import java.util.*;
 import java.util.Locale;
+import org.vetcontrol.web.template.ListTemplatePage;
 
 import static org.vetcontrol.document.service.DocumentCargoBean.OrderBy;
 import static org.vetcontrol.web.security.SecurityRoles.*;
@@ -43,7 +43,7 @@ import static org.vetcontrol.web.security.SecurityRoles.*;
  *         Date: 12.01.2010 12:54:13
  */
 @AuthorizeInstantiation({DOCUMENT_CREATE, DOCUMENT_DEP_VIEW, DOCUMENT_DEP_CHILD_VIEW})
-public class DocumentCargoList extends TemplatePage{
+public class DocumentCargoList extends ListTemplatePage{
     private static final String PAGE_NUMBER_KEY = DocumentCargoList.class.getSimpleName()+"_PAGE_NUMBER";
     private static final String SORT_PROPERTY_KEY = DocumentCargoList.class.getSimpleName() + "_SORT_PROPERTY";
     private static final String SORT_ORDER_KEY = DocumentCargoList.class.getSimpleName() + "_SORT_ORDER";

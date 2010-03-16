@@ -20,7 +20,6 @@ import org.vetcontrol.logging.service.LogListBean;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.web.component.paging.PagingNavigator;
 import org.vetcontrol.web.security.SecurityRoles;
-import org.vetcontrol.web.template.TemplatePage;
 
 import javax.ejb.EJB;
 import java.util.Arrays;
@@ -28,13 +27,14 @@ import java.util.Date;
 import java.util.Iterator;
 import org.vetcontrol.entity.Client;
 import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
+import org.vetcontrol.web.template.ListTemplatePage;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 29.01.2010 10:57:03
  */
 @AuthorizeInstantiation({SecurityRoles.LOGGING_VIEW})
-public class LogList extends TemplatePage {
+public class LogList extends ListTemplatePage {
 
     private static final String PAGE_NUMBER_KEY = LogList.class.getSimpleName() + "_PAGE_NUMBER";
     private static final String SORT_PROPERTY_KEY = LogList.class.getSimpleName() + "_SORT_PROPERTY";
