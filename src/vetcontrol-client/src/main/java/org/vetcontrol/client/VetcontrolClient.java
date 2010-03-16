@@ -58,22 +58,23 @@ public class VetcontrolClient {
 
     public static void main(String... args) {
         showSplash();
-        messageSplash("Запуск...");
-
+       
         initLogging();
 
-        messageSplash("Инициализация базы данных...");
+        messageSplash("Запуск базы данных...");
         initDB();
 
-        messageSplash("Инициализация сервера...");
+        messageSplash("Запуск сервера...");
         initServer();
 
-        messageSplash("Инициализация клиента...");
+        messageSplash("Запуск клиента...");
         deployClient();
 
         createTray();
-        
+
         hideSplash();
+
+        openBrowser();
     }
 
     private static void initDB(){
@@ -209,15 +210,7 @@ public class VetcontrolClient {
         //Open menu item action
         ActionListener openListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
-
-                try {
-                    desktop.browse(new URI(CLIENT_URL));
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                } catch (URISyntaxException e1) {
-                    e1.printStackTrace();
-                }
+                openBrowser();
             }
         };
 
@@ -225,7 +218,7 @@ public class VetcontrolClient {
         ActionListener exitListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    server.getDeployer().undeployAll();                     
+                    server.getDeployer().undeployAll();
                     server.stop();
                 } catch (LifecycleException e1) {
                     log.error(e1.getLocalizedMessage());
@@ -253,15 +246,7 @@ public class VetcontrolClient {
 
         ActionListener actionListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
-
-                try {
-                    desktop.browse(new URI(CLIENT_URL));
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                } catch (URISyntaxException e1) {
-                    e1.printStackTrace();
-                }
+                openBrowser();
             }
         };
 
@@ -306,7 +291,7 @@ public class VetcontrolClient {
         }
     }
 
-           
+
     private static JWindow splash = new JWindow();
     private static JProgressBar progressBar = new JProgressBar();
 
@@ -329,11 +314,23 @@ public class VetcontrolClient {
         splash.setVisible(true);
     }
 
-    private static void hideSplash(){        
+    private static void hideSplash(){
         splash.dispose();
     }
 
     private static void messageSplash(String m){
         progressBar.setString(m);
+    }
+
+    private static void openBrowser(){
+        java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
+
+        try {
+            desktop.browse(new URI(CLIENT_URL));
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        } catch (URISyntaxException e1) {
+            e1.printStackTrace();
+        }
     }
 }
