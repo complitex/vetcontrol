@@ -25,6 +25,8 @@ import javax.ejb.EJB;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
+import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.vetcontrol.entity.Client;
 import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
 import org.vetcontrol.web.template.ListTemplatePage;
@@ -48,6 +50,7 @@ public class LogList extends ListTemplatePage {
 
         add(new Label("title", new ResourceModel("logging.log.list.title")));
         add(new Label("header", new ResourceModel("logging.log.list.title")));
+        add(new FeedbackPanel("messages"));
 
         final UIPreferences preferences = getPreferences();
 
@@ -64,15 +67,14 @@ public class LogList extends ListTemplatePage {
         final Form<LogFilter> filterForm = new Form<LogFilter>("filter_form", filterModel);
         add(filterForm);
 
-        Button filter_reset = new Button("filter_reset") {
+        Link filter_reset = new Link("filter_reset") {
 
             @Override
-            public void onSubmit() {
+            public void onClick() {
                 filterForm.clearInput();
                 filterModel.setObject(new LogFilter());
             }
         };
-        filter_reset.setDefaultFormProcessing(false);
         filterForm.add(filter_reset);
 
         //Date
