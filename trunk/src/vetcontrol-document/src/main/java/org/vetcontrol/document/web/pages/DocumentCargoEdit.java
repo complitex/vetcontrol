@@ -1,6 +1,5 @@
 package org.vetcontrol.document.web.pages;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
@@ -31,6 +30,7 @@ import org.vetcontrol.web.template.FormTemplatePage;
 import javax.ejb.EJB;
 import java.util.Date;
 import java.util.List;
+import org.vetcontrol.web.component.list.AjaxRemovableListView;
 
 import static org.vetcontrol.entity.Log.EVENT.*;
 import static org.vetcontrol.entity.Log.MODULE.DOCUMENT;
@@ -214,7 +214,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
         final AjaxSubmitLink addCargoLink = new AjaxSubmitLink("document.cargo.cargo.add", form) {
 
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+            public void onSubmit(AjaxRequestTarget target, Form form) {
                 DocumentCargo dc = (DocumentCargo) form.getModelObject();
                 Cargo cargo = new Cargo();
                 cargo.setDocumentCargo(dc);
@@ -230,61 +230,15 @@ public class DocumentCargoEdit extends FormTemplatePage {
         cargoContainer.add(addCargoLink);
 
 
-        final ListView cargoListView = new ListView<Cargo>("document.cargo.cargo_list",
+        final ListView cargoListView = new AjaxRemovableListView<Cargo>("document.cargo.cargo_list",
                 new PropertyModel<List<Cargo>>(documentCargoModel, "cargos")) {
-
-            @Override
-            protected IModel<Cargo> getListItemModel(IModel<? extends List<Cargo>> listViewModel, int index) {
-                return new Model<Cargo>(listViewModel.getObject().get(index));
-            }
 
             @Override
             protected void populateItem(final ListItem<Cargo> item) {
                 addCargo(item);
-
-                //Удалить
-                AjaxSubmitLink deleteLink = new AjaxSubmitLink("document.cargo.delete", form) {
-
-                    @Override
-                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                        @SuppressWarnings({"unchecked"})
-                        ListItem<Cargo> item = (ListItem) getParent();
-                        Cargo remove = item.getModelObject();
-                        @SuppressWarnings({"unchecked"})
-                        ListView<Cargo> list = (ListView<Cargo>) item.getParent();
-
-                        int last_index = list.getModelObject().size() - 1;
-
-                        //Copy childs from next list item and remove last 
-                        for (int index = item.getIndex(); index < last_index; index++) {
-                            ListItem li = (ListItem) item.getParent().get(index);
-                            ListItem li_next = (ListItem) item.getParent().get(index + 1);
-
-                            li.removeAll();
-                            //noinspection unchecked
-                            li.setModelObject(li_next.getModelObject());
-
-                            int size = li_next.size();
-                            Component[] childs = new Component[size];
-                            for (int i = 0; i < size; i++) {
-                                childs[i] = li_next.get(i);
-                            }
-                            li.add(childs);
-                        }
-
-                        list.getModelObject().remove(remove);
-                        item.getParent().get(last_index).remove();
-
-                        target.addComponent(cargoContainer);
-                        target.focusComponent(addCargoLink);
-                    }
-                };
-                deleteLink.setDefaultFormProcessing(false);
-
-                item.add(deleteLink);
+                addRemoveSubmitLink("document.cargo.delete", form, item, addCargoLink, cargoContainer);
             }
         };
-        cargoListView.setReuseItems(true);
         cargoContainer.add(cargoListView);
 
         //Отравитель
