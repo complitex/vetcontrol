@@ -58,7 +58,7 @@ selectedMenuLoad = function(){
     var selecteMenuItemID = getCookie(selectedMenuItemCookieName);
     if(selecteMenuItemID){
         $("#"+selecteMenuItemID).parent().addClass(selectedMenuItemClassName)
-        $("#"+selecteMenuItemID).focus();
+//        $("#"+selecteMenuItemID).focus();
 //        $("#ButtonMain").focus();
     }
 };

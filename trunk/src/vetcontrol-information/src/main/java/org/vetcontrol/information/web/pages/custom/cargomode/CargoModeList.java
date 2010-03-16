@@ -16,9 +16,9 @@ import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -42,14 +42,14 @@ import org.vetcontrol.web.component.paging.PagingNavigator;
 import org.vetcontrol.web.component.toolbar.AddItemButton;
 import org.vetcontrol.web.component.toolbar.ToolbarButton;
 import org.vetcontrol.web.security.SecurityRoles;
-import org.vetcontrol.web.template.TemplatePage;
+import org.vetcontrol.web.template.ListTemplatePage;
 
 /**
  *
  * @author Artem
  */
 @AuthorizeInstantiation(SecurityRoles.INFORMATION_VIEW)
-public class CargoModeList extends TemplatePage {
+public class CargoModeList extends ListTemplatePage {
 
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
@@ -91,16 +91,14 @@ public class CargoModeList extends TemplatePage {
             }
             final CompoundPropertyModel<CargoModeFilterBean> filterModel = new CompoundPropertyModel<CargoModeFilterBean>(filterObject);
             final Form<CargoModeFilterBean> filterForm = new Form<CargoModeFilterBean>("filterForm", filterModel);
-            Button clear = new Button("clear") {
+            Link clear = new Link("clear") {
 
                 @Override
-                public void onSubmit() {
+                public void onClick() {
                     filterForm.clearInput();
                     filterModel.setObject(newCargoModeFilterBean());
                 }
             };
-
-            clear.setDefaultFormProcessing(false);
             filterForm.add(bookName);
             filterForm.add(clear);
             filterForm.add(new TextField<String>("name"));

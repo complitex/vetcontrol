@@ -53,12 +53,12 @@ public abstract class TemplatePage extends WebPage {
     public TemplatePage() {
         add(JavascriptPackageResource.getHeaderContribution("js/common.js"));
         add(JavascriptPackageResource.getHeaderContribution(CoreJavaScriptResourceReference.get()));
-        add(JavascriptPackageResource.getHeaderContribution(TemplatePage.class, "TemplatePage.js"));
+        add(JavascriptPackageResource.getHeaderContribution(TemplatePage.class, TemplatePage.class.getSimpleName() + ".js"));
 
         Locale system = localeDAO.systemLocale();
 
         add(CSSPackageResource.getHeaderContribution("css/style.css"));
-        
+
         //locale picker
         add(new LocalePicker("localePicker", localeDAO.all(), system, getPreferences()));
 
@@ -94,7 +94,7 @@ public abstract class TemplatePage extends WebPage {
             protected void populateItem(ListItem<ITemplateMenu> item) {
                 item.add(new TemplateMenu("menu_placeholder", "menu", this, item.getModelObject()));
             }
-        });                  
+        });
 
         User user = userProfileBean.getCurrentUser();
 
@@ -107,7 +107,7 @@ public abstract class TemplatePage extends WebPage {
 
             @Override
             public void onSubmit() {
-                 getVetControlTemplateApplication().logout();
+                getVetControlTemplateApplication().logout();
             }
         });
     }
@@ -130,7 +130,7 @@ public abstract class TemplatePage extends WebPage {
                 protected void populateItem(ListItem<ITemplateLink> item) {
                     final ITemplateLink templateLink = item.getModelObject();
                     BookmarkablePageLink link = new BookmarkablePageLink<Class<? extends Page>>("link", templateLink.getPage(),
-                            templateLink.getParameters()){
+                            templateLink.getParameters()) {
 
                         @Override
                         protected void onComponentTag(ComponentTag tag) {
@@ -139,7 +139,6 @@ public abstract class TemplatePage extends WebPage {
                                 tag.put("id", templateLink.getTagId());
                             }
                         }
-
                     };
                     link.add(new Label("label", templateLink.getLabel(getLocale())));
                     item.add(link);
@@ -210,11 +209,11 @@ public abstract class TemplatePage extends WebPage {
         return null;
     }
 
-    protected boolean hasAnyRole(String... roles){
+    protected boolean hasAnyRole(String... roles) {
         return ((IRoleCheckingStrategy) getApplication()).hasAnyRole(new Roles(roles));
     }
 
-    protected TemplateWebApplication getVetControlTemplateApplication(){
-        return (TemplateWebApplication)getApplication();
+    protected TemplateWebApplication getVetControlTemplateApplication() {
+        return (TemplateWebApplication) getApplication();
     }
 }

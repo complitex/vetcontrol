@@ -46,14 +46,14 @@ import org.vetcontrol.web.component.datatable.ArrowHeadersToolbar;
 import org.vetcontrol.web.component.paging.PagingNavigator;
 import org.vetcontrol.web.component.toolbar.AddItemButton;
 import org.vetcontrol.web.security.SecurityRoles;
-import org.vetcontrol.web.template.TemplatePage;
+import org.vetcontrol.web.template.ListTemplatePage;
 
 /**
  *
  * @author Artem
  */
 @AuthorizeInstantiation(SecurityRoles.INFORMATION_VIEW)
-public class BookPage extends TemplatePage {
+public class BookPage extends ListTemplatePage {
 
     public class DataProvider extends SortableDataProvider<Serializable> implements IFilterStateLocator, IBookDataProvider {
 

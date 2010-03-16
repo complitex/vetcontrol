@@ -2,7 +2,6 @@ package org.vetcontrol.information.web.component.list;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.slf4j.Logger;
@@ -29,31 +28,11 @@ class ModifyColumnHeader extends Panel {
                 }
             }
         };
-//        Button clear = new Button("clear") {
-//
-//            @Override
-//            public void onSubmit() {
-//                try {
-//                    Form form = getForm();
-//                    Object filterBean = bookClass.newInstance();
-//                    refreshModel(form, filterBean);
-//                } catch (Exception e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
-//        };
-//        clear.setDefaultFormProcessing(false);
         add(clear);
     }
 
     private static void refreshFormComponentInput(Form form) {
-        FormComponent.visitFormComponentsPostOrder(form, new FormComponent.AbstractVisitor() {
-
-            @Override
-            protected void onFormComponent(FormComponent<?> formComponent) {
-                formComponent.clearInput();
-            }
-        });
+        form.clearInput();
     }
 
     private static void refreshModel(Form form, Object newModelObject) {
