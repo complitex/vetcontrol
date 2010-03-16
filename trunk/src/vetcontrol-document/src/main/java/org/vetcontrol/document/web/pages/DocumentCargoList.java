@@ -33,6 +33,7 @@ import org.vetcontrol.web.component.toolbar.ToolbarButton;
 import javax.ejb.EJB;
 import java.util.*;
 import java.util.Locale;
+import org.apache.wicket.markup.html.link.Link;
 import org.vetcontrol.web.template.ListTemplatePage;
 
 import static org.vetcontrol.document.service.DocumentCargoBean.OrderBy;
@@ -43,21 +44,18 @@ import static org.vetcontrol.web.security.SecurityRoles.*;
  *         Date: 12.01.2010 12:54:13
  */
 @AuthorizeInstantiation({DOCUMENT_CREATE, DOCUMENT_DEP_VIEW, DOCUMENT_DEP_CHILD_VIEW})
-public class DocumentCargoList extends ListTemplatePage{
-    private static final String PAGE_NUMBER_KEY = DocumentCargoList.class.getSimpleName()+"_PAGE_NUMBER";
+public class DocumentCargoList extends ListTemplatePage {
+
+    private static final String PAGE_NUMBER_KEY = DocumentCargoList.class.getSimpleName() + "_PAGE_NUMBER";
     private static final String SORT_PROPERTY_KEY = DocumentCargoList.class.getSimpleName() + "_SORT_PROPERTY";
     private static final String SORT_ORDER_KEY = DocumentCargoList.class.getSimpleName() + "_SORT_ORDER";
     private static final String FILTER_KEY = DocumentCargoList.class.getSimpleName() + "_FILTER";
-
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
-
     @EJB(name = "DocumentBean")
     DocumentCargoBean documentCargoBean;
-
     @EJB(name = "UserProfileBean")
     UserProfileBean userProfileBean;
-
     @EJB(name = "ClientBean")
     ClientBean clientBean;
 
@@ -77,27 +75,26 @@ public class DocumentCargoList extends ListTemplatePage{
         //Фильтр
         DocumentCargoFilter filterObject = preferences.getPreference(UIPreferences.PreferenceType.FILTER,
                 FILTER_KEY, DocumentCargoFilter.class);
-        if (filterObject == null){
+        if (filterObject == null) {
             filterObject = newDocumentCargoFilter();
         }
 
         final IModel<DocumentCargoFilter> filter = new CompoundPropertyModel<DocumentCargoFilter>(filterObject);
         final Form<DocumentCargoFilter> filterForm = new Form<DocumentCargoFilter>("filter_form", filter);
 
-        Button filter_reset = new Button("filter_reset"){
+        Link filter_reset = new Link("filter_reset") {
+
             @Override
-            public void onSubmit() {
+            public void onClick() {
                 filterForm.clearInput();
                 filter.setObject(newDocumentCargoFilter());
             }
         };
-
-        filter_reset.setDefaultFormProcessing(false);
         filterForm.add(filter_reset);
 
         filterForm.add(new TextField<String>("id"));
         filterForm.add(new DropDownChoice<MovementType>("movementType", documentCargoBean.getList(MovementType.class),
-                new IChoiceRenderer<MovementType>(){
+                new IChoiceRenderer<MovementType>() {
 
                     @Override
                     public Object getDisplayValue(MovementType object) {
@@ -111,7 +108,7 @@ public class DocumentCargoList extends ListTemplatePage{
                 }));
 
         filterForm.add(new DropDownChoice<VehicleType>("vehicleType", documentCargoBean.getList(VehicleType.class),
-                new IChoiceRenderer<VehicleType>(){
+                new IChoiceRenderer<VehicleType>() {
 
                     @Override
                     public Object getDisplayValue(VehicleType object) {
@@ -136,7 +133,7 @@ public class DocumentCargoList extends ListTemplatePage{
 
         DropDownChoice<Synchronized.SyncStatus> ddcSyncStatus =
                 new DropDownChoice<Synchronized.SyncStatus>("syncStatus", Arrays.asList(Synchronized.SyncStatus.values()),
-                new IChoiceRenderer<Synchronized.SyncStatus>(){
+                new IChoiceRenderer<Synchronized.SyncStatus>() {
 
                     @Override
                     public Object getDisplayValue(Synchronized.SyncStatus object) {
@@ -152,7 +149,8 @@ public class DocumentCargoList extends ListTemplatePage{
         filterForm.add(ddcSyncStatus);
 
         //Модель данных списка карточек на груз
-        final SortableDataProvider<DocumentCargo> dataProvider = new SortableDataProvider<DocumentCargo>(){
+        final SortableDataProvider<DocumentCargo> dataProvider = new SortableDataProvider<DocumentCargo>() {
+
             @Override
             public Iterator<? extends DocumentCargo> iterator(int first, int count) {
                 DocumentCargoBean.OrderBy sort = OrderBy.valueOf(getSort().getProperty());
@@ -182,14 +180,14 @@ public class DocumentCargoList extends ListTemplatePage{
         dataProvider.setSort(sortProp, asc);
 
         //Таблица документов
-        final DataView<DocumentCargo> dataView = new DataView<DocumentCargo>("documents", dataProvider, 1){
+        final DataView<DocumentCargo> dataView = new DataView<DocumentCargo>("documents", dataProvider, 1) {
 
             @Override
             protected void populateItem(Item<DocumentCargo> item) {
                 DocumentCargo dc = item.getModelObject();
 
-                PageParameters pageParameters = new PageParameters("document_cargo_id=" + dc.getId() + "," +
-                        "client_id=" + dc.getClient().getId() + "," + "department_id=" + dc.getDepartment().getId());
+                PageParameters pageParameters = new PageParameters("document_cargo_id=" + dc.getId() + ","
+                        + "client_id=" + dc.getClient().getId() + "," + "department_id=" + dc.getDepartment().getId());
 
                 item.add(new BookmarkablePageLinkPanel<DocumentCargo>("id", dc.getDisplayId(),
                         DocumentCargoView.class, pageParameters));
@@ -204,10 +202,10 @@ public class DocumentCargoList extends ListTemplatePage{
                 Label syncStatus = new Label("syncStatus", getString(dc.getSyncStatus().name()));
                 syncStatus.setVisible(!server);
                 item.add(syncStatus);
-                if ((server || !dc.getSyncStatus().equals(Synchronized.SyncStatus.SYNCHRONIZED)) && canEdit(dc)){
+                if ((server || !dc.getSyncStatus().equals(Synchronized.SyncStatus.SYNCHRONIZED)) && canEdit(dc)) {
                     item.add(new BookmarkablePageLinkPanel<DocumentCargo>("action", getString("document.cargo.list.edit"),
                             DocumentCargoEdit.class, pageParameters));
-                }else{
+                } else {
                     item.add(new BookmarkablePageLinkPanel<DocumentCargo>("action", getString("document.cargo.list.view"),
                             DocumentCargoView.class, pageParameters));
                 }
@@ -225,6 +223,7 @@ public class DocumentCargoList extends ListTemplatePage{
         addOrderByBorder(filterForm, "order_created", OrderBy.CREATED.name(), dataProvider, dataView);
 
         ArrowOrderByBorder orderSyncStatus = new ArrowOrderByBorder("order_syncStatus", OrderBy.SYNC_STATUS.name(), dataProvider) {
+
             @Override
             protected void onSortChanged() {
                 dataView.setCurrentPage(0);
@@ -240,7 +239,7 @@ public class DocumentCargoList extends ListTemplatePage{
         add(filterForm);
     }
 
-    private void addOrderByBorder(MarkupContainer container, String id, String property, ISortStateLocator stateLocator, final DataView dateView){
+    private void addOrderByBorder(MarkupContainer container, String id, String property, ISortStateLocator stateLocator, final DataView dateView) {
         container.add(new ArrowOrderByBorder(id, property, stateLocator) {
 
             @Override
@@ -250,16 +249,16 @@ public class DocumentCargoList extends ListTemplatePage{
         });
     }
 
-    private DocumentCargoFilter newDocumentCargoFilter(){
-        DocumentCargoFilter filter = new DocumentCargoFilter(getLocale(),localeDAO.systemLocale());
+    private DocumentCargoFilter newDocumentCargoFilter() {
+        DocumentCargoFilter filter = new DocumentCargoFilter(getLocale(), localeDAO.systemLocale());
 
-        if(hasAnyRole(DOCUMENT_DEP_VIEW)){
+        if (hasAnyRole(DOCUMENT_DEP_VIEW)) {
             filter.setDepartment(userProfileBean.getCurrentUser().getDepartment());
             filter.setChildDepartments(hasAnyRole(DOCUMENT_DEP_CHILD_VIEW));
-            return  filter;
+            return filter;
         }
 
-        if (hasAnyRole(DOCUMENT_CREATE)){
+        if (hasAnyRole(DOCUMENT_CREATE)) {
             filter.setCreator(userProfileBean.getCurrentUser());
             return filter;
         }
@@ -267,19 +266,19 @@ public class DocumentCargoList extends ListTemplatePage{
         return filter;
     }
 
-    private boolean canEdit(DocumentCargo dc){
+    private boolean canEdit(DocumentCargo dc) {
         User currentUser = userProfileBean.getCurrentUser();
-        
+
         boolean authorized = hasAnyRole(DOCUMENT_EDIT)
                 && currentUser.getId().equals(dc.getCreator().getId());
 
-        if (!authorized && hasAnyRole(DOCUMENT_DEP_EDIT)){
+        if (!authorized && hasAnyRole(DOCUMENT_DEP_EDIT)) {
             authorized = currentUser.getDepartment().getId().equals(dc.getCreator().getDepartment().getId());
         }
 
-        if (!authorized && hasAnyRole(DOCUMENT_DEP_CHILD_EDIT)){
-            for(Department d = dc.getCreator().getDepartment(); d != null; d = d.getParent()){
-                if (d.getId().equals(currentUser.getDepartment().getId())){
+        if (!authorized && hasAnyRole(DOCUMENT_DEP_CHILD_EDIT)) {
+            for (Department d = dc.getCreator().getDepartment(); d != null; d = d.getParent()) {
+                if (d.getId().equals(currentUser.getDepartment().getId())) {
                     authorized = true;
                     break;
                 }
@@ -290,8 +289,8 @@ public class DocumentCargoList extends ListTemplatePage{
 
     @Override
     protected List<ToolbarButton> getToolbarButtons(String id) {
-        if (hasAnyRole(DOCUMENT_CREATE)){
-            return Arrays.asList( (ToolbarButton) new AddDocumentButton(id) {
+        if (hasAnyRole(DOCUMENT_CREATE)) {
+            return Arrays.asList((ToolbarButton) new AddDocumentButton(id) {
 
                 @Override
                 protected void onClick() {
@@ -302,5 +301,4 @@ public class DocumentCargoList extends ListTemplatePage{
 
         return null;
     }
-
 }
