@@ -102,7 +102,7 @@ public class UserGroupResourceBean {
                 .getResultList();
 
         if (!list.isEmpty()){
-            logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, UserGroupResourceBean.class, DeletedLongId.class,
+            logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, UserGroupResourceBean.class, UserGroup.class,
                     rb.getString("info.sync.processed"), list.size(),
                     r.getRemoteHost(), client.getIp());
 
