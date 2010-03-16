@@ -105,7 +105,7 @@ public class RegistrationPage extends WebPage {
                         error(message);
                     }else{
                         log.error(e.getCausedByException().getLocalizedMessage(), e);
-                        error(e.getCausedByException().getLocalizedMessage());                        
+                        error(getString("sync.client.registration.error"));
                     }
                 }
             }
