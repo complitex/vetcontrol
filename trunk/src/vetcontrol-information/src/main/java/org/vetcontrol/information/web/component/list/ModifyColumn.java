@@ -12,9 +12,11 @@ import org.apache.wicket.model.IModel;
 public abstract class ModifyColumn implements IFilteredColumn, IColumn {
 
     private Class bookClass;
+    private IBookDataProvider dataProvoder;
 
-    public ModifyColumn(Class bookClass) {
+    public ModifyColumn(Class bookClass, IBookDataProvider dataProvoder) {
         this.bookClass = bookClass;
+        this.dataProvoder = dataProvoder;
     }
 
     @Override
@@ -30,13 +32,13 @@ public abstract class ModifyColumn implements IFilteredColumn, IColumn {
 
     @Override
     public Component getFilter(String componentId, FilterForm form) {
-        Panel filter = new ModifyColumnFilter(componentId);
+        Panel filter = new ModifyColumnFilter(componentId, dataProvoder);
         return filter;
     }
 
     @Override
     public Component getHeader(String componentId) {
-        Panel header = new ModifyColumnHeader(componentId, bookClass);
+        Panel header = new ModifyColumnHeader(componentId, bookClass, dataProvoder);
         return header;
     }
 

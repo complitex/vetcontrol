@@ -25,12 +25,14 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.Filte
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilterStateLocator;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.util.book.entity.ShowBooksMode;
-import org.vetcontrol.information.web.component.list.BookPropertyColumn;
+import org.vetcontrol.information.web.component.BookPropertyColumn;
+import org.vetcontrol.information.web.component.list.IBookDataProvider;
 import org.vetcontrol.information.web.component.list.ModifyColumn;
 import org.vetcontrol.information.web.component.list.ShowBooksModePanel;
 import org.vetcontrol.information.web.model.DisplayBookClassModel;
@@ -53,7 +55,7 @@ import org.vetcontrol.web.template.TemplatePage;
 @AuthorizeInstantiation(SecurityRoles.INFORMATION_VIEW)
 public class BookPage extends TemplatePage {
 
-    public class DataProvider extends SortableDataProvider<Serializable> implements IFilterStateLocator {
+    public class DataProvider extends SortableDataProvider<Serializable> implements IFilterStateLocator, IBookDataProvider {
 
         private Serializable filterBean;
         private LoadableDetachableModel<Integer> sizeModel;
@@ -95,6 +97,7 @@ public class BookPage extends TemplatePage {
             this.filterBean = (Serializable) state;
         }
 
+        @Override
         public void initSize() {
             sizeModel = new LoadableDetachableModel<Integer>() {
 
@@ -105,20 +108,25 @@ public class BookPage extends TemplatePage {
             };
         }
 
-        public void init(Class type, String sortProperty, boolean isAscending) throws InstantiationException, IllegalAccessException {
-            //retrieve filter bean from preferences.
-            filterBean = preferences.getPreference(PreferenceType.FILTER, type.getSimpleName() + FILTER_KEY_SUFFIX, Serializable.class);
-            if (filterBean == null) {
-                filterBean = (Serializable) type.newInstance();
-            }
+        @Override
+        public void init(Class type, String sortProperty, boolean isAscending) {
+            try {
+                //retrieve filter bean from preferences.
+                filterBean = preferences.getPreference(PreferenceType.FILTER, type.getSimpleName() + FILTER_KEY_SUFFIX, Serializable.class);
+                if (filterBean == null) {
+                    filterBean = (Serializable) type.newInstance();
+                }
 
-            String sortPropertyFromPreferences = preferences.getPreference(PreferenceType.SORT_PROPERTY,
-                    type.getSimpleName() + SORT_PROPERTY_KEY_SUFFIX, String.class);
-            Boolean sortOrderFromPreferences = preferences.getPreference(PreferenceType.SORT_ORDER,
-                    type.getSimpleName() + SORT_ORDER_KEY_SUFFIX, Boolean.class);
-            String sortProp = sortPropertyFromPreferences != null ? sortPropertyFromPreferences : sortProperty;
-            boolean asc = sortOrderFromPreferences != null ? sortOrderFromPreferences.booleanValue() : isAscending;
-            setSort(sortProp, asc);
+                String sortPropertyFromPreferences = preferences.getPreference(PreferenceType.SORT_PROPERTY,
+                        type.getSimpleName() + SORT_PROPERTY_KEY_SUFFIX, String.class);
+                Boolean sortOrderFromPreferences = preferences.getPreference(PreferenceType.SORT_ORDER,
+                        type.getSimpleName() + SORT_ORDER_KEY_SUFFIX, Boolean.class);
+                String sortProp = sortPropertyFromPreferences != null ? sortPropertyFromPreferences : sortProperty;
+                boolean asc = sortOrderFromPreferences != null ? sortOrderFromPreferences.booleanValue() : isAscending;
+                setSort(sortProp, asc);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
     private final Logger log = LoggerFactory.getLogger(BookPage.class);
@@ -169,7 +177,7 @@ public class BookPage extends TemplatePage {
             for (Property prop : BeanPropertyUtil.getProperties(bookType)) {
                 columns.add(new BookPropertyColumn<Serializable>(this, new DisplayPropertyLocalizableModel(prop, this), prop, bookViewDAO, systemLocale));
             }
-            columns.add(new ModifyColumn(bookType) {
+            columns.add(new ModifyColumn(bookType, dataProvider) {
 
                 @Override
                 protected void selected(Serializable bean) {
@@ -181,18 +189,13 @@ public class BookPage extends TemplatePage {
 
             table.addTopToolbar(new ArrowHeadersToolbar(table, dataProvider));
 
-            final FilterForm filterForm = new FilterForm("filterForm", dataProvider) {
-
-                @Override
-                protected void onSubmit() {
-                    dataProvider.initSize();
-                }
-            };
+            final FilterForm filterForm = new FilterForm("filterForm", dataProvider);
 
             table.addTopToolbar(new FilterToolbar(table, filterForm, dataProvider));
             filterForm.add(bookName);
             filterForm.add(table);
             filterForm.add(showBooksModePanel);
+            add(new FeedbackPanel("messages"));
             add(filterForm);
             add(new PagingNavigator("navigator", table, "rowsPerPage", preferences, bookType.getSimpleName() + PAGE_NUMBER_KEY_SUFFIX));
         } catch (Exception e) {

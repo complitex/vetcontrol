@@ -2,9 +2,8 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.vetcontrol.information.web.component.list;
+package org.vetcontrol.information.web.component;
 
-import org.vetcontrol.information.web.component.edit.DateFilter;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -15,7 +14,6 @@ import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulato
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.ChoiceFilter;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterForm;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilteredPropertyColumn;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.TextFilter;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.repeater.Item;
@@ -26,6 +24,8 @@ import org.apache.wicket.util.string.Strings;
 import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.information.util.web.Constants;
 import org.vetcontrol.information.util.web.ResourceUtil;
+import org.vetcontrol.information.web.component.list.DateFilter;
+import org.vetcontrol.information.web.component.list.BookTextFilter;
 import org.vetcontrol.information.web.model.AutoCompleteBookReferenceModel;
 import org.vetcontrol.util.book.Property;
 import org.vetcontrol.information.web.model.StringCultureModel;
@@ -93,9 +93,8 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
     @Override
     public Component getFilter(String componentId, FilterForm form) {
         if (property.isLocalizable()) {
-            TextFilter filter = new TextFilter(componentId,
-                    new StringCultureModel(new PropertyModel(form.getDefaultModel(), getPropertyExpression())),
-                    form);
+            BookTextFilter filter = new BookTextFilter(componentId,
+                    new StringCultureModel(new PropertyModel(form.getDefaultModel(), getPropertyExpression())), form, property);
             return filter;
         } else if (property.isBookReference()) {
             if (property.getUiType().equals(UIType.SELECT)) {
@@ -103,14 +102,14 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
                         bookViewDAO.getContent(property.getType(), ShowBooksMode.ENABLED),
                         new BookChoiceRenderer(property, systemLocale), false);
             } else if (property.getUiType().equals(UIType.AUTO_COMPLETE)) {
-                return new TextFilter(componentId,
-                        new AutoCompleteBookReferenceModel(property, new PropertyModel(form.getDefaultModel(), getPropertyExpression())), form);
+                return new BookTextFilter(componentId,
+                        new AutoCompleteBookReferenceModel(property, new PropertyModel(form.getDefaultModel(), getPropertyExpression())), form, property);
             } else {
                 //TODO: remove after tests.
                 throw new RuntimeException("Not real case.");
             }
         } else if (Date.class.isAssignableFrom(property.getType())) {
-            DateFilter filter = new DateFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form);
+            DateFilter filter = new DateFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form, property);
             return filter;
         } else if (property.getType().equals(boolean.class) || property.getType().equals(Boolean.class)) {
             List choices = Arrays.asList(new Boolean[]{Boolean.TRUE, Boolean.FALSE});
@@ -131,7 +130,7 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
                     form, choices, booleanChoiceRenderer, false);
             return filter;
         } else {
-            TextFilter filter = new TextFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form);
+            BookTextFilter filter = new BookTextFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form, property);
             return filter;
         }
     }
