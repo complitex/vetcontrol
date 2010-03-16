@@ -28,6 +28,7 @@ import java.util.Iterator;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.vetcontrol.entity.Client;
+import org.vetcontrol.logging.util.DisplayUserUtil;
 import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
 import org.vetcontrol.web.template.ListTemplatePage;
 
@@ -207,7 +208,7 @@ public class LogList extends ListTemplatePage {
             protected void populateItem(Item<Log> item) {
                 Log log = item.getModelObject();
                 item.add(DateLabel.forDatePattern("date", new Model<Date>(log.getDate()), "dd.MM.yy HH:mm:ss"));
-                item.add(new Label("login", log.getUser() != null ? log.getUser().getLogin() : "SYSTEM"));
+                item.add(new Label("login", DisplayUserUtil.displayUser(log.getUser())));
                 item.add(new Label("client", getClientAsString(log.getClient())));
                 item.add(new Label("controllerClass", getStringOrKey(log.getControllerClass())));
                 item.add(new Label("modelClass", getStringOrKey(log.getModelClass())));

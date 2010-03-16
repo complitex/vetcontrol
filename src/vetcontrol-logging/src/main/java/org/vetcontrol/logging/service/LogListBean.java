@@ -9,6 +9,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
+import org.vetcontrol.logging.util.DisplayUserUtil;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -88,7 +89,11 @@ public class LogListBean {
                 select += " and l.date between :date_s and :date_e";
             }
             if (filter.getLogin() != null) {
-                select += " and l.user.login like :login";
+                if (filter.getLogin().equalsIgnoreCase(DisplayUserUtil.SYSTEM_USER_LOGIN)) {
+                    select += " and l.user is null";
+                } else {
+                    select += " and l.user.login like :login";
+                }
             }
             if (filter.getControllerClass() != null) {
                 select += " and upper(l.controllerClass) like :controllerClass";
@@ -126,7 +131,9 @@ public class LogListBean {
                 query.setParameter("date_e", DateUtil.getEndOfDay(filter.getDate()));
             }
             if (filter.getLogin() != null) {
-                query.setParameter("login", "%" + filter.getLogin() + "%");
+                if (!filter.getLogin().equalsIgnoreCase(DisplayUserUtil.SYSTEM_USER_LOGIN)) {
+                    query.setParameter("login", "%" + filter.getLogin() + "%");
+                }
             }
             if (filter.getControllerClass() != null) {
                 query.setParameter("controllerClass", "%" + filter.getControllerClass() + "%");
@@ -158,10 +165,12 @@ public class LogListBean {
     }
 
     public List<String> getControllerClasses() {
-        return entityManager.createQuery("select l.controllerClass from Log l where l.controllerClass is not null group by l.controllerClass", String.class).getResultList();
+        return entityManager.createQuery("select l.controllerClass from Log l where l.controllerClass is not null group by l.controllerClass",
+                String.class).getResultList();
     }
 
     public List<String> getModelClasses() {
-        return entityManager.createQuery("select l.modelClass from Log l where l.modelClass is not null group by l.modelClass", String.class).getResultList();
+        return entityManager.createQuery("select l.modelClass from Log l where l.modelClass is not null group by l.modelClass",
+                String.class).getResultList();
     }
 }
