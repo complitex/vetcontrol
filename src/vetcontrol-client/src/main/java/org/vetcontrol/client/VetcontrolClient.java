@@ -308,43 +308,32 @@ public class VetcontrolClient {
 
            
     private static JWindow splash = new JWindow();
+    private static JProgressBar progressBar = new JProgressBar();
 
     private static void showSplash(){
         Image image = Toolkit.getDefaultToolkit().getImage(VetcontrolClient.class.getResource("splash.gif"));
         JLabel label = new JLabel(new ImageIcon(image));
         splash.add(label, BorderLayout.CENTER);
+
+        progressBar.setIndeterminate(true);
+        progressBar.setStringPainted(true);
+        splash.add(progressBar, BorderLayout.SOUTH);
+
         splash.pack();
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension labelSize = label.getPreferredSize();
 
-        splash.setLocation((screenSize.width/2) - (labelSize.width/2)
-                ,(screenSize.height/2) - (labelSize.height/2));
+        splash.setLocation((screenSize.width/2) - (labelSize.width/2),(screenSize.height/2) - (labelSize.height/2));
 
         splash.setVisible(true);
     }
 
-    private static void hideSplash(){
-        splash.setVisible(false);
+    private static void hideSplash(){        
+        splash.dispose();
     }
 
-    private static void messageSplash(String message){
-        Graphics2D g = (Graphics2D) splash.getContentPane().getGraphics();
-                
-        // Find the size of string s in font f in the current Graphics context g.
-        FontMetrics fm   = g.getFontMetrics(g.getFont());
-        java.awt.geom.Rectangle2D rect = fm.getStringBounds(message, g);
-
-        int textWidth  = (int)(rect.getWidth());
-        double panelHeight= splash.getSize().getHeight();
-        double panelWidth = splash.getSize().getWidth();
-
-        // Center text horizontally 
-        int x = (int) ((panelWidth  - textWidth)  / 2);
-        int y = (int) (panelHeight - 30);
-
-        g.clearRect(0, y-10, (int) panelWidth, 30);
-
-        g.drawString(message, x, y);
+    private static void messageSplash(String m){
+        progressBar.setString(m);
     }
 }
