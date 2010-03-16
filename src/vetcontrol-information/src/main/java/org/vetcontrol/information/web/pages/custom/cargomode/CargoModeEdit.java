@@ -14,6 +14,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.Response;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AbstractAutoCompleteTextRenderer;
@@ -55,6 +56,7 @@ import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.util.book.BookHash;
+import org.vetcontrol.web.component.list.AjaxRemovableListView;
 import org.vetcontrol.web.component.toolbar.DisableItemButton;
 import org.vetcontrol.web.component.toolbar.ToolbarButton;
 import org.vetcontrol.web.security.SecurityRoles;
@@ -330,10 +332,10 @@ public final class CargoModeEdit extends FormTemplatePage {
         cargoTypesContainer.setOutputMarkupId(true);
         form.add(cargoTypesContainer);
 
-        final AjaxSubmitLink addCargoType = new AjaxSubmitLink("addCargoType", form) {
+        final AjaxLink addCargoType = new AjaxLink("addCargoType") {
 
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
+            public void onClick(AjaxRequestTarget target) {
                 CargoModeCargoType cargoModeCargoType = new CargoModeCargoType();
                 cargoModeModel.getObject().addCargoModeCargoType(cargoModeCargoType);
                 target.addComponent(cargoTypesContainer);
@@ -343,67 +345,21 @@ public final class CargoModeEdit extends FormTemplatePage {
                 target.appendJavascript(setFocusOnNewElement);
             }
         };
-        addCargoType.setDefaultFormProcessing(false);
         addCargoType.setVisible(CanEditUtil.canEdit(cargoModeModel.getObject()));
         cargoTypesContainer.add(addCargoType);
 
-        final ListView<CargoModeCargoType> cargoTypes = new ListView<CargoModeCargoType>("cargoTypes",
+        final ListView<CargoModeCargoType> cargoTypes = new AjaxRemovableListView<CargoModeCargoType>("cargoTypes",
                 cargoModeModel.getObject().getCargoModeCargoTypes()) {
-
-            @Override
-            protected IModel<CargoModeCargoType> getListItemModel(IModel<? extends List<CargoModeCargoType>> listViewModel, int index) {
-                return new Model<CargoModeCargoType>(listViewModel.getObject().get(index));
-            }
 
             @Override
             protected void populateItem(ListItem<CargoModeCargoType> item) {
                 UKTZEDPanel uktzed = new UKTZEDPanel("cargoType", cargoMode, item.getModelObject(), systemLocale);
                 item.add(uktzed);
 
-                AjaxSubmitLink deleteCargoType = new AjaxSubmitLink("deleteCargoType", form) {
-
-                    @Override
-                    protected void onSubmit(AjaxRequestTarget target, Form form) {
-                        ListItem<CargoModeCargoType> item = (ListItem) getParent();
-                        ListView<CargoModeCargoType> list = (ListView<CargoModeCargoType>) item.getParent();
-
-                        int removeIndex = item.getIndex();
-                        int last_index = list.getModelObject().size() - 1;
-
-                        //Copy childs from next list item and remove last
-                        for (int index = item.getIndex(); index < last_index; index++) {
-                            ListItem<CargoModeCargoType> li = (ListItem) item.getParent().get(index);
-                            ListItem<CargoModeCargoType> li_next = (ListItem) item.getParent().get(index + 1);
-
-                            li.removeAll();
-                            if (li.getIndex() == removeIndex) {
-                                for (int i = 0; i < li.size(); i++) {
-                                    li.get(i).remove();
-                                }
-                            }
-                            li.setModelObject(li_next.getModelObject());
-
-                            int size = li_next.size();
-                            Component[] childs = new Component[size];
-                            for (int i = 0; i < size; i++) {
-                                childs[i] = li_next.get(i);
-                            }
-                            li.add(childs);
-                        }
-                        item.getParent().get(last_index).remove();
-
-                        list.getModelObject().remove(removeIndex);
-
-                        target.addComponent(cargoTypesContainer);
-                        target.focusComponent(addCargoType);
-                    }
-                };
-                deleteCargoType.setDefaultFormProcessing(false);
-                deleteCargoType.setVisible(CanEditUtil.canEdit(cargoModeModel.getObject()));
-                item.add(deleteCargoType);
+                addRemoveLink("deleteCargoType", item, addCargoType, cargoTypesContainer).
+                        setVisible(CanEditUtil.canEdit(cargoModeModel.getObject()));
             }
         };
-        cargoTypes.setReuseItems(true);
         cargoTypesContainer.add(cargoTypes);
 
         //list of associated unit types.
@@ -411,10 +367,10 @@ public final class CargoModeEdit extends FormTemplatePage {
         unitTypesContainer.setOutputMarkupId(true);
         form.add(unitTypesContainer);
 
-        final AjaxSubmitLink addUnitType = new AjaxSubmitLink("addUnitType", form) {
+        final AjaxLink addUnitType = new AjaxLink("addUnitType") {
 
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
+            public void onClick(AjaxRequestTarget target) {
                 CargoModeUnitType cargoModeUnitType = new CargoModeUnitType();
                 cargoModeModel.getObject().addCargoModeUnitType(cargoModeUnitType);
                 target.addComponent(unitTypesContainer);
@@ -424,17 +380,11 @@ public final class CargoModeEdit extends FormTemplatePage {
                 target.appendJavascript(setFocusOnNewElement);
             }
         };
-        addUnitType.setDefaultFormProcessing(false);
         addUnitType.setVisible(CanEditUtil.canEdit(cargoModeModel.getObject()));
         unitTypesContainer.add(addUnitType);
 
-        final ListView<CargoModeUnitType> unitTypes = new ListView<CargoModeUnitType>("unitTypes",
+        final ListView<CargoModeUnitType> unitTypes = new AjaxRemovableListView<CargoModeUnitType>("unitTypes",
                 cargoModeModel.getObject().getCargoModeUnitTypes()) {
-
-            @Override
-            protected IModel<CargoModeUnitType> getListItemModel(IModel<? extends List<CargoModeUnitType>> listViewModel, int index) {
-                return new Model<CargoModeUnitType>(listViewModel.getObject().get(index));
-            }
 
             @Override
             protected void populateItem(ListItem<CargoModeUnitType> item) {
@@ -442,50 +392,10 @@ public final class CargoModeEdit extends FormTemplatePage {
                         item.getModelObject(), new PropertyModel<UnitType>(item.getModelObject(), "unitType"), systemLocale);
                 item.add(unitTypesChoiceContainer);
 
-                AjaxSubmitLink deleteUnitType = new AjaxSubmitLink("deleteUnitType", form) {
-
-                    @Override
-                    protected void onSubmit(AjaxRequestTarget target, Form form) {
-                        ListItem<CargoModeUnitType> item = (ListItem) getParent();
-                        ListView<CargoModeUnitType> list = (ListView<CargoModeUnitType>) item.getParent();
-
-                        int removeIndex = item.getIndex();
-                        int last_index = list.getModelObject().size() - 1;
-
-                        //Copy childs from next list item and remove last
-                        for (int index = item.getIndex(); index < last_index; index++) {
-                            ListItem<CargoModeUnitType> li = (ListItem) item.getParent().get(index);
-                            ListItem<CargoModeUnitType> li_next = (ListItem) item.getParent().get(index + 1);
-
-                            li.removeAll();
-                            if (li.getIndex() == removeIndex) {
-                                for (int i = 0; i < li.size(); i++) {
-                                    li.get(i).remove();
-                                }
-                            }
-                            li.setModelObject(li_next.getModelObject());
-
-                            int size = li_next.size();
-                            Component[] childs = new Component[size];
-                            for (int i = 0; i < size; i++) {
-                                childs[i] = li_next.get(i);
-                            }
-                            li.add(childs);
-                        }
-                        item.getParent().get(last_index).remove();
-
-                        list.getModelObject().remove(removeIndex);
-
-                        target.addComponent(unitTypesContainer);
-                        target.focusComponent(addUnitType);
-                    }
-                };
-                deleteUnitType.setDefaultFormProcessing(false);
-                deleteUnitType.setVisible(CanEditUtil.canEdit(cargoModeModel.getObject()));
-                item.add(deleteUnitType);
+                addRemoveLink("deleteUnitType", item, addUnitType, unitTypesContainer).
+                        setVisible(CanEditUtil.canEdit(cargoModeModel.getObject()));
             }
         };
-        unitTypes.setReuseItems(true);
         unitTypesContainer.add(unitTypes);
 
         final SaveUpdateConfirmationDialog confirmationDialog = new SaveUpdateConfirmationDialog("confirmationDialogPanel") {
