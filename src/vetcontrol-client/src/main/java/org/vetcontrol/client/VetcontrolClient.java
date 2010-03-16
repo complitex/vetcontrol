@@ -9,6 +9,7 @@ import org.glassfish.api.embedded.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -56,11 +57,23 @@ public class VetcontrolClient {
     private static Server server;
 
     public static void main(String... args) {
+        showSplash();
+        messageSplash("Запуск...");
+
         initLogging();
-        createTray();
+
+        messageSplash("Инициализация базы данных...");
         initDB();
+
+        messageSplash("Инициализация сервера...");
         initServer();
+
+        messageSplash("Инициализация клиента...");
         deployClient();
+
+        createTray();
+        
+        hideSplash();
     }
 
     private static void initDB(){
@@ -291,5 +304,47 @@ public class VetcontrolClient {
         if (!logDir.exists()) {
             logDir.mkdir();
         }
+    }
+
+           
+    private static JWindow splash = new JWindow();
+
+    private static void showSplash(){
+        Image image = Toolkit.getDefaultToolkit().getImage(VetcontrolClient.class.getResource("splash.gif"));
+        JLabel label = new JLabel(new ImageIcon(image));
+        splash.add(label, BorderLayout.CENTER);
+        splash.pack();
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension labelSize = label.getPreferredSize();
+
+        splash.setLocation((screenSize.width/2) - (labelSize.width/2)
+                ,(screenSize.height/2) - (labelSize.height/2));
+
+        splash.setVisible(true);
+    }
+
+    private static void hideSplash(){
+        splash.setVisible(false);
+    }
+
+    private static void messageSplash(String message){
+        Graphics2D g = (Graphics2D) splash.getContentPane().getGraphics();
+                
+        // Find the size of string s in font f in the current Graphics context g.
+        FontMetrics fm   = g.getFontMetrics(g.getFont());
+        java.awt.geom.Rectangle2D rect = fm.getStringBounds(message, g);
+
+        int textWidth  = (int)(rect.getWidth());
+        double panelHeight= splash.getSize().getHeight();
+        double panelWidth = splash.getSize().getWidth();
+
+        // Center text horizontally 
+        int x = (int) ((panelWidth  - textWidth)  / 2);
+        int y = (int) (panelHeight - 30);
+
+        g.clearRect(0, y-10, (int) panelWidth, 30);
+
+        g.drawString(message, x, y);
     }
 }
