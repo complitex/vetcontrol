@@ -205,7 +205,7 @@ public class SyncBean{
                 logBean.error(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, SyncBean.class, null, m);
             } catch (Exception e) {
                 message.setName(rb.getString("sync.client.sync.error"));
-                message.setMessage(e.getLocalizedMessage());
+                message.setMessage(rb.getString("sync.client.sync.error.common"));
 
                 log.error(e.getLocalizedMessage(), e);
                 logBean.error(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, SyncBean.class, null, e.getLocalizedMessage());                
