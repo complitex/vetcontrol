@@ -238,9 +238,9 @@
         <test.server.connection.username>artem</test.server.connection.username>
         <test.server.connection.password>artem</test.server.connection.password>
 
-        <test.client.connection.url>jdbc:mysql://localhost:3306/vetcontrol</test.client.connection.url>
-        <test.client.connection.username>artem</test.client.connection.username>
-        <test.client.connection.password>artem</test.client.connection.password>
+        <test.client.connection.url>jdbc:mysql://localhost:13306/vetcontrol_client</test.client.connection.url>
+        <test.client.connection.username>vc_client_user</test.client.connection.username>
+        <test.client.connection.password>vc_client_pass</test.client.connection.password>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
