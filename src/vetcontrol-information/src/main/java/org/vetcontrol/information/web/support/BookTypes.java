@@ -18,7 +18,7 @@ public class BookTypes {
 
     @SuppressWarnings({"unchecked"})
     public static List<Class> getList() {
-        return Collections.unmodifiableList((List)Arrays.asList(
+        return Collections.unmodifiableList((List) Arrays.asList(
                 Department.class,
                 CountryBook.class,
                 RegisteredProducts.class,
@@ -29,16 +29,17 @@ public class BookTypes {
                 MovementType.class,
                 CargoProducer.class,
                 UnitType.class,
-                CargoType.class,                
+                CargoType.class,
                 Job.class,
                 Prohibition.class,
                 Tariff.class,
                 ArrestReason.class,
                 AddressBook.class,
-                PassingBorderPoint.class));
+                PassingBorderPoint.class,
+                CountryWithBadEpizooticSituation.class));
     }
 
-    public static Map<Class, Class<? extends TemplatePage>> getCustomBooks(){
+    public static Map<Class, Class<? extends TemplatePage>> getCustomBooks() {
         Map<Class, Class<? extends TemplatePage>> customBooks = new HashMap<Class, Class<? extends TemplatePage>>();
         customBooks.put(CargoMode.class, CargoModeList.class);
 
