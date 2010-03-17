@@ -22,9 +22,9 @@ public class ClientPopulator extends AbstractPopulator {
     /*--------------------------Settings------------------------------------------------------*/
     private static final String CLIENT_PERSISTENCE_UNIT_NAME = "populate.client";
     //count of documents to generate
-    private static final int DOCUMENT_COUNT = 100;
+    private static final int DOCUMENT_COUNT = 1000;
     //count of cargos onto one DocumentCargo entry.
-    private static final int CARGO_COUNT = 100;
+    private static final int CARGO_COUNT = 10;
     //Department id of creator of documents.
     private static final Long DEPARTMENT_ID = 17L;
     //User id of creator of documents.

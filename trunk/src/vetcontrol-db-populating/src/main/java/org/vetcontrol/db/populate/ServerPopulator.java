@@ -17,7 +17,7 @@ public class ServerPopulator extends AbstractPopulator {
     /*--------------------------Settings------------------------------------------------------*/
     private static final String SERVER_PERSISTENCE_UNIT_NAME = "populate.server";
     //count of books to generate
-    private static final int BOOK_COUNT = 1000;
+    private static final int BOOK_COUNT = 100;
     //count of CargoModeCargoType entries for one CargoMode to generate. The same true for CargoModeUnitType.
     private static final int LINK_TABLE_ROWS = 2;
     /*--------------------------- End settings -----------------------------------------------*/
@@ -37,7 +37,8 @@ public class ServerPopulator extends AbstractPopulator {
         Tariff.class,
         ArrestReason.class,
         AddressBook.class,
-        PassingBorderPoint.class
+        PassingBorderPoint.class,
+        CountryWithBadEpizooticSituation.class
     };
     private static final String[] SUPPORTED_LOCALES = {"en", "ru"};
     private Sequence sequence;

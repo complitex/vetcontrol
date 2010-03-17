@@ -28,6 +28,7 @@
         <class>org.vetcontrol.entity.CargoMode</class>
         <class>org.vetcontrol.entity.CargoModeCargoType</class>
         <class>org.vetcontrol.entity.CargoModeUnitType</class>
+        <class>org.vetcontrol.entity.CountryWithBadEpizooticSituation</class>
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
@@ -70,11 +71,12 @@
         <class>org.vetcontrol.entity.CargoMode</class>
         <class>org.vetcontrol.entity.CargoModeCargoType</class>
         <class>org.vetcontrol.entity.CargoModeUnitType</class>
+        <class>org.vetcontrol.entity.CountryWithBadEpizooticSituation</class>
+
         <class>org.vetcontrol.entity.Cargo</class>
         <class>org.vetcontrol.entity.Client</class>
         <class>org.vetcontrol.entity.DocumentCargo</class>
-
-
+        
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
             <property name="hibernate.connection.username" value="${test.client.connection.username}"/>
