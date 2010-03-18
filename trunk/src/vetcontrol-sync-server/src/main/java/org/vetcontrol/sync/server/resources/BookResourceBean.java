@@ -290,7 +290,7 @@ public class BookResourceBean {
         Client client = getClient(re, r);
 
         TypedQuery<T> query =  em.createQuery("select e from "+ entity.getSimpleName() +
-                " e where e.updated >= :updated", entity) .setParameter("updated", re.getUpdated());
+                " e where e.updated >= :updated order by e.updated", entity) .setParameter("updated", re.getUpdated());
 
         if (maxResults != null){
             query.setMaxResults(Integer.parseInt(maxResults));

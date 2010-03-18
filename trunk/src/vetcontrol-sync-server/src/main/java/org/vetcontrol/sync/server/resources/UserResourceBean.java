@@ -64,7 +64,7 @@ public class UserResourceBean {
         Client client = getClient(requestEntity, r);
 
         List<User> list = em.createQuery("select u from User u where u.department = :department " +
-                "and u.updated >= :updated", User.class)
+                "and u.updated >= :updated order by u.updated", User.class)
                 .setParameter("department", client.getDepartment())
                 .setParameter("updated", requestEntity.getUpdated())
                 .getResultList();
