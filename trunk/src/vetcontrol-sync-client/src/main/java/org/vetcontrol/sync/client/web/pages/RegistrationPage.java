@@ -8,7 +8,6 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -68,8 +67,6 @@ public class RegistrationPage extends WebPage {
         info.add(new Label("registered", getString("sync.client.registration.registered")));
 
         BookmarkablePageLink<Void> loginLink = new BookmarkablePageLink<Void>("login", Login.class);
-//        ExternalLink login = new ExternalLink("login", "/login.jsp", getString("sync.client.registration.login"));
-//        login.setContextRelative(true);
         info.add(loginLink);
 
 
