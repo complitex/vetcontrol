@@ -21,7 +21,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.odlabs.wiquery.ui.datepicker.DateOption;
 import org.vetcontrol.entity.Department;
 import org.vetcontrol.report.service.dao.DepartmentDAO;
-import org.vetcontrol.report.web.components.DepartmentPicker;
+import org.vetcontrol.report.web.component.DepartmentPicker;
 import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.web.component.DatePicker;
 import org.vetcontrol.web.component.Spacer;

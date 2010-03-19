@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.vetcontrol.report.web.components;
+package org.vetcontrol.report.web.component;
 
 import java.util.List;
 import java.util.Locale;
