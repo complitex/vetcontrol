@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import org.vetcontrol.web.resource.WebCommonResourceInitializer;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -51,13 +52,12 @@ public abstract class TemplatePage extends WebPage {
     private ILocaleDAO localeDAO;
 
     public TemplatePage() {
-        add(JavascriptPackageResource.getHeaderContribution("js/common.js"));
         add(JavascriptPackageResource.getHeaderContribution(CoreJavaScriptResourceReference.get()));
+        add(JavascriptPackageResource.getHeaderContribution(WebCommonResourceInitializer.COMMON_JS));
         add(JavascriptPackageResource.getHeaderContribution(TemplatePage.class, TemplatePage.class.getSimpleName() + ".js"));
+        add(CSSPackageResource.getHeaderContribution(WebCommonResourceInitializer.STYLE_CSS));
 
         Locale system = localeDAO.systemLocale();
-
-        add(CSSPackageResource.getHeaderContribution("css/style.css"));
 
         //locale picker
         add(new LocalePicker("localePicker", localeDAO.all(), system, getPreferences()));

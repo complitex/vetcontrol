@@ -23,6 +23,7 @@ import org.vetcontrol.report.util.movementtypes.Month;
 import org.vetcontrol.report.web.components.DepartmentPicker;
 import org.vetcontrol.report.web.components.MonthPicker;
 import org.vetcontrol.util.DateUtil;
+import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.FormTemplatePage;
 
@@ -95,8 +96,9 @@ public final class MovementTypesReportForm extends FormTemplatePage {
             departmentPanel.setVisible(false);
         }
         form.add(departmentPanel);
-        add(form);
+        form.add(new Spacer("spacer"));
 
+        add(form);
     }
 }
 

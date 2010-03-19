@@ -36,18 +36,19 @@
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket-datetime</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-web-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
         <dependency>
             <groupId>org.wiquery</groupId>
             <artifactId>wiquery</artifactId>
             <scope>system</scope>
             <version>1.0</version>
-            <systemPath>${pom.basedir}/../../lib/wiquery-1.0.jar</systemPath>
-        </dependency>
-        
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-web-api</artifactId>
-            <scope>provided</scope>
+            <systemPath>${project.basedir}/../../lib/wiquery-1.0.jar</systemPath>
         </dependency>
     </dependencies>
 

@@ -16,7 +16,6 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
-import org.odlabs.wiquery.ui.datepicker.DatePicker;
 import org.vetcontrol.document.service.DocumentCargoBean;
 import org.vetcontrol.document.service.DocumentCargoFilter;
 import org.vetcontrol.entity.*;
@@ -34,6 +33,7 @@ import javax.ejb.EJB;
 import java.util.*;
 import java.util.Locale;
 import org.apache.wicket.markup.html.link.Link;
+import org.vetcontrol.web.component.DatePicker;
 import org.vetcontrol.web.template.ListTemplatePage;
 
 import static org.vetcontrol.document.service.DocumentCargoBean.OrderBy;
@@ -126,9 +126,6 @@ public class DocumentCargoList extends ListTemplatePage {
         filterForm.add(new TextField("cargoProducerName"));
 
         DatePicker<Date> created = new DatePicker<Date>("created");
-        created.setButtonImage("images/calendar.gif");
-        created.setButtonImageOnly(true);
-        created.setShowOn(DatePicker.ShowOnEnum.BOTH);
         filterForm.add(created);
 
         DropDownChoice<Synchronized.SyncStatus> ddcSyncStatus =

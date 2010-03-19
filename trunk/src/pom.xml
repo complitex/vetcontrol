@@ -1,7 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.vetcontrol</groupId>
@@ -23,6 +21,8 @@
         <module>vetcontrol-web</module>
         <module>vetcontrol-web-client</module>
         <module>vetcontrol-client</module>
+        <module>vetcontrol-resources-images</module>
+        <module>vetcontrol-resources-common</module>
     </modules>
 
     <dependencyManagement>
@@ -76,6 +76,16 @@
             <dependency>
                 <groupId>org.vetcontrol</groupId>
                 <artifactId>vetcontrol-web-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.vetcontrol</groupId>
+                <artifactId>vetcontrol-resources-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.vetcontrol</groupId>
+                <artifactId>vetcontrol-resources-images</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -266,3 +276,4 @@
         </repository>
     </repositories>
 </project>
+

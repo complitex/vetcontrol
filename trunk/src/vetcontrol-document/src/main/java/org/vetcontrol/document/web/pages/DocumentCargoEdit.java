@@ -14,7 +14,6 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.*;
-import org.odlabs.wiquery.ui.datepicker.DatePicker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.document.service.DocumentCargoBean;
@@ -30,6 +29,8 @@ import org.vetcontrol.web.template.FormTemplatePage;
 import javax.ejb.EJB;
 import java.util.Date;
 import java.util.List;
+import org.vetcontrol.web.component.DatePicker;
+import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.component.list.AjaxRemovableListView;
 
 import static org.vetcontrol.entity.Log.EVENT.*;
@@ -332,6 +333,8 @@ public class DocumentCargoEdit extends FormTemplatePage {
                 new StyleDateConverter(true));
         created.setVisible(visible);
         form.add(created);
+
+        form.add(new Spacer("spacer"));
     }
 
     private <T extends Localizable> DropDownChoice<T> addDropDownChoice(WebMarkupContainer container, String id, Class<T> bookClass, IModel<DocumentCargo> model, String property) {
@@ -421,9 +424,6 @@ public class DocumentCargoEdit extends FormTemplatePage {
         //Дата сертификата
         DatePicker<Date> certificateDate = new DatePicker<Date>("document.cargo.certificate_date",
                 new PropertyModel<Date>(item.getModel(), "certificateDate"));
-        certificateDate.setButtonImage("images/calendar.gif");
-        certificateDate.setButtonImageOnly(true);
-        certificateDate.setShowOn(DatePicker.ShowOnEnum.BOTH);
         certificateDate.setRequired(true);
         item.add(certificateDate);
     }

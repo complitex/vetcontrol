@@ -7,9 +7,9 @@ package org.vetcontrol.information.web.component.edit;
 import java.util.Date;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.odlabs.wiquery.ui.datepicker.DatePicker;
 import org.vetcontrol.util.book.Property;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
+import org.vetcontrol.web.component.DatePicker;
 
 /**
  *
@@ -23,9 +23,6 @@ public final class DatePanel extends Panel {
         DatePicker<Date> dateField = new DatePicker<Date>("dateField", model);
         dateField.setEnabled(enabled);
         dateField.setLabel(new DisplayPropertyLocalizableModel(prop, this));
-        dateField.setButtonImage("images/calendar.gif");
-        dateField.setButtonImageOnly(true);
-        dateField.setShowOn(DatePicker.ShowOnEnum.BOTH);
         dateField.setRequired(!prop.isNullable());
         add(dateField);
     }

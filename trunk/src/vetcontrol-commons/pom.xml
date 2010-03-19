@@ -13,6 +13,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.vetcontrol</groupId>
+            <artifactId>vetcontrol-resources-common</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket</artifactId>
         </dependency>

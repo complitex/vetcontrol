@@ -19,11 +19,12 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.odlabs.wiquery.ui.datepicker.DateOption;
-import org.odlabs.wiquery.ui.datepicker.DatePicker;
 import org.vetcontrol.entity.Department;
 import org.vetcontrol.report.service.dao.DepartmentDAO;
 import org.vetcontrol.report.web.components.DepartmentPicker;
 import org.vetcontrol.util.DateUtil;
+import org.vetcontrol.web.component.DatePicker;
+import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.FormTemplatePage;
 
@@ -36,10 +37,10 @@ public final class CargosInDayReportForm extends FormTemplatePage {
 
     @EJB(name = "DepartmentDAO")
     private DepartmentDAO departmentDAO;
-
     static final MetaDataKey<Date> DAY_KEY = new MetaDataKey<Date>() {
     };
-    static final MetaDataKey<Long> DEPARTMENT_KEY = new MetaDataKey<Long>() {};
+    static final MetaDataKey<Long> DEPARTMENT_KEY = new MetaDataKey<Long>() {
+    };
 
     public CargosInDayReportForm() {
         init();
@@ -79,9 +80,6 @@ public final class CargosInDayReportForm extends FormTemplatePage {
 
         DatePicker<Date> day = new DatePicker<Date>("day", dayModel, Date.class);
         day.setMaxDate(new DateOption((short) 0));
-        day.setButtonImage("images/calendar.gif");
-        day.setButtonImageOnly(true);
-        day.setShowOn(DatePicker.ShowOnEnum.BOTH);
         day.setRequired(true);
 
         form.add(day);
@@ -103,8 +101,9 @@ public final class CargosInDayReportForm extends FormTemplatePage {
             departmentPanel.setVisible(false);
         }
         form.add(departmentPanel);
-        add(form);
+        form.add(new Spacer("spacer"));
 
+        add(form);
     }
 }
 

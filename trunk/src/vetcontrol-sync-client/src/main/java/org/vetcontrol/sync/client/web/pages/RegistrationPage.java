@@ -1,7 +1,6 @@
 package org.vetcontrol.sync.client.web.pages;
 
 import com.sun.jersey.api.client.UniformInterfaceException;
-import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -25,21 +24,23 @@ import org.vetcontrol.sync.client.service.RegistrationBean;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import java.util.Locale;
+import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.vetcontrol.web.component.Spacer;
+import org.vetcontrol.web.pages.login.Login;
+import org.vetcontrol.web.resource.WebCommonResourceInitializer;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 07.02.2010 18:18:28
  */
 public class RegistrationPage extends WebPage {
-    private static final Logger log = LoggerFactory.getLogger(RegistrationPage.class);
 
+    private static final Logger log = LoggerFactory.getLogger(RegistrationPage.class);
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
-
     @EJB(name = "ClientBean")
     private ClientBean clientBean;
-
-
     @EJB(name = "RegistrationBean")
     private RegistrationBean registrationBean;
 
@@ -48,7 +49,7 @@ public class RegistrationPage extends WebPage {
 
         final Locale system = localeDAO.systemLocale();
 
-        add(CSSPackageResource.getHeaderContribution("css/style.css"));
+        add(CSSPackageResource.getHeaderContribution(WebCommonResourceInitializer.STYLE_CSS));
 
         add(new Label("title", getString("sync.client.registration.title")));
 
@@ -57,7 +58,7 @@ public class RegistrationPage extends WebPage {
         IModel<Client> clientModel = new Model<Client>(new Client());
 
         //DEBUG
-        info("IP: " + clientBean.getCurrentIP() + ", MAC:"  + clientBean.getCurrentMAC());
+        info("IP: " + clientBean.getCurrentIP() + ", MAC:" + clientBean.getCurrentMAC());
 
         //Регистрация успешно
         final WebMarkupContainer info = new WebMarkupContainer("info");
@@ -66,29 +67,31 @@ public class RegistrationPage extends WebPage {
 
         info.add(new Label("registered", getString("sync.client.registration.registered")));
 
-        ExternalLink login = new ExternalLink("login", "/login.jsp", getString("sync.client.registration.login"));
-        login.setContextRelative(true);
-        info.add(login);
+        BookmarkablePageLink<Void> loginLink = new BookmarkablePageLink<Void>("login", Login.class);
+//        ExternalLink login = new ExternalLink("login", "/login.jsp", getString("sync.client.registration.login"));
+//        login.setContextRelative(true);
+        info.add(loginLink);
 
 
         //Форма регистрации
-        Form form = new Form<Client>("registration_form", clientModel){
+        Form form = new Form<Client>("registration_form", clientModel) {
+
             @Override
             protected void onSubmit() {
                 Client client = getModelObject();
 
                 String ip = clientBean.getCurrentIP();
-                if (ip != null){
+                if (ip != null) {
                     client.setIp(ip);
-                }else{
+                } else {
                     error("Ошибка получения IP адреса клиента");
                 }
 
                 String mac = clientBean.getCurrentMAC();
-                if (mac != null){
+                if (mac != null) {
                     client.setMac(mac);
-                }else{
-                     error("Ошибка получения MAC адреса клиента");
+                } else {
+                    error("Ошибка получения MAC адреса клиента");
                 }
 
                 try {
@@ -98,12 +101,12 @@ public class RegistrationPage extends WebPage {
                     setVisible(false);
                     info.setVisible(true);
                 } catch (EJBException e) {
-                    if (e.getCausedByException() instanceof UniformInterfaceException){
+                    if (e.getCausedByException() instanceof UniformInterfaceException) {
                         UniformInterfaceException uie = (UniformInterfaceException) e.getCausedByException();
                         String message = uie.getResponse().getEntity(String.class);
                         log.error(message, e);
                         error(message);
-                    }else{
+                    } else {
                         log.error(e.getCausedByException().getLocalizedMessage(), e);
                         error(getString("sync.client.registration.error"));
                     }
@@ -115,7 +118,7 @@ public class RegistrationPage extends WebPage {
         DropDownChoice ddc = new DropDownChoice<Department>("sync.client.registration.department",
                 new PropertyModel<Department>(clientModel, "department"),
                 registrationBean.getDepartments(),
-                new IChoiceRenderer<Department>(){
+                new IChoiceRenderer<Department>() {
 
                     @Override
                     public Object getDisplayValue(Department department) {
@@ -133,9 +136,6 @@ public class RegistrationPage extends WebPage {
 
         form.add(new TextField<String>("sync.client.registration.key", new PropertyModel<String>(clientModel, "secureKey")));
 
-
-
-
-
+        add(new Spacer("spacer"));
     }
 }
