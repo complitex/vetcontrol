@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.vetcontrol.report.web.components;
+package org.vetcontrol.report.web.component;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.link.Link;
@@ -15,12 +15,12 @@ import org.vetcontrol.web.component.toolbar.ToolbarButton;
  */
 public class PrintButton extends ToolbarButton {
 
-    private static final String IMAGE_SRC = "icon-print.gif";
+    private static final String IMAGE_SRC = "images/icon-print.gif";
     private static final String TITLE_PREFIX = "title.";
     private String formId;
 
     public PrintButton(String id, ExportType exportType, String formId) {
-        super(id, new ResourceReference(PrintButton.class, IMAGE_SRC), TITLE_PREFIX + exportType.name().toLowerCase());
+        super(id, new ResourceReference(IMAGE_SRC), TITLE_PREFIX + exportType.name().toLowerCase());
         this.formId = formId;
     }
 
