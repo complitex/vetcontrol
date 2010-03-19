@@ -23,11 +23,17 @@
         <module>vetcontrol-web</module>
         <module>vetcontrol-web-client</module>
         <module>vetcontrol-client</module>
+        <module>vetcontrol-configuration</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
             <!--VetControl Modules-->
+            <dependency>
+                <groupId>org.vetcontrol</groupId>
+                <artifactId>vetcontrol-configuration</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.vetcontrol</groupId>
                 <artifactId>vetcontrol-resources-common</artifactId>
@@ -38,7 +44,7 @@
                 <artifactId>vetcontrol-resources-images</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.vetcontrol</groupId>
                 <artifactId>vetcontrol-commons</artifactId>
@@ -142,6 +148,16 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>jcl-over-slf4j</artifactId>
                 <version>1.5.10</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-jdk14</artifactId>
+                <version>1.5.8</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>log4j-over-slf4j</artifactId>
+                <version>1.5.8</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>

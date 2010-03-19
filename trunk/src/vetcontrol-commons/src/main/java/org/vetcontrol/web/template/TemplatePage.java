@@ -3,8 +3,6 @@ package org.vetcontrol.web.template;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
-import org.apache.wicket.authorization.strategies.role.IRoleCheckingStrategy;
-import org.apache.wicket.authorization.strategies.role.Roles;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.CSSPackageResource;
@@ -155,21 +153,16 @@ public abstract class TemplatePage extends WebPage {
         }
     }
 
-    //Загрузка списка классов меню из файла конфигурации и их создание
     private List<ITemplateMenu> newTemplateMenus() {
-        List<String> classes = ((TemplateWebApplication) getApplication()).getTemplateLoader().getMenuClassNames();
         List<ITemplateMenu> templateMenus = new ArrayList<ITemplateMenu>();
-
-        for (String _class : classes) {
-            try {
-                Class menuClass = getSession().getClassResolver().resolveClass(_class);
-
-                if (isTemplateMenuAuthorized(menuClass)) {
+        for (Class<ITemplateMenu> menuClass : getVetControlTemplateApplication().getMenuClasses()) {
+            if (isTemplateMenuAuthorized(menuClass)) {
+                try {
                     ITemplateMenu templateMenu = (ITemplateMenu) menuClass.newInstance();
                     templateMenus.add(templateMenu);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (Exception e) {
-                log.warn("Меню не найдено [{}]", e.getLocalizedMessage());
             }
         }
 
@@ -186,7 +179,7 @@ public abstract class TemplatePage extends WebPage {
 
         final AuthorizeInstantiation classAnnotation = menuClass.getAnnotation(AuthorizeInstantiation.class);
         if (classAnnotation != null) {
-            authorized = ((TemplateWebApplication) getApplication()).hasAnyRole(new Roles(classAnnotation.value()));
+            authorized = getVetControlTemplateApplication().hasAnyRole(classAnnotation.value());
         }
 
         return authorized;
@@ -210,7 +203,7 @@ public abstract class TemplatePage extends WebPage {
     }
 
     protected boolean hasAnyRole(String... roles) {
-        return ((IRoleCheckingStrategy) getApplication()).hasAnyRole(new Roles(roles));
+        return getVetControlTemplateApplication().hasAnyRole(roles);
     }
 
     protected TemplateWebApplication getVetControlTemplateApplication() {
