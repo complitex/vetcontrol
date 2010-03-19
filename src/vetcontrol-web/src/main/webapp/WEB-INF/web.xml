@@ -4,7 +4,7 @@
         <param-name>configuration</param-name>
         <param-value>development</param-value>
     </context-param>
-    
+
     <env-entry>
         <env-entry-name>syncServerUrl</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
@@ -27,7 +27,7 @@
     <servlet>
         <servlet-name>sync</servlet-name>
         <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
-      <!--  <init-param>
+        <!--  <init-param>
               <param-name>com.sun.jersey.config.property.packages</param-name>
               <param-value>org.vetcontrol.sync.server.resources;org.vetcontrol.sync</param-value>
          </init-param>-->
@@ -84,8 +84,8 @@
         <auth-method>FORM</auth-method>
         <realm-name>VetcontrolRealm</realm-name>
         <form-login-config>
-            <form-login-page>/login.jsp</form-login-page>
-            <form-error-page>/login_error.jsp</form-error-page>
+            <form-login-page>/?wicket:bookmarkablePage=:org.vetcontrol.web.pages.login.Login</form-login-page>
+            <form-error-page>/?wicket:bookmarkablePage=:org.vetcontrol.web.pages.login.Login&amp;error</form-error-page>
         </form-login-config>
     </login-config>
 

@@ -21,6 +21,7 @@ import org.vetcontrol.web.template.TemplatePage;
 import javax.ejb.EJB;
 import java.util.Date;
 import java.util.Locale;
+import org.vetcontrol.web.component.Spacer;
 
 import static org.vetcontrol.web.security.SecurityRoles.*;
 
@@ -29,15 +30,13 @@ import static org.vetcontrol.web.security.SecurityRoles.*;
  *         Date: 20.01.2010 17:35:54
  */
 @AuthorizeInstantiation({DOCUMENT_CREATE, DOCUMENT_DEP_VIEW, DOCUMENT_DEP_CHILD_VIEW})
-public class DocumentCargoView extends TemplatePage{
-    private static final Logger log = LoggerFactory.getLogger(DocumentCargoView.class);
+public class DocumentCargoView extends TemplatePage {
 
+    private static final Logger log = LoggerFactory.getLogger(DocumentCargoView.class);
     @EJB(name = "UserProfileBean")
     UserProfileBean userProfileBean;
-
     @EJB(name = "DocumentBean")
     DocumentCargoBean documentCargoBean;
-
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
 
@@ -49,14 +48,14 @@ public class DocumentCargoView extends TemplatePage{
                 parameters.getAsLong("client_id"),
                 parameters.getAsLong("department_id"));
 
-        LoadableDetachableModel<DocumentCargo> model = new LoadableDetachableModel<DocumentCargo>(){
+        LoadableDetachableModel<DocumentCargo> model = new LoadableDetachableModel<DocumentCargo>() {
 
             @Override
             protected DocumentCargo load() {
                 try {
                     return documentCargoBean.loadDocumentCargo(id);
                 } catch (Exception e) {
-                    log.error("Ошибка загрузки документа карточка на груз, id = "+id, e);
+                    log.error("Ошибка загрузки документа карточка на груз, id = " + id, e);
                     return null;
                 }
             }
@@ -64,8 +63,8 @@ public class DocumentCargoView extends TemplatePage{
 
         DocumentCargo dc = model.getObject();
 
-        if (dc == null){
-            getSession().error("Карточка на груз №"+id+" не найдена");
+        if (dc == null) {
+            getSession().error("Карточка на груз №" + id + " не найдена");
             setResponsePage(DocumentCargoList.class);
             return;
         }
@@ -76,21 +75,21 @@ public class DocumentCargoView extends TemplatePage{
         boolean authorized = hasAnyRole(DOCUMENT_CREATE)
                 && currentUser.getId().equals(dc.getCreator().getId());
 
-        if (!authorized && hasAnyRole(DOCUMENT_DEP_VIEW)){
+        if (!authorized && hasAnyRole(DOCUMENT_DEP_VIEW)) {
             authorized = currentUser.getDepartment().getId().equals(dc.getCreator().getDepartment().getId());
         }
 
-        if (!authorized && hasAnyRole(DOCUMENT_DEP_CHILD_VIEW)){
-            for(Department d = dc.getCreator().getDepartment(); d != null; d = d.getParent()){
-                if (d.getId().equals(currentUser.getDepartment().getId())){
+        if (!authorized && hasAnyRole(DOCUMENT_DEP_CHILD_VIEW)) {
+            for (Department d = dc.getCreator().getDepartment(); d != null; d = d.getParent()) {
+                if (d.getId().equals(currentUser.getDepartment().getId())) {
                     authorized = true;
                     break;
                 }
             }
         }
 
-        if (!authorized){
-            log.error("Пользователю запрещен доступ просмотр карточки на груз id = " + id +  ": "
+        if (!authorized) {
+            log.error("Пользователю запрещен доступ просмотр карточки на груз id = " + id + ": "
                     + currentUser.toString());
             throw new UnauthorizedInstantiationException(DocumentCargoEdit.class);
         }
@@ -111,11 +110,11 @@ public class DocumentCargoView extends TemplatePage{
         add(new Label("document.cargo.detention_details", dc.getDetentionDetails()));
         add(new Label("document.cargo.details", dc.getDetails()));
 
-        String fullCreator =  dc.getCreator().getFullName();
-        if (dc.getCreator().getJob() != null){
+        String fullCreator = dc.getCreator().getFullName();
+        if (dc.getCreator().getJob() != null) {
             fullCreator += ", " + dc.getCreator().getJob().getDisplayName(getLocale(), localeDAO.systemLocale());
         }
-        if (dc.getDepartment() != null && !dc.getDepartment().getId().equals(dc.getCreator().getDepartment().getId())){
+        if (dc.getDepartment() != null && !dc.getDepartment().getId().equals(dc.getCreator().getDepartment().getId())) {
             fullCreator += ", " + dc.getCreator().getDepartment().getDisplayName(getLocale(), localeDAO.systemLocale());
         }
         add(new Label("document.cargo.creator_name", fullCreator));
@@ -123,7 +122,7 @@ public class DocumentCargoView extends TemplatePage{
         add(new Label("document.cargo.department", dc.getDepartment().getDisplayName(getLocale(), system)));
         add(new DateLabel("document.cargo.created", new Model<Date>(dc.getCreated()), new StyleDateConverter(true)));
 
-        ListView<Cargo> dataView = new ListView<Cargo>("document.cargo.cargo_list", dc.getCargos()){
+        ListView<Cargo> dataView = new ListView<Cargo>("document.cargo.cargo_list", dc.getCargos()) {
 
             @Override
             protected void populateItem(ListItem<Cargo> item) {
@@ -138,5 +137,6 @@ public class DocumentCargoView extends TemplatePage{
 
         add(dataView);
 
+        add(new Spacer("spacer"));
     }
 }

@@ -17,6 +17,6 @@ public abstract class AddDocumentButton extends ToolbarButton {
     private static final String TITLE_KEY = "image.title.addDocument";
 
     public AddDocumentButton(String id) {
-        super(id, new ResourceReference(AddItemButton.class, IMAGE_SRC), TITLE_KEY);
+        super(id, new ResourceReference(IMAGE_SRC), TITLE_KEY);
     }
 }

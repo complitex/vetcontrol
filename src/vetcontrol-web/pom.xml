@@ -68,6 +68,14 @@
     <dependencies>
         <dependency>
             <groupId>org.vetcontrol</groupId>
+            <artifactId>vetcontrol-resources-images</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.vetcontrol</groupId>
+            <artifactId>vetcontrol-resources-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.vetcontrol</groupId>
             <artifactId>vetcontrol-commons</artifactId>
         </dependency>
         <dependency>

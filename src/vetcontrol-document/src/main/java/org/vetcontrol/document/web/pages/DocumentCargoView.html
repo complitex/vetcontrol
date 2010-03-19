@@ -2,93 +2,93 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml"  xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
-<head>
-    <wicket:head><title wicket:id="title"></title></wicket:head>
-</head>
+    <head>
+        <wicket:head><title wicket:id="title"></title></wicket:head>
+    </head>
 
-<body>
-<wicket:extend>
-    <h2 wicket:id="header"></h2>
+    <body>
+        <wicket:extend>
+            <h2 wicket:id="header"></h2>
 
-        <table  border="0" cellspacing="0" cellpadding="0" class="tbForm">
-            <tbody>
-            <tr>
-                <th><wicket:message key="document.cargo.movement_type"/>:</th>
-                <td><span wicket:id="document.cargo.movement_type"></span></td>
-            </tr>
-            <tr>
-                <th><wicket:message key="document.cargo.vehicle_type"/>:</th>
-                <td><span id="vehicle_type" wicket:id="document.cargo.vehicle_type"></span></td>
-            </tr>
-            <tr>
-                <th><wicket:message key="document.cargo.vehicle_details"/>:</th>
-                <td><span wicket:id="document.cargo.vehicle_details"></span></td>
-            </tr>
-            <tr>
-                <th><wicket:message key="document.cargo.cargo_sender"/>:</th>
-                <td><span wicket:id="document.cargo.cargo_sender"></span></td>
-            </tr>
-            <tr>
-                <th><wicket:message key="document.cargo.cargo_receiver"/>:</th>
-                <td><span wicket:id="document.cargo.cargo_receiver"></span></td>
-            </tr>
-            <tr>
-                <th><wicket:message key="document.cargo.cargo_producer"/>:</th>
-                <td><span wicket:id="document.cargo.cargo_producer"></span></td>
-            </tr>
-            <tr>
-                <th><wicket:message key="document.cargo.passingBorderPoint"/>:</th>
-                <td><span wicket:id="document.cargo.passingBorderPoint"></span></td>
-            </tr>
-            <tr>
-                <th><wicket:message key="document.cargo.detention_details"/>:</th>
-                <td><span wicket:id="document.cargo.detention_details"></span></td>
-            </tr>
-            <tr>
-                <th><wicket:message key="document.cargo.details"/>:</th>
-                <td><span wicket:id="document.cargo.details" ></span></td>
-            </tr>
-            <tr>
-                <th><wicket:message key="document.cargo.creator_name"/>:</th>
-                <td><span wicket:id="document.cargo.creator_name" ></span></td>
-            </tr>
-            <tr>
-                <th><wicket:message key="document.cargo.department"/>:</th>
-                <td><span wicket:id="document.cargo.department" ></span></td>
-            </tr>
-            <tr>
-                <th><wicket:message key="document.cargo.created"/>:</th>
-                <td><span wicket:id="document.cargo.created" ></span></td>
-            </tr>
-            </tbody>
-        </table>
-        <div>
-            <table  border="0" cellspacing="0" cellpadding="0" class="tbColor table_input">
-                <thead>
-                <tr>
-                    <th  class="center"><wicket:message key="document.cargo.cargo_type"/></th>
-                    <th  class="center"><wicket:message key="document.cargo.count"/></th>
-                    <th  class="center"><wicket:message key="document.cargo.unit_type"/></th>
-                    <th  class="center"><wicket:message key="document.cargo.certificate_detail"/></th>
-                    <th  class="center"><wicket:message key="document.cargo.certificate_date"/></th>
-                    <th></th>
-                </tr>
-                </thead>
+            <table  border="0" cellspacing="0" cellpadding="0" class="tbForm">
                 <tbody>
-                <tr wicket:id="document.cargo.cargo_list">
-                    <td><span wicket:id="document.cargo.cargo_type"></span></td>
-                    <td><span wicket:id="document.cargo.count"></span></td>
-                    <td><span wicket:id="document.cargo.unit_type"></span></td>
-                    <td><span wicket:id="document.cargo.certificate_detail"></span></td>
-                    <td><span wicket:id="document.cargo.certificate_date"></span></td>
-                </tr>
+                    <tr>
+                        <th><wicket:message key="document.cargo.movement_type"/>:</th>
+                        <td><span wicket:id="document.cargo.movement_type"></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="document.cargo.vehicle_type"/>:</th>
+                        <td><span id="vehicle_type" wicket:id="document.cargo.vehicle_type"></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="document.cargo.vehicle_details"/>:</th>
+                        <td><span wicket:id="document.cargo.vehicle_details"></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="document.cargo.cargo_sender"/>:</th>
+                        <td><span wicket:id="document.cargo.cargo_sender"></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="document.cargo.cargo_receiver"/>:</th>
+                        <td><span wicket:id="document.cargo.cargo_receiver"></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="document.cargo.cargo_producer"/>:</th>
+                        <td><span wicket:id="document.cargo.cargo_producer"></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="document.cargo.passingBorderPoint"/>:</th>
+                        <td><span wicket:id="document.cargo.passingBorderPoint"></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="document.cargo.detention_details"/>:</th>
+                        <td><span wicket:id="document.cargo.detention_details"></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="document.cargo.details"/>:</th>
+                        <td><span wicket:id="document.cargo.details" ></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="document.cargo.creator_name"/>:</th>
+                        <td><span wicket:id="document.cargo.creator_name" ></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="document.cargo.department"/>:</th>
+                        <td><span wicket:id="document.cargo.department" ></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="document.cargo.created"/>:</th>
+                        <td><span wicket:id="document.cargo.created" ></span></td>
+                    </tr>
                 </tbody>
             </table>
-        </div>
+            <div>
+                <table  border="0" cellspacing="0" cellpadding="0" class="tbColor table_input">
+                    <thead>
+                        <tr>
+                            <th  class="center"><wicket:message key="document.cargo.cargo_type"/></th>
+                            <th  class="center"><wicket:message key="document.cargo.count"/></th>
+                            <th  class="center"><wicket:message key="document.cargo.unit_type"/></th>
+                            <th  class="center"><wicket:message key="document.cargo.certificate_detail"/></th>
+                            <th  class="center"><wicket:message key="document.cargo.certificate_date"/></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr wicket:id="document.cargo.cargo_list">
+                            <td><span wicket:id="document.cargo.cargo_type"></span></td>
+                            <td><span wicket:id="document.cargo.count"></span></td>
+                            <td><span wicket:id="document.cargo.unit_type"></span></td>
+                            <td><span wicket:id="document.cargo.certificate_detail"></span></td>
+                            <td><span wicket:id="document.cargo.certificate_date"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-        <div class="line"><img src="images/spacer.gif" style="width:1px; height:1px" width="1px" height="1px" alt=""></div>
-        <input type="reset" class="btnMiddle" wicket:message="value:document.cargo.view.back" value="Back" onclick="history.back()"/>
+            <div wicket:id="spacer"></div>
+            <input type="reset" class="btnMiddle" wicket:message="value:document.cargo.view.back" value="Back" onclick="history.back()"/>
 
-</wicket:extend>
-</body>
+        </wicket:extend>
+    </body>
 </html>

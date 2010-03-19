@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.vetcontrol.web.component.Spacer;
 
 import static org.vetcontrol.entity.Log.EVENT.CREATE;
 import static org.vetcontrol.entity.Log.EVENT.EDIT;
@@ -39,17 +40,14 @@ import static org.vetcontrol.entity.SecurityGroup.*;
  */
 @AuthorizeInstantiation(SecurityRoles.USER_EDIT)
 public class UserEdit extends FormTemplatePage {
-    private static final Logger log = LoggerFactory.getLogger(UserEdit.class);
 
+    private static final Logger log = LoggerFactory.getLogger(UserEdit.class);
     @EJB(name = "UserBean")
     private UserBean userBean;
-
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
-
     @EJB(name = "LogBean")
     private LogBean logBean;
-
     @EJB(name = "UserProfileBean")
     private UserProfileBean userProfileBean;
 
@@ -58,26 +56,27 @@ public class UserEdit extends FormTemplatePage {
         init(null);
     }
 
-    public UserEdit(final PageParameters parameters){
+    public UserEdit(final PageParameters parameters) {
         super();
         init(parameters.getAsLong("user_id"));
     }
 
-    private void init(final Long id){
+    private void init(final Long id) {
         add(new Label("title", new ResourceModel("user.edit.title")));
         add(new Label("header", new ResourceModel("user.edit.title")));
 
         add(new FeedbackPanel("messages"));
 
         //Модель данных
-        final LoadableDetachableModel<User> userModel = new LoadableDetachableModel<User>(){
+        final LoadableDetachableModel<User> userModel = new LoadableDetachableModel<User>() {
+
             @Override
             protected User load() {
                 try {
                     return (id != null) ? userBean.getUser(id) : new User();
                 } catch (Exception e) {
                     log.error("Пользователь по id = " + id + " не найден", e);
-                    logBean.error(USER, EDIT, UserEdit.class, User.class, 
+                    logBean.error(USER, EDIT, UserEdit.class, User.class,
                             "Пользователь не найден. ID: " + id);
                 }
                 return null;
@@ -86,24 +85,24 @@ public class UserEdit extends FormTemplatePage {
 
         //Форма
         Form form = new Form<User>("user_edit_form", userModel);
-        
-        Button save = new Button("save"){
+
+        Button save = new Button("save") {
 
             @Override
             public void onSubmit() {
-                User user = (User)getForm().getModelObject();
+                User user = (User) getForm().getModelObject();
 
                 /*Пароль кодируется в MD5. Для нового пользователя пароль равен логину.
                 Пароль меняется в базе данныех, если поле пароля не пустое*/
 
-                if (id == null){
+                if (id == null) {
                     user.setPassword(DigestUtils.md5Hex(user.getLogin()));
-                    if (userBean.containsLogin(user.getLogin())){
+                    if (userBean.containsLogin(user.getLogin())) {
                         log.warn("Пользователь с логином: " + user.getLogin() + " уже существует");
                         getSession().error(getString("user.edit.contain_login"));
                         return;
                     }
-                }else if(user.getChangePassword() != null && !user.getChangePassword().isEmpty()){
+                } else if (user.getChangePassword() != null && !user.getChangePassword().isEmpty()) {
                     user.setPassword(DigestUtils.md5Hex(user.getChangePassword()));
                 }
 
@@ -117,8 +116,8 @@ public class UserEdit extends FormTemplatePage {
                     getSession().info(getString("user.info.saved"));
                     logBean.info(USER, id == null ? CREATE : EDIT, UserEdit.class, User.class, "ID: " + user.getId());
 
-                    if (toLogout){
-                        if (logout(user.getLogin())){
+                    if (toLogout) {
+                        if (logout(user.getLogin())) {
                             log.info("Текущая сессия пользователя деактивирована: " + user);
                             getSession().info(getString("user.info.logoff"));
                         }
@@ -132,17 +131,15 @@ public class UserEdit extends FormTemplatePage {
 
                 setResponsePage(UserList.class);
             }
-
         };
         form.add(save);
 
-        Button cancel = new Button("back"){
+        Button cancel = new Button("back") {
 
             @Override
             public void onSubmit() {
                 setResponsePage(UserList.class);
             }
-
         };
         cancel.setDefaultFormProcessing(false);
         form.add(cancel);
@@ -167,22 +164,23 @@ public class UserEdit extends FormTemplatePage {
         try {
             jobs = userBean.getJobs();
         } catch (Exception e) {
-            log.error("Ошибка загрузки списка должностей",e);
+            log.error("Ошибка загрузки списка должностей", e);
         }
         DropDownChoice ddcJob = new DropDownChoice<Job>("user.job",
                 new PropertyModel<Job>(userModel, "job"),
                 jobs, new IChoiceRenderer<Job>() {
-                    @Override
-                    public Object getDisplayValue(Job job) {
-                        return job.getDisplayName(getLocale(), localeDAO.systemLocale());
-                    }
 
-                    @Override
-                    public String getIdValue(Job job, int index) {
-                        return String.valueOf(job.getId());
-                    }
-                });
-                
+            @Override
+            public Object getDisplayValue(Job job) {
+                return job.getDisplayName(getLocale(), localeDAO.systemLocale());
+            }
+
+            @Override
+            public String getIdValue(Job job, int index) {
+                return String.valueOf(job.getId());
+            }
+        });
+
         form.add(ddcJob);
 
         //Department drop down menu
@@ -190,21 +188,22 @@ public class UserEdit extends FormTemplatePage {
         try {
             departments = userBean.getDepartments();
         } catch (Exception e) {
-            log.error("Ошибка загрузки списка структурных единиц",e);
+            log.error("Ошибка загрузки списка структурных единиц", e);
         }
         DropDownChoice ddcDepartment = new DropDownChoice<Department>("user.department",
                 new PropertyModel<Department>(userModel, "department"),
                 departments, new IChoiceRenderer<Department>() {
-                    @Override
-                    public Object getDisplayValue(Department department) {
-                        return department.getDisplayName(getLocale(), localeDAO.systemLocale());
-                    }
 
-                    @Override
-                    public String getIdValue(Department department, int index) {
-                        return String.valueOf(department.getId());
-                    }
-                });
+            @Override
+            public Object getDisplayValue(Department department) {
+                return department.getDisplayName(getLocale(), localeDAO.systemLocale());
+            }
+
+            @Override
+            public String getIdValue(Department department, int index) {
+                return String.valueOf(department.getId());
+            }
+        });
 
         ddcDepartment.setRequired(true);
 
@@ -214,18 +213,18 @@ public class UserEdit extends FormTemplatePage {
 
         Map<SecurityGroup, IModel<UserGroup>> userGroupsMap = new HashMap<SecurityGroup, IModel<UserGroup>>();
 
-        for (SecurityGroup securityGroup : SecurityGroup.values()){
+        for (SecurityGroup securityGroup : SecurityGroup.values()) {
             boolean hasGroup = false;
 
-            for (UserGroup userGroup : userModel.getObject().getUserGroups()){
-                if (userGroup.getSecurityGroup().equals(securityGroup)){
+            for (UserGroup userGroup : userModel.getObject().getUserGroups()) {
+                if (userGroup.getSecurityGroup().equals(securityGroup)) {
                     userGroupsMap.put(userGroup.getSecurityGroup(), new Model<UserGroup>(userGroup));
                     hasGroup = true;
                     break;
                 }
             }
 
-            if (!hasGroup){
+            if (!hasGroup) {
                 UserGroup userGroup = new UserGroup();
                 userGroup.setSecurityGroup(securityGroup);
                 userGroupsMap.put(userGroup.getSecurityGroup(), new Model<UserGroup>(userGroup));
@@ -234,7 +233,7 @@ public class UserEdit extends FormTemplatePage {
 
         CheckGroup<UserGroup> usergroups = new CheckGroup<UserGroup>("usergroups",
                 new PropertyModel<Collection<UserGroup>>(userModel, "userGroups"));
-        
+
         usergroups.add(new Check<UserGroup>("ADMINISTRATORS", userGroupsMap.get(ADMINISTRATORS)));
         usergroups.add(new Check<UserGroup>("DEPARTMENT_OFFICERS", userGroupsMap.get(DEPARTMENT_OFFICERS)));
         usergroups.add(new Check<UserGroup>("LOCAL_OFFICERS", userGroupsMap.get(LOCAL_OFFICERS)));
@@ -246,6 +245,7 @@ public class UserEdit extends FormTemplatePage {
         usergroups.add(new Check<UserGroup>("MOBILE_OFFICERS", userGroupsMap.get(MOBILE_OFFICERS)));
 
         form.add(usergroups);
+        form.add(new Spacer("spacer"));
     }
 
     /**
@@ -253,11 +253,13 @@ public class UserEdit extends FormTemplatePage {
      * @param login Логин пользователя
      * @return был ли пользователь авторизован
      */
-    private boolean logout(String login){
+    private boolean logout(String login) {
         List<HttpSession> httpSessions = SecurityWebListener.getSessions(login);
-        if (httpSessions.size() == 0) return false;
+        if (httpSessions.size() == 0) {
+            return false;
+        }
 
-        for (HttpSession httpSession : httpSessions){
+        for (HttpSession httpSession : httpSessions) {
             getApplication().getSessionStore().unbind(httpSession.getId());
             httpSession.invalidate();
         }

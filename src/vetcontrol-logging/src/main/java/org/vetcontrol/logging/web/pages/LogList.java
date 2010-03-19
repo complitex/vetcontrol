@@ -13,7 +13,6 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
-import org.odlabs.wiquery.ui.datepicker.DatePicker;
 import org.vetcontrol.entity.Log;
 import org.vetcontrol.logging.service.LogFilter;
 import org.vetcontrol.logging.service.LogListBean;
@@ -29,6 +28,7 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.vetcontrol.entity.Client;
 import org.vetcontrol.logging.util.DisplayUserUtil;
+import org.vetcontrol.web.component.DatePicker;
 import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
 import org.vetcontrol.web.template.ListTemplatePage;
 
@@ -80,9 +80,6 @@ public class LogList extends ListTemplatePage {
 
         //Date
         DatePicker<Date> date = new DatePicker<Date>("date");
-        date.setButtonImage("images/calendar.gif");
-        date.setButtonImageOnly(true);
-        date.setShowOn(DatePicker.ShowOnEnum.BOTH);
         filterForm.add(date);
 
         //Login

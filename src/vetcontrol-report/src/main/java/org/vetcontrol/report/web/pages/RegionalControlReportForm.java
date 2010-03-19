@@ -14,6 +14,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.odlabs.wiquery.ui.datepicker.DatePicker;
+import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.FormTemplatePage;
 
@@ -82,6 +83,7 @@ public final class RegionalControlReportForm extends FormTemplatePage {
 
         form.add(startDate);
         form.add(endDate);
+        form.add(new Spacer("spacer"));
         add(form);
     }
 }

@@ -55,6 +55,7 @@ import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.util.book.BookHash;
+import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.component.list.AjaxRemovableListView;
 import org.vetcontrol.web.component.toolbar.DisableItemButton;
 import org.vetcontrol.web.component.toolbar.ToolbarButton;
@@ -489,6 +490,8 @@ public final class CargoModeEdit extends FormTemplatePage {
         };
         back.setVisible(!CanEditUtil.canEdit(cargoModeModel.getObject()));
         form.add(back);
+
+        form.add(new Spacer("spacer"));
     }
 
     private void saveOrUpdate(IModel<CargoMode> cargoModeModel, BookHash initial) {

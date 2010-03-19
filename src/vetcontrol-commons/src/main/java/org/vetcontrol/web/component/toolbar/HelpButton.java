@@ -16,7 +16,7 @@ public class HelpButton extends ToolbarButton {
     private static final String TITLE_KEY = "image.title.help";
 
     public HelpButton(String id) {
-        super(id, new ResourceReference(HelpButton.class, IMAGE_SRC), TITLE_KEY);
+        super(id, new ResourceReference(IMAGE_SRC), TITLE_KEY);
     }
 
     @Override

@@ -17,6 +17,6 @@ public abstract class AddUserButton extends ToolbarButton {
     private static final String TITLE_KEY = "image.title.addUser";
 
     public AddUserButton(String id) {
-        super(id, new ResourceReference(AddItemButton.class, IMAGE_SRC), TITLE_KEY);
+        super(id, new ResourceReference(IMAGE_SRC), TITLE_KEY);
     }
 }

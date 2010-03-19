@@ -17,6 +17,6 @@ public abstract class DisableItemButton extends ToolbarButton {
     private static final String TITLE_KEY = "image.title.disableItem";
 
     public DisableItemButton(String id) {
-        super(id, new ResourceReference(DisableItemButton.class, IMAGE_SRC), TITLE_KEY);
+        super(id, new ResourceReference(IMAGE_SRC), TITLE_KEY);
     }
 }

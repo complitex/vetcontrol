@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import org.vetcontrol.web.pages.login.Login;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -47,7 +48,7 @@ public abstract class ServeltAuthWebApplication extends WebApplication
         return false;
     }
 
-    public boolean hasAnyRole(String... roles){
+    public boolean hasAnyRole(String... roles) {
         return hasAnyRole(new Roles(roles));
     }
 
@@ -88,7 +89,9 @@ public abstract class ServeltAuthWebApplication extends WebApplication
         }
 
         if (servletRequest.getUserPrincipal() == null) {
-            throw new RedirectToUrlException("/login.jsp");
+            RequestCycle.get().setRedirect(true);
+            Session.get().invalidate();
+            throw new RestartResponseException(Login.class);
         } else {
             throw new UnauthorizedInstantiationException(component.getClass());
         }

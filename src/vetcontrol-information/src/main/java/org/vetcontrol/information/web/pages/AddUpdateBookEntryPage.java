@@ -52,6 +52,7 @@ import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 import org.vetcontrol.util.book.BookHash;
 import org.vetcontrol.util.book.Property;
 import org.vetcontrol.util.book.entity.ShowBooksMode;
+import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.component.toolbar.DisableItemButton;
 
 /**
@@ -239,6 +240,7 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
         back.setVisible(!CanEditUtil.canEdit(bookEntry));
         form.add(back);
 
+        form.add(new Spacer("spacer"));
     }
 
     private void saveOrUpdate(Serializable bookEntry, BookHash initial) {

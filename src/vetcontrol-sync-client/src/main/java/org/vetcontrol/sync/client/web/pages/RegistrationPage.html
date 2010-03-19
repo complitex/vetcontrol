@@ -23,9 +23,11 @@
                     <div wicket:id="info" align="center">
                         <span wicket:id="registered"></span>
                         <br/>
-                        <a wicket:id="login" href="#"></a>
+                        <a wicket:id="login" href="#">
+                            <wicket:message key="sync.client.registration.login"/>
+                        </a>
                     </div>
-                    
+
                     <form action="#" wicket:id="registration_form">
                         <table style="margin-top:10px" cellpadding="5" cellspacing="0" border="0" align="center">
                             <tr>
@@ -51,7 +53,7 @@
             </tr>
             <tr>
                 <td>
-                    <div><img src="images/spacer.gif" width="800" height="1" alt=""/></div>
+                    <div wicket:id="spacer"></div>
                 </td>
             </tr>
         </table>
