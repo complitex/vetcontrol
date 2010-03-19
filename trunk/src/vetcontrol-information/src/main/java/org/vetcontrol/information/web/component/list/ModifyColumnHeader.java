@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 class ModifyColumnHeader extends Panel {
 
-    private final Logger log = LoggerFactory.getLogger(ModifyColumnHeader.class);
+    private static final Logger log = LoggerFactory.getLogger(ModifyColumnHeader.class);
 
     public ModifyColumnHeader(String id, final Class bookClass, final IBookDataProvider dataProvider) {
         super(id);
