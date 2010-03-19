@@ -85,6 +85,37 @@ public class UserTemplateMenu extends ResourceTemplateMenu{
             log.error("Модуль журнала событий не найден", e);
         }
 
+        try {
+            final Class updateList = Class.forName("org.vetcontrol.sync.server.web.pages.UpdateList");
+
+            links.add(new ITemplateLink(){
+            @Override
+            public String getLabel(Locale locale) {
+                return getString(UserTemplateMenu.class, locale, "user.template.menu.update");
+            }
+
+            @SuppressWarnings({"unchecked"})
+            @Override
+            public Class<? extends Page> getPage() {
+
+                return updateList;
+            }
+
+            @Override
+            public PageParameters getParameters() {
+                return PageParameters.NULL;
+            }
+
+            @Override
+            public String getTagId() {
+                return "Update";
+            }
+
+        });
+        } catch (ClassNotFoundException e) {
+            log.error("Модуль обновления клиента не найден", e);
+        }
+
 
         return links;
     }

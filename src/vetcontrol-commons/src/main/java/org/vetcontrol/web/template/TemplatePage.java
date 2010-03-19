@@ -216,4 +216,8 @@ public abstract class TemplatePage extends WebPage {
     protected TemplateWebApplication getVetControlTemplateApplication() {
         return (TemplateWebApplication) getApplication();
     }
+
+    protected String getStringOrKey(String key) {
+        return key != null ? getString(key, null, key) : "";
+    }
 }
