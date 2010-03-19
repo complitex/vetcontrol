@@ -37,7 +37,6 @@
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -60,7 +59,6 @@
         <dependency>
             <groupId>jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
-            <version>3.7.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>jfree</groupId>
@@ -74,9 +72,29 @@
                     <groupId>eclipse</groupId>
                     <artifactId>jdtcore</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>bouncycastle</groupId>
+                    <artifactId>bcmail-jdk14</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcmail-jdk14</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>bouncycastle</groupId>
+                    <artifactId>bcprov-jdk14</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcprov-jdk14</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>bouncycastle</groupId>
+                    <artifactId>bctsp-jdk14</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
-        
+
         <dependency>
             <groupId>org.wiquery</groupId>
             <artifactId>wiquery</artifactId>
@@ -87,13 +105,22 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <filtering>false</filtering>
+                <directory>src/main/java</directory>
+                <excludes>
+                    <exclude>**/*.jrxml</exclude>
+                </excludes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jasperreports-maven-plugin</artifactId>
                 <configuration>
                     <sourceDirectory>src/main/java</sourceDirectory>
-                    <!--<encoding>UTF-8</encoding> check documentation for encoding--> 
+                    <!--<encoding>UTF-8</encoding> check documentation for encoding-->
                 </configuration>
                 <executions>
                     <execution>
@@ -109,20 +136,6 @@
                         <groupId>jasperreports</groupId>
                         <artifactId>jasperreports</artifactId>
                         <version>3.7.1</version>
-                        <exclusions>
-                            <exclusion>
-                                <groupId>jfree</groupId>
-                                <artifactId>jcommon</artifactId>
-                            </exclusion>
-                            <exclusion>
-                                <groupId>jfree</groupId>
-                                <artifactId>jfreechart</artifactId>
-                            </exclusion>
-                            <exclusion>
-                                <groupId>eclipse</groupId>
-                                <artifactId>jdtcore</artifactId>
-                            </exclusion>
-                        </exclusions>
                     </dependency>
                 </dependencies>
 
