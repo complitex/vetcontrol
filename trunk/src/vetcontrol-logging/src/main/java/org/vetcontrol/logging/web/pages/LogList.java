@@ -6,31 +6,34 @@ import org.apache.wicket.datetime.markup.html.basic.DateLabel;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.*;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
+import org.vetcontrol.entity.Client;
 import org.vetcontrol.entity.Log;
 import org.vetcontrol.logging.service.LogFilter;
 import org.vetcontrol.logging.service.LogListBean;
+import org.vetcontrol.logging.util.DisplayUserUtil;
 import org.vetcontrol.service.UIPreferences;
+import org.vetcontrol.web.component.DatePicker;
+import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
 import org.vetcontrol.web.component.paging.PagingNavigator;
 import org.vetcontrol.web.security.SecurityRoles;
+import org.vetcontrol.web.template.ListTemplatePage;
 
 import javax.ejb.EJB;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
-import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.vetcontrol.entity.Client;
-import org.vetcontrol.logging.util.DisplayUserUtil;
-import org.vetcontrol.web.component.DatePicker;
-import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
-import org.vetcontrol.web.template.ListTemplatePage;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -230,11 +233,7 @@ public class LogList extends ListTemplatePage {
 
         //Панель ссылок для постраничной навигации
         filterForm.add(new PagingNavigator("navigator", dataView, "itemsPerPage", preferences, PAGE_NUMBER_KEY));
-    }
-
-    private String getStringOrKey(String key) {
-        return key != null ? getString(key, null, key) : "";
-    }
+    }   
 
     private String getClientAsString(Client client) {
         if (client == null) {

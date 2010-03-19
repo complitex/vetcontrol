@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"  xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+    <head>
+        <wicket:head><title wicket:id="title"></title></wicket:head>
+    </head>
+
+    <body>
+        <wicket:extend>
+            <div>
+                <h1 wicket:id="header"></h1>
+                <div id="messages" wicket:id="messages"></div>
+
+                <form id="filter_form" action="#" wicket:id="filter_form">
+                    <table  border="0" cellspacing="0" cellpadding="0" class="tbColor table_input">
+                        <thead>
+                            <tr>
+                                <th class="center" wicket:id="order_id"><wicket:message key="sync.server.update.list.id"/></th>
+                                <th class="center" wicket:id="order_version"><wicket:message key="sync.server.update.list.version"/></th>
+                                <th class="center" wicket:id="order_type"><wicket:message key="sync.server.update.list.type"/></th>
+                                <th class="center" wicket:id="order_active"><wicket:message key="sync.server.update.list.active"/></th>
+                                <th class="center" wicket:id="order_created"><wicket:message key="sync.server.update.list.created"/></th>
+                                <th class="center">
+                                    <input class="btnSmall"  wicket:id="filter_reset" type="button" wicket:message="value:sync.server.update.filter.clear"/>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="center"><input type="text" wicket:id="id"/></th>
+                                <th class="center"><input type="text" wicket:id="version"/></th>
+                                <th class="center"><select wicket:id="type"></select></th>
+                                <th class="center"><select wicket:id="active"></select></th>
+                                <th class="center">
+                                    <div style="width:102px">
+                                        <input style="width:80px" type="text" wicket:id="created"/>
+                                    </div>
+                                </th>
+                                <th class="center">
+                                    <input class="btnSmall default" type="submit" wicket:message="value:sync.server.update.filter.go" tabindex="0" />
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr wicket:id="updates">
+                                <td><span wicket:id="id"></span></td>
+                                <td><span wicket:id="version"></span></td>
+                                <td><span wicket:id="type"></span></td>
+                                <td><span wicket:id="active"></span></td>
+                                <td><span wicket:id="created"></span></td>
+                                <td><span>[Редактировать}</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div>
+                        <span wicket:id="navigator">[dataview navigator]</span>
+                    </div>
+                </form>
+            </div>
+
+        </wicket:extend>
+    </body>
+</html>
