@@ -571,6 +571,26 @@ CREATE TABLE `deleted_long_id` (
     KEY `deleted_long_id_deleted_INDEX` (`deleted`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `client_update`;
+CREATE TABLE  `client_update` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `active` bit(1) NOT NULL,
+  `created` datetime NOT NULL,
+  `type` varchar(64) NOT NULL,
+  `version` varchar(64) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `client_update_item`;
+CREATE TABLE  `client_update_item` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `update_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_update_id` (`update_id`),
+  CONSTRAINT `FK_update_id` FOREIGN KEY (`update_id`) REFERENCES `client_update` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
