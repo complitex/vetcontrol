@@ -129,7 +129,7 @@ public class BookPage extends ListTemplatePage {
             }
         }
     }
-    private final Logger log = LoggerFactory.getLogger(BookPage.class);
+    private static final Logger log = LoggerFactory.getLogger(BookPage.class);
     @EJB(name = "BookViewDAO")
     private IBookViewDAO bookViewDAO;
     @EJB(name = "LocaleDAO")
