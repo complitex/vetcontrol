@@ -130,9 +130,9 @@ public class UpdateEdit extends FormTemplatePage{
                         //remove
                         for (UpdateItem it : removeItems){
                             if (it.getCreated() == null){
-                                new File(source_dir, it.getName()).deleteOnExit();
+                                new File(source_dir, it.getName()).delete();
                             }else{
-                                new File(destination_dir, it.getName()).deleteOnExit();
+                                new File(destination_dir, it.getName()).delete();
                             }
                         }
                     }
@@ -143,9 +143,9 @@ public class UpdateEdit extends FormTemplatePage{
 
                     setResponsePage(UpdateList.class);
 
-                    getSession().info("Обновление добавлено");
+                    getSession().info(getString("sync.server.update.edit.info.save"));
                 } catch (Exception e) {
-                    getSession().error("Ошибка сохранения записи в базу данных или копирования файла");
+                    getSession().error(getString("sync.server.update.edit.error.save"));
                     log.error("Ошибка сохранения обновления клиента, id: " + id, e);
                     logBean.error(USER, EDIT, UpdateEdit.class, Update.class,
                             "Ошибка сохранения обновления клиента. ID: " + id);

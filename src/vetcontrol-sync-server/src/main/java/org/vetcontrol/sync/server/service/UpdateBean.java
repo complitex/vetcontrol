@@ -120,8 +120,11 @@ public class UpdateBean {
     public void save(Update update){
         //remove items
         if (update.getId() != null){
-            Update updateDB = em.find(Update.class, update.getId());
-            List<UpdateItem> itemsDB = updateDB.getItems();
+            List<UpdateItem> itemsDB = em.createQuery("select ui from UpdateItem ui where ui.update = :update", UpdateItem.class)
+                    .setParameter("update", update)
+                    .getResultList();
+
+            em.detach(itemsDB);
 
             for (UpdateItem itDB : itemsDB){
                 boolean save = false;
@@ -134,11 +137,12 @@ public class UpdateBean {
                 }
 
                 if (!save){
-                    em.remove(itDB);
+                    em.createQuery("delete from UpdateItem ui where ui = :ui")
+                            .setParameter("ui", itDB)
+                            .executeUpdate();                    
                 }
             }
 
-            em.detach(updateDB);
             em.flush();
             em.clear();
         }
