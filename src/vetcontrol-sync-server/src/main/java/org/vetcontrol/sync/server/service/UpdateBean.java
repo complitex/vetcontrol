@@ -149,4 +149,10 @@ public class UpdateBean {
 
         em.merge(update);
     }
+
+    public boolean isUnique(String version){
+        return em.createQuery("select count(*) from Update u where u.version = :version", Long.class)
+                .setParameter("version", version)
+                .getSingleResult() == 0;        
+    }
 }
