@@ -108,6 +108,14 @@ public class UpdateEdit extends FormTemplatePage{
                 try {
                     Update update = model.getObject();
 
+                    //check version unique
+                    if (!updateBean.isUnique(update.getVersion())){
+                        
+                        getSession().error(getString("sync.server.update.edit.error.not_unique"));
+
+                        return;                        
+                    }
+
                     if (!update.getItems().isEmpty()){
                         File source_dir = new File(tmpFolder, getSession().getId());
 
@@ -242,11 +250,11 @@ public class UpdateEdit extends FormTemplatePage{
         form.add(cancel);
 
         //Версия
-        RequiredTextField version = new RequiredTextField<String>("version",  new PropertyModel<String>(model, "version"));
+        RequiredTextField version = new RequiredTextField<String>("sync.server.update.edit.version",  new PropertyModel<String>(model, "version"));
         form.add(version);
 
         //Тип
-        DropDownChoice type = new DropDownChoice<Update.TYPE>("type", new PropertyModel<Update.TYPE>(model, "type"),
+        DropDownChoice type = new DropDownChoice<Update.TYPE>("sync.server.update.edit.type", new PropertyModel<Update.TYPE>(model, "type"),
                 Arrays.asList(Update.TYPE.values()), new IChoiceRenderer<Update.TYPE>(){
 
                     @Override
@@ -259,10 +267,11 @@ public class UpdateEdit extends FormTemplatePage{
                         return type.name();
                     }
                 });
+        type.setRequired(true);
         form.add(type);
 
         //Статус
-        DropDownChoice active = new DropDownChoice<Boolean>("active", new PropertyModel<Boolean>(model, "active"),
+        DropDownChoice active = new DropDownChoice<Boolean>("sync.server.update.edit.active", new PropertyModel<Boolean>(model, "active"),
                 Arrays.asList(Boolean.TRUE, Boolean.FALSE), new IChoiceRenderer<Boolean>(){
 
                     @Override
@@ -275,6 +284,7 @@ public class UpdateEdit extends FormTemplatePage{
                         return aBoolean.toString();
                     }
                 });
+        active.setRequired(true);
         form.add(active);
 
         //Список загруженных файлов

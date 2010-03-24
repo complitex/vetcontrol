@@ -578,7 +578,8 @@ CREATE TABLE  `client_update` (
   `created` datetime NOT NULL,
   `type` varchar(64) NOT NULL,
   `version` varchar(64) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `version` (`version`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `client_update_item`;
