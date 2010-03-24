@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"  xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <wicket:head><title wicket:id="title"></title></wicket:head>
+</head>
+
+<body>
+<wicket:extend>
+    <h2 wicket:id="header"></h2>
+
+    <div id="messages" wicket:id="messages"></div>
+
+    <form id="update_edit_form" action="#" wicket:id="update_edit_form">
+        <table  border="0" cellspacing="0" cellpadding="0" class="tbForm">
+            <tbody>
+            <tr>
+                <th><label for="version"><wicket:message key="sync.server.update.edit.version"/><b class="blue">*</b>:</label></th>
+                <td><input id="version" wicket:id="version" type="text" autocomplete="off"/></td>
+            </tr>
+            <tr>
+                <th><label for="type"><wicket:message key="sync.server.update.edit.type"/>:</label></th>
+                <td><select id="type" wicket:id="type"></select></td>
+            </tr>
+            <tr>
+                <th><label for="active"><wicket:message key="sync.server.update.edit.active"/>:</label></th>
+                <td><select id="active" wicket:id="active"></select></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div wicket:id="update_items_container">
+            <ul>
+                <li wicket:id="update_items">
+                    <span wicket:id="name"></span>
+                    <a href="#" wicket:id="delete"><wicket:message key="sync.server.update.edit.delete_item"/></a>
+                </li>
+            </ul>
+        </div>
+
+        <input type="file" wicket:id="upload_war_field"/>
+        <input type="submit" class="btnSmall"  wicket:id="upload" wicket:message="value:sync.server.update.edit.upload.war"/>
+        <!--<span wicket:id="progress"></span>-->
+
+        <div wicket:id="spacer"></div>
+        <input class="btnBig" type="submit" wicket:id="save" wicket:message="value:sync.server.update.edit.save" />
+        <input class="btnMiddle" type="submit" wicket:id="back" wicket:message="value:sync.server.update.edit.back"/>
+    </form>
+</wicket:extend>
+</body>
+</html>

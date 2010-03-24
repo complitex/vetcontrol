@@ -586,6 +586,8 @@ CREATE TABLE  `client_update_item` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `update_id` bigint(20) NOT NULL,
+  `created` datetime NOT NULL,
+  `packaging` varchar(64) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_update_id` (`update_id`),
   CONSTRAINT `FK_update_id` FOREIGN KEY (`update_id`) REFERENCES `client_update` (`id`)

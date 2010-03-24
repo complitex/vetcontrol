@@ -1,6 +1,7 @@
 package org.vetcontrol.sync.server.service;
 
 import org.vetcontrol.entity.Update;
+import org.vetcontrol.entity.UpdateItem;
 import org.vetcontrol.util.DateUtil;
 
 import javax.ejb.Stateless;
@@ -103,5 +104,45 @@ public class UpdateBean {
                 query.setParameter("date_e", DateUtil.getEndOfDay(filter.getCreated()));
             }
         }
+    }
+
+    public Update getUpdate(Long id){
+        Update update = em.find(Update.class, id);
+
+        //lazy load
+        update.getItems().size();
+
+        em.detach(update);
+                
+        return update;
+    }
+
+    public void save(Update update){
+        //remove items
+        if (update.getId() != null){
+            Update updateDB = em.find(Update.class, update.getId());
+            List<UpdateItem> itemsDB = updateDB.getItems();
+
+            for (UpdateItem itDB : itemsDB){
+                boolean save = false;
+
+                for (UpdateItem it : update.getItems()){
+                    if (itDB.getName().equals(it.getName())){
+                        save = true;
+                        break;
+                    }
+                }
+
+                if (!save){
+                    em.remove(itDB);
+                }
+            }
+
+            em.detach(updateDB);
+            em.flush();
+            em.clear();
+        }
+
+        em.merge(update);
     }
 }

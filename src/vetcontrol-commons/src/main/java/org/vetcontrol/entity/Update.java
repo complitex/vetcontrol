@@ -19,7 +19,7 @@ public class Update implements ILongId{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToMany(mappedBy = "update")
+    @OneToMany(mappedBy = "update", cascade = CascadeType.ALL)
     private List<UpdateItem> items;
 
     @Enumerated(EnumType.STRING)
