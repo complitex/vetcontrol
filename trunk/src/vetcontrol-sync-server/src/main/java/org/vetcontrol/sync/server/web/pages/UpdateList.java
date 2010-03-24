@@ -1,6 +1,7 @@
 package org.vetcontrol.sync.server.web.pages;
 
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.datetime.markup.html.basic.DateLabel;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
@@ -23,11 +24,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.Update;
 import org.vetcontrol.service.UIPreferences;
-import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.sync.server.service.UpdateBean;
 import org.vetcontrol.sync.server.service.UpdateFilter;
+import org.vetcontrol.web.component.BookmarkablePageLinkPanel;
 import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
 import org.vetcontrol.web.component.paging.PagingNavigator;
+import org.vetcontrol.web.component.toolbar.AddItemButton;
+import org.vetcontrol.web.component.toolbar.ToolbarButton;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.TemplatePage;
 
@@ -35,6 +38,7 @@ import javax.ejb.EJB;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -53,9 +57,6 @@ public class UpdateList extends TemplatePage{
 
     @EJB(name = "UpdateBean")
     private UpdateBean updateBean;
-
-    @EJB(name = "LocaleDAO")
-    private ILocaleDAO localeDAO;
 
     public UpdateList() {
         super();
@@ -175,7 +176,10 @@ public class UpdateList extends TemplatePage{
 
                 item.add(new Label("active", getStringOrKey(String.valueOf(update.isActive()))));
 
-                item.add(DateLabel.forDatePattern("date", new Model<Date>(update.getCreated()), "dd.MM.yy HH:mm:ss"));
+                item.add(DateLabel.forDatePattern("created", new Model<Date>(update.getCreated()), "dd.MM.yy HH:mm:ss"));
+
+                item.add(new BookmarkablePageLinkPanel<UpdateEdit>("action", getString("sync.server.update.list.edit"),
+                            UpdateEdit.class,  new PageParameters("update_id=" + update.getId())));
             }
         };
         filterForm.add(dataView);
@@ -199,5 +203,20 @@ public class UpdateList extends TemplatePage{
                 dateView.setCurrentPage(0);
             }
         });
+    }
+
+    @Override
+    protected List<ToolbarButton> getToolbarButtons(String id) {
+        if (hasAnyRole(SecurityRoles.USER_EDIT)) {
+            return Arrays.asList((ToolbarButton) new AddItemButton(id) {
+
+                @Override
+                protected void onClick() {
+                    setResponsePage(UpdateEdit.class);
+                }
+            });
+        }
+
+        return null;
     }
 }

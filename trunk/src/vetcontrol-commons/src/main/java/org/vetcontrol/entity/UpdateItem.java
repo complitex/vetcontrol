@@ -2,6 +2,7 @@ package org.vetcontrol.entity;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Date;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -11,7 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "client_update_item")
 @XmlRootElement
 public class UpdateItem implements ILongId{
-    public static enum PACKAGING {WAR, JAR}
+    public static enum PACKAGING {WAR, JAR, SQL, SQL_ZIP}
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -22,6 +23,11 @@ public class UpdateItem implements ILongId{
     private Update update;
 
     private String name;
+
+    private Date created;
+
+    @Enumerated(EnumType.STRING)
+    private PACKAGING packaging;
 
     public Long getId() {
         return id;
@@ -45,5 +51,21 @@ public class UpdateItem implements ILongId{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public PACKAGING getPackaging() {
+        return packaging;
+    }
+
+    public void setPackaging(PACKAGING packaging) {
+        this.packaging = packaging;
     }
 }
