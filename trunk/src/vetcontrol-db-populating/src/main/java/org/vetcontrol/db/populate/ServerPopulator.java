@@ -17,7 +17,7 @@ public class ServerPopulator extends AbstractPopulator {
     /*--------------------------Settings------------------------------------------------------*/
     private static final String SERVER_PERSISTENCE_UNIT_NAME = "populate.server";
     //count of books to generate
-    private static final int BOOK_COUNT = 100;
+    private static final int BOOK_COUNT = 101;
     //count of CargoModeCargoType entries for one CargoMode to generate. The same true for CargoModeUnitType.
     private static final int LINK_TABLE_ROWS = 2;
     /*--------------------------- End settings -----------------------------------------------*/
@@ -78,6 +78,7 @@ public class ServerPopulator extends AbstractPopulator {
             CargoType ct = populate(CargoType.class, false);
             CargoModeCargoType cmct = new CargoModeCargoType();
             cmct.setId(new CargoModeCargoType.Id(cargoMode.getId(), ct.getId()));
+            cmct.setUpdated(GenerateUtil.generateFutureDate());
             getEntityManager().merge(cmct);
         }
 
@@ -85,6 +86,7 @@ public class ServerPopulator extends AbstractPopulator {
             UnitType ut = populate(UnitType.class, true);
             CargoModeUnitType cmut = new CargoModeUnitType();
             cmut.setId(new CargoModeUnitType.Id(cargoMode.getId(), ut.getId()));
+            cmut.setUpdated(GenerateUtil.generateFutureDate());
             getEntityManager().merge(cmut);
         }
     }
@@ -104,6 +106,7 @@ public class ServerPopulator extends AbstractPopulator {
                     List<StringCulture> values = (List<StringCulture>) BeanPropertyUtil.getPropertyValue(bookEntry, prop.getName());
                     for (String locale : SUPPORTED_LOCALES) {
                         StringCulture sc = new StringCulture(new StringCultureId(locale), GenerateUtil.generateString(length));
+                        sc.setUpdated(GenerateUtil.generateFutureDate());
                         values.add(sc);
                     }
                 } else if (prop.isBookReference()) {
@@ -131,6 +134,7 @@ public class ServerPopulator extends AbstractPopulator {
                     }
                 }
             }
+            BeanPropertyUtil.setPropertyValue(bookEntry, BeanPropertyUtil.getVersionPropertyName(), GenerateUtil.generateFutureDate());
             saveBook((Serializable) bookEntry);
             return bookEntry;
         } catch (Exception e) {

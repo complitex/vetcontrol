@@ -5,7 +5,6 @@ import org.vetcontrol.sync.LongAdapter;
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -18,7 +17,7 @@ import java.util.Date;
 @Table(name = "usergroup")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class UserGroup implements Serializable, IUpdated, IQuery, ILongId {
+public class UserGroup implements IUpdated, IQuery, ILongId {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @XmlID @XmlJavaTypeAdapter(LongAdapter.class)
@@ -34,10 +33,12 @@ public class UserGroup implements Serializable, IUpdated, IQuery, ILongId {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -58,10 +59,12 @@ public class UserGroup implements Serializable, IUpdated, IQuery, ILongId {
         this.login = login;
     }
 
+    @Override
     public Date getUpdated() {
         return updated;
     }
 
+    @Override
     public void setUpdated(Date updated) {
         this.updated = updated;
     }

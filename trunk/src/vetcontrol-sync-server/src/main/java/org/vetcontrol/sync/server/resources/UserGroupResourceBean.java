@@ -34,7 +34,7 @@ import java.util.ResourceBundle;
 @Consumes(MediaType.APPLICATION_JSON)
 public class UserGroupResourceBean {
 
-    private static final Logger log = LoggerFactory.getLogger(UserResourceBean.class);
+    private static final Logger log = LoggerFactory.getLogger(UserGroupResourceBean.class);
     private static final ResourceBundle rb = ResourceBundle.getBundle("org.vetcontrol.sync.server.resources.ResourceBeans");
     @PersistenceContext
     private EntityManager em;
@@ -62,7 +62,7 @@ public class UserGroupResourceBean {
         Client client = getClient(requestEntity, r);
 
         List<UserGroup> list = em.createQuery("select ug from UserGroup ug, User u "
-                + "where ug.login = u.login and u.department = :department and ug.updated >= :updated order by ug.updated", UserGroup.class).setParameter("department", client.getDepartment()).setParameter("updated", requestEntity.getUpdated()).getResultList();
+                + "where ug.login = u.login and u.department = :department and ug.updated > :updated order by ug.updated", UserGroup.class).setParameter("department", client.getDepartment()).setParameter("updated", requestEntity.getUpdated()).getResultList();
 
         if (!list.isEmpty()) {
             logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, UserGroupResourceBean.class, UserGroup.class,
@@ -81,7 +81,7 @@ public class UserGroupResourceBean {
     @Path("/count")
     public Count getUserGroupsCount(SyncRequestEntity requestEntity, @Context HttpServletRequest r) {
         return new Count(em.createQuery("select count(ug) from UserGroup ug, User u "
-                + "where ug.login = u.login and u.department = :department and ug.updated >= :updated", Long.class).setParameter("department", getClient(requestEntity, r).getDepartment()).setParameter("updated", requestEntity.getUpdated()).getSingleResult().intValue());
+                + "where ug.login = u.login and u.department = :department and ug.updated > :updated", Long.class).setParameter("department", getClient(requestEntity, r).getDepartment()).setParameter("updated", requestEntity.getUpdated()).getSingleResult().intValue());
     }
 
     @POST
@@ -90,7 +90,7 @@ public class UserGroupResourceBean {
         Client client = getClient(requestEntity, r);
 
         List<DeletedLongId> list = em.createQuery("select d from DeletedLongId d "
-                + "where d.id.entity = :entity and d.deleted >= :updated", DeletedLongId.class).setParameter("entity", UserGroup.class.getCanonicalName()).setParameter("updated", requestEntity.getUpdated()).getResultList();
+                + "where d.id.entity = :entity and d.deleted > :updated order by d.deleted", DeletedLongId.class).setParameter("entity", UserGroup.class.getCanonicalName()).setParameter("updated", requestEntity.getUpdated()).getResultList();
 
         if (!list.isEmpty()) {
             logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, UserGroupResourceBean.class, UserGroup.class,
@@ -110,7 +110,13 @@ public class UserGroupResourceBean {
     public Count getDeletedUserGroupsCount(SyncRequestEntity requestEntity, @Context HttpServletRequest r) {
         getClient(requestEntity, r);
 
-        return new Count(em.createQuery("select count(*) from DeletedLongId d "
-                + "where d.id.entity = :entity and d.deleted >= :updated", Long.class).setParameter("entity", UserGroup.class.getCanonicalName()).setParameter("updated", requestEntity.getUpdated()).getSingleResult().intValue());
+        int count = em.createQuery("select count(*) from DeletedLongId d "
+                + "where d.id.entity = :entity and d.deleted > :updated", Long.class).
+                setParameter("entity", UserGroup.class.getCanonicalName()).
+                setParameter("updated", requestEntity.getUpdated()).
+                getSingleResult().
+                intValue();
+
+        return new Count(count);
     }
 }

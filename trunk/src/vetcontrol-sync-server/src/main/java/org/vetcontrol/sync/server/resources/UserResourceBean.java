@@ -64,7 +64,7 @@ public class UserResourceBean {
         Client client = getClient(requestEntity, r);
 
         List<User> list = em.createQuery("select u from User u where u.department = :department " +
-                "and u.updated >= :updated order by u.updated", User.class)
+                "and u.updated > :updated order by u.updated", User.class)
                 .setParameter("department", client.getDepartment())
                 .setParameter("updated", requestEntity.getUpdated())
                 .getResultList();
@@ -84,7 +84,7 @@ public class UserResourceBean {
     @POST @Path("/count")
     public Count getUsersCount(SyncRequestEntity requestEntity, @Context HttpServletRequest request){
          return new Count(em.createQuery("select count(u) from User u where u.department = :department " +
-                "and u.updated >= :updated", Long.class)
+                "and u.updated > :updated", Long.class)
                 .setParameter("department", getClient(requestEntity, request).getDepartment())
                 .setParameter("updated", requestEntity.getUpdated())
                 .getSingleResult().intValue());

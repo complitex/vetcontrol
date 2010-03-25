@@ -28,7 +28,7 @@ public class GenerateUtil {
     }
 
     public static String generateString(int length) {
-        int min = length; //Math.min(length, 30);
+        int min = length;
         StringBuilder result = new StringBuilder(min);
         for (int i = 0; i < min; i++) {
             result.append(SYMBOLS[RANDOM.nextInt(SYMBOLS.length)]);
@@ -43,7 +43,17 @@ public class GenerateUtil {
         return c.getTime();
     }
 
-    public static int generateInt(int n){
+    public static Date generateFutureDate() {
+        Calendar now = Calendar.getInstance();
+
+        Calendar c = Calendar.getInstance();
+        c.set(DateUtil.getCurrentYear(), RANDOM.nextInt(12 - now.get(Calendar.MONTH)) + now.get(Calendar.MONTH),
+                RANDOM.nextInt(c.getActualMaximum(Calendar.DAY_OF_MONTH) - now.get(Calendar.DAY_OF_MONTH) - 1) + now.get(Calendar.DAY_OF_MONTH) + 1,
+                RANDOM.nextInt(24), RANDOM.nextInt(60), RANDOM.nextInt(60));
+        return c.getTime();
+    }
+
+    public static int generateInt(int n) {
         return RANDOM.nextInt(n);
     }
 }

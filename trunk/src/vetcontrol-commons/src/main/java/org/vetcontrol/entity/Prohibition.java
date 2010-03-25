@@ -149,7 +149,6 @@ public class Prohibition implements ILongId, IUpdated, IQuery, IDisabled {
     private Date updated;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @XmlTransient
     @Override
     @ValidProperty(false)
     public Date getUpdated() {

@@ -69,10 +69,12 @@ public class User implements ILongId, IUpdated, IQuery{
     @Column(name = "page_size")
     private Integer pageSize;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -165,10 +167,12 @@ public class User implements ILongId, IUpdated, IQuery{
         this.pageSize = pageSize;
     }
 
+    @Override
     public Date getUpdated() {
         return updated;
     }
 
+    @Override
     public void setUpdated(Date updated) {
         this.updated = updated;
     }
