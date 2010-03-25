@@ -13,14 +13,13 @@ import java.util.Date;
 @Table(name = "deleted_long_id")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DeletedLongId  implements Serializable{
+public class DeletedLongId implements Serializable {
+
     @Embeddable
     @XmlAccessorType(XmlAccessType.FIELD)
-    public static class Id implements Serializable{
-        @XmlValue
-        private Long id;
+    public static class Id implements Serializable {
 
-        @XmlTransient
+        private Long id;
         private String entity;
 
         public Id() {
@@ -77,18 +76,15 @@ public class DeletedLongId  implements Serializable{
             return hash;
         }
     }
-
     @EmbeddedId
     private Id id;
-
     @Temporal(TemporalType.TIMESTAMP)
-    @XmlTransient
     private Date deleted;
 
     public DeletedLongId() {
     }
 
-    public DeletedLongId(Long lid, String entity, Date deleted) {        
+    public DeletedLongId(Long lid, String entity, Date deleted) {
         this.id = new Id(lid, entity);
         this.deleted = deleted;
     }

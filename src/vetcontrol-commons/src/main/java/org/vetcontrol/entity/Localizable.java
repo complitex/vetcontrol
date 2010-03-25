@@ -74,7 +74,6 @@ public abstract class Localizable implements ILongId, IUpdated, IQuery, IDisable
     @ValidProperty(false)
     @Column(name = "updated", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @XmlTransient
     @Override
     public Date getUpdated() {
         return updated;

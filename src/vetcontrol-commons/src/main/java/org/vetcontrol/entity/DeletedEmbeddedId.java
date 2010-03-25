@@ -18,9 +18,11 @@ import java.util.Date;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DeletedEmbeddedId implements Serializable {
+
     @Embeddable
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Id implements Serializable {
+
         public Id() {
         }
 
@@ -28,13 +30,9 @@ public class DeletedEmbeddedId implements Serializable {
             this.id = id;
             this.entity = entity;
         }
-
         @Column(name = "id")
-        @XmlValue
         private String id;
-
         @Column(name = "entity")
-        @XmlTransient
         private String entity;
 
         public String getId() {
@@ -81,10 +79,8 @@ public class DeletedEmbeddedId implements Serializable {
     }
     @EmbeddedId
     private Id id;
-
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "deleted")
-    @XmlTransient
     private Date deleted;
 
     public Date getDeleted() {
