@@ -17,12 +17,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
-import javax.ejb.EJBException;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.transaction.Status;
-import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
+import org.vetcontrol.service.LogBean;
+import org.vetcontrol.sync.client.service.exception.DBOperationException;
+import org.vetcontrol.sync.client.service.exception.NetworkConnectionException;
 
 import static org.vetcontrol.sync.client.service.ClientFactory.createJSONClient;
 
@@ -36,9 +37,11 @@ public class BookSyncBean extends SyncInfo {
 
     private static final Logger log = LoggerFactory.getLogger(BookSyncBean.class);
     private static final int NETWORK_BATCH_SIZE = 100;
-    private static final int DB_BATCH_SIZE = 3;
-    @EJB(beanName = "ClientBean")
+    private static final int DB_BATCH_SIZE = 1;
+    @EJB
     private ClientBean clientBean;
+    @EJB
+    private LogBean logBean;
     @Resource
     private UserTransaction userTransaction;
     @PersistenceContext
@@ -126,30 +129,24 @@ public class BookSyncBean extends SyncInfo {
      * @param <T> тип справочника
      */
     public <T extends IUpdated> void processDeleted(Class<T> bookClass) {
+        Log.EVENT event = Log.EVENT.SYNC_DELETED;
+        Log.STATUS lastSyncStatus = logBean.getLastStatus(Log.MODULE.SYNC_CLIENT, event, bookClass);
+
+
         String secureKey = clientBean.getCurrentSecureKey();
 
         log.debug("\n==================== Synchronizing Deleted: {} ============================", bookClass.getSimpleName());
 
         Date localMaxDeletedDate = null;
-
-        if (initial) {
-            localMaxDeletedDate = new Date(0);
-        } else {
-            localMaxDeletedDate = em.createQuery("select max(d.deleted) from DeletedEmbeddedId d where d.id.entity = :entity", Date.class).
-                    setParameter("entity", bookClass.getCanonicalName()).getSingleResult();
-
-            if (localMaxDeletedDate == null) {
-                localMaxDeletedDate = new Date(0);
-            }
-        }
+        localMaxDeletedDate = getMaxDeleted(bookClass, localMaxDeletedDate);
 
         //Количество записей загрузки
         int count = 0;
         try {
             count = createJSONClient("/book/" + bookClass.getSimpleName() + "/deleted/count").
-                    post(Count.class, new SyncRequestEntity(secureKey, localMaxDeletedDate)).getCount();
+                    post(Count.class, new SyncRequestEntity(secureKey, localMaxDeletedDate, lastSyncStatus)).getCount();
         } catch (Exception e) {
-            throw new EJBException(e);
+            throw new NetworkConnectionException("Network connection exception.", e, bookClass, event);
         }
         start(new SyncEvent(count, new DeletedEmbeddedId(new DeletedEmbeddedId.Id(null, bookClass.getCanonicalName()), null)));
 
@@ -163,10 +160,9 @@ public class BookSyncBean extends SyncInfo {
                 try {
                     ids = ClientFactory.createJSONClient("/book/" + bookClass.getSimpleName()
                             + "/deleted/list/" + i * NETWORK_BATCH_SIZE + "/" + NETWORK_BATCH_SIZE).post(new GenericType<List<DeletedEmbeddedId>>() {
-                    }, new SyncRequestEntity(secureKey, localMaxDeletedDate));
+                    }, new SyncRequestEntity(secureKey, localMaxDeletedDate, lastSyncStatus));
                 } catch (Exception e) {
-                    //TODO: replace exception type.
-                    throw new EJBException(e);
+                    throw new NetworkConnectionException("Network connection exception.", e, bookClass, event);
                 }
 
                 //Сохранение в базу данных списка
@@ -182,7 +178,7 @@ public class BookSyncBean extends SyncInfo {
                             }
 
                             //skip null
-                            if (id.getId() == null && id.getId().getId() != null) {
+                            if (isSkip(id)) {
                                 continue;
                             }
 
@@ -214,10 +210,10 @@ public class BookSyncBean extends SyncInfo {
                     } catch (Exception e) {
                         try {
                             userTransaction.rollback();
-                        } catch (SystemException rollbackEx) {
+                        } catch (Exception rollbackEx) {
                             log.error("Couldn't to rollback transaction.", rollbackEx);
                         }
-                        throw new EJBException(e);
+                        throw new DBOperationException("Db operation exception.", e, bookClass, event);
                     }
                 }
             }
@@ -230,35 +226,53 @@ public class BookSyncBean extends SyncInfo {
                     deletedEmbeddedId.setDeleted(serverMaxDeletedDate);
                     em.merge(deletedEmbeddedId);
                     userTransaction.commit();
-                } catch (Exception exc) {
-                    log.error("Couldn't to persist DeletedEmbeddedId entity.", exc);
+                } catch (Exception e) {
+                    log.error("Couldn't to persist DeletedEmbeddedId entity.", e);
                     try {
                         userTransaction.rollback();
-                    } catch (SystemException rollbackExc) {
+                    } catch (Exception rollbackExc) {
                         log.error("Couldn't to rollback transaction.", rollbackExc);
                     }
+                    throw new DBOperationException("Db operation exception.", e, bookClass, event);
                 }
             }
         }
 
-        complete(new SyncEvent(index, bookClass));
+        complete(new SyncEvent(index, bookClass, event));
         log.debug("++++++++++++++++++++ Synchronizing Deleted Complete: {} +++++++++++++++++++\n", bookClass.getSimpleName());
     }
 
+    private Date getMaxDeleted(Class bookClass, Date localMaxDeletedDate) {
+        if (initial) {
+            localMaxDeletedDate = new Date(0);
+        } else {
+            localMaxDeletedDate = em.createQuery("select max(d.deleted) from DeletedEmbeddedId d where d.id.entity = :entity", Date.class).
+                    setParameter("entity", bookClass.getCanonicalName()).
+                    getSingleResult();
+            if (localMaxDeletedDate == null) {
+                localMaxDeletedDate = new Date(0);
+            }
+        }
+        return localMaxDeletedDate;
+    }
+
     public <T extends IQuery & IUpdated> void processBook(Class<T> bookClass) {
+        Log.EVENT event = Log.EVENT.SYNC_UPDATED;
+        Log.STATUS lastSyncStatus = logBean.getLastStatus(Log.MODULE.SYNC_CLIENT, event, bookClass);
+
         String secureKey = clientBean.getCurrentSecureKey();
 
         log.debug("\n==================== Synchronizing: {} ============================", bookClass.getSimpleName());
 
-        Date updated = getUpdated(bookClass);
+        Date maxUpdated = getMaxUpdated(bookClass);
 
 
         //Количество записей загрузки
         int count = 0;
         try {
-            count = createJSONClient("/book/" + bookClass.getSimpleName() + "/count").post(Count.class, new SyncRequestEntity(secureKey, updated)).getCount();
+            count = createJSONClient("/book/" + bookClass.getSimpleName() + "/count").post(Count.class, new SyncRequestEntity(secureKey, maxUpdated, lastSyncStatus)).getCount();
         } catch (Exception e) {
-            throw new EJBException(e);
+            throw new NetworkConnectionException("Network connection exception.", e, bookClass, event);
         }
 
         start(new SyncEvent(count, bookClass));
@@ -270,9 +284,9 @@ public class BookSyncBean extends SyncInfo {
             List<T> books = null;
             try {
                 books = ClientFactory.createJSONClient("/book/" + bookClass.getSimpleName()
-                        + "/list/" + i * NETWORK_BATCH_SIZE + "/" + NETWORK_BATCH_SIZE).post((GenericType<List<T>>) genericTypeMap.get(bookClass), new SyncRequestEntity(secureKey, updated));
+                        + "/list/" + i * NETWORK_BATCH_SIZE + "/" + NETWORK_BATCH_SIZE).post((GenericType<List<T>>) genericTypeMap.get(bookClass), new SyncRequestEntity(secureKey, maxUpdated, lastSyncStatus));
             } catch (Exception e) {
-                throw new EJBException(e);
+                throw new NetworkConnectionException("Network connection exception.", e, bookClass, event);
             }
             //Сохранение в базу данных списка
             if (books != null) {
@@ -308,16 +322,15 @@ public class BookSyncBean extends SyncInfo {
                 } catch (Exception e) {
                     try {
                         userTransaction.rollback();
-                    } catch (SystemException rollbackExc) {
+                    } catch (Exception rollbackExc) {
                         log.error("Couldn't to rollback transaction.", rollbackExc);
                     }
-                    //TODO: replace transaction type.
-                    throw new EJBException(e);
+                    throw new DBOperationException("Db operation exception.", e, bookClass, event);
                 }
             }
         }
 
-        complete(new SyncEvent(index, bookClass));
+        complete(new SyncEvent(index, bookClass, event));
         log.debug("++++++++++++++++++++ Synchronizing Complete: {} +++++++++++++++++++\n", bookClass.getSimpleName());
     }
 
@@ -328,6 +341,7 @@ public class BookSyncBean extends SyncInfo {
             return ((IEmbeddedId) obj).getId() == null;
         }
 
+        log.error("Unknown entity type.");
         throw new IllegalArgumentException();
     }
 
@@ -343,7 +357,7 @@ public class BookSyncBean extends SyncInfo {
         return em.createQuery("select count(*) from " + obj.getClass().getSimpleName() + " b where b.id = :id", Long.class).setParameter("id", id).getSingleResult() > 0;
     }
 
-    private Date getUpdated(Class<? extends IUpdated> book) {
+    private Date getMaxUpdated(Class<? extends IUpdated> book) {
         if (initial) {
             return new Date(0);
         }

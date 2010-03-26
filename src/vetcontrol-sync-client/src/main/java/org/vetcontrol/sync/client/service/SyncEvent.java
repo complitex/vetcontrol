@@ -1,17 +1,18 @@
 package org.vetcontrol.sync.client.service;
 
+import org.vetcontrol.entity.Log.EVENT;
+
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 24.02.2010 22:41:28
  */
 public class SyncEvent {
+
     private int count;
-
     private int index;
-
     private Object object;
-
     private String message;
+    private EVENT event;
 
     public SyncEvent() {
     }
@@ -19,6 +20,12 @@ public class SyncEvent {
     public SyncEvent(int count, Object object) {
         this.count = count;
         this.object = object;
+    }
+
+    public SyncEvent(int count, Object object, EVENT event) {
+        this.count = count;
+        this.object = object;
+        this.event = event;
     }
 
     public SyncEvent(int count, int index, Object object) {
@@ -62,5 +69,13 @@ public class SyncEvent {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public EVENT getEvent() {
+        return event;
+    }
+
+    public void setEvent(EVENT event) {
+        this.event = event;
     }
 }
