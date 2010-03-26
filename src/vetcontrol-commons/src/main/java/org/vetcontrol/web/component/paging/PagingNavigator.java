@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.wicket.Component;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -12,6 +13,7 @@ import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -48,6 +50,7 @@ public class PagingNavigator extends Panel {
     public PagingNavigator(String id, final IPageable pageable, final String rowsPerPagePropertyExpression, final UIPreferences preferences,
             String pageNumberPreferenceKey) {
         super(id);
+
         this.pageable = pageable;
         this.preferences = preferences;
         this.pageNumberPreferenceKey = pageNumberPreferenceKey;
@@ -72,10 +75,18 @@ public class PagingNavigator extends Panel {
         pageNavigator.add(pageBar);
 
         // Add additional page links
-        pageBar.add(newPagingNavigationLink("first", pageable, 0).add(new TitleResourceAppender("PagingNavigator.first")));
-        pageBar.add(newPagingNavigationIncrementLink("prev", pageable, -1).add(new TitleResourceAppender("PagingNavigator.previous")));
-        pageBar.add(newPagingNavigationIncrementLink("next", pageable, 1).add(new TitleResourceAppender("PagingNavigator.next")));
-        pageBar.add(newPagingNavigationLink("last", pageable, -1).add(new TitleResourceAppender("PagingNavigator.last")));
+        pageBar.add(newPagingNavigationLink("first", pageable, 0).
+                add(new Image("firstImage", new ResourceReference("images/pageNavStart.gif"))).
+                add(new TitleResourceAppender("PagingNavigator.first")));
+        pageBar.add(newPagingNavigationIncrementLink("prev", pageable, -1).
+                add(new Image("prevImage", new ResourceReference("images/pageNavPrev.gif"))).
+                add(new TitleResourceAppender("PagingNavigator.previous")));
+        pageBar.add(newPagingNavigationIncrementLink("next", pageable, 1).
+                add(new Image("nextImage", new ResourceReference("images/pageNavNext.gif"))).
+                add(new TitleResourceAppender("PagingNavigator.next")));
+        pageBar.add(newPagingNavigationLink("last", pageable, -1).
+                add(new Image("lastImage", new ResourceReference("images/pageNavEnd.gif"))).
+                add(new TitleResourceAppender("PagingNavigator.last")));
 
         //navigation before
         IModel navigationBeforeModel = new AbstractReadOnlyModel<List<? extends Integer>>() {
