@@ -15,6 +15,9 @@ import javax.ws.rs.core.Response;
 import java.util.*;
 import java.util.Locale;
 import java.util.concurrent.Future;
+import org.vetcontrol.sync.client.service.exception.DBOperationException;
+import org.vetcontrol.sync.client.service.exception.NetworkConnectionException;
+import org.vetcontrol.sync.client.service.exception.SyncException;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -22,44 +25,36 @@ import java.util.concurrent.Future;
  */
 @Singleton(name = "SyncBean")
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
-public class SyncBean{
-    private static final Logger log = LoggerFactory.getLogger(SyncBean.class);
+public class SyncBean {
 
+    private static final Logger log = LoggerFactory.getLogger(SyncBean.class);
     @EJB(beanName = "BookSyncBean")
     BookSyncBean bookSyncBean;
-
     @EJB(beanName = "UserSyncBean")
     UserSyncBean userSyncBean;
     @EJB(beanName = "DocumentCargoSyncBean")
     private DocumentCargoSyncBean documentCargoSyncBean;
-
     @EJB(beanName = "LogBean")
     LogBean logBean;
-
     @EJB(beanName = "LogSyncBean")
     private LogSyncBean logSyncBean;
-
     private ResourceBundle rb;
-
     private boolean processing = false;
-
     private List<SyncMessage> syncMessages = new ArrayList<SyncMessage>();
-
     private boolean logout = false;
-
-    private ISyncListener syncListener = new ISyncListener(){
+    private ISyncListener syncListener = new ISyncListener() {
 
         @Override
         public void start(SyncEvent syncEvent) {
             SyncMessage message = new SyncMessage();
 
             String key = syncEvent.getObject() instanceof DeletedEmbeddedId
-                    ? ((DeletedEmbeddedId)syncEvent.getObject()).getId().getEntity()
-                    : ((Class)syncEvent.getObject()).getCanonicalName();
+                    ? ((DeletedEmbeddedId) syncEvent.getObject()).getId().getEntity()
+                    : ((Class) syncEvent.getObject()).getCanonicalName();
 
             message.setName(rb.containsKey(key) ? rb.getString(key) : key);
 
-            if (syncEvent.getObject() instanceof DeletedEmbeddedId){
+            if (syncEvent.getObject() instanceof DeletedEmbeddedId) {
                 message.setName(message.getName() + " " + rb.getString("sync.client.sync.delete"));
             }
 
@@ -70,16 +65,16 @@ public class SyncBean{
 
         @Override
         public void sync(SyncEvent syncEvent) {
-            SyncMessage message = syncMessages.get(syncMessages.size()-1);
+            SyncMessage message = syncMessages.get(syncMessages.size() - 1);
             message.setDate(DateUtil.getCurrentDate());
-            message.setMessage(rb.getString("sync.client.sync.process") + " " +
-                    ((syncEvent.getIndex()*100) / syncEvent.getCount()) + "%");
+            message.setMessage(rb.getString("sync.client.sync.process") + " "
+                    + ((syncEvent.getIndex() * 100) / syncEvent.getCount()) + "%");
 
         }
 
         @Override
         public void complete(SyncEvent syncEvent) {
-            SyncMessage message = syncMessages.get(syncMessages.size()-1);
+            SyncMessage message = syncMessages.get(syncMessages.size() - 1);
             message.setDate(DateUtil.getCurrentDate());
 
             String m = syncEvent.getCount() > 0
@@ -87,9 +82,9 @@ public class SyncBean{
                     : rb.getString("sync.client.sync.complete.skip");
             message.setMessage(m);
 
-            if (User.class.equals(syncEvent.getObject()) || UserGroup.class.equals(syncEvent.getObject())){
+            if (User.class.equals(syncEvent.getObject()) || UserGroup.class.equals(syncEvent.getObject())) {
                 //Деактивация сессии пользователя
-                if (syncEvent.getCount() > 0){
+                if (syncEvent.getCount() > 0) {
                     message = new SyncMessage();
                     message.setName(rb.getString("sync.client.sync.client"));
                     message.setMessage(rb.getString("sync.client.sync.logoff"));
@@ -98,12 +93,13 @@ public class SyncBean{
                 }
 
                 //fix insert log lock by user
-                logBean.infoTxRequired(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, SyncBean.class, (Class)syncEvent.getObject(), m);
-            }else{
-                logBean.info(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, SyncBean.class, (Class)syncEvent.getObject(), m);
+                logBean.infoTxRequired(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, SyncBean.class, (Class) syncEvent.getObject(), m);
+            } else {
+                logBean.info(Log.MODULE.SYNC_CLIENT, syncEvent.getEvent() == null ? Log.EVENT.SYNC : syncEvent.getEvent(),
+                        SyncBean.class, (Class) syncEvent.getObject(), m);
             }
 
-            log.info("Синхронизация объекта: {}. " + m, syncEvent.getObject());            
+            log.info("Синхронизация объекта: {}. " + m, syncEvent.getObject());
         }
     };
 
@@ -113,12 +109,12 @@ public class SyncBean{
         return list;
     }
 
-    public boolean isProcessing(){
+    public boolean isProcessing() {
         return processing;
     }
 
     @Asynchronous
-    public Future<String> asynchronousProcess(Locale locale){
+    public Future<String> asynchronousProcess(Locale locale) {
         rb = ResourceBundle.getBundle("org.vetcontrol.sync.client.service.SyncBean", locale);
         syncMessages.clear();
 
@@ -138,10 +134,10 @@ public class SyncBean{
             syncMessages.add(message);
 
             //Синхронизация справочников
-            for (Class book : BookSyncBean.syncBooks){
-                if (book.equals(CargoModeCargoType.class)){
+            for (Class book : BookSyncBean.syncBooks) {
+                if (book.equals(CargoModeCargoType.class)) {
                     bookSyncBean.processDeleted(CargoModeCargoType.class);
-                } else if (book.equals(CargoModeUnitType.class)){
+                } else if (book.equals(CargoModeUnitType.class)) {
                     bookSyncBean.processDeleted(CargoModeUnitType.class);
                 }
 
@@ -156,20 +152,20 @@ public class SyncBean{
             documentCargoSyncBean.process();
 
             //Синхронизация лога документов
-            logSyncBean.process();            
+            logSyncBean.process();
 
             message = new SyncMessage();
             message.setName(rb.getString("sync.client.sync.client"));
             message.setMessage(rb.getString("sync.client.sync.after_complete"));
             syncMessages.add(message);
 
-            if (logout){
+            if (logout) {
                 try {
                     Thread.sleep(15000);
                 } catch (InterruptedException e) {
                     log.error(e.getLocalizedMessage());
                 }
-                for(HttpSession session : SecurityWebListener.getSessions()){
+                for (HttpSession session : SecurityWebListener.getSessions()) {
                     session.invalidate();
                 }
                 logout = false;
@@ -178,8 +174,8 @@ public class SyncBean{
             SyncMessage message = new SyncMessage();
 
             try {
-                if (exception.getCausedByException() instanceof EJBException){
-                    throw ((EJBException)exception.getCausedByException()).getCausedByException();
+                if (exception.getCausedByException() instanceof EJBException) {
+                    throw ((EJBException) exception.getCausedByException()).getCausedByException();
                 }
                 throw exception.getCausedByException();
             } catch (NotRegisteredException e) {
@@ -190,27 +186,36 @@ public class SyncBean{
 
                 log.error(m);
                 logBean.error(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, SyncBean.class, Client.class, m);
-            } catch (UniformInterfaceException e){
+            } catch (UniformInterfaceException e) {
                 String m = e.getResponse().getEntity(String.class);
 
                 message.setName(rb.getString("sync.client.sync.error"));
 
-                if (e.getResponse().getStatus() == Response.Status.NOT_FOUND.getStatusCode()){
+                if (e.getResponse().getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
                     message.setMessage(rb.getString("NOT_FOUND"));
-                }else{
+                } else {
                     message.setMessage(m);
                 }
 
                 log.error(m);
                 logBean.error(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, SyncBean.class, null, m);
+            } catch (SyncException e) {
+                message.setName(rb.getString("sync.client.sync.error"));
+                if (e instanceof NetworkConnectionException) {
+                    message.setMessage(rb.getString("sync.client.sync.error.common"));
+                } else if (e instanceof DBOperationException) {
+                    message.setMessage(rb.getString("sync.client.sync.error.db"));
+                }
+
+                log.error(message.getMessage());
+                logBean.error(Log.MODULE.SYNC_CLIENT, e.getEvent(), SyncBean.class, e.getModelClass(), message.getMessage());
             } catch (Exception e) {
                 message.setName(rb.getString("sync.client.sync.error"));
                 message.setMessage(rb.getString("sync.client.sync.error.common"));
 
                 log.error(e.getLocalizedMessage(), e);
-                logBean.error(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, SyncBean.class, null, e.getLocalizedMessage());                
+                logBean.error(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, SyncBean.class, null, e.getLocalizedMessage());
             }
-
             syncMessages.add(message);
         }
 
@@ -219,7 +224,7 @@ public class SyncBean{
         return new AsyncResult<String>("COMPLETE");
     }
 
-    public Date getLastSync(){
+    public Date getLastSync() {
         return logBean.getLastDate(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, Log.STATUS.OK);
     }
 }

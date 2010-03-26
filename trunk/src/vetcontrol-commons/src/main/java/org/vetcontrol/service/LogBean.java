@@ -46,7 +46,7 @@ public class LogBean {
                 getCurrentUser(), getCurrentClient());
     }
 
-     public void info(Client client, MODULE module, EVENT event, Class controllerClass, Class modelClass, String description, Object... args) {
+    public void info(Client client, MODULE module, EVENT event, Class controllerClass, Class modelClass, String description, Object... args) {
         log(module, event, controllerClass, modelClass, STATUS.OK, MessageFormat.format(description, args), DateUtil.getCurrentDate(),
                 getCurrentUser(), client);
     }
@@ -56,7 +56,7 @@ public class LogBean {
                 getCurrentUser(), getCurrentClient());
     }
 
-     public void error(Client client, MODULE module, EVENT event, Class controllerClass, Class modelClass, String description, Object... args) {
+    public void error(Client client, MODULE module, EVENT event, Class controllerClass, Class modelClass, String description, Object... args) {
         log(module, event, controllerClass, modelClass, STATUS.ERROR, MessageFormat.format(description, args), DateUtil.getCurrentDate(),
                 getCurrentUser(), client);
     }
@@ -143,6 +143,23 @@ public class LogBean {
         try {
             return entityManager.createQuery("select max(l.date) from Log l where l.module = :module "
                     + "and l.event = :event and l.status = :status", Date.class).setParameter("module", module).setParameter("event", event).setParameter("status", status).getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public STATUS getLastStatus(MODULE module, EVENT event, Class modelClass) {
+        if (modelClass == null) {
+            throw new IllegalArgumentException("Model class can't be null");
+        }
+        try {
+            return entityManager.createQuery("SELECT l.status FROM Log l WHERE l.module = :module AND l.event = :event AND l.modelClass = :modelClass "
+                    + "AND l.date = (SELECT MAX(l2.date) FROM Log l2 WHERE l2.module = :module AND l2.event = :event AND l2.modelClass = :modelClass)",
+                    STATUS.class).
+                    setParameter("module", module).
+                    setParameter("event", event).
+                    setParameter("modelClass", modelClass.getName()).
+                    getSingleResult();
         } catch (Exception e) {
             return null;
         }

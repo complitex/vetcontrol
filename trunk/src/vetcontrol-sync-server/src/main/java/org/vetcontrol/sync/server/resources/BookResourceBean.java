@@ -306,6 +306,14 @@ public class BookResourceBean {
         };
     }
 
+    private String getEqualSymbol(Log.STATUS lastSyncStatus) {
+        String equalSymbol = "";
+        if (lastSyncStatus == null || lastSyncStatus.equals(Log.STATUS.ERROR)) {
+            equalSymbol = "=";
+        }
+        return equalSymbol;
+    }
+
     private Client getClient(SyncRequestEntity re, HttpServletRequest r) {
         try {
             return clientBean.getClient(re.getSecureKey());
@@ -323,7 +331,8 @@ public class BookResourceBean {
     @Path("/{entity}/count")
     public Count getEntityCount(@PathParam("entity") String entity, SyncRequestEntity re, @Context HttpServletRequest r) {
         getClient(re, r);
-        int count = em.createQuery("select count(*) from " + entity + " e where e.updated >= :updated", Long.class).setParameter("updated", re.getUpdated()).getSingleResult().intValue();
+        String equalSymbol = getEqualSymbol(re.getLastSyncStatus());
+        int count = em.createQuery("select count(*) from " + entity + " e where e.updated >" + equalSymbol + " :updated", Long.class).setParameter("updated", re.getUpdated()).getSingleResult().intValue();
         return new Count(count);
     }
 
@@ -334,8 +343,9 @@ public class BookResourceBean {
             String maxResults) {
         Client client = getClient(re, r);
 
+        String equalSymbol = getEqualSymbol(re.getLastSyncStatus());
         TypedQuery<T> query = em.createQuery("select e from " + entity.getSimpleName()
-                + " e where e.updated >= :updated order by e.updated", entity).setParameter("updated", re.getUpdated());
+                + " e where e.updated >" + equalSymbol + " :updated order by e.updated", entity).setParameter("updated", re.getUpdated());
 
         if (maxResults != null) {
             query.setMaxResults(Integer.parseInt(maxResults));
@@ -348,7 +358,7 @@ public class BookResourceBean {
         List<T> list = query.getResultList();
 
         if (!list.isEmpty()) {
-            logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, BookResourceBean.class, entity,
+            logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC_UPDATED, BookResourceBean.class, entity,
                     rb.getString("info.sync.processed"), list.size(), r.getRemoteHost(), client.getIp());
 
             log.info("Синхронизация " + entity.getSimpleName() + ". " + rb.getString("info.sync.processed.log"),
@@ -362,6 +372,7 @@ public class BookResourceBean {
     @Path("/{entity}/deleted/count")
     public Count getDeletedCount(@PathParam("entity") String entity, SyncRequestEntity re, @Context HttpServletRequest r) {
         getClient(re, r);
+        String equalSymbol = getEqualSymbol(re.getLastSyncStatus());
 
         String entityName = null;
 
@@ -372,7 +383,10 @@ public class BookResourceBean {
         }
 
         return new Count(em.createQuery("select count(*) from DeletedEmbeddedId d "
-                + "where d.deleted >= :deleted and entity = :entity", Long.class).setParameter("deleted", re.getUpdated()).setParameter("entity", entityName).getSingleResult().intValue());
+                + "where d.deleted >" + equalSymbol + " :deleted and entity = :entity", Long.class).
+                setParameter("deleted", re.getUpdated()).
+                setParameter("entity", entityName).
+                getSingleResult().intValue());
     }
 
     private List<DeletedEmbeddedId> getDeleted(Class entity,
@@ -381,9 +395,12 @@ public class BookResourceBean {
             String firstResult,
             String maxResults) {
         Client client = getClient(re, r);
+        String equalSymbol = getEqualSymbol(re.getLastSyncStatus());
 
         TypedQuery<DeletedEmbeddedId> query = em.createQuery("select d from DeletedEmbeddedId d "
-                + "where d.deleted >= :deleted and entity = :entity order by d.deleted", DeletedEmbeddedId.class).setParameter("deleted", re.getUpdated()).setParameter("entity", entity.getCanonicalName());
+                + "where d.deleted >" + equalSymbol + " :deleted and entity = :entity order by d.deleted", DeletedEmbeddedId.class).
+                setParameter("deleted", re.getUpdated()).
+                setParameter("entity", entity.getCanonicalName());
 
         if (maxResults != null) {
             query.setMaxResults(Integer.parseInt(maxResults));
@@ -396,7 +413,7 @@ public class BookResourceBean {
         List<DeletedEmbeddedId> list = query.getResultList();
 
         if (!list.isEmpty()) {
-            logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, BookResourceBean.class, entity,
+            logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC_DELETED, BookResourceBean.class, entity,
                     rb.getString("info.sync.processed"), list.size(), r.getRemoteHost(), client.getIp());
 
             log.info("Синхронизация " + entity.getSimpleName() + ". " + rb.getString("info.sync.processed.log"),

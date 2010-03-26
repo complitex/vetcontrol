@@ -17,7 +17,7 @@ import java.util.Date;
 @Table(name = "deleted_embedded_id")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DeletedEmbeddedId implements Serializable {
+public class DeletedEmbeddedId implements IEmbeddedId<DeletedEmbeddedId.Id> {
 
     @Embeddable
     @XmlAccessorType(XmlAccessType.FIELD)
@@ -91,10 +91,12 @@ public class DeletedEmbeddedId implements Serializable {
         this.deleted = deleted;
     }
 
+    @Override
     public Id getId() {
         return id;
     }
 
+    @Override
     public void setId(Id id) {
         this.id = id;
     }
