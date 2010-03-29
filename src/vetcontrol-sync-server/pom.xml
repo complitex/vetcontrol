@@ -77,6 +77,12 @@
             <version>1.0</version>
             <systemPath>${pom.basedir}/../../lib/wiquery-1.0.jar</systemPath>
         </dependency>
+
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.4</version>
+        </dependency>
     </dependencies>
 
 </project>

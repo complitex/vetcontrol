@@ -1,7 +1,13 @@
 package org.vetcontrol.entity;
 
+import org.vetcontrol.sync.LongAdapter;
+
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
 import java.util.List;
 
@@ -12,11 +18,13 @@ import java.util.List;
 @Entity
 @Table(name = "client_update")
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Update implements ILongId{
     public static enum TYPE {CRITICAL, NOT_CRITICAL}
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @XmlID @XmlJavaTypeAdapter(LongAdapter.class)
     private Long id;
 
     @OneToMany(mappedBy = "update", cascade = CascadeType.ALL)

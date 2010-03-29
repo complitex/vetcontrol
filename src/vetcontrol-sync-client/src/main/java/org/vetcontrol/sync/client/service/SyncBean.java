@@ -6,6 +6,9 @@ import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.sync.NotRegisteredException;
+import org.vetcontrol.sync.client.service.exception.DBOperationException;
+import org.vetcontrol.sync.client.service.exception.NetworkConnectionException;
+import org.vetcontrol.sync.client.service.exception.SyncException;
 import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.web.security.SecurityWebListener;
 
@@ -15,9 +18,6 @@ import javax.ws.rs.core.Response;
 import java.util.*;
 import java.util.Locale;
 import java.util.concurrent.Future;
-import org.vetcontrol.sync.client.service.exception.DBOperationException;
-import org.vetcontrol.sync.client.service.exception.NetworkConnectionException;
-import org.vetcontrol.sync.client.service.exception.SyncException;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -26,8 +26,8 @@ import org.vetcontrol.sync.client.service.exception.SyncException;
 @Singleton(name = "SyncBean")
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class SyncBean {
-
     private static final Logger log = LoggerFactory.getLogger(SyncBean.class);
+
     @EJB(beanName = "BookSyncBean")
     BookSyncBean bookSyncBean;
     @EJB(beanName = "UserSyncBean")
@@ -38,6 +38,9 @@ public class SyncBean {
     LogBean logBean;
     @EJB(beanName = "LogSyncBean")
     private LogSyncBean logSyncBean;
+    @EJB(beanName = "UpdateSyncBean")
+    private UpdateSyncBean updateSyncBean;
+
     private ResourceBundle rb;
     private boolean processing = false;
     private List<SyncMessage> syncMessages = new ArrayList<SyncMessage>();
@@ -122,6 +125,7 @@ public class SyncBean {
         userSyncBean.setSyncListener(syncListener);
         documentCargoSyncBean.setSyncListener(syncListener);
         logSyncBean.setSyncListener(syncListener);
+        updateSyncBean.setSyncListener(syncListener);
 
         bookSyncBean.setInitial(getLastSync() == null);
 
@@ -153,6 +157,9 @@ public class SyncBean {
 
             //Синхронизация лога документов
             logSyncBean.process();
+
+            //Синхронизация доступных обновлений
+            updateSyncBean.process();
 
             message = new SyncMessage();
             message.setName(rb.getString("sync.client.sync.client"));

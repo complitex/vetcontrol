@@ -1,8 +1,9 @@
 package org.vetcontrol.sync;
 
+import org.vetcontrol.entity.Log.STATUS;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
-import org.vetcontrol.entity.Log.STATUS;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -14,6 +15,7 @@ public class SyncRequestEntity {
     private String secureKey;
     private Date updated;
     private STATUS lastSyncStatus;
+    private String version;
 
     public SyncRequestEntity() {
     }
@@ -27,6 +29,13 @@ public class SyncRequestEntity {
         this.secureKey = secureKey;
         this.updated = updated;
         this.lastSyncStatus = lastSyncStatus;
+    }
+
+    public SyncRequestEntity(String secureKey, Date updated, STATUS lastSyncStatus, String version) {
+        this.secureKey = secureKey;
+        this.updated = updated;
+        this.lastSyncStatus = lastSyncStatus;
+        this.version = version;
     }
 
     public String getSecureKey() {
@@ -51,5 +60,13 @@ public class SyncRequestEntity {
 
     public void setLastSyncStatus(STATUS lastSyncStatus) {
         this.lastSyncStatus = lastSyncStatus;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 }

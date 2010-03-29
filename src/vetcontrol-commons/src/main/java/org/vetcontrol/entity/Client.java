@@ -44,6 +44,9 @@ public class Client extends Synchronized implements ILongId{
     @Column(name = "updated", nullable = false)
     private Date updated;
 
+    @Column(name = "version")
+    private String version;
+
     public Long getId() {
         return id;
     }
@@ -100,9 +103,17 @@ public class Client extends Synchronized implements ILongId{
         this.updated = updated;
     }
 
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
     public Query getInsertQuery(EntityManager em){
-       return em.createNativeQuery("insert into client (id, department_id, ip, mac, secure_key, created, updated, sync_status)" +
-               " value (:id, :department_id, :ip, :mac, :secure_key, :created, :updated, :syncStatus)")
+       return em.createNativeQuery("insert into client (id, department_id, ip, mac, secure_key, created, updated, sync_status, version)" +
+               " value (:id, :department_id, :ip, :mac, :secure_key, :created, :updated, :syncStatus, :version)")
                .setParameter("id", id)
                .setParameter("department_id", department.getId())
                .setParameter("ip", ip)
@@ -110,7 +121,8 @@ public class Client extends Synchronized implements ILongId{
                .setParameter("secure_key", secureKey)
                .setParameter("created", created)
                .setParameter("updated", updated)
-               .setParameter("syncStatus", syncStatus.name());
+               .setParameter("syncStatus", syncStatus.name())
+               .setParameter("version", version);
     }
 
     @Override
@@ -128,6 +140,7 @@ public class Client extends Synchronized implements ILongId{
         if (mac != null ? !mac.equals(client.mac) : client.mac != null) return false;
         if (secureKey != null ? !secureKey.equals(client.secureKey) : client.secureKey != null) return false;
         if (updated != null ? !updated.equals(client.updated) : client.updated != null) return false;
+        if (version != null ? !version.equals(client.version) : client.version != null) return false;
 
         return true;
     }
@@ -142,6 +155,7 @@ public class Client extends Synchronized implements ILongId{
         result = 31 * result + (secureKey != null ? secureKey.hashCode() : 0);
         result = 31 * result + (created != null ? created.hashCode() : 0);
         result = 31 * result + (updated != null ? updated.hashCode() : 0);
+        result = 31 * result + (version != null ? version.hashCode() : 0);
         return result;
     }
 
@@ -154,6 +168,7 @@ public class Client extends Synchronized implements ILongId{
                 + ", mac: " + mac
                 + ", secureKey: " + secureKey
                 + ", created: " + created
-                + ", updated: " + updated +"]";                
+                + ", updated: " + updated
+                + ", version: " + version +"]";
     }
 }
