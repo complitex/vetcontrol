@@ -1,5 +1,6 @@
 package org.vetcontrol.sync.server.web.pages;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -25,7 +26,7 @@ import org.vetcontrol.entity.UpdateItem;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.sync.server.service.UpdateBean;
 import org.vetcontrol.util.DateUtil;
-import org.vetcontrol.web.VetcontrolWebApplication;
+import org.vetcontrol.util.FileUtil;
 import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.FormTemplatePage;
@@ -71,8 +72,8 @@ public class UpdateEdit extends FormTemplatePage{
         add(new FeedbackPanel("messages"));
 
         //Директории загрузок
-        final Folder tmpFolder = ((VetcontrolWebApplication)getApplication()).getUploadTmpFolder();
-        final Folder uploadFolder = ((VetcontrolWebApplication)getApplication()).getClientUpdateFolder();
+        final Folder tmpFolder = new Folder(FileUtil.getUploadTmpFolder());
+        final Folder uploadFolder = new Folder(FileUtil.getClientUpdateFolder());
 
         //Модель данных
         Update updateObject = null;
@@ -226,6 +227,9 @@ public class UpdateEdit extends FormTemplatePage{
                 try {
                     file.createNewFile();
                     upload.writeTo(file);
+
+                    //Контрольная сумма
+                    item.setCheckSum(DigestUtils.md5Hex(new FileInputStream(file)));
 
                     model.getObject().getItems().add(item);
 

@@ -533,6 +533,7 @@ CREATE TABLE `client` (
   `updated` timestamp NOT NULL,
   `department_id` bigint(20) NOT NULL,
   `sync_status` varchar(64) DEFAULT NULL,
+  `version` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `mac` (`mac`),
   UNIQUE KEY `secure_key` (`secure_key`),
@@ -589,6 +590,7 @@ CREATE TABLE  `client_update_item` (
   `update_id` bigint(20) NOT NULL,
   `created` datetime NOT NULL,
   `packaging` varchar(64) NOT NULL,
+  `check_sum` varchar(64) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_update_id` (`update_id`),
   CONSTRAINT `FK_update_id` FOREIGN KEY (`update_id`) REFERENCES `client_update` (`id`)

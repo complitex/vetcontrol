@@ -1,7 +1,7 @@
 package org.vetcontrol.entity;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 import java.util.Date;
 
 /**
@@ -11,6 +11,7 @@ import java.util.Date;
 @Entity
 @Table(name = "client_update_item")
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class UpdateItem implements ILongId{
     public static enum PACKAGING {WAR, JAR, SQL, SQL_ZIP}
 
@@ -20,6 +21,7 @@ public class UpdateItem implements ILongId{
 
     @ManyToOne
     @JoinColumn(name = "update_id")
+    @XmlIDREF
     private Update update;
 
     private String name;
@@ -28,6 +30,9 @@ public class UpdateItem implements ILongId{
 
     @Enumerated(EnumType.STRING)
     private PACKAGING packaging;
+
+    @Column(name = "check_sum", length = 64)
+    private String checkSum;
 
     public Long getId() {
         return id;
@@ -67,5 +72,13 @@ public class UpdateItem implements ILongId{
 
     public void setPackaging(PACKAGING packaging) {
         this.packaging = packaging;
+    }
+
+    public String getCheckSum() {
+        return checkSum;
+    }
+
+    public void setCheckSum(String checkSum) {
+        this.checkSum = checkSum;
     }
 }
