@@ -23,7 +23,6 @@ public class ServerPopulator extends AbstractPopulator {
     /*--------------------------- End settings -----------------------------------------------*/
     private static final Class[] BOOKS = {
         RegisteredProducts.class,
-        Prohibition.class,
         CountryBook.class,
         VehicleType.class,
         CargoReceiver.class,
@@ -34,9 +33,7 @@ public class ServerPopulator extends AbstractPopulator {
         UnitType.class,
         CargoType.class,
         Job.class,
-        Tariff.class,
         ArrestReason.class,
-        AddressBook.class,
         PassingBorderPoint.class,
         CountryWithBadEpizooticSituation.class
     };
