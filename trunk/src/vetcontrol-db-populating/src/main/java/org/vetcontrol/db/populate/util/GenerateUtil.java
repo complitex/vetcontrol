@@ -46,11 +46,14 @@ public class GenerateUtil {
     public static Date generateFutureDate() {
         Calendar now = Calendar.getInstance();
 
-        Calendar c = Calendar.getInstance();
-        c.set(DateUtil.getCurrentYear(), RANDOM.nextInt(12 - now.get(Calendar.MONTH)) + now.get(Calendar.MONTH),
-                RANDOM.nextInt(c.getActualMaximum(Calendar.DAY_OF_MONTH) - now.get(Calendar.DAY_OF_MONTH) - 1) + now.get(Calendar.DAY_OF_MONTH) + 1,
-                RANDOM.nextInt(24), RANDOM.nextInt(60), RANDOM.nextInt(60));
-        return c.getTime();
+        Calendar work = (Calendar) now.clone();
+        work.set(Calendar.YEAR, DateUtil.getCurrentYear());
+        work.set(Calendar.MONTH, RANDOM.nextInt(12 - now.get(Calendar.MONTH) - 1) + now.get(Calendar.MONTH) + 1);
+        work.set(Calendar.DAY_OF_MONTH, RANDOM.nextInt(work.getActualMaximum(Calendar.DAY_OF_MONTH)));
+        work.set(Calendar.HOUR_OF_DAY, RANDOM.nextInt(24));
+        work.set(Calendar.MINUTE, RANDOM.nextInt(60));
+        work.set(Calendar.SECOND, RANDOM.nextInt(60));
+        return work.getTime();
     }
 
     public static int generateInt(int n) {
