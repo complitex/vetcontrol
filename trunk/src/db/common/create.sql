@@ -149,6 +149,7 @@ CREATE TABLE  `department` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
     `parent_id` bigint(20) NULL,
+    `custom_point_id` bigint(20) NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
  /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
   `disabled` tinyint(1) NOT NULL default '0',
@@ -157,6 +158,8 @@ CREATE TABLE  `department` (
     CONSTRAINT `FK_department_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
     KEY `FK_department_parent` (`parent_id`),
     CONSTRAINT `FK_department_parent` FOREIGN KEY (`parent_id`) REFERENCES `department` (`id`),
+    KEY `FK_department_custom_point` (`custom_point_id`),
+    CONSTRAINT `FK_department_custom_point` FOREIGN KEY (`custom_point_id`) REFERENCES `custom_point` (`id`),
     KEY `department_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -165,14 +168,12 @@ CREATE TABLE  `department` (
 DROP TABLE IF EXISTS `cargo_sender`;
 CREATE TABLE  `cargo_sender` (
     `id` bigint(20) NOT NULL auto_increment,
-    `name` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL DEFAULT NOW(),
- /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
-  `disabled` tinyint(1) NOT NULL default '0',
+    `name` varchar(100) NOT NULL,
+    `country_id` bigint(20) NOT NULL,
+    `address` varchar(100) NOT NULL,
     PRIMARY KEY (`id`),
-    KEY `FK_cargo_sender_name` (`name`),
-    CONSTRAINT `FK_cargo_sender_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
-    KEY `cargo_sender_updated_INDEX` (`updated`)
+    KEY `FK_cargo_sender_country_ref` (`country_id`),
+    CONSTRAINT `FK_cargo_sender_country_ref` FOREIGN KEY (`country_id`) REFERENCES `countrybook` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `cargo_receiver` */
@@ -180,14 +181,9 @@ CREATE TABLE  `cargo_sender` (
 DROP TABLE IF EXISTS `cargo_receiver`;
 CREATE TABLE  `cargo_receiver` (
     `id` bigint(20) NOT NULL auto_increment,
-    `name` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL DEFAULT NOW(),
- /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
-  `disabled` tinyint(1) NOT NULL default '0',
-    PRIMARY KEY (`id`),
-    KEY `FK_cargo_receiver_name` (`name`),
-    CONSTRAINT `FK_cargo_receiver_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
-    KEY `cargo_receiver_updated_INDEX` (`updated`)
+    `name` varchar(100) NOT NULL,
+    `address` varchar(100) NOT NULL,
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `customs_point` */
@@ -261,7 +257,6 @@ CREATE TABLE  `cargo_mode_cargo_type` (
     `cargo_type_id` bigint(20) NOT NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`cargo_mode_id`, `cargo_type_id`),
---    UNIQUE KEY `cargo_type_id` (`cargo_type_id`),
     KEY `FK_cargo_mode_cargo_type_cargo_mode_id` (`cargo_mode_id`),
     CONSTRAINT `FK_cargo_mode_cargo_type_cargo_mode_id` FOREIGN KEY (`cargo_mode_id`) REFERENCES `cargo_mode` (`id`),
     KEY `FK_cargo_mode_cargo_type_cargo_type_id` (`cargo_type_id`),
@@ -275,12 +270,15 @@ DROP TABLE IF EXISTS `cargo_mode`;
 CREATE TABLE  `cargo_mode` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
+    `parent_id` bigint(20) NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
  /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
   `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_cargo_mode_name` (`name`),
     CONSTRAINT `FK_cargo_mode_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+    KEY `FK_cargo_mode_parent` (`parent_id`),
+    CONSTRAINT `FK_cargo_mode` FOREIGN KEY (`parent_id`) REFERENCES `cargo_mode` (`id`),
     KEY `cargo_mode_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -330,32 +328,6 @@ CREATE TABLE  `job` (
     KEY `job_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `prohibition_country` */
-
-DROP TABLE IF EXISTS `prohibition_country`;
-CREATE TABLE  `prohibition_country` (
-    `id` bigint(20) NOT NULL auto_increment,
-    `date` date NOT NULL,
-    `number` VARCHAR(10) NOT NULL,
-    `country_id` bigint(20) NOT NULL,
-    `reason` bigint(20) NOT NULL,
-    `region` bigint(20) NOT NULL,
-    `target` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL DEFAULT NOW(),
- /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
-  `disabled` tinyint(1) NOT NULL default '0',
-    PRIMARY KEY (`id`),
-    KEY `FK_prohibition_country_country_ref` (`country_id`),
-    CONSTRAINT `FK_prohibition_country_country_ref` FOREIGN KEY (`country_id`) REFERENCES `countrybook` (`id`),
-    KEY `FK_prohibition_country_reason` (`reason`),
-    CONSTRAINT `FK_prohibition_country_reason` FOREIGN KEY (`reason`) REFERENCES `stringculture` (`id`),
-    KEY `FK_prohibition_country_region` (`region`),
-    CONSTRAINT `FK_prohibition_country_region` FOREIGN KEY (`region`) REFERENCES `stringculture` (`id`),
-    KEY `FK_prohibition_country_target` (`target`),
-    CONSTRAINT `FK_prohibition_country_target` FOREIGN KEY (`target`) REFERENCES `stringculture` (`id`),
-    KEY `prohibition_country_updated_INDEX` (`updated`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 /*Table structure for table `arrest_reason` */
 
 DROP TABLE IF EXISTS `arrest_reason`;
@@ -386,49 +358,22 @@ CREATE TABLE  `bad_epizootic_situation` (
     KEY `bad_epizootic_situation_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `tariff` */
-
-DROP TABLE IF EXISTS `tariff`;
-CREATE TABLE  `tariff` (
-    `id` bigint(20) NOT NULL auto_increment,
-    `name` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL DEFAULT NOW(),
- /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
-  `disabled` tinyint(1) NOT NULL default '0',
-    PRIMARY KEY (`id`),
-    KEY `FK_tariff_name` (`name`),
-    CONSTRAINT `FK_tariff_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
-    KEY `tariff_updated_INDEX` (`updated`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 /*Table structure for table `passing_border_point` */
 
 DROP TABLE IF EXISTS `passing_border_point`;
 CREATE TABLE  `passing_border_point` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
+    `department_id` bigint(20) NOT NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
  /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
   `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_passing_border_point_name` (`name`),
     CONSTRAINT `FK_passing_border_point_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+    KEY `FK_passing_border_point_department` (`department_id`),
+    CONSTRAINT `FK_passing_border_point_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`),
     KEY `passing_border_point_updated_INDEX` (`updated`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-/*Table structure for table `addressbook` */
-
-DROP TABLE IF EXISTS `addressbook`;
-CREATE TABLE  `addressbook` (
-    `id` bigint(20) NOT NULL auto_increment,
-    `name` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL DEFAULT NOW(),
- /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
-  `disabled` tinyint(1) NOT NULL default '0',
-    PRIMARY KEY (`id`),
-    KEY `FK_addressbook_name` (`name`),
-    CONSTRAINT `FK_addressbook_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
-    KEY `addressbook_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*documents*/
