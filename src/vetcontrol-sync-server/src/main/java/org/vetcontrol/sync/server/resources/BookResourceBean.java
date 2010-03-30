@@ -52,16 +52,6 @@ public class BookResourceBean {
         };
     }
 
-    @POST
-    @Path("/AddressBook/list/{firstResult}/{maxResults}")
-    public GenericEntity<List<AddressBook>> getAddressBooks(
-            SyncRequestEntity re,
-            @Context HttpServletRequest r,
-            @PathParam("maxResults") String maxResults,
-            @PathParam("firstResult") String firstResult) {
-        return new GenericEntity<List<AddressBook>>(getList(AddressBook.class, re, r, firstResult, maxResults)) {
-        };
-    }
 
     @POST
     @Path("/CargoMode/list/{firstResult}/{maxResults}")
@@ -241,17 +231,6 @@ public class BookResourceBean {
     }
 
     @POST
-    @Path("/Prohibition/list/{firstResult}/{maxResults}")
-    public GenericEntity<List<Prohibition>> getProhibitions(
-            SyncRequestEntity re,
-            @Context HttpServletRequest r,
-            @PathParam("maxResults") String maxResults,
-            @PathParam("firstResult") String firstResult) {
-        return new GenericEntity<List<Prohibition>>(getList(Prohibition.class, re, r, firstResult, maxResults)) {
-        };
-    }
-
-    @POST
     @Path("/RegisteredProducts/list/{firstResult}/{maxResults}")
     public GenericEntity<List<RegisteredProducts>> getRegisteredProducts(
             SyncRequestEntity re,
@@ -259,17 +238,6 @@ public class BookResourceBean {
             @PathParam("maxResults") String maxResults,
             @PathParam("firstResult") String firstResult) {
         return new GenericEntity<List<RegisteredProducts>>(getList(RegisteredProducts.class, re, r, firstResult, maxResults)) {
-        };
-    }
-
-    @POST
-    @Path("/Tariff/list/{firstResult}/{maxResults}")
-    public GenericEntity<List<Tariff>> getTariffs(
-            SyncRequestEntity re,
-            @Context HttpServletRequest r,
-            @PathParam("maxResults") String maxResults,
-            @PathParam("firstResult") String firstResult) {
-        return new GenericEntity<List<Tariff>>(getList(Tariff.class, re, r, firstResult, maxResults)) {
         };
     }
 

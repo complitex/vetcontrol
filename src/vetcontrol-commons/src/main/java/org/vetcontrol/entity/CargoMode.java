@@ -13,6 +13,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.bind.annotation.XmlIDREF;
+import org.vetcontrol.util.book.entity.annotation.BookReference;
 
 /**
  * 2.4.3.12 Справочник видов грузов
@@ -71,14 +73,40 @@ public class CargoMode extends Localizable {
     public void setNames(List<StringCulture> names) {
         this.names = names;
     }
+    private CargoMode parent;
+
+    @BookReference(referencedProperty = "names")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "parent_id", nullable = true)
+    @XmlIDREF
+    public CargoMode getParent() {
+        return parent;
+    }
+
+    public void setParent(CargoMode parent) {
+        this.parent = parent;
+    }
 
     @Override
     public Query getInsertQuery(EntityManager em) {
-        return getInsertQuery(em, "cargo_mode");
+        return em.createNativeQuery("insert into cargo_mode (id, `name`, parent_id, updated, disabled) "
+                + "value (:id, :name, :parent_id, :updated, :disabled)").
+                setParameter("id", id).
+                setParameter("name", name).
+                setParameter("parent_id", parent != null ? parent.getId() : null).
+                setParameter("updated", updated).
+                setParameter("disabled", disabled);
     }
 
     @Override
     public Query getUpdateQuery(EntityManager em) {
-        return getUpdateQuery(em, "cargo_mode");
+        return em.createNativeQuery("update cargo_mode set `name` = :name, parent_id = :parent_id, "
+                + "updated = :updated, disabled = :disabled where id = :id").
+                setParameter("id", id).
+                setParameter("name", name).
+                setParameter("parent_id", parent != null ? parent.getId() : null).
+                setParameter("updated", updated).
+                setParameter("disabled", disabled);
     }
 }

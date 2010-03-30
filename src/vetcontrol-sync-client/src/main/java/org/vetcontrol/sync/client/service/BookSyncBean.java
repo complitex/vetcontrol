@@ -49,16 +49,14 @@ public class BookSyncBean extends SyncInfo {
     private boolean initial = false;
     public final static Class[] syncBooks = new Class[]{
         StringCulture.class,
-        AddressBook.class, ArrestReason.class, CargoMode.class, CargoProducer.class, CargoReceiver.class,
+        ArrestReason.class, CargoMode.class, CargoProducer.class, CargoReceiver.class,
         CargoSender.class, CargoType.class, CountryBook.class, CountryWithBadEpizooticSituation.class,
         CustomsPoint.class, Department.class, Job.class, MovementType.class, PassingBorderPoint.class,
-        Prohibition.class, RegisteredProducts.class, Tariff.class, UnitType.class, VehicleType.class,
+        RegisteredProducts.class, UnitType.class, VehicleType.class,
         CargoModeCargoType.class, CargoModeUnitType.class};
     private final Map<Class, GenericType> genericTypeMap = new HashMap<Class, GenericType>();
 
     public BookSyncBean() {
-        genericTypeMap.put(AddressBook.class, new GenericType<List<AddressBook>>() {
-        });
         genericTypeMap.put(ArrestReason.class, new GenericType<List<ArrestReason>>() {
         });
         genericTypeMap.put(CargoMode.class, new GenericType<List<CargoMode>>() {
@@ -89,13 +87,9 @@ public class BookSyncBean extends SyncInfo {
         });
         genericTypeMap.put(PassingBorderPoint.class, new GenericType<List<PassingBorderPoint>>() {
         });
-        genericTypeMap.put(Prohibition.class, new GenericType<List<Prohibition>>() {
-        });
         genericTypeMap.put(RegisteredProducts.class, new GenericType<List<RegisteredProducts>>() {
         });
         genericTypeMap.put(StringCulture.class, new GenericType<List<StringCulture>>() {
-        });
-        genericTypeMap.put(Tariff.class, new GenericType<List<Tariff>>() {
         });
         genericTypeMap.put(UnitType.class, new GenericType<List<UnitType>>() {
         });
