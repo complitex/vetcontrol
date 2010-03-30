@@ -23,19 +23,13 @@ public class BookTypes {
                 CountryBook.class,
                 RegisteredProducts.class,
                 VehicleType.class,
-                CargoReceiver.class,
-                CargoSender.class,
                 CustomsPoint.class,
                 MovementType.class,
                 CargoProducer.class,
                 UnitType.class,
                 CargoType.class,
                 Job.class,
-                Prohibition.class,
-                Tariff.class,
                 ArrestReason.class,
-                AddressBook.class,
-                PassingBorderPoint.class,
                 CountryWithBadEpizooticSituation.class));
     }
 

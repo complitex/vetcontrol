@@ -5,7 +5,6 @@ import org.vetcontrol.util.book.entity.annotation.ValidProperty;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
 import java.util.Map;
@@ -15,7 +14,7 @@ import java.util.Map;
  *         Date: 18.01.2010 18:44:59
  */
 @MappedSuperclass
-public abstract class Localizable implements ILongId, IUpdated, IQuery, IDisabled {
+public abstract class Localizable implements IBook, ILongId, IUpdated, IQuery, IDisabled {
 
     protected Long id;
 

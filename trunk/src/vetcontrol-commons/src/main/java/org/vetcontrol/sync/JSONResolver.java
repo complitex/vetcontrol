@@ -25,11 +25,10 @@ public class JSONResolver {
 
     private final static Class[] cTypes = {
             Client.class, Department.class, User.class, UserGroup.class, StringCulture.class, StringCultureId.class,
-            AddressBook.class,
             ArrestReason.class, CargoMode.class, CargoProducer.class, CargoReceiver.class, CargoSender.class,
             CargoType.class, CountryBook.class, CountryWithBadEpizooticSituation.class, CustomsPoint.class,
-            Department.class, Job.class, MovementType.class, PassingBorderPoint.class, Prohibition.class,
-            RegisteredProducts.class, Tariff.class, UnitType.class, VehicleType.class, Count.class,
+            Department.class, Job.class, MovementType.class, PassingBorderPoint.class,
+            RegisteredProducts.class, UnitType.class, VehicleType.class, Count.class,
             DocumentCargo.class, Cargo.class, SyncCargo.class, SyncDocumentCargo.class, SyncRequestEntity.class,
             SyncLog.class, Log.class
     };

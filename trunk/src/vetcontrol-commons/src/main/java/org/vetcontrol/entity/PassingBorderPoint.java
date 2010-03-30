@@ -11,6 +11,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.bind.annotation.XmlIDREF;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.vetcontrol.util.book.entity.annotation.BookReference;
 
 /**
  * @author Artem
@@ -35,13 +39,41 @@ public class PassingBorderPoint extends Localizable{
         this.names = names;
     }
 
+    private Department department;
+
+    @BookReference(referencedProperty = "names")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "department_id", nullable = false)
+    @XmlIDREF
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
     @Override
     public Query getInsertQuery(EntityManager em){
-        return getInsertQuery(em, "passing_border_point");
+         return em.createNativeQuery("insert into passing_border_point (id, `name`, department_id, updated, disabled) "
+                + "value (:id, :name, :department_id, :updated, :disabled)").
+                setParameter("id", id).
+                setParameter("name", name).
+                setParameter("department_id", department != null ? department.getId() : null).
+                setParameter("updated", updated).
+                setParameter("disabled", disabled);
     }
 
     @Override
     public Query getUpdateQuery(EntityManager em) {
-        return getUpdateQuery(em, "passing_border_point");
+        return em.createNativeQuery("update passing_border_point set `name` = :name, department_id = :department_id, "
+                + "updated = :updated, disabled = :disabled where id = :id").
+                setParameter("id", id).
+                setParameter("name", name).
+                setParameter("department_id", department != null ? department.getId() : null).
+                setParameter("updated", updated).
+                setParameter("disabled", disabled);
     }
+
 }

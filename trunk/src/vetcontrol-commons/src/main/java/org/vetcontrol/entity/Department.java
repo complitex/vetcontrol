@@ -24,7 +24,8 @@ import java.util.List;
 @Entity
 @Table(name = "department")
 @XmlRootElement
-public class Department extends Localizable{    
+public class Department extends Localizable {
+
     private List<StringCulture> names = new ArrayList<StringCulture>();
 
     /**
@@ -72,38 +73,49 @@ public class Department extends Localizable{
     public void setParent(Department parent) {
         this.parent = parent;
     }
+    private CustomsPoint customsPoint;
 
-    @Override
-    public Query getInsertQuery(EntityManager em){
-        return em.createNativeQuery("insert into department (id, `name`, parent_id, updated, disabled) " +
-                "value (:id, :name, :parent_id, :updated, :disabled)")
-                .setParameter("id", id)
-                .setParameter("name", name)
-                .setParameter("parent_id", parent != null ? parent.getId() : null)
-                .setParameter("updated", updated)
-                .setParameter("disabled", disabled);
+    @BookReference(referencedProperty = "names")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "custom_point_id", nullable = true)
+    public CustomsPoint getCustomsPoint() {
+        return customsPoint;
+    }
+
+    public void setCustomsPoint(CustomsPoint customsPoint) {
+        this.customsPoint = customsPoint;
     }
 
     @Override
-    public Query getUpdateQuery(EntityManager em){
-        return em.createNativeQuery("update department set `name` = :name, parent_id = :parent_id, " +
-                "updated = :updated, disabled = :disabled where id = :id")
-                .setParameter("id", id)
-                .setParameter("name", name)
-                .setParameter("parent_id", parent != null ? parent.getId() : null)
-                .setParameter("updated", updated)
-                .setParameter("disabled", disabled);
+    public Query getInsertQuery(EntityManager em) {
+        return em.createNativeQuery("insert into department (id, `name`, parent_id, updated, disabled) "
+                + "value (:id, :name, :parent_id, :updated, :disabled)").setParameter("id", id).setParameter("name", name).setParameter("parent_id", parent != null ? parent.getId() : null).setParameter("updated", updated).setParameter("disabled", disabled);
+    }
+
+    @Override
+    public Query getUpdateQuery(EntityManager em) {
+        return em.createNativeQuery("update department set `name` = :name, parent_id = :parent_id, "
+                + "updated = :updated, disabled = :disabled where id = :id").setParameter("id", id).setParameter("name", name).setParameter("parent_id", parent != null ? parent.getId() : null).setParameter("updated", updated).setParameter("disabled", disabled);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Department)) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Department)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         Department that = (Department) o;
 
-        if (parent != null ? !parent.equals(that.parent) : that.parent != null) return false;
+        if (parent != null ? !parent.equals(that.parent) : that.parent != null) {
+            return false;
+        }
 
         return true;
     }
@@ -117,10 +129,6 @@ public class Department extends Localizable{
 
     @Override
     public String toString() {
-        return new StringBuilder().append("[hash: ").append(Integer.toHexString(hashCode()))
-                .append(", id: ").append(id)
-                .append(", parent_id: ").append(parent != null ? parent.getId() : null)
-                .append(", namesMap: ").append(getNamesMap())
-                .append("]").toString();
+        return new StringBuilder().append("[hash: ").append(Integer.toHexString(hashCode())).append(", id: ").append(id).append(", parent_id: ").append(parent != null ? parent.getId() : null).append(", namesMap: ").append(getNamesMap()).append("]").toString();
     }
 }
