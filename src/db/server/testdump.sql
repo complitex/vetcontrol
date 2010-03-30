@@ -166,31 +166,31 @@ INSERT INTO `cargo_mode_cargo_type` VALUES (1, 1, CURRENT_TIMESTAMP), (1, 2, CUR
 
 INSERT INTO `cargo_mode_unit_type` VALUES (1, 1, CURRENT_TIMESTAMP);
 
-INSERT INTO `cargo_receiver`(`id`, `name`) VALUES (1, 43),(2,44),(3,45);
+--INSERT INTO `cargo_receiver`(`id`, `name`) VALUES (1, 43),(2,44),(3,45);
 
-INSERT INTO `cargo_sender`(`id`, `name`) VALUES (1,46),(2,47),(3,48);
+--INSERT INTO `cargo_sender`(`id`, `name`) VALUES (1,46),(2,47),(3,48);
 
-INSERT INTO `passing_border_point`(`id`, `name`) VALUES (1,68),(2,69),(3,70);
+--INSERT INTO `passing_border_point`(`id`, `name`) VALUES (1,68),(2,69),(3,70);
 
 INSERT INTO `cargo_producer`(`id`, `name`) VALUES (1,49),(2,50),(3,51);
 
-INSERT INTO `document_cargo`(`id`, `client_id`, `department_id`, `creator_id`, `created`, `updated`, `movement_type_id`, 
-                                `vehicle_type_id`, `vehicle_details`, `cargo_sender_id`, `cargo_receiver_id`,
-                                `cargo_producer_id`, `passing_border_point_id`, `details`, `detention_details`, `sync_status`)
-                                VALUES 
-                  (1,1,17,30, '2010-01-15 17:59:09', '2010-01-15 17:59:09', 1,1, 'транспорт 1', 1,2,3,1, 'примечание 3','задержан 2', 'NOT_SYNCHRONIZED'),
-                  (2,1,17,30, '2010-02-15 17:48:00', '2010-02-15 17:48:00', 1,1, 'транспорт 2', 1,2,3,1, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
-                  (3,1,17,30, '2010-02-16 17:48:00', '2010-02-16 17:48:00', 3,1, 'транспорт 2', 1,2,3,1, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
-                  (4,1,17,30, '2010-03-30 17:48:00', '2010-03-30 17:48:00', 1,1, 'транспорт 3', 1,2,3,1, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
-                  (5,1,17,30, '2010-03-31 17:48:00', '2010-03-31 17:48:00', 2,1, 'транспорт 3', 1,2,3,1, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
-                  (6,1,17,30, '2010-02-16 17:25:00', '2010-02-16 17:25:00', 2,1, 'транспорт 4', 1,2,3,1, 'примечание','задержан', 'NOT_SYNCHRONIZED');
-
-INSERT INTO `cargo`(`document_cargo_id`, `client_id`, `department_id`, `cargo_type_id`, `unit_type_id`, `count`, `certificate_date`,
-`certificate_details`, `sync_status`)
- VALUES (1,1,17,1,1,20,'2010-01-15','сертификат 1', 'NOT_SYNCHRONIZED'),
-(2,1,17,1,1,30,'2010-02-15','сертификат 2', 'NOT_SYNCHRONIZED'),
-(3,1,17,1,1, 23,'2010-02-15','сертификат 2', 'NOT_SYNCHRONIZED'),
-(3,1,17,1,2, 73,'2010-02-15','сертификат 2', 'NOT_SYNCHRONIZED'),
-(4,1,17, 2, 1, 40, '2010-03-30', 'сертификат 3', 'NOT_SYNCHRONIZED'),
-(5,1,17, 2, 1, 89, '2010-03-30', 'сертификат 3', 'NOT_SYNCHRONIZED'),
-(6,1,17,1,1,50,'2010-02-16', 'сертификат 4', 'NOT_SYNCHRONIZED');
+--INSERT INTO `document_cargo`(`id`, `client_id`, `department_id`, `creator_id`, `created`, `updated`, `movement_type_id`,
+--                                `vehicle_type_id`, `vehicle_details`, `cargo_sender_id`, `cargo_receiver_id`,
+--                                `cargo_producer_id`, `passing_border_point_id`, `details`, `detention_details`, `sync_status`)
+--                                VALUES
+--                  (1,1,17,30, '2010-01-15 17:59:09', '2010-01-15 17:59:09', 1,1, 'транспорт 1', 1,2,3,1, 'примечание 3','задержан 2', 'NOT_SYNCHRONIZED'),
+--                  (2,1,17,30, '2010-02-15 17:48:00', '2010-02-15 17:48:00', 1,1, 'транспорт 2', 1,2,3,1, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
+--                  (3,1,17,30, '2010-02-16 17:48:00', '2010-02-16 17:48:00', 3,1, 'транспорт 2', 1,2,3,1, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
+--                  (4,1,17,30, '2010-03-30 17:48:00', '2010-03-30 17:48:00', 1,1, 'транспорт 3', 1,2,3,1, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
+--                  (5,1,17,30, '2010-03-31 17:48:00', '2010-03-31 17:48:00', 2,1, 'транспорт 3', 1,2,3,1, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
+--                  (6,1,17,30, '2010-02-16 17:25:00', '2010-02-16 17:25:00', 2,1, 'транспорт 4', 1,2,3,1, 'примечание','задержан', 'NOT_SYNCHRONIZED');
+--
+--INSERT INTO `cargo`(`document_cargo_id`, `client_id`, `department_id`, `cargo_type_id`, `unit_type_id`, `count`, `certificate_date`,
+--`certificate_details`, `sync_status`)
+-- VALUES (1,1,17,1,1,20,'2010-01-15','сертификат 1', 'NOT_SYNCHRONIZED'),
+--(2,1,17,1,1,30,'2010-02-15','сертификат 2', 'NOT_SYNCHRONIZED'),
+--(3,1,17,1,1, 23,'2010-02-15','сертификат 2', 'NOT_SYNCHRONIZED'),
+--(3,1,17,1,2, 73,'2010-02-15','сертификат 2', 'NOT_SYNCHRONIZED'),
+--(4,1,17, 2, 1, 40, '2010-03-30', 'сертификат 3', 'NOT_SYNCHRONIZED'),
+--(5,1,17, 2, 1, 89, '2010-03-30', 'сертификат 3', 'NOT_SYNCHRONIZED'),
+--(6,1,17,1,1,50,'2010-02-16', 'сертификат 4', 'NOT_SYNCHRONIZED');
