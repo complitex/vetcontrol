@@ -53,9 +53,6 @@ public class DocumentCargo extends Synchronized implements IUpdated{
     @Enumerated(EnumType.STRING)
     private VehicleType vehicleType;
 
-    @Column(name = "vehicle_details", length = 255)
-    private String vehicleDetails;
-
     @OneToMany(mappedBy = "documentCargo")
     @XmlTransient
     private List<Cargo> cargos = new ArrayList<Cargo>();
@@ -150,14 +147,6 @@ public class DocumentCargo extends Synchronized implements IUpdated{
         this.vehicleType = vehicleType;
     }
 
-    public String getVehicleDetails() {
-        return vehicleDetails;
-    }
-
-    public void setVehicleDetails(String vehicleDetails) {
-        this.vehicleDetails = vehicleDetails;
-    }
-
     public List<Cargo> getCargos() {
         return cargos;
     }
@@ -235,8 +224,6 @@ public class DocumentCargo extends Synchronized implements IUpdated{
         if (passingBorderPoint != null ? !passingBorderPoint.equals(that.passingBorderPoint) : that.passingBorderPoint != null)
             return false;
         if (updated != null ? !updated.equals(that.updated) : that.updated != null) return false;
-        if (vehicleDetails != null ? !vehicleDetails.equals(that.vehicleDetails) : that.vehicleDetails != null)
-            return false;
         if (vehicleType != null ? !vehicleType.equals(that.vehicleType) : that.vehicleType != null) return false;
 
         return true;
@@ -253,7 +240,6 @@ public class DocumentCargo extends Synchronized implements IUpdated{
         result = 31 * result + (updated != null ? updated.hashCode() : 0);
         result = 31 * result + (movementType != null ? movementType.hashCode() : 0);
         result = 31 * result + (vehicleType != null ? vehicleType.hashCode() : 0);
-        result = 31 * result + (vehicleDetails != null ? vehicleDetails.hashCode() : 0);
         result = 31 * result + (cargos != null ? cargos.hashCode() : 0);
         result = 31 * result + (cargoSenderEmbeddable != null ? cargoSenderEmbeddable.hashCode() : 0);
         result = 31 * result + (cargoReceiverEmbeddable != null ? cargoReceiverEmbeddable.hashCode() : 0);

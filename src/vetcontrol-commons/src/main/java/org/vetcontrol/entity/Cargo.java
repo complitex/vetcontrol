@@ -54,7 +54,7 @@ public class Cargo extends Synchronized implements IUpdated{
     @XmlIDREF
     private UnitType unitType;
 
-    @Column(name = "count")
+    @Column(name = "count", nullable=true)
     private Integer count;
 
     @Column(name = "certificate_details", length = 255)
@@ -71,6 +71,15 @@ public class Cargo extends Synchronized implements IUpdated{
     @JoinColumn(name = "cargo_producer_id")
     @XmlIDREF
     private CargoProducer cargoProducer;
+
+    @ManyToOne(optional=true)
+    @JoinColumns({
+        @JoinColumn(name="vehicle_id"),
+        @JoinColumn(name="department_id"),
+        @JoinColumn(name="client_id")
+    })
+    @XmlIDREF
+    private Vehicle vehicle;
 
     @PrePersist @PreUpdate
     protected void preUpdate(){
@@ -162,10 +171,12 @@ public class Cargo extends Synchronized implements IUpdated{
         this.certificateDate = certificateDate;
     }
 
+    @Override
     public Date getUpdated() {
         return updated;
     }
 
+    @Override
     public void setUpdated(Date updated) {
         this.updated = updated;
     }
@@ -178,52 +189,12 @@ public class Cargo extends Synchronized implements IUpdated{
         this.cargoProducer = cargoProducer;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Cargo)) return false;
-        if (!super.equals(o)) return false;
-
-        Cargo cargo = (Cargo) o;
-
-        if (cargoProducer != null ? !cargoProducer.equals(cargo.cargoProducer) : cargo.cargoProducer != null)
-            return false;
-
-        if (cargoType != null ? !cargoType.equals(cargo.cargoType) : cargo.cargoType != null) return false;
-        if (certificateDate != null ? !certificateDate.equals(cargo.certificateDate) : cargo.certificateDate != null)
-            return false;
-        if (certificateDetails != null ? !certificateDetails.equals(cargo.certificateDetails) : cargo.certificateDetails != null)
-            return false;
-        if (client != null ? !client.equals(cargo.client) : cargo.client != null) return false;
-        if (count != null ? !count.equals(cargo.count) : cargo.count != null) return false;
-        if (department != null ? !department.equals(cargo.department) : cargo.department != null) return false;
-        if (documentCargo != null ? !documentCargo.equals(cargo.documentCargo) : cargo.documentCargo != null)
-            return false;
-        if (documentCargoId != null ? !documentCargoId.equals(cargo.documentCargoId) : cargo.documentCargoId != null)
-            return false;
-        if (id != null ? !id.equals(cargo.id) : cargo.id != null) return false;
-        if (unitType != null ? !unitType.equals(cargo.unitType) : cargo.unitType != null) return false;
-        if (updated != null ? !updated.equals(cargo.updated) : cargo.updated != null) return false;
-
-        return true;
+    public Vehicle getVehicle() {
+        return vehicle;
     }
 
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (id != null ? id.hashCode() : 0);
-        result = 31 * result + (client != null ? client.hashCode() : 0);
-        result = 31 * result + (department != null ? department.hashCode() : 0);
-        result = 31 * result + (documentCargo != null ? documentCargo.hashCode() : 0);
-        result = 31 * result + (documentCargoId != null ? documentCargoId.hashCode() : 0);
-        result = 31 * result + (cargoType != null ? cargoType.hashCode() : 0);
-        result = 31 * result + (unitType != null ? unitType.hashCode() : 0);
-        result = 31 * result + (count != null ? count.hashCode() : 0);
-        result = 31 * result + (certificateDetails != null ? certificateDetails.hashCode() : 0);
-        result = 31 * result + (certificateDate != null ? certificateDate.hashCode() : 0);
-        result = 31 * result + (cargoProducer != null ? cargoProducer.hashCode() : 0);
-        result = 31 * result + (updated != null ? updated.hashCode() : 0);
-        return result;
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
     }
 }
 
