@@ -28,7 +28,7 @@ public class JSONResolver {
             ArrestReason.class, CargoMode.class, CargoProducer.class, CargoReceiver.class, CargoSender.class,
             CargoType.class, CountryBook.class, CountryWithBadEpizooticSituation.class, CustomsPoint.class,
             Department.class, Job.class, MovementType.class, PassingBorderPoint.class,
-            RegisteredProducts.class, UnitType.class, VehicleType.class, Count.class,
+            RegisteredProducts.class, UnitType.class, Count.class,
             DocumentCargo.class, Cargo.class, SyncCargo.class, SyncDocumentCargo.class, SyncRequestEntity.class,
             SyncLog.class, Log.class
     };

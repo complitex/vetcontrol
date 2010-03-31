@@ -50,9 +50,7 @@ public class DocumentCargo extends Synchronized implements IUpdated{
     @XmlIDREF
     private MovementType movementType;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "vehicle_type_id")
-    @XmlIDREF
+    @Enumerated(EnumType.STRING)
     private VehicleType vehicleType;
 
     @Column(name = "vehicle_details", length = 255)
