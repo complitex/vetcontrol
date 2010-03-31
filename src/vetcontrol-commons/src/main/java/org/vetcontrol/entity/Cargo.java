@@ -67,6 +67,11 @@ public class Cargo extends Synchronized implements IUpdated{
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "cargo_producer_id")
+    @XmlIDREF
+    private CargoProducer cargoProducer;
+
     @PrePersist @PreUpdate
     protected void preUpdate(){
         if (documentCargo != null){
@@ -165,6 +170,14 @@ public class Cargo extends Synchronized implements IUpdated{
         this.updated = updated;
     }
 
+    public CargoProducer getCargoProducer() {
+        return cargoProducer;
+    }
+
+    public void setCargoProducer(CargoProducer cargoProducer) {
+        this.cargoProducer = cargoProducer;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -172,6 +185,9 @@ public class Cargo extends Synchronized implements IUpdated{
         if (!super.equals(o)) return false;
 
         Cargo cargo = (Cargo) o;
+
+        if (cargoProducer != null ? !cargoProducer.equals(cargo.cargoProducer) : cargo.cargoProducer != null)
+            return false;
 
         if (cargoType != null ? !cargoType.equals(cargo.cargoType) : cargo.cargoType != null) return false;
         if (certificateDate != null ? !certificateDate.equals(cargo.certificateDate) : cargo.certificateDate != null)
@@ -205,6 +221,7 @@ public class Cargo extends Synchronized implements IUpdated{
         result = 31 * result + (count != null ? count.hashCode() : 0);
         result = 31 * result + (certificateDetails != null ? certificateDetails.hashCode() : 0);
         result = 31 * result + (certificateDate != null ? certificateDate.hashCode() : 0);
+        result = 31 * result + (cargoProducer != null ? cargoProducer.hashCode() : 0);
         result = 31 * result + (updated != null ? updated.hashCode() : 0);
         return result;
     }

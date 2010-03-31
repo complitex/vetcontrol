@@ -58,9 +58,6 @@ public class ClientPopulator extends AbstractPopulator {
         dc.setCreator(creator);
         dc.setClient(client);
 
-        dc.setCargoProducer(findAny(CargoProducer.class));
-        dc.setCargoReceiver(findAny(CargoReceiver.class));
-        dc.setCargoSender(findAny(CargoSender.class));
         dc.setCreated(created);
         dc.setUpdated(created);
         dc.setMovementType(findAny(MovementType.class));
