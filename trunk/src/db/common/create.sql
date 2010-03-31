@@ -379,6 +379,21 @@ CREATE TABLE  `passing_border_point` (
     KEY `passing_border_point_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/*Table structure for table `container_validator` */
+
+DROP TABLE IF EXISTS `container_validator`;
+CREATE TABLE  `container_validator` (
+    `id` bigint(20) NOT NULL auto_increment,
+    `prefix` varchar(4) NOT NULL,
+    `carrier_abbr` varchar(50) NULL,
+    `carrier_name` varchar(100) NOT NULL,
+    `updated` timestamp NOT NULL DEFAULT NOW(),
+ /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
+  `disabled` tinyint(1) NOT NULL default '0',
+    PRIMARY KEY (`id`),
+    KEY `passing_border_point_updated_INDEX` (`updated`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*documents*/
 DROP TABLE IF EXISTS `document_cargo`;
 CREATE TABLE `document_cargo` (
