@@ -22,7 +22,7 @@ public class BookTypes {
                 Department.class,
                 CountryBook.class,
                 RegisteredProducts.class,
-                VehicleType.class,
+//                VehicleType.class,
                 CustomsPoint.class,
                 MovementType.class,
                 CargoProducer.class,
