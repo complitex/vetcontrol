@@ -66,7 +66,6 @@ public class ClientPopulator extends AbstractPopulator {
         dc.setDetails(GenerateUtil.generateString(255));
         dc.setDetentionDetails(GenerateUtil.generateString(255));
         dc.setSyncStatus(SyncStatus.NOT_SYNCHRONIZED);
-        dc.setVehicleDetails(GenerateUtil.generateString(255));
 
         getEntityManager().persist(dc);
     }
