@@ -15,6 +15,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import org.apache.wicket.util.string.Strings;
 import org.hibernate.Session;
@@ -44,7 +45,7 @@ public class CargoModeDAO {
 
     public static enum OrderBy {
 
-        ID, NAME, UKTZED
+        ID, NAME, UKTZED, PARENT
     }
     @PersistenceContext
     private EntityManager entityManager;
@@ -56,35 +57,41 @@ public class CargoModeDAO {
     public List<CargoMode> getAll(CargoModeFilterBean filter, int first, int count, OrderBy orderBy, boolean asc, Locale currentLocale,
             ShowBooksMode showBooksMode) {
         Map<String, Object> params = newParams();
-        StringBuilder query = select(false, params, currentLocale);
-        query.append(where(filter, params, showBooksMode));
-        query.append(orderBy(orderBy, asc));
+        StringBuilder queryBuilder = select(false, params, orderBy, currentLocale);
+        queryBuilder.append(where(filter, params, showBooksMode));
+        queryBuilder.append(orderBy(orderBy, asc));
 
-        TypedQuery<CargoMode> typedQuery = entityManager.createQuery(query.toString(), CargoMode.class);
+        Query query = entityManager.createQuery(queryBuilder.toString());
         for (Map.Entry<String, Object> entry : params.entrySet()) {
-            typedQuery.setParameter(entry.getKey(), entry.getValue());
+            query.setParameter(entry.getKey(), entry.getValue());
         }
-        List<CargoMode> cargoModes = typedQuery.setFirstResult(first).setMaxResults(count).getResultList();
+        List<Object[]> results = query.setFirstResult(first).setMaxResults(count).getResultList();
+        List<CargoMode> cargoModes = new ArrayList<CargoMode>(results.size());
+        for (Object[] result : results) {
+            cargoModes.add((CargoMode) result[0]);
+        }
         return cargoModes;
     }
 
-    private StringBuilder select(boolean forSize, Map<String, Object> params, Locale currentLocale) {
-        params.put("locale", currentLocale.getLanguage());
-        StringBuilder prefix = new StringBuilder("SELECT ");
-        String suffix = " FROM CargoMode cm, StringCulture sc LEFT JOIN cm.cargoModeCargoTypes cmct LEFT JOIN cmct.cargoType ct "
-                + "WHERE cm.name = sc.id.id AND sc.id.locale = :locale ";
-        String body = "";
+    private StringBuilder select(boolean forSize, Map<String, Object> params, OrderBy orderBy, Locale currentLocale) {
+        StringBuilder queryString = new StringBuilder("SELECT ");
         if (forSize) {
-            body = " COUNT(DISTINCT cm) ";
+            queryString.append(" COUNT(DISTINCT cm) ");
         } else {
-            body = " DISTINCT cm ";
+            queryString.append(" DISTINCT(cm), ");
+            if (orderBy != null && (orderBy == OrderBy.NAME || orderBy == OrderBy.PARENT)) {
+                queryString.append("(SELECT sc.value FROM StringCulture sc WHERE cm.name = sc.id.id AND sc.id.locale = :locale) ");
+                params.put("locale", currentLocale.getLanguage());
+            } else {
+                queryString.append("'1' ");
+            }
         }
-
-        return prefix.append(body).append(suffix);
+        queryString.append(" FROM CargoMode cm LEFT JOIN cm.cargoModeCargoTypes cmct LEFT JOIN cmct.cargoType ct ");
+        return queryString;
     }
 
     private StringBuilder where(CargoModeFilterBean filter, Map<String, Object> params, ShowBooksMode showBooksMode) {
-        StringBuilder where = new StringBuilder();
+        StringBuilder where = new StringBuilder(" WHERE (1=1) ");
         switch (showBooksMode) {
             case ALL:
                 break;
@@ -102,6 +109,10 @@ public class CargoModeDAO {
                 where.append(" AND ct.code LIKE :uktzed ");
                 params.put("uktzed", "%" + filter.getUktzed() + "%");
             }
+            if (filter.getParent() != null) {
+                where.append(" AND cm.parent = :parent");
+                params.put("parent", filter.getParent());
+            }
         }
         return where;
     }
@@ -113,10 +124,13 @@ public class CargoModeDAO {
                 order.append(" cm.id ");
                 break;
             case NAME:
-                order.append(" sc.value ");
+                order.append(" 2 ");
                 break;
             case UKTZED:
                 order.append(" ct.code ");
+                break;
+            case PARENT:
+                order.append(" 2 ");
                 break;
         }
         order.append(asc ? " ASC" : " DESC");
@@ -125,7 +139,7 @@ public class CargoModeDAO {
 
     public int size(CargoModeFilterBean filter, Locale currentLocale, ShowBooksMode showBooksMode) {
         Map<String, Object> params = newParams();
-        StringBuilder query = select(true, params, currentLocale);
+        StringBuilder query = select(true, params, null, currentLocale);
         query.append(where(filter, params, showBooksMode));
 
         TypedQuery<Long> typedQuery = entityManager.createQuery(query.toString(), Long.class);
@@ -283,5 +297,10 @@ public class CargoModeDAO {
 
         TypedQuery<UnitType> typedQuery = entityManager.createQuery(query.toString(), UnitType.class);
         return typedQuery.getResultList();
+    }
+
+    public List<CargoMode> getRootCargoModes() {
+        String queryString = "SELECT cm FROM CargoMode cm WHERE cm.parent IS NULL";
+        return entityManager.createQuery(queryString, CargoMode.class).getResultList();
     }
 }
