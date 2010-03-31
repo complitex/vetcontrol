@@ -24,7 +24,10 @@
         <table class="tbColor bookContent" cellspacing="0" cellpadding="0" border="0">
             <thead>
                 <tr>
-                    <th wicket:id="nameHeader">
+                    <th wicket:id="parentNameHeader">
+            <wicket:message key="cargoMode.list.parent_name.header"/>
+            </th>
+            <th wicket:id="nameHeader">
             <wicket:message key="cargoMode.list.name.header"/>
             </th>
             <th wicket:id="uktzedHeader">
@@ -35,6 +38,11 @@
             </th>
             </tr>
             <tr>
+                <th>
+                    <select wicket:id="parent">
+                        <option></option>
+                    </select>
+                </th>
                 <th>
                     <input type="text" wicket:id="name" style="width: 100%"/>
                 </th>
@@ -48,6 +56,9 @@
             </thead>
             <tbody>
                 <tr wicket:id="cargoModes">
+                    <td>
+                        <span wicket:id="parentNameValue"></span>
+                    </td>
                     <td>
                         <span wicket:id="nameValue"></span>
                     </td>

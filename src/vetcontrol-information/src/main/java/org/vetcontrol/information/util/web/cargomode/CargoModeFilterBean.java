@@ -6,6 +6,7 @@
 package org.vetcontrol.information.util.web.cargomode;
 
 import java.io.Serializable;
+import org.vetcontrol.entity.CargoMode;
 
 /**
  *
@@ -34,5 +35,15 @@ public class CargoModeFilterBean implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    private CargoMode parent;
+
+    public CargoMode getParent() {
+        return parent;
+    }
+
+    public void setParent(CargoMode cargoMode) {
+        this.parent = cargoMode;
     }
 }

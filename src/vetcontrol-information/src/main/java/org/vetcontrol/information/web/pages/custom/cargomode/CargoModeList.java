@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import javax.ejb.EJB;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
@@ -16,7 +17,9 @@ import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -70,6 +73,8 @@ public class CargoModeList extends ListTemplatePage {
     private void init() {
         try {
 
+            final Locale systemLocale = localeDAO.systemLocale();
+
             //title
             add(new Label("title", new DisplayBookClassModel(CargoMode.class)));
             Label bookName = new Label("bookName", new DisplayBookClassModel(CargoMode.class));
@@ -104,6 +109,21 @@ public class CargoModeList extends ListTemplatePage {
             filterForm.add(new TextField<String>("name"));
             filterForm.add(new TextField<String>("uktzed"));
 
+            IChoiceRenderer<CargoMode> filterChoiceRenderer = new IChoiceRenderer<CargoMode>() {
+
+                @Override
+                public Object getDisplayValue(CargoMode cargoMode) {
+                    return cargoMode.getDisplayName(getLocale(), systemLocale);
+                }
+
+                @Override
+                public String getIdValue(CargoMode cargoMode, int index) {
+                    return String.valueOf(cargoMode.getId());
+                }
+            };
+
+            DropDownChoice<CargoMode> filterParent = new DropDownChoice<CargoMode>("parent", cargoModeDAO.getRootCargoModes(), filterChoiceRenderer);
+            filterForm.add(filterParent);
 
             final SortableDataProvider<CargoMode> dataProvider = new SortableDataProvider<CargoMode>() {
 
@@ -141,7 +161,8 @@ public class CargoModeList extends ListTemplatePage {
                 @Override
                 protected void populateItem(Item<CargoMode> item) {
                     CargoMode cargoMode = item.getModelObject();
-                    item.add(getNameLabel(cargoMode));
+                    item.add(getNameLabel("parentNameValue", cargoMode.getParent(), systemLocale));
+                    item.add(getNameLabel("nameValue", cargoMode, systemLocale));
                     item.add(getUktzedLabel(cargoMode));
                     item.add(new EditPanel("edit", item.getModel()) {
 
@@ -156,6 +177,7 @@ public class CargoModeList extends ListTemplatePage {
             filterForm.add(showBooksModePanel);
             filterForm.add(cargoModes);
 
+            addOrderByBorder(filterForm, "parentNameHeader", OrderBy.PARENT.name(), dataProvider, cargoModes);
             addOrderByBorder(filterForm, "nameHeader", OrderBy.NAME.name(), dataProvider, cargoModes);
             addOrderByBorder(filterForm, "uktzedHeader", OrderBy.UKTZED.name(), dataProvider, cargoModes);
 
@@ -177,9 +199,12 @@ public class CargoModeList extends ListTemplatePage {
         return getLabel("uktzedValue", value.toString() != null ? value.toString() : "");
     }
 
-    private Label getNameLabel(CargoMode cargoMode) {
-        String value = cargoMode.getDisplayName(getLocale(), localeDAO.systemLocale());
-        return getLabel("nameValue", value);
+    private Label getNameLabel(String id, CargoMode cargoMode, Locale systemLocale) {
+        String value = "";
+        if (cargoMode != null) {
+            value = cargoMode.getDisplayName(getLocale(), systemLocale);
+        }
+        return getLabel(id, value);
     }
 
     private Label getLabel(String id, String text) {
