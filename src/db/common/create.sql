@@ -126,22 +126,6 @@ CREATE TABLE `registered_products` (
     KEY `registered_products_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `vehicletypes` */
-
-DROP TABLE IF EXISTS `vehicletypes`;
-
-CREATE TABLE `vehicletypes` (
-    `id` bigint(20) NOT NULL auto_increment,
-    `name` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL DEFAULT NOW(),
- /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
-  `disabled` tinyint(1) NOT NULL default '0',
-    PRIMARY KEY (`id`),
-    KEY `FK_vehicletypes_name` (`name`),
-    CONSTRAINT `FK_vehicletypes_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
-    KEY `vehicletypes_updated_INDEX` (`updated`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 /*Table structure for table `department` */
 
 DROP TABLE IF EXISTS `department`;
@@ -404,7 +388,7 @@ CREATE TABLE `document_cargo` (
   `created` timestamp NOT NULL,
   `updated` timestamp NOT NULL,
   `movement_type_id` bigint(20) NOT NULL,
-  `vehicle_type_id` bigint(20) NOT NULL,
+  `vehicle_type` varchar(10) NOT NULL,
   `vehicle_details` varchar(255) NOT NULL,
   `cargo_sender_id` bigint(20) NOT NULL,
   `cargo_receiver_id` bigint(20) NOT NULL,
@@ -417,7 +401,6 @@ CREATE TABLE `document_cargo` (
   KEY `FK_department_0` (`department_id`),
   KEY `FK_client_0` (`client_id`),
   KEY `FK_movement_type` (`movement_type_id`),
-  KEY `FK_vehicle_type` (`vehicle_type_id`),
   KEY `FK_cargo_sender` (`cargo_sender_id`),
   KEY `FK_cargo_receiver` (`cargo_receiver_id`),
   KEY `FK_cargo_producer` (`cargo_producer_id`),
@@ -425,7 +408,6 @@ CREATE TABLE `document_cargo` (
   CONSTRAINT `FK_department_0` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`),
   CONSTRAINT `FK_client_0` FOREIGN KEY (`client_id`) REFERENCES `client` (`id`),
   CONSTRAINT `FK_movement_type` FOREIGN KEY (`movement_type_id`) REFERENCES `movement_type` (`id`),
-  CONSTRAINT `FK_vehicle_type` FOREIGN KEY (`vehicle_type_id`) REFERENCES `vehicletypes` (`id`),
   CONSTRAINT `FK_cargo_sender` FOREIGN KEY (`cargo_sender_id`) REFERENCES `cargo_sender` (`id`),
   CONSTRAINT `FK_cargo_receiver` FOREIGN KEY (`cargo_receiver_id`) REFERENCES `cargo_receiver` (`id`),
   CONSTRAINT `FK_cargo_producer` FOREIGN KEY (`cargo_producer_id`) REFERENCES `cargo_producer` (`id`),

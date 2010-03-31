@@ -4,44 +4,20 @@
  */
 package org.vetcontrol.entity;
 
-import org.vetcontrol.util.book.entity.annotation.MappedProperty;
-
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * 2.4.3.18 Справочник типов транспортных средств
  *
  * @author Artem
  */
-@Entity
-@Table(name = "vehicletypes")
-@XmlRootElement
-public class VehicleType extends Localizable{
-    private List<StringCulture> names = new ArrayList<StringCulture>();          
+public enum VehicleType {
 
-    @Transient
-    @MappedProperty("name")
-    @Column(length = 20, nullable = false)
-    @XmlTransient
-    public List<StringCulture> getNames() {
-        return names;
+    CAR(true), SHIP(false), CONTAINER(true), CARRIAGE(true), AIRCRAFT(false);
+    private boolean isCompound;
+
+    public boolean isCompound() {
+        return isCompound;
     }
 
-    public void setNames(List<StringCulture> names) {
-        this.names = names;
-    }
-
-    @Override
-    public Query getInsertQuery(EntityManager em){
-        return getInsertQuery(em, "vehicletypes");
-    }
-
-    @Override
-    public Query getUpdateQuery(EntityManager em) {
-        return getUpdateQuery(em, "vehicletypes");
+    private VehicleType(boolean isCompound) {
+        this.isCompound = isCompound;
     }
 }
