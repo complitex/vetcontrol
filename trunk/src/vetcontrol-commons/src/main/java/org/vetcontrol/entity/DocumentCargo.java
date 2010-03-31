@@ -60,20 +60,20 @@ public class DocumentCargo extends Synchronized implements IUpdated{
     @XmlTransient
     private List<Cargo> cargos = new ArrayList<Cargo>();
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "cargo_sender_id")
-    @XmlIDREF
-    private CargoSender cargoSender;
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name="name", column=@Column(name="cargo_sender_name")),
+        @AttributeOverride(name="country", column=@Column(name="cargo_sender_country_id")),
+        @AttributeOverride(name="address", column=@Column(name="cargo_sender_address"))
+    })
+    private CargoSenderEmbeddable cargoSenderEmbeddable;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "cargo_receiver_id")
-    @XmlIDREF
-    private CargoReceiver cargoReceiver;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "cargo_producer_id")
-    @XmlIDREF
-    private CargoProducer cargoProducer;
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name="name", column=@Column(name="cargo_receiver_name")),
+        @AttributeOverride(name="address", column=@Column(name="cargo_receiver_address"))
+    })
+    private CargoReceiverEmbeddable cargoReceiverEmbeddable;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "passing_border_point_id")
@@ -166,28 +166,20 @@ public class DocumentCargo extends Synchronized implements IUpdated{
         this.cargos = cargos;
     }
 
-    public CargoSender getCargoSender() {
-        return cargoSender;
+    public CargoSenderEmbeddable getCargoSender() {
+        return cargoSenderEmbeddable;
     }
 
-    public void setCargoSender(CargoSender cargoSender) {
-        this.cargoSender = cargoSender;
+    public void setCargoSender(CargoSenderEmbeddable cargoSenderEmbeddable) {
+        this.cargoSenderEmbeddable = cargoSenderEmbeddable;
     }
 
-    public CargoReceiver getCargoReceiver() {
-        return cargoReceiver;
+    public CargoReceiverEmbeddable getCargoReceiver() {
+        return cargoReceiverEmbeddable;
     }
 
-    public void setCargoReceiver(CargoReceiver cargoReceiver) {
-        this.cargoReceiver = cargoReceiver;
-    }
-
-    public CargoProducer getCargoProducer() {
-        return cargoProducer;
-    }
-
-    public void setCargoProducer(CargoProducer cargoProducer) {
-        this.cargoProducer = cargoProducer;
+    public void setCargoReceiver(CargoReceiverEmbeddable cargoReceiverEmbeddable) {
+        this.cargoReceiverEmbeddable = cargoReceiverEmbeddable;
     }
 
     public PassingBorderPoint getPassingBorderPoint() {
@@ -227,11 +219,9 @@ public class DocumentCargo extends Synchronized implements IUpdated{
 
         DocumentCargo that = (DocumentCargo) o;
 
-        if (cargoProducer != null ? !cargoProducer.equals(that.cargoProducer) : that.cargoProducer != null)
+        if (cargoReceiverEmbeddable != null ? !cargoReceiverEmbeddable.equals(that.cargoReceiverEmbeddable) : that.cargoReceiverEmbeddable != null)
             return false;
-        if (cargoReceiver != null ? !cargoReceiver.equals(that.cargoReceiver) : that.cargoReceiver != null)
-            return false;
-        if (cargoSender != null ? !cargoSender.equals(that.cargoSender) : that.cargoSender != null) return false;
+        if (cargoSenderEmbeddable != null ? !cargoSenderEmbeddable.equals(that.cargoSenderEmbeddable) : that.cargoSenderEmbeddable != null) return false;
         if (cargos != null ? !cargos.equals(that.cargos) : that.cargos != null) return false;
         if (client != null ? !client.equals(that.client) : that.client != null) return false;
         if (created != null ? !created.equals(that.created) : that.created != null) return false;
@@ -265,9 +255,8 @@ public class DocumentCargo extends Synchronized implements IUpdated{
         result = 31 * result + (vehicleType != null ? vehicleType.hashCode() : 0);
         result = 31 * result + (vehicleDetails != null ? vehicleDetails.hashCode() : 0);
         result = 31 * result + (cargos != null ? cargos.hashCode() : 0);
-        result = 31 * result + (cargoSender != null ? cargoSender.hashCode() : 0);
-        result = 31 * result + (cargoReceiver != null ? cargoReceiver.hashCode() : 0);
-        result = 31 * result + (cargoProducer != null ? cargoProducer.hashCode() : 0);
+        result = 31 * result + (cargoSenderEmbeddable != null ? cargoSenderEmbeddable.hashCode() : 0);
+        result = 31 * result + (cargoReceiverEmbeddable != null ? cargoReceiverEmbeddable.hashCode() : 0);
         result = 31 * result + (passingBorderPoint != null ? passingBorderPoint.hashCode() : 0);
         result = 31 * result + (detentionDetails != null ? detentionDetails.hashCode() : 0);
         result = 31 * result + (details != null ? details.hashCode() : 0);
