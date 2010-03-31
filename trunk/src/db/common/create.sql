@@ -304,12 +304,15 @@ DROP TABLE IF EXISTS `unit_type`;
 CREATE TABLE  `unit_type` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
+    `short_name` bigint(20) NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
  /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
   `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_unit_type_name` (`name`),
     CONSTRAINT `FK_unit_type_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+    KEY `FK_unit_type_short_name` (`short_name`),
+    CONSTRAINT `FK_unit_type_short_name` FOREIGN KEY (`short_name`) REFERENCES `stringculture` (`id`),
     KEY `unit_type_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
