@@ -389,7 +389,6 @@ CREATE TABLE `document_cargo` (
   `updated` timestamp NOT NULL,
   `movement_type_id` bigint(20) NOT NULL,
   `vehicle_type` varchar(10) NOT NULL,
-  `vehicle_details` varchar(255) NOT NULL,
 
   `cargo_sender_name` varchar(100) NOT NULL,
   `cargo_sender_country_id` bigint(20) NOT NULL,
@@ -425,6 +424,7 @@ CREATE TABLE  `cargo` (
   `cargo_type_id` bigint(20) NOT NULL,
   `unit_type_id` bigint(20) NOT NULL,
   `cargo_producer_id` bigint(20) NOT NULL,
+  `vehicle_id` bigint(20) NOT NULL,
   `count` int(11) NULL,
   `certificate_date` date NOT NULL,
   `certificate_details` varchar(255) NOT NULL,
@@ -437,13 +437,35 @@ CREATE TABLE  `cargo` (
   KEY `FK_unit_type` (`unit_type_id`),
   KEY `FK_cargo_producer` (`cargo_producer_id`),
   KEY `FK_document_cargo` (`document_cargo_id`,`department_id`,`client_id`),
+  KEY `FK_cargo_vehicle` (`vehicle_id`),
   CONSTRAINT `FK_department_1` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`),
   CONSTRAINT `FK_client_1` FOREIGN KEY (`client_id`) REFERENCES `client` (`id`),
   CONSTRAINT `FK_cargo_type` FOREIGN KEY (`cargo_type_id`) REFERENCES `cargo_type` (`id`),
   CONSTRAINT `FK_unit_type` FOREIGN KEY (`unit_type_id`) REFERENCES `unit_type` (`id`),
   CONSTRAINT `FK_cargo_producer` FOREIGN KEY (`cargo_producer_id`) REFERENCES `cargo_producer` (`id`),
   CONSTRAINT `FK_document_cargo` FOREIGN KEY (`document_cargo_id`, `department_id`, `client_id`) REFERENCES `document_cargo` (`id`, `department_id`, `client_id`),
+  CONSTRAINT `FK_cargo_vehicle` FOREIGN KEY (`vehicle_id`) REFERENCES `vehicle` (`id`),
   KEY `cargo_updated_INDEX` (`updated`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `vehicle`;
+CREATE TABLE  `vehicle` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `client_id` bigint(20) NOT NULL,
+    `department_id` bigint(20) NOT NULL,
+    `document_cargo_id` bigint(20) NOT NULL,
+    `vehicle_type` varchar(10) NOT NULL,
+    `vehicle_details` varchar(255) NOT NULL,
+    `updated` timestamp DEFAULT NOW(),
+    `sync_status` varchar(64) DEFAULT NULL,
+    PRIMARY KEY (`id`,`department_id`,`client_id`),
+    KEY `FK_vehicle_client` (`client_id`),
+    KEY `FK_vehicle_department` (`department_id`),
+    KEY `FK_vehicle_document_cargo` (`document_cargo_id`,`department_id`,`client_id`),
+    CONSTRAINT `FK_vehicle_client` FOREIGN KEY (`client_id`) REFERENCES `client` (`id`),
+    CONSTRAINT `FK_vehicle_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`),
+    CONSTRAINT `FK_vehicle_document_cargo` FOREIGN KEY (`document_cargo_id`, `department_id`, `client_id`) REFERENCES `document_cargo` (`id`, `department_id`, `client_id`),
+    KEY `cargo_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `log`;
