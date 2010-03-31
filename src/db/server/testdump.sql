@@ -160,7 +160,7 @@ INSERT INTO `unit_type`(`id`, `name`) VALUES (1,52),(2,53),(3,54),(4,55),(5,56),
 
 INSERT INTO `cargo_type`(`id`, `name`, `ukt_zed_code`) VALUES (1,57,'2602000000'),(2,58,'2603000000'),(3,59,'2605000000');
 
-INSERT INTO `cargo_mode`(`id`, `name`) VALUES (1,71), (2,72), (3,73);
+INSERT INTO `cargo_mode`(`id`, `name`, `parent_id`) VALUES (3,73, null), (1,71,3), (2,72,3);
 
 INSERT INTO `cargo_mode_cargo_type` VALUES (1, 1, CURRENT_TIMESTAMP), (1, 2, CURRENT_TIMESTAMP);
 
