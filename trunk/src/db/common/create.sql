@@ -206,12 +206,15 @@ DROP TABLE IF EXISTS `cargo_producer`;
 CREATE TABLE  `cargo_producer` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
+    `country_id` bigint(20) NOT NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
  /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
   `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
-    KEY `FK_producer_name` (`name`),
-    CONSTRAINT `FK_producer_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+    KEY `FK_cargo_producer_name` (`name`),
+    CONSTRAINT `FK_cargo_producer_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+    KEY `FK_cargo_producer_country` (`country_id`),
+    CONSTRAINT `FK_cargo_producer_country` FOREIGN KEY (`country_id`) REFERENCES `countrybook` (`id`),
     KEY `cargo_producer_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
