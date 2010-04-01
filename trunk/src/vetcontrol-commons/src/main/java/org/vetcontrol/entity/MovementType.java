@@ -23,7 +23,7 @@ public class MovementType extends Localizable{
 
     @Transient
     @MappedProperty("name")
-    @Column(length = 20, nullable = false)
+    @Column(length = 50, nullable = false)
     @XmlTransient
     public List<StringCulture> getNames() {
         return names;
