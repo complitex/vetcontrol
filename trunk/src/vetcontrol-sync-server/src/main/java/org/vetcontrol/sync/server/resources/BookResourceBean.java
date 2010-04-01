@@ -131,28 +131,6 @@ public class BookResourceBean {
     }
 
     @POST
-    @Path("/CargoReceiver/list/{firstResult}/{maxResults}")
-    public GenericEntity<List<CargoReceiver>> getCargoReceivers(
-            SyncRequestEntity re,
-            @Context HttpServletRequest r,
-            @PathParam("maxResults") String maxResults,
-            @PathParam("firstResult") String firstResult) {
-        return new GenericEntity<List<CargoReceiver>>(getList(CargoReceiver.class, re, r, firstResult, maxResults)) {
-        };
-    }
-
-    @POST
-    @Path("/CargoSender/list/{firstResult}/{maxResults}")
-    public GenericEntity<List<CargoSender>> getCargoSenders(
-            SyncRequestEntity re,
-            @Context HttpServletRequest r,
-            @PathParam("maxResults") String maxResults,
-            @PathParam("firstResult") String firstResult) {
-        return new GenericEntity<List<CargoSender>>(getList(CargoSender.class, re, r, firstResult, maxResults)) {
-        };
-    }
-
-    @POST
     @Path("/CountryBook/list/{firstResult}/{maxResults}")
     public GenericEntity<List<CountryBook>> getCountryBooks(
             SyncRequestEntity re,

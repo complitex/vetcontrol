@@ -49,8 +49,8 @@ public class BookSyncBean extends SyncInfo {
     private boolean initial = false;
     public final static Class[] syncBooks = new Class[]{
         StringCulture.class,
-        ArrestReason.class, CargoMode.class, CargoProducer.class, CargoReceiver.class,
-        CargoSender.class, CargoType.class, CountryBook.class, CountryWithBadEpizooticSituation.class,
+        ArrestReason.class, CargoMode.class, CargoProducer.class,
+        CargoType.class, CountryBook.class, CountryWithBadEpizooticSituation.class,
         CustomsPoint.class, Department.class, Job.class, MovementType.class, PassingBorderPoint.class,
         RegisteredProducts.class, UnitType.class, CargoModeCargoType.class, CargoModeUnitType.class};
     private final Map<Class, GenericType> genericTypeMap = new HashMap<Class, GenericType>();
@@ -65,10 +65,6 @@ public class BookSyncBean extends SyncInfo {
         genericTypeMap.put(CargoModeUnitType.class, new GenericType<List<CargoModeUnitType>>() {
         });
         genericTypeMap.put(CargoProducer.class, new GenericType<List<CargoProducer>>() {
-        });
-        genericTypeMap.put(CargoReceiver.class, new GenericType<List<CargoReceiver>>() {
-        });
-        genericTypeMap.put(CargoSender.class, new GenericType<List<CargoSender>>() {
         });
         genericTypeMap.put(CargoType.class, new GenericType<List<CargoType>>() {
         });
