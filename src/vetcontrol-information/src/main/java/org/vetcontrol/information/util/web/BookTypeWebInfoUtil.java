@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.wicket.PageParameters;
 import org.vetcontrol.entity.CargoMode;
+import org.vetcontrol.entity.Department;
 import org.vetcontrol.information.web.pages.AddUpdateBookEntryPage;
 import org.vetcontrol.information.web.pages.BookPage;
 import org.vetcontrol.information.web.pages.custom.cargomode.CargoModeEdit;
@@ -27,7 +28,7 @@ public final class BookTypeWebInfoUtil {
         for (Class commonBookType : BookTypes.common()) {
             PageParameters listPageParams = new PageParameters();
             listPageParams.add(BookPage.BOOK_TYPE, commonBookType.getName());
-            
+
             BookWebInfo webInfo = new BookWebInfo(BookPage.class, AddUpdateBookEntryPage.class, listPageParams);
             info.put(commonBookType, webInfo);
         }
@@ -35,6 +36,13 @@ public final class BookTypeWebInfoUtil {
         //custom book types
         // 1.CargoMode
         info.put(CargoMode.class, new BookWebInfo(CargoModeList.class, CargoModeEdit.class, PageParameters.NULL));
+
+        // 2. Department
+        //TODO: change book edit page!
+        PageParameters listPageParams = new PageParameters();
+        listPageParams.add(BookPage.BOOK_TYPE, Department.class.getName());
+        BookWebInfo departmentWebInfo = new BookWebInfo(BookPage.class, AddUpdateBookEntryPage.class, listPageParams);
+        info.put(Department.class, departmentWebInfo);
     }
 
     private BookTypeWebInfoUtil() {

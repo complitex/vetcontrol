@@ -17,7 +17,6 @@ public final class BookTypes {
     private BookTypes() {
     }
     private static List<Class> commonBookTypes = Collections.unmodifiableList((List) Arrays.asList(
-            Department.class,
             CountryBook.class,
             RegisteredProducts.class,
             CustomsPoint.class,
@@ -29,6 +28,7 @@ public final class BookTypes {
             ArrestReason.class,
             CountryWithBadEpizooticSituation.class));
     private static List<Class> customBookTypes = Collections.unmodifiableList((List) Arrays.asList(
+            Department.class,
             CargoMode.class));
     private static List<Class> allBookTypes;
 
