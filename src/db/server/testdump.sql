@@ -152,9 +152,10 @@ INSERT INTO `stringculture`(`id`, `locale`, `value`) VALUES
 (59,'ru','хлеб белый'),(60,'en','хлеб черный'),(60,'ru','хлеб черный'),(61,'en','сыр голландский'),
 (61,'ru','сыр голландский'),(62,'en','сыр алтайский'),(62,'ru','сыр алтайский'),(63,'en','Пункт 1'),
 (63,'ru','Пункт 1'),(64,'en','Пункт 2'),(64,'ru','Пункт 2'),(65,'en','Пункт 3'),(65,'ru','Пункт 3'),
-(66,'ru','Вид1'), (67,'ru','Вид2'), (68,'ru','Вид3');
+(66,'ru','Вид1'), (67,'ru','Вид2'), (68,'ru','Вид3'),
+(69, 'ru', 'Россия'), (69, 'en', 'Russia'), (70, 'ru', 'Англия'), (70, 'en', 'England');
 
-UPDATE `generator` SET `generatorValue` = 68 WHERE `generatorName` = 'books';
+UPDATE `generator` SET `generatorValue` = 70 WHERE `generatorName` = 'books';
 
 INSERT INTO `unit_type`(`id`, `name`) VALUES (1,47),(2,48),(3,49),(4,50),(5,51),(6,57);
 
@@ -167,8 +168,8 @@ INSERT INTO `cargo_mode_cargo_type` VALUES (1, 1, CURRENT_TIMESTAMP), (1, 2, CUR
 INSERT INTO `cargo_mode_unit_type` VALUES (1, 1, CURRENT_TIMESTAMP);
 
 --INSERT INTO `passing_border_point`(`id`, `name`) VALUES (1,68),(2,69),(3,70);
-
-INSERT INTO `cargo_producer`(`id`, `name`) VALUES (1,44),(2,45),(3,46);
+INSERT INTO `countrybook`(`id`, `name`) VALUES (1, 69), (2, 70);
+INSERT INTO `cargo_producer`(`id`, `name`, `country_id`) VALUES (1,44, 1),(2,45, 1),(3,46, 2);
 
 --INSERT INTO `document_cargo`(`id`, `client_id`, `department_id`, `creator_id`, `created`, `updated`, `movement_type_id`,
 --                                `vehicle_type_id`, `vehicle_details`, `cargo_sender_id`, `cargo_receiver_id`,
