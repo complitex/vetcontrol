@@ -19,7 +19,6 @@ import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvid
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -27,18 +26,21 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.vetcontrol.entity.CargoMode;
 import org.vetcontrol.information.service.dao.CargoModeDAO;
 import org.vetcontrol.information.service.dao.CargoModeDAO.OrderBy;
 import org.vetcontrol.information.util.web.Constants;
 import org.vetcontrol.information.util.web.cargomode.CargoModeFilterBean;
+import org.vetcontrol.information.web.component.BookChoiceRenderer;
 import org.vetcontrol.information.web.component.list.EditPanel;
 import org.vetcontrol.information.web.component.list.ShowBooksModePanel;
 import org.vetcontrol.information.web.model.DisplayBookClassModel;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UIPreferences.PreferenceType;
 import org.vetcontrol.service.dao.ILocaleDAO;
+import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.util.book.entity.ShowBooksMode;
 import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
 import org.vetcontrol.web.component.paging.PagingNavigator;
@@ -109,30 +111,25 @@ public class CargoModeList extends ListTemplatePage {
             filterForm.add(new TextField<String>("name"));
             filterForm.add(new TextField<String>("uktzed"));
 
-            IChoiceRenderer<CargoMode> filterChoiceRenderer = new IChoiceRenderer<CargoMode>() {
+            IModel<List<CargoMode>> rootCargoModeModel = new LoadableDetachableModel<List<CargoMode>>() {
 
                 @Override
-                public Object getDisplayValue(CargoMode cargoMode) {
-                    return cargoMode.getDisplayName(getLocale(), systemLocale);
-                }
-
-                @Override
-                public String getIdValue(CargoMode cargoMode, int index) {
-                    return String.valueOf(cargoMode.getId());
+                protected List<CargoMode> load() {
+                    return cargoModeDAO.getRootCargoModes();
                 }
             };
-
-            DropDownChoice<CargoMode> filterParent = new DropDownChoice<CargoMode>("parent", cargoModeDAO.getRootCargoModes(), filterChoiceRenderer);
+            BookChoiceRenderer parentChoiceRenderer = new BookChoiceRenderer(BeanPropertyUtil.getPropertyByName(CargoMode.class, "parent"), systemLocale);
+            DropDownChoice<CargoMode> filterParent = new DropDownChoice<CargoMode>("parent", rootCargoModeModel, parentChoiceRenderer);
             filterForm.add(filterParent);
 
             final SortableDataProvider<CargoMode> dataProvider = new SortableDataProvider<CargoMode>() {
 
                 @Override
                 public Iterator<CargoMode> iterator(int first, int count) {
-                    CargoModeDAO.OrderBy sort = OrderBy.valueOf(getSort().getProperty());
+                    OrderBy sort = OrderBy.valueByProperty(getSort().getProperty());
                     boolean asc = getSort().isAscending();
 
-                    preferences.putPreference(PreferenceType.SORT_PROPERTY, SORT_PROPERTY_KEY, getSort().getProperty());
+                    preferences.putPreference(PreferenceType.SORT_PROPERTY, SORT_PROPERTY_KEY, sort.getPropertyName());
                     preferences.putPreference(PreferenceType.SORT_ORDER, SORT_ORDER_KEY, asc);
                     preferences.putPreference(PreferenceType.FILTER, FILTER_KEY, filterModel.getObject());
                     preferences.putPreference(PreferenceType.SHOW_BOOKS_MODE, SHOW_BOOKS_MODE_KEY, showBooksModeModel.getObject());
@@ -152,7 +149,7 @@ public class CargoModeList extends ListTemplatePage {
             };
             String sortPropertyFromPreferences = preferences.getPreference(UIPreferences.PreferenceType.SORT_PROPERTY, SORT_PROPERTY_KEY, String.class);
             Boolean sortOrderFromPreferences = preferences.getPreference(UIPreferences.PreferenceType.SORT_ORDER, SORT_ORDER_KEY, Boolean.class);
-            String sortProp = sortPropertyFromPreferences != null ? sortPropertyFromPreferences : OrderBy.ID.name();
+            String sortProp = sortPropertyFromPreferences != null ? sortPropertyFromPreferences : OrderBy.ID.getPropertyName();
             boolean asc = sortOrderFromPreferences != null ? sortOrderFromPreferences : true;
             dataProvider.setSort(sortProp, asc);
 
@@ -177,9 +174,9 @@ public class CargoModeList extends ListTemplatePage {
             filterForm.add(showBooksModePanel);
             filterForm.add(cargoModes);
 
-            addOrderByBorder(filterForm, "parentNameHeader", OrderBy.PARENT.name(), dataProvider, cargoModes);
-            addOrderByBorder(filterForm, "nameHeader", OrderBy.NAME.name(), dataProvider, cargoModes);
-            addOrderByBorder(filterForm, "uktzedHeader", OrderBy.UKTZED.name(), dataProvider, cargoModes);
+            addOrderByBorder(filterForm, "parentNameHeader", OrderBy.PARENT.getPropertyName(), dataProvider, cargoModes);
+            addOrderByBorder(filterForm, "nameHeader", OrderBy.NAME.getPropertyName(), dataProvider, cargoModes);
+            addOrderByBorder(filterForm, "uktzedHeader", OrderBy.UKTZED.getPropertyName(), dataProvider, cargoModes);
 
             add(filterForm);
             add(new PagingNavigator("navigator", cargoModes, "itemsPerPage", getPreferences(), PAGE_NUMBER_KEY));

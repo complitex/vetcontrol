@@ -13,79 +13,93 @@
     <form wicket:id="form">
         <table class="tbForm" cellpadding="0" cellspacing="0" border="0">
             <tr>
-                <td><wicket:message key="cargoMode.edit.name"/> :
+                <td>
+            <wicket:message key="cargoMode.edit.name"/> :
             </td>
             <td>
                 <div wicket:id="name"></div>
             </td>
             </tr>
-        </table>
-        <table border="0" cellspacing="0" cellpadding="0" style="width: 100%">
-            <tr>
-                <td valign="top">
-                    <div wicket:id="cargoTypesContainer">
-                        <table  border="0" cellspacing="0" cellpadding="0" class="tbColor cargo_types">
-                            <thead>
-                                <tr>
-                                    <th class="center"><wicket:message key="cargoMode.edit.cargoTypes"/></th>
-                            <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                                <tr wicket:id="cargoTypes">
-                                    <td><span wicket:id="cargoType"></span></td>
-                                    <td><a href="#" wicket:id="deleteCargoType" onfocus="$('.addCargoType').focus();">
-                                            <wicket:message key="cargoMode.edit.cargoType.delete"/>
-                                        </a></td>
-                                </tr>
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="2" align="left">
-                                        <a class="addCargoType" href="#" wicket:id="addCargoType">
-                                            <wicket:message key="cargoMode.edit.cargoType.add"/></a>
-                                    </td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                </td>
-                <td valign="top">
-                    <div wicket:id="unitTypesContainer">
-                        <table  border="0" cellspacing="0" cellpadding="0" class="tbColor unit_types">
-                            <thead>
-                                <tr>
-                                    <th colspan="2" class="center">
-                            <wicket:message key="cargoMode.edit.unitTypes"/>
-                            </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                                <tr wicket:id="unitTypes">
-                                    <td>
-                                        <span wicket:id="unitType">
-                                            <select wicket:id="unitTypeSelect">
-                                            </select>
-                                        </span>
-                                    </td>
-                                    <td><a href="#" wicket:id="deleteUnitType" onfocus="$('.addUnitType').focus();">
-                                            <wicket:message key="cargoMode.edit.unitType.delete"/>
-                                        </a></td>
-                                </tr>
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="2" align="left">
-                                        <a class="addUnitType" href="#" wicket:id="addUnitType">
-                                            <wicket:message key="cargoMode.edit.unitType.add"/></a>
-                                    </td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                </td>
+            <tr wicket:id="parentZone">
+                <td>
+            <wicket:message key="cargoMode.edit.parent"/> : 
+            </td>
+            <td>
+                <select wicket:id="parent">
+                    <option></option>
+                </select>
+            </td>
             </tr>
         </table>
+
+        <div wicket:id="cargoAndUnitTypes">
+            <table border="0" cellspacing="0" cellpadding="0" style="width: 100%">
+                <tr>
+                    <td valign="top">
+                        <div wicket:id="cargoTypesContainer">
+                            <table  border="0" cellspacing="0" cellpadding="0" class="tbColor cargo_types">
+                                <thead>
+                                    <tr>
+                                        <th class="center"><wicket:message key="cargoMode.edit.cargoTypes"/></th>
+                                <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    <tr wicket:id="cargoTypes">
+                                        <td><span wicket:id="cargoType"></span></td>
+                                        <td><a href="#" wicket:id="deleteCargoType" onfocus="$('.addCargoType').focus();">
+                                                <wicket:message key="cargoMode.edit.cargoType.delete"/>
+                                            </a></td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="2" align="left">
+                                            <a class="addCargoType" href="#" wicket:id="addCargoType">
+                                                <wicket:message key="cargoMode.edit.cargoType.add"/></a>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </td>
+                    <td valign="top">
+                        <div wicket:id="unitTypesContainer">
+                            <table  border="0" cellspacing="0" cellpadding="0" class="tbColor unit_types">
+                                <thead>
+                                    <tr>
+                                        <th colspan="2" class="center">
+                                <wicket:message key="cargoMode.edit.unitTypes"/>
+                                </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    <tr wicket:id="unitTypes">
+                                        <td>
+                                            <span wicket:id="unitType">
+                                                <select wicket:id="unitTypeSelect">
+                                                </select>
+                                            </span>
+                                        </td>
+                                        <td><a href="#" wicket:id="deleteUnitType" onfocus="$('.addUnitType').focus();">
+                                                <wicket:message key="cargoMode.edit.unitType.delete"/>
+                                            </a></td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="2" align="left">
+                                            <a class="addUnitType" href="#" wicket:id="addUnitType">
+                                                <wicket:message key="cargoMode.edit.unitType.add"/></a>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
 
         <div wicket:id="spacer"></div>
         <input class="btnMiddle" type="button" wicket:message="value:cargoMode.edit.save" wicket:id="save"/>

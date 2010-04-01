@@ -46,6 +46,7 @@ import org.vetcontrol.information.service.dao.CargoModeDAO;
 import org.vetcontrol.information.service.dao.IBookDAO;
 import org.vetcontrol.information.util.web.CanEditUtil;
 import org.vetcontrol.information.util.web.Constants;
+import org.vetcontrol.information.web.component.BookChoiceRenderer;
 import org.vetcontrol.information.web.component.edit.AbstractAutoCompleteTextField;
 import org.vetcontrol.information.web.component.edit.LocalizableTextPanel;
 import org.vetcontrol.information.web.component.edit.SaveUpdateConfirmationDialog;
@@ -235,9 +236,7 @@ public final class CargoModeEdit extends FormTemplatePage {
                                 }
                             }
                         }
-                        return cargoModeDAO.getAvailableCargoTypes(searchTextInput, Constants.AUTO_COMPLETE_TEXT_FIELD_MAX_ITEMS,
-                                cargoMode.getId(),
-                                exclude);
+                        return cargoModeDAO.getAvailableCargoTypes(searchTextInput, Constants.AUTO_COMPLETE_TEXT_FIELD_MAX_ITEMS, exclude);
                     } else {
                         return Collections.emptyList();
                     }
@@ -327,10 +326,49 @@ public final class CargoModeEdit extends FormTemplatePage {
                 BeanPropertyUtil.getPropertyByName(CargoMode.class, "names"),
                 systemLocale, CanEditUtil.canEdit(cargoModeModel.getObject())));
 
+
+        WebMarkupContainer parentZone = new WebMarkupContainer("parentZone");
+        parentZone.setVisible(BeanPropertyUtil.isNewBook(cargoModeModel.getObject()) || !isRootCargoMode(cargoModeModel.getObject()));
+        form.add(parentZone);
+
+        IModel<List<CargoMode>> rootCargoModeModel = new LoadableDetachableModel<List<CargoMode>>() {
+
+            @Override
+            protected List<CargoMode> load() {
+                return cargoModeDAO.getRootCargoModes();
+            }
+        };
+        BookChoiceRenderer parentChoiceRenderer = new BookChoiceRenderer(BeanPropertyUtil.getPropertyByName(CargoMode.class, "parent"), systemLocale);
+        final DropDownChoice parentChoice = new DropDownChoice("parent",
+                new PropertyModel(cargoModeModel, "parent"),
+                rootCargoModeModel,
+                parentChoiceRenderer);
+        parentChoice.setEnabled(CanEditUtil.canEdit(cargoModeModel.getObject()));
+        parentZone.add(parentChoice);
+
+        //cargo and unit types container
+        final WebMarkupContainer cargoAndUnitTypes = new WebMarkupContainer("cargoAndUnitTypes");
+        cargoAndUnitTypes.setOutputMarkupPlaceholderTag(true);
+        cargoAndUnitTypes.setVisible(!isRootCargoMode(cargoModeModel.getObject()));
+        form.add(cargoAndUnitTypes);
+
+        parentChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                if (isRootCargoMode(cargoModeModel.getObject())) {
+                    parentChoice.setRequired(true);
+                    cargoAndUnitTypes.setVisible(true);
+                }
+                target.addComponent(parentChoice);
+                target.addComponent(cargoAndUnitTypes);
+            }
+        });
+
         //list of associated cargo types.
         final WebMarkupContainer cargoTypesContainer = new WebMarkupContainer("cargoTypesContainer");
         cargoTypesContainer.setOutputMarkupId(true);
-        form.add(cargoTypesContainer);
+        cargoAndUnitTypes.add(cargoTypesContainer);
 
         final AjaxLink addCargoType = new AjaxLink("addCargoType") {
 
@@ -365,7 +403,7 @@ public final class CargoModeEdit extends FormTemplatePage {
         //list of associated unit types.
         final WebMarkupContainer unitTypesContainer = new WebMarkupContainer("unitTypesContainer");
         unitTypesContainer.setOutputMarkupId(true);
-        form.add(unitTypesContainer);
+        cargoAndUnitTypes.add(unitTypesContainer);
 
         final AjaxLink addUnitType = new AjaxLink("addUnitType") {
 
@@ -550,6 +588,10 @@ public final class CargoModeEdit extends FormTemplatePage {
             }
         });
         return toolbarButtons;
+    }
+
+    private static boolean isRootCargoMode(CargoMode cargoMode) {
+        return cargoMode.getParent() == null;
     }
 }
 
