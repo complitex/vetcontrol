@@ -9,13 +9,13 @@ import org.apache.wicket.PageParameters;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.vetcontrol.information.util.web.ResourceUtil;
 import org.vetcontrol.information.web.model.DisplayBookClassModel;
-import org.vetcontrol.information.web.support.BookTypes;
+import org.vetcontrol.util.book.BookTypes;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.ITemplateLink;
 import org.vetcontrol.web.template.ITemplateMenu;
 
 import java.util.*;
-import org.vetcontrol.web.template.TemplatePage;
+import org.vetcontrol.information.util.web.BookTypeWebInfoUtil;
 
 /**
  *
@@ -32,7 +32,7 @@ public class BookMenu implements ITemplateMenu {
     @Override
     public List<ITemplateLink> getTemplateLinks(final Locale locale) {
         List<ITemplateLink> links = new ArrayList<ITemplateLink>();
-        for (final Class bookType : BookTypes.getList()) {
+        for (final Class bookType : BookTypes.all()) {
             links.add(new ITemplateLink() {
 
                 @Override
@@ -42,14 +42,12 @@ public class BookMenu implements ITemplateMenu {
 
                 @Override
                 public Class<? extends Page> getPage() {
-                    return BookPage.class;
+                    return BookTypeWebInfoUtil.getInfo(bookType).getListPage();
                 }
 
                 @Override
                 public PageParameters getParameters() {
-                    PageParameters params = new PageParameters();
-                    params.add(BookPage.BOOK_TYPE, bookType.getName());
-                    return params;
+                    return BookTypeWebInfoUtil.getInfo(bookType).getListPageParameters();
                 }
 
                 @Override
@@ -58,33 +56,7 @@ public class BookMenu implements ITemplateMenu {
                 }
             });
         }
-        for(Map.Entry<Class, Class<? extends TemplatePage>> entry : BookTypes.getCustomBooks().entrySet()){
-            final Class bookType = entry.getKey();
-            final Class<? extends TemplatePage> bookListPage = entry.getValue();
 
-            links.add(new ITemplateLink() {
-
-                @Override
-                public String getLabel(Locale locale) {
-                    return new DisplayBookClassModel(bookType).getObject();
-                }
-
-                @Override
-                public Class<? extends Page> getPage() {
-                    return bookListPage;
-                }
-
-                @Override
-                public PageParameters getParameters() {
-                    return PageParameters.NULL;
-                }
-
-                @Override
-                public String getTagId() {
-                    return bookType.getSimpleName();
-                }
-            });
-        }
         Collections.sort(links, new Comparator<ITemplateLink>() {
 
             @Override
