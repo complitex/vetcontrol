@@ -31,6 +31,7 @@ import org.apache.wicket.model.Model;
 import org.vetcontrol.entity.CargoMode;
 import org.vetcontrol.information.service.dao.CargoModeDAO;
 import org.vetcontrol.information.service.dao.CargoModeDAO.OrderBy;
+import org.vetcontrol.information.util.web.BookTypeWebInfoUtil;
 import org.vetcontrol.information.util.web.Constants;
 import org.vetcontrol.information.util.web.cargomode.CargoModeFilterBean;
 import org.vetcontrol.information.web.component.BookChoiceRenderer;
@@ -235,7 +236,7 @@ public class CargoModeList extends ListTemplatePage {
 
     private void goToEditPage(Serializable entry) {
         getSession().setMetaData(SELECTED_BOOK_ENTRY, entry);
-        setResponsePage(CargoModeEdit.class);
+        setResponsePage(BookTypeWebInfoUtil.getInfo(CargoMode.class).getEditPage());
     }
 
     @Override

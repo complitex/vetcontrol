@@ -30,6 +30,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vetcontrol.information.util.web.BookTypeWebInfoUtil;
 import org.vetcontrol.util.book.entity.ShowBooksMode;
 import org.vetcontrol.information.web.component.BookPropertyColumn;
 import org.vetcontrol.information.web.component.list.IBookDataProvider;
@@ -205,7 +206,7 @@ public class BookPage extends ListTemplatePage {
 
     private void goToEditPage(Serializable entry) {
         getSession().setMetaData(SELECTED_BOOK_ENTRY, entry);
-        setResponsePage(AddUpdateBookEntryPage.class);
+        setResponsePage(BookTypeWebInfoUtil.getInfo(entry.getClass()).getEditPage());
     }
 
     private Class getBookType() throws ClassNotFoundException {
