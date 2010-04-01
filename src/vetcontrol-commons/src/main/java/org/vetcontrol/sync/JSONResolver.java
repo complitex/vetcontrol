@@ -25,8 +25,8 @@ public class JSONResolver {
 
     private final static Class[] cTypes = {
             Client.class, Department.class, User.class, UserGroup.class, StringCulture.class, StringCultureId.class,
-            ArrestReason.class, CargoMode.class, CargoProducer.class, CargoReceiver.class, CargoSender.class,
-            CargoType.class, CountryBook.class, CountryWithBadEpizooticSituation.class, CustomsPoint.class,
+            ArrestReason.class, CargoMode.class, CargoProducer.class, CargoType.class, CountryBook.class,
+            CountryWithBadEpizooticSituation.class, CustomsPoint.class,
             Department.class, Job.class, MovementType.class, PassingBorderPoint.class,
             RegisteredProducts.class, UnitType.class, Count.class,
             DocumentCargo.class, Cargo.class, SyncCargo.class, SyncDocumentCargo.class, SyncRequestEntity.class,

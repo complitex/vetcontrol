@@ -25,8 +25,6 @@ public class ServerPopulator extends AbstractPopulator {
         RegisteredProducts.class,
         CountryBook.class,
         VehicleType.class,
-        CargoReceiver.class,
-        CargoSender.class,
         CustomsPoint.class,
         MovementType.class,
         CargoProducer.class,

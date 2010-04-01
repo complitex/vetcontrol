@@ -6,7 +6,7 @@
 package org.vetcontrol.entity;
 
 /**
- *
+ * Marker interface. Represents local book entity.
  * @author Artem
  */
 public interface ILocalBook extends IBook {
