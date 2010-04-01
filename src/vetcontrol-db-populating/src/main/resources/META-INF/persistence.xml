@@ -14,16 +14,9 @@
         <class>org.vetcontrol.entity.Department</class>
         <class>org.vetcontrol.entity.UserGroup</class>
         <class>org.vetcontrol.entity.Job</class>
-        <class>org.vetcontrol.entity.VehicleType</class>
-        <class>org.vetcontrol.entity.CargoReceiver</class>
-        <class>org.vetcontrol.entity.CargoSender</class>
         <class>org.vetcontrol.entity.CustomsPoint</class>
         <class>org.vetcontrol.entity.MovementType</class>
-        <class>org.vetcontrol.entity.CargoProducer</class>
-        <class>org.vetcontrol.entity.Prohibition</class>
-        <class>org.vetcontrol.entity.Tariff</class>
         <class>org.vetcontrol.entity.ArrestReason</class>
-        <class>org.vetcontrol.entity.AddressBook</class>
         <class>org.vetcontrol.entity.PassingBorderPoint</class>
         <class>org.vetcontrol.entity.CargoMode</class>
         <class>org.vetcontrol.entity.CargoModeCargoType</class>
@@ -57,16 +50,11 @@
         <class>org.vetcontrol.entity.Department</class>
         <class>org.vetcontrol.entity.UserGroup</class>
         <class>org.vetcontrol.entity.Job</class>
-        <class>org.vetcontrol.entity.VehicleType</class>
         <class>org.vetcontrol.entity.CargoReceiver</class>
         <class>org.vetcontrol.entity.CargoSender</class>
         <class>org.vetcontrol.entity.CustomsPoint</class>
         <class>org.vetcontrol.entity.MovementType</class>
-        <class>org.vetcontrol.entity.CargoProducer</class>
-        <class>org.vetcontrol.entity.Prohibition</class>
-        <class>org.vetcontrol.entity.Tariff</class>
         <class>org.vetcontrol.entity.ArrestReason</class>
-        <class>org.vetcontrol.entity.AddressBook</class>
         <class>org.vetcontrol.entity.PassingBorderPoint</class>
         <class>org.vetcontrol.entity.CargoMode</class>
         <class>org.vetcontrol.entity.CargoModeCargoType</class>
