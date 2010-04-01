@@ -45,7 +45,25 @@ public class CargoModeDAO {
 
     public static enum OrderBy {
 
-        ID, NAME, UKTZED, PARENT
+        ID("id"), NAME("name"), UKTZED("uktzed"), PARENT("parent");
+        private String propertyName;
+
+        private OrderBy(String propertyName) {
+            this.propertyName = propertyName;
+        }
+
+        public String getPropertyName() {
+            return propertyName;
+        }
+
+        public static OrderBy valueByProperty(String propertyName) {
+            for (OrderBy orderBy : values()) {
+                if (orderBy.getPropertyName().equals(propertyName)) {
+                    return orderBy;
+                }
+            }
+            return null;
+        }
     }
     @PersistenceContext
     private EntityManager entityManager;
@@ -74,20 +92,29 @@ public class CargoModeDAO {
     }
 
     private StringBuilder select(boolean forSize, Map<String, Object> params, OrderBy orderBy, Locale currentLocale) {
-        StringBuilder queryString = new StringBuilder("SELECT ");
+        StringBuilder queryBuilder = new StringBuilder("SELECT ");
         if (forSize) {
-            queryString.append(" COUNT(DISTINCT cm) ");
+            queryBuilder.append(" COUNT(DISTINCT cm) ");
         } else {
-            queryString.append(" DISTINCT(cm), ");
-            if (orderBy != null && (orderBy == OrderBy.NAME || orderBy == OrderBy.PARENT)) {
-                queryString.append("(SELECT sc.value FROM StringCulture sc WHERE cm.name = sc.id.id AND sc.id.locale = :locale) ");
+            queryBuilder.append(" DISTINCT(cm), ");
+            String property = null;
+            switch (orderBy) {
+                case NAME:
+                case PARENT:
+                    property = orderBy.getPropertyName();
+                    break;
+            }
+            if (property != null) {
+                queryBuilder.append("(SELECT sc.value FROM StringCulture sc WHERE cm.").
+                        append(property).
+                        append(" = sc.id.id AND sc.id  .locale = :locale) ");
                 params.put("locale", currentLocale.getLanguage());
             } else {
-                queryString.append("'1' ");
+                queryBuilder.append("'1' ");
             }
         }
-        queryString.append(" FROM CargoMode cm LEFT JOIN cm.cargoModeCargoTypes cmct LEFT JOIN cmct.cargoType ct ");
-        return queryString;
+        queryBuilder.append(" FROM CargoMode cm LEFT JOIN cm.cargoModeCargoTypes cmct LEFT JOIN cmct.cargoType ct ");
+        return queryBuilder;
     }
 
     private StringBuilder where(CargoModeFilterBean filter, Map<String, Object> params, ShowBooksMode showBooksMode) {
@@ -245,16 +272,9 @@ public class CargoModeDAO {
         return deleted;
     }
 
-    public List<CargoType> getAvailableCargoTypes(String search, int count, Long cargoModeId, List<CargoType> exclude) {
+    public List<CargoType> getAvailableCargoTypes(String search, int count, List<CargoType> exclude) {
         StringBuilder query = new StringBuilder("SELECT DISTINCT ct FROM CargoType ct "
-                + "WHERE ct." + BeanPropertyUtil.getDisabledPropertyName() + " = FALSE AND ct.code LIKE :search "
-                + "AND ct.id NOT IN (SELECT cmct.id.cargoTypeId FROM CargoModeCargoType cmct WHERE "
-                + " FALSE = (SELECT cm." + BeanPropertyUtil.getDisabledPropertyName() + " FROM CargoMode cm WHERE "
-                + "cm.id = cmct.id.cargoModeId) ");
-        if (cargoModeId != null) {
-            query.append(" AND cmct.id.cargoModeId != :cargoModeId");
-        }
-        query.append(")");
+                + "WHERE ct." + BeanPropertyUtil.getDisabledPropertyName() + " = FALSE AND ct.code LIKE :search ");
 
         if (exclude != null && !exclude.isEmpty()) {
             query.append(" AND ct.id NOT IN (");
@@ -272,9 +292,6 @@ public class CargoModeDAO {
         TypedQuery<CargoType> typedQuery = entityManager.createQuery(query.toString(), CargoType.class).
                 setParameter("search", "%" + search + "%").
                 setMaxResults(count);
-        if (cargoModeId != null) {
-            typedQuery.setParameter("cargoModeId", cargoModeId);
-        }
         return typedQuery.getResultList();
     }
 
@@ -300,7 +317,9 @@ public class CargoModeDAO {
     }
 
     public List<CargoMode> getRootCargoModes() {
-        String queryString = "SELECT cm FROM CargoMode cm WHERE cm.parent IS NULL";
-        return entityManager.createQuery(queryString, CargoMode.class).getResultList();
+        String queryString = "SELECT cm FROM CargoMode cm WHERE cm.parent IS NULL ";
+        List<CargoMode> rootCargoModes = entityManager.createQuery(queryString, CargoMode.class).getResultList();
+        bookDAO.addLocalizationSupport(rootCargoModes);
+        return rootCargoModes;
     }
 }
