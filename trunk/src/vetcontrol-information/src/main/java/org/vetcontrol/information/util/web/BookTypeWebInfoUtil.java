@@ -24,7 +24,7 @@ public final class BookTypeWebInfoUtil {
 
     static {
         info = new HashMap<Class<?>, BookWebInfo>();
-        for (Class commonBookType : BookTypes.all()) {
+        for (Class commonBookType : BookTypes.common()) {
             PageParameters listPageParams = new PageParameters();
             listPageParams.add(BookPage.BOOK_TYPE, commonBookType.getName());
             
