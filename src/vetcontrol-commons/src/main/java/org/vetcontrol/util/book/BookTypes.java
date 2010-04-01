@@ -16,7 +16,7 @@ public final class BookTypes {
 
     private BookTypes() {
     }
-    private static List<Class> allBookTypes = Collections.unmodifiableList((List) Arrays.asList(
+    private static List<Class> commonBookTypes = Collections.unmodifiableList((List) Arrays.asList(
             Department.class,
             CountryBook.class,
             RegisteredProducts.class,
@@ -27,11 +27,27 @@ public final class BookTypes {
             CargoType.class,
             Job.class,
             ArrestReason.class,
-            CountryWithBadEpizooticSituation.class,
+            CountryWithBadEpizooticSituation.class));
+    private static List<Class> customBookTypes = Collections.unmodifiableList((List) Arrays.asList(
             CargoMode.class));
+    private static List<Class> allBookTypes;
 
-    @SuppressWarnings({"unchecked"})
+    static {
+        List<Class> all = new ArrayList<Class>();
+        all.addAll(commonBookTypes);
+        all.addAll(customBookTypes);
+        allBookTypes = Collections.unmodifiableList(all);
+    }
+
     public static List<Class> all() {
         return allBookTypes;
+    }
+
+    public static List<Class> common() {
+        return commonBookTypes;
+    }
+
+    public static List<Class> custom() {
+        return customBookTypes;
     }
 }
