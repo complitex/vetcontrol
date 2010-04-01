@@ -34,6 +34,7 @@ public class RegistrationBean {
 
         client.setSyncStatus(Synchronized.SyncStatus.SYNCHRONIZED);
         client.setUpdated(DateUtil.getCurrentDate());
+        client.setVersion("1.0.0");
 
         client.getInsertQuery(em).executeUpdate();
 
