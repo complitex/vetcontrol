@@ -1,6 +1,6 @@
 package org.vetcontrol.sync.server.web.pages;
 
-import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -32,10 +32,8 @@ import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.FormTemplatePage;
 
 import javax.ejb.EJB;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -110,7 +108,7 @@ public class UpdateEdit extends FormTemplatePage{
                     Update update = model.getObject();
 
                     //check version unique
-                    if (!updateBean.isUnique(update.getVersion())){
+                    if (id == null && !updateBean.isUnique(update.getVersion())){
                         
                         getSession().error(getString("sync.server.update.edit.error.not_unique"));
 
@@ -228,8 +226,8 @@ public class UpdateEdit extends FormTemplatePage{
                     file.createNewFile();
                     upload.writeTo(file);
 
-                    //Контрольная сумма
-                    item.setCheckSum(DigestUtils.md5Hex(new FileInputStream(file)));
+                    //Контрольная сумма                     
+                    item.setCheckSum(new String(Hex.encodeHex(md5(new FileInputStream(file)))));
 
                     model.getObject().getItems().add(item);
 
@@ -335,5 +333,25 @@ public class UpdateEdit extends FormTemplatePage{
 
         fis.close();
         fos.close();
+    }
+
+    private byte[] md5(InputStream data){
+        int STREAM_BUFFER_LENGTH = 1024;
+
+        try{
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+
+            byte[] buffer = new byte[STREAM_BUFFER_LENGTH];
+            int read = data.read(buffer, 0, STREAM_BUFFER_LENGTH);
+
+            while (read > -1) {
+                digest.update(buffer, 0, read);
+                read = data.read(buffer, 0, STREAM_BUFFER_LENGTH);
+            }
+
+            return digest.digest();
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }

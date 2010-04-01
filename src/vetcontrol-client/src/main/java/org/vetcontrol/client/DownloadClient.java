@@ -1,4 +1,4 @@
-package org.vetcontrol.sync.client.download;
+package org.vetcontrol.client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +14,9 @@ import java.util.Observable;
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 29.03.2010 11:09:30
  *
- * copy paste from http://www.java-tips.org/java-se-tips/javax.swing/how-to-create-a-download-manager-in-java.html
  */
-public class ResumeDownloadClient extends Observable implements Runnable{
-    private static final Logger log = LoggerFactory.getLogger(ResumeDownloadClient.class);
+public class DownloadClient extends Observable{
+    private static final Logger log = LoggerFactory.getLogger(DownloadClient.class);
     
     private static final int MAX_BUFFER_SIZE = 8*1024;
 
@@ -30,7 +29,7 @@ public class ResumeDownloadClient extends Observable implements Runnable{
     private int totalSize = -1;
     private int downloadedSize = 0;
 
-    public ResumeDownloadClient(URL downloadFrom, Map<String, String> postParams, File saveTo) {
+    public DownloadClient(URL downloadFrom, Map<String, String> postParams, File saveTo) {
         this.downloadFrom = downloadFrom;
         this.postParams = postParams;
         this.saveTo = saveTo;
@@ -43,11 +42,10 @@ public class ResumeDownloadClient extends Observable implements Runnable{
 
         status = STATUS.DOWNLOADING;
 
-        new Thread(this).start();
+        process();
     }
 
-    @Override
-    public void run() {
+    private void process() {
         RandomAccessFile file = null;
         InputStream inputStream = null;
         OutputStreamWriter outputStreamWriter = null;
@@ -105,6 +103,8 @@ public class ResumeDownloadClient extends Observable implements Runnable{
 
             inputStream = connection.getInputStream();
             while (status == STATUS.DOWNLOADING) {
+                Thread.sleep(100);
+
                 //Size buffer according to how much of the file is left to download.
                 byte buffer[];
                 if (totalSize - downloadedSize > MAX_BUFFER_SIZE) {

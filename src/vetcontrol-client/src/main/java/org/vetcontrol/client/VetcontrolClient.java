@@ -19,42 +19,46 @@ import java.net.URISyntaxException;
 import java.sql.*;
 import java.util.Scanner;
 
+import static org.vetcontrol.client.Properties.*;
+
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 11.03.2010 13:23:45
  */
-public class VetcontrolClient {
+public class VetcontrolClient{
     private static final Logger log = LoggerFactory.getLogger(VetcontrolClient.class);
-
-    private static final String LOG_DIRECTORY = "logs";
-
-    private final static int SERVER_PORT = 8888;
-    private final static int DB_PORT = 13306;
-
-    private final static String DB_USER = "vc_client_user";
-    private final static String DB_PASSWORD = "vc_client_pass";
-
-    private final static String DB_BASEDIR = "bin\\mysql";
-    private final static String DB_DATADIR = "data";
-
-    private final static String CLIENT_URL = "http://localhost:" + SERVER_PORT + "/client";
-
-    private final static String INIT_DB_URL = "jdbc:mysql:mxj://localhost:" + DB_PORT + "/vetcontrol_client?" +
-            "server.basedir=" + DB_BASEDIR +
-            "&server.datadir=" + DB_DATADIR +
-            "&createDatabaseIfNotExist=true" +
-            "&server.initialize-user=true" +
-            "&server.default-character-set=utf8" +
-            "&server.innodb_additional_mem_pool_size=4M" +
-            "&server.innodb_flush_log_at_trx_commit=1" +
-            "&server.innodb_lock_wait_timeout=180" +
-            "&server.innodb_log_buffer_size=2M" +
-            "&server.innodb_buffer_pool_size=92M" +
-            "&server.innodb_thread_concurrency=8";
-
-    private final static String JDBC_POOL_URL = "jdbc\\:mysql\\:mxj\\://localhost\\:" + DB_PORT + "/vetcontrol_client";
-
     private static Server server;
+
+    private final static File clientDeployDir = new File("client").getAbsoluteFile();
+    private final static File clientUpdateDir = new File("update").getAbsoluteFile();
+
+    private static IServer iServer = new IServer(){
+
+        @Override
+        public File getClientDeployDir() {
+            return clientDeployDir;
+        }
+
+        @Override
+        public File getClientUpdateDir() {
+            if (!clientUpdateDir.exists() && clientUpdateDir.mkdirs()){
+                //make dir
+            }
+            return clientUpdateDir;
+        }
+
+        @Override
+        public void deployClient() {
+            VetcontrolClient.deployClient();
+        }
+
+        @Override
+        public void undeployClient() {
+            VetcontrolClient.undeployClient();
+        }
+    };
+
+    private static UpdateClient updateClient;
 
     public static void main(String... args) {
         showSplash();
@@ -64,10 +68,10 @@ public class VetcontrolClient {
         messageSplash("Запуск базы данных...");
         initDB();
 
-        messageSplash("Запуск сервера...");
+        messageSplash("Запуск клиента...");
         initServer();
 
-        messageSplash("Запуск клиента...");
+        messageSplash("Запуск приложения...");
         deployClient();
 
         createTray();
@@ -75,6 +79,8 @@ public class VetcontrolClient {
         hideSplash();
 
         openBrowser();
+
+        updateClient = new UpdateClient(iServer);
     }
 
     private static void initDB(){
@@ -196,11 +202,14 @@ public class VetcontrolClient {
     private static void deployClient(){
         final EmbeddedDeployer deployer = server.getDeployer();
         DeployCommandParameters deployParams = new DeployCommandParameters();
-        File archive = new File("client").getAbsoluteFile();
 
-        String deployed = deployer.deploy(archive, deployParams);
+        String deployed = deployer.deploy(clientDeployDir, deployParams);
 
         log.info("Deployed: " + deployed);
+    }
+
+    private static void undeployClient(){
+        server.getDeployer().undeployAll();
     }
 
     private static void createTray(){
@@ -211,6 +220,13 @@ public class VetcontrolClient {
         ActionListener openListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 openBrowser();
+            }
+        };
+
+        //Update menu item action
+        ActionListener updateListener = new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateClient.show();
             }
         };
 
@@ -235,6 +251,10 @@ public class VetcontrolClient {
         MenuItem open = new MenuItem("Открыть");
         open.addActionListener(openListener);
         popup.add(open);
+
+        MenuItem update = new MenuItem("Обновление");
+        update.addActionListener(updateListener);
+        popup.add(update);
 
         popup.addSeparator();
 
@@ -291,7 +311,6 @@ public class VetcontrolClient {
         }
     }
 
-
     private static JWindow splash = new JWindow();
     private static JProgressBar progressBar = new JProgressBar();
 
@@ -300,6 +319,7 @@ public class VetcontrolClient {
         JLabel label = new JLabel(new ImageIcon(image));
         splash.add(label, BorderLayout.CENTER);
 
+        progressBar.setBorder(BorderFactory.createEmptyBorder(16, 10, 16, 10));
         progressBar.setIndeterminate(true);
         progressBar.setStringPainted(true);
         splash.add(progressBar, BorderLayout.SOUTH);
