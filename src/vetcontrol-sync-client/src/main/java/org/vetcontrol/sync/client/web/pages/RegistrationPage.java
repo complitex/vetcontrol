@@ -1,6 +1,7 @@
 package org.vetcontrol.sync.client.web.pages;
 
 import com.sun.jersey.api.client.UniformInterfaceException;
+import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -8,6 +9,7 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -19,15 +21,13 @@ import org.vetcontrol.entity.Department;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.sync.client.service.RegistrationBean;
+import org.vetcontrol.web.component.Spacer;
+import org.vetcontrol.web.pages.login.Login;
+import org.vetcontrol.web.resource.WebCommonResourceInitializer;
 
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import java.util.Locale;
-import org.apache.wicket.markup.html.CSSPackageResource;
-import org.apache.wicket.markup.html.link.BookmarkablePageLink;
-import org.vetcontrol.web.component.Spacer;
-import org.vetcontrol.web.pages.login.Login;
-import org.vetcontrol.web.resource.WebCommonResourceInitializer;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -52,7 +52,9 @@ public class RegistrationPage extends WebPage {
 
         add(new Label("title", getString("sync.client.registration.title")));
 
-        add(new FeedbackPanel("messages"));
+        FeedbackPanel feedbackPanel = new FeedbackPanel("messages");
+        feedbackPanel.setEscapeModelStrings(false);
+        add(feedbackPanel);
 
         IModel<Client> clientModel = new Model<Client>(new Client());
 
