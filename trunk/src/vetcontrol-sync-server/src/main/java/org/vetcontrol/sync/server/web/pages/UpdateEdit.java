@@ -88,6 +88,8 @@ public class UpdateEdit extends FormTemplatePage{
                     "Обновление клиента не найдено. ID: " + id);
         }
 
+        final String updateVersion = updateObject.getVersion();
+
         final IModel<Update> model = new Model<Update>(updateObject);
 
         final List<UpdateItem> removeItems = new ArrayList<UpdateItem>();
@@ -120,6 +122,24 @@ public class UpdateEdit extends FormTemplatePage{
 
                         File destination_dir = new File(uploadFolder, update.getVersion());
                         destination_dir.mkdirs();
+
+                        //move if version changed
+                        if (updateVersion != null && !updateVersion.equals(update.getVersion())){
+                            File oldDir = new File(uploadFolder, updateVersion);
+
+                            for (File f : oldDir.listFiles()){
+                                if (f.isFile()){
+                                    File file = new File(destination_dir, f.getName());
+                                    file.createNewFile();
+
+                                    copyFile(f, file);
+
+                                    f.delete();
+                                }
+                            }
+
+                            oldDir.delete();
+                        }
 
                         //if created == null, file is new
                         for (UpdateItem it : update.getItems()){                            

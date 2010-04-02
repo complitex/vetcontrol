@@ -103,7 +103,8 @@ public class DownloadClient extends Observable{
 
             inputStream = connection.getInputStream();
             while (status == STATUS.DOWNLOADING) {
-                Thread.sleep(100);
+                //TODO test process bar
+                Thread.sleep(50);
 
                 //Size buffer according to how much of the file is left to download.
                 byte buffer[];

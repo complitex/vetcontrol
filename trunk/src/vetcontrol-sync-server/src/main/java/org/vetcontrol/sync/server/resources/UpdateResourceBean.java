@@ -47,7 +47,8 @@ public class UpdateResourceBean {
     public List<Update> getLastClientUpdate(SyncRequestEntity re, @Context HttpServletRequest r){
         Client client = getClient(re, r);
 
-        List<Update> list = em.createQuery("select u from Update u join fetch u.items where u.version > :version and u.created > :created", Update.class)
+        List<Update> list = em.createQuery("select u from Update u join fetch u.items " +
+                "where u.version > :version and u.created > :created and u.active = true", Update.class)
                 .setParameter("version", re.getVersion())
                 .setParameter("created", re.getUpdated())
                 .getResultList();
@@ -61,12 +62,6 @@ public class UpdateResourceBean {
         }
 
         return list;
-    }
-
-    @PUT
-    @Path("/commit")
-    public void commit(SyncRequestEntity re, @Context HttpServletRequest r){
-        //TODO: log, update client version
     }
 
     private Client getClient(SyncRequestEntity re, HttpServletRequest r) {

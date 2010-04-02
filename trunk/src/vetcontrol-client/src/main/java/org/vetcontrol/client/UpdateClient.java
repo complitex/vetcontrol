@@ -114,11 +114,14 @@ public class UpdateClient {
      */
     public void show(){
         currentClientVersion = null;
-        currentVersionLabel.setText("Текущая версия клиента: " + getCurrentClientVersion());
+        currentVersionLabel.setText("Текущая версия клиента: "
+                + (getCurrentClientVersion() != null ? getCurrentClientVersion() : "Не зарегистрирован"));
 
         lastClientVersion = null;
         lastVersionLable.setText("Последняя доступная версия: "
                 + (getLastClientVersion() != null ? getLastClientVersion() : "Нет новых обновлений"));
+
+        updateButton.setVisible(hasUpdate());
 
         frame.pack();
         frame.setLocationRelativeTo(null); //center a frame onscreen
@@ -241,9 +244,12 @@ public class UpdateClient {
                 return ps.executeUpdate();
             }else{
                 ResultSet rs = ps.executeQuery();
-                rs.next();
 
-                return rs.getString(1);
+                if (rs.next()){
+                    return rs.getString(1);
+                }
+
+
             }
         } catch (SQLException e) {
             log.error("Ошибка соединения с базой данных", e);
@@ -281,11 +287,13 @@ public class UpdateClient {
      * Внутренний класс для использлвания дополнительной информации о файле обновления
      */
     private class UpdateItem{
+        String version;
         String name;
         String packaging;
         String checkSum;
 
-        private UpdateItem(String name, String packaging, String checkSum) {
+        private UpdateItem(String version, String name, String packaging, String checkSum) {
+            this.version = version;
             this.name = name;
             this.packaging = packaging;
             this.checkSum = checkSum;
@@ -293,15 +301,18 @@ public class UpdateClient {
     }
 
     /**
-     * Список файлов требуемых для обновления
-     * @param version Версия обновления клиента
+     * Список файлов требуемых для обновления, сортированный по версии и имени файла
+     * @param fromVersion Текущая версия
+     * @param toVersion Новая версия
      * @return Список файлов требуемых для обновления
      */
-    private List<UpdateItem> getDownloadFileNames(String version){
-        String query = "select client_update_item.name, client_update_item.packaging, client_update_item.check_sum " +
+    private List<UpdateItem> getDownloadFileNames(String fromVersion, String toVersion){
+        String query = "select `version`, `name`, `packaging`, `check_sum` " +
                 "from client_update_item left join client_update " +
                 "on (client_update_item.update_id = client_update.id) " +
-                "where client_update.version = ?";
+                "where `version` = ? " +
+                "or ((`packaging` = 'SQL' or `packaging` = 'SQL_ZIP') and `version` > ? and `version` < ?) " +
+                "order by `version`, `name` asc";
 
         Connection connection = null;
         PreparedStatement ps = null;
@@ -309,16 +320,17 @@ public class UpdateClient {
             connection = getConnection();
 
             ps = connection.prepareStatement(query);
-            if (version != null){
-                ps.setString(1, version);
-            }
+
+            ps.setString(1, toVersion);
+            ps.setString(2, fromVersion);
+            ps.setString(3, toVersion);
 
             ResultSet rs = ps.executeQuery();
 
             java.util.List<UpdateItem> list = new ArrayList<UpdateItem>();
 
             while(rs.next()){
-                list.add(new UpdateItem(rs.getString(1), rs.getString(2), rs.getString(3)));
+                list.add(new UpdateItem(rs.getString(1), rs.getString(2), rs.getString(3),  rs.getString(4)));
             }
 
             return list;
@@ -354,9 +366,13 @@ public class UpdateClient {
                 if (status != STATUS.ERROR && !validate(false)){
                     download();
                 }
-                if (status != STATUS.ERROR){
+                if (status != STATUS.ERROR && validate(true)){
                     install();
+                }else{
+                    progressBar.setString("Ошибка проверки контрольной суммы");
+                    error("Ошибка проверки контрольной суммы файлов обновлений.");
                 }
+                
                 if (status != STATUS.ERROR){
                     progressBar.setString("Установка завершена успешно");
                     info("Установка завершена успешно");
@@ -378,7 +394,7 @@ public class UpdateClient {
      */
     @SuppressWarnings({"ResultOfMethodCallIgnored"})
     private void download(){
-        final List<UpdateItem> updateItems = getDownloadFileNames(getLastClientVersion());
+        final List<UpdateItem> updateItems = getDownloadFileNames(getCurrentClientVersion(), getLastClientVersion());
 
         if (updateItems == null){
             return;
@@ -390,10 +406,10 @@ public class UpdateClient {
         for (final UpdateItem ui : updateItems){
             Map<String, String> params = new HashMap<String, String>();
             params.put("secureKey", getSecureKey());
-            params.put("version", getLastClientVersion());
+            params.put("version", ui.version);
             params.put("name", ui.name);
 
-            File dir = new File(updateDir, getLastClientVersion());
+            File dir = new File(updateDir, ui.version);
             dir.mkdirs();
 
             log.info("updateDir = {}", dir.getAbsolutePath());
@@ -439,8 +455,9 @@ public class UpdateClient {
         progressBar.setValue(0);
         progressBar.setString("Проверка обновлений...");
 
-        for (UpdateItem ui : getDownloadFileNames(getLastClientVersion())){
-            File file = new File(updateDir, getLastClientVersion() + "/" + ui.name);
+        for (UpdateItem ui : getDownloadFileNames(getCurrentClientVersion(), getLastClientVersion())){
+            File dir = new File(updateDir, ui.version);
+            File file = new File(dir, ui.name);
 
             try {
                 if (file.exists()){
@@ -471,49 +488,50 @@ public class UpdateClient {
      * Удаление старой версии, установка новой версии
      */
     private void install(){
-        if (validate(true)){
-            progressBar.setValue(0);
-            progressBar.setIndeterminate(true);
+        progressBar.setValue(0);
+        progressBar.setIndeterminate(true);
 
-            //undeploy client
-            progressBar.setString("Остановка приложения...");
-            iServer.undeployClient();
+        //undeploy client
+        progressBar.setString("Остановка приложения...");
+        iServer.undeployClient();
 
-            //files copy
-            progressBar.setString("Установка обновлений...");
-            for (UpdateItem ui :  getDownloadFileNames(getLastClientVersion())){
-                if ("WAR".equalsIgnoreCase(ui.packaging)){
-                    installWar(ui.name);
-                }
+        //files copy
+        progressBar.setString("Установка обновлений...");
+        for (UpdateItem ui :  getDownloadFileNames(getCurrentClientVersion(), getLastClientVersion())){
+            if ("WAR".equalsIgnoreCase(ui.packaging)){
+                installWar(ui.version, ui.name);
+            }else if ("SQL".equalsIgnoreCase(ui.packaging)){
+                installSQL(ui.version, ui.name);
+            }else if ("SQL_ZIP".equalsIgnoreCase(ui.packaging)){
+                installSQL_ZIP(ui.version, ui.name);
             }
-
-            //set version
-            currentClientVersion = null;
-            int count = executeUpdate("update client set version = ? where mac = ?", getLastClientVersion(), getCurrentMAC());
-            if (count != 1){
-                error("Ошибка соединения с базой данных");
-                //TODO backup
-            }
-
-            currentVersionLabel.setText("Текущая версия клиента: " + getCurrentClientVersion());
-
-            //deploy client
-            progressBar.setString("Запуск приложения...");
-            iServer.deployClient();
-
-            progressBar.setIndeterminate(false);
-        }else{
-            progressBar.setString("Ошибка проверки контрольной суммы");
-            error("Ошибка проверки контрольной суммы файлов обновлений.");
         }
+
+        //set version
+        currentClientVersion = null;
+        int count = executeUpdate("update client set version = ? where mac = ?", getLastClientVersion(), getCurrentMAC());
+        if (count != 1){
+            error("Ошибка соединения с базой данных");
+            //TODO backup
+        }
+
+        currentVersionLabel.setText("Текущая версия клиента: " + getCurrentClientVersion());
+
+        //deploy client
+        progressBar.setString("Запуск приложения...");
+        iServer.deployClient();
+
+        progressBar.setIndeterminate(false);
+
     }
 
     /**
      * Распакова и копирование архива приложения
+     * @param version Версия
      * @param fileName Имя файла архива
      */
     @SuppressWarnings({"ResultOfMethodCallIgnored"})
-    private void installWar(String fileName) {
+    private void installWar(String version, String fileName) {
         final int BUFFER = 2024;
 
         try {
@@ -523,11 +541,11 @@ public class UpdateClient {
 
             log.info("clientDir = {}", clientDir.getAbsolutePath());
 
-            File file = new File(updateDir, getLastClientVersion() + "/" + fileName);
+            File versionDir = new File(updateDir, version);
+            File file = new File(versionDir, fileName);
 
-            BufferedOutputStream dest = null;
-            FileInputStream fis = new FileInputStream(file);
-            ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
+            BufferedOutputStream dest;
+            ZipInputStream zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(file)));
             ZipEntry entry;
             while ((entry = zis.getNextEntry()) != null) {
                 log.debug("Extracting: {} ", entry);
@@ -539,8 +557,7 @@ public class UpdateClient {
                     File dir = new File(clientDir, entry.getName());
                     dir.mkdirs();
                 }else{
-                    FileOutputStream fos = new FileOutputStream(new File(clientDir, entry.getName()));
-                    dest = new BufferedOutputStream(fos, BUFFER);
+                    dest = new BufferedOutputStream(new FileOutputStream(new File(clientDir, entry.getName())), BUFFER);
                     while ((count = zis.read(data, 0, BUFFER)) != -1) {
                         dest.write(data, 0, count);
                     }
@@ -552,6 +569,59 @@ public class UpdateClient {
         } catch (Exception e) {
             log.error("Ошибка распаковки архива", e);
             error("Ошибка распаковки архива");
+        }
+    }
+
+    /**
+     * Установка обновления SQL скрипта
+     * @param version Версия
+     * @param fileName Имя файла
+     */
+    private void installSQL(String version, String fileName){
+        File versionDir = new File(updateDir, version);
+        File file = new File(versionDir, fileName);
+
+        try {
+            log.info("Установка SQL скрипта: " + file.getName());
+
+            importSQL(getConnection(), new FileInputStream(file));
+        } catch (SQLException e) {
+            log.error("Ошибка обновления базы данных: " + file.getAbsolutePath() , e);
+            error("Ошибка обновления базы данных: " + file.getAbsolutePath());
+        } catch (FileNotFoundException e) {
+            log.error("Файл скрипта не найден: " + file.getAbsolutePath(), e);
+            error("Файл скрипта не найден: " + file.getAbsolutePath());
+        }
+    }
+
+    /**
+     * Установка обновлений архива SQL скриптов
+     * @param version Версия
+     * @param fileName Имя файла
+     */
+    private void installSQL_ZIP(String version, String fileName){
+        File versionDir = new File(updateDir, version);
+        File file = new File(versionDir, fileName);
+
+        try {
+            ZipInputStream zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(file)));
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                log.debug("Extracting: {} ", entry);
+
+                if (entry.getName().toUpperCase().endsWith("SQL")){
+                    try {
+                        importSQL(getConnection(), zis);
+                    } catch (SQLException e) {
+                        log.error("Ошибка обновления базы данных: " + file.getAbsolutePath() + ", " + entry.getName() , e);
+                        error("Ошибка обновления базы данных: " + file.getAbsolutePath() + ", " + entry.getName());
+                    }
+                }
+            }
+            zis.close();
+        } catch (IOException e) {
+            log.error("Файл архива SQL скриптов не найден: " + file.getAbsolutePath(), e);
+            error("Файл архива SQL скриптов не найден: " + file.getAbsolutePath());
         }
     }
 
@@ -599,5 +669,27 @@ public class UpdateClient {
             log.error(e.getMessage(), e);
         }
         return null;
+    }
+
+    private static void importSQL(Connection conn, InputStream in) throws SQLException{
+        Scanner s = new Scanner(in, "UTF-8");
+        s.useDelimiter("(;(\r)?\n)|(--\n)");
+        Statement st = null;
+        try{
+            st = conn.createStatement();
+            while (s.hasNext()){
+                String line = s.next();
+                if (line.startsWith("/*!") && line.endsWith("*/")){
+                    int i = line.indexOf(' ');
+                    line = line.substring(i + 1, line.length() - " */".length());
+                }
+
+                if (line.trim().length() > 0){
+                    st.execute(line);
+                }
+            }
+        } finally{
+            if (st != null) st.close();
+        }
     }
 }
