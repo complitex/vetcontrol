@@ -33,6 +33,8 @@ import javax.ejb.EJB;
 import java.util.*;
 import java.util.Locale;
 import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.model.PropertyModel;
+import org.vetcontrol.web.component.VehicleTypeChoicePanel;
 import org.vetcontrol.web.component.DatePicker;
 import org.vetcontrol.web.template.ListTemplatePage;
 
@@ -107,23 +109,10 @@ public class DocumentCargoList extends ListTemplatePage {
                     }
                 }));
 
-        filterForm.add(new DropDownChoice<VehicleType>("vehicleType", documentCargoBean.getList(VehicleType.class),
-                new IChoiceRenderer<VehicleType>() {
-
-                    @Override
-                    public Object getDisplayValue(VehicleType object) {
-                        return object.getDisplayName(getLocale(), systemLocale);
-                    }
-
-                    @Override
-                    public String getIdValue(VehicleType object, int index) {
-                        return String.valueOf(object.getId());
-                    }
-                }));
-        filterForm.add(new TextField("vehicleDetails"));
-        filterForm.add(new TextField("cargoSenderName"));
-        filterForm.add(new TextField("cargoReceiverName"));
-        filterForm.add(new TextField("cargoProducerName"));
+        filterForm.add(new VehicleTypeChoicePanel("vehicleType", new PropertyModel<VehicleType>(filterObject, "vehicleType")));
+        
+        filterForm.add(new TextField<String>("receiver.name"));
+        filterForm.add(new TextField<String>("receiver.address"));
 
         DatePicker<Date> created = new DatePicker<Date>("created");
         filterForm.add(created);
@@ -189,11 +178,9 @@ public class DocumentCargoList extends ListTemplatePage {
                 item.add(new BookmarkablePageLinkPanel<DocumentCargo>("id", dc.getDisplayId(),
                         DocumentCargoView.class, pageParameters));
                 item.add(new Label("movementType", dc.getMovementType().getDisplayName(getLocale(), systemLocale)));
-                item.add(new Label("vehicleType", dc.getVehicleType().getDisplayName(getLocale(), systemLocale)));
-                item.add(new Label("vehicleDetails", dc.getVehicleDetails()));
-                item.add(new Label("cargoSender", dc.getCargoSender().getDisplayName(getLocale(), systemLocale)));
-                item.add(new Label("cargoReceiver", dc.getCargoReceiver().getDisplayName(getLocale(), systemLocale)));
-                item.add(new Label("cargoProducer", dc.getCargoProducer().getDisplayName(getLocale(), systemLocale)));
+                item.add(new Label("vehicleType", VehicleTypeChoicePanel.getDysplayName(dc.getVehicleType())));
+                item.add(new Label("receiverName", dc.getCargoReceiver().getName()));
+                item.add(new Label("receiverAddress", dc.getCargoReceiver().getAddress()));
                 item.add(new DateLabel("created", new Model<Date>(dc.getCreated()), new StyleDateConverter(true)));
 
                 Label syncStatus = new Label("syncStatus", getString(dc.getSyncStatus().name()));
@@ -213,10 +200,8 @@ public class DocumentCargoList extends ListTemplatePage {
         addOrderByBorder(filterForm, "order_id", OrderBy.ID.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_movementType", OrderBy.MOVEMENT_TYPE.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_vehicleType", OrderBy.VECHICLE_TYPE.name(), dataProvider, dataView);
-        addOrderByBorder(filterForm, "order_vehicleDetails", OrderBy.VECHICLE_DETAILS.name(), dataProvider, dataView);
-        addOrderByBorder(filterForm, "order_cargoSender", OrderBy.CARGO_SENDER.name(), dataProvider, dataView);
-        addOrderByBorder(filterForm, "order_cargoReceiver", OrderBy.CARGO_RECEIVER.name(), dataProvider, dataView);
-        addOrderByBorder(filterForm, "order_cargoProducer", OrderBy.CARGO_PRODUCER.name(), dataProvider, dataView);
+        addOrderByBorder(filterForm, "order_receiver_name", OrderBy.RECEIVER_NAME.name(), dataProvider, dataView);
+        addOrderByBorder(filterForm, "order_receiver_address", OrderBy.RECEIVER_ADDRESS.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_created", OrderBy.CREATED.name(), dataProvider, dataView);
 
         ArrowOrderByBorder orderSyncStatus = new ArrowOrderByBorder("order_syncStatus", OrderBy.SYNC_STATUS.name(), dataProvider) {

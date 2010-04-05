@@ -20,10 +20,8 @@
                     <th class="center" wicket:id="order_id"><wicket:message key="document.cargo.id"/></th>
                     <th class="center" wicket:id="order_movementType"><wicket:message key="document.cargo.movement_type"/></th>
                     <th class="center" wicket:id="order_vehicleType"><wicket:message key="document.cargo.vehicle_type"/></th>
-                    <th class="center" wicket:id="order_vehicleDetails"><wicket:message key="document.cargo.vehicle_details"/></th>
-                    <th class="center" wicket:id="order_cargoSender"><wicket:message key="document.cargo.cargo_sender"/></th>
-                    <th class="center" wicket:id="order_cargoReceiver"><wicket:message key="document.cargo.cargo_receiver"/></th>
-                    <th class="center" wicket:id="order_cargoProducer"><wicket:message key="document.cargo.cargo_producer"/></th>
+                    <th class="center" wicket:id="order_receiver_name"><wicket:message key="document.cargo.cargo_receiver_name"/></th>
+                    <th class="center" wicket:id="order_receiver_address"><wicket:message key="document.cargo.cargo_receiver_address"/></th>
                     <th class="center" wicket:id="order_created"><wicket:message key="document.cargo.date_created"/></th>
                     <th class="center">
                         <span wicket:id="order_syncStatus"><wicket:message key="document.cargo.syncStatus"/></span>
@@ -35,11 +33,10 @@
                 <tr>
                     <th class="center"><input type="text" wicket:id="id"/></th>
                     <th class="center"><select wicket:id="movementType"></select></th>
-                    <th class="center"><select wicket:id="vehicleType"></select></th>
-                    <th class="center"><input type="text" wicket:id="vehicleDetails"/></th>
-                    <th class="center"><input type="text" wicket:id="cargoSenderName"/></th>
-                    <th class="center"><input type="text" wicket:id="cargoReceiverName"/></th>
-                    <th class="center"><input type="text" wicket:id="cargoProducerName"/></th>
+                    <th class="center"><span wicket:id="vehicleType"></span></th>
+                    <th class="center"><input type="text" wicket:id="receiver.name"/></th>
+                    <th class="center"><input type="text" wicket:id="receiver.address"/></th>
+
                     <th class="center">
                         <div style="width:102px">
                             <input style="width:80px" type="text" wicket:id="created"/>
@@ -56,10 +53,7 @@
                     <td><span wicket:id="id"></span></td>
                     <td><span wicket:id="movementType"></span></td>
                     <td><span wicket:id="vehicleType"></span></td>
-                    <td><span wicket:id="vehicleDetails"></span></td>
-                    <td><span wicket:id="cargoSender"></span></td>
-                    <td><span wicket:id="cargoReceiver"></span></td>
-                    <td><span wicket:id="cargoProducer"></span></td>
+                    <td><span wicket:id="receiverName"></span></td>
                     <td><span wicket:id="created"></span></td>
                     <td><span wicket:id="syncStatus"></span></td>
                     <td><span wicket:id="action"></span></td>
