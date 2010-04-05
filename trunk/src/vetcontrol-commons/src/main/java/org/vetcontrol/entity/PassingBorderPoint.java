@@ -4,17 +4,19 @@
  */
 package org.vetcontrol.entity;
 
-import org.vetcontrol.util.book.entity.annotation.MappedProperty;
+import java.util.Date;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import java.util.ArrayList;
-import java.util.List;
+import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.vetcontrol.sync.LongAdapter;
 import org.vetcontrol.util.book.entity.annotation.BookReference;
+import org.vetcontrol.util.book.entity.annotation.ValidProperty;
 
 /**
  * @author Artem
@@ -24,21 +26,33 @@ import org.vetcontrol.util.book.entity.annotation.BookReference;
 @Entity
 @Table(name = "passing_border_point")
 @XmlRootElement
-public class PassingBorderPoint extends Localizable{
-    private List<StringCulture> names = new ArrayList<StringCulture>();
+public class PassingBorderPoint implements ILongId, IBook, IUpdated, IDisabled, IQuery {
 
-    @MappedProperty("name")
-    @Transient
-    @Column(length = 10, nullable = false)
-    @XmlTransient
-    public List<StringCulture> getNames() {
-        return names;
+    private Long id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @XmlID
+    @XmlJavaTypeAdapter(LongAdapter.class)
+    @Override
+    public Long getId() {
+        return id;
     }
 
-    public void setNames(List<StringCulture> names) {
-        this.names = names;
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+    private String name;
+
+    @Column(name = "name", nullable = false, length = 100)
+    public String getName() {
+        return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
     private Department department;
 
     @BookReference(referencedProperty = "names")
@@ -53,14 +67,41 @@ public class PassingBorderPoint extends Localizable{
     public void setDepartment(Department department) {
         this.department = department;
     }
+    private Date updated;
+
+    @ValidProperty(false)
+    @Column(name = "updated", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Override
+    public Date getUpdated() {
+        return updated;
+    }
 
     @Override
-    public Query getInsertQuery(EntityManager em){
-         return em.createNativeQuery("insert into passing_border_point (id, `name`, department_id, updated, disabled) "
+    public void setUpdated(Date updated) {
+        this.updated = updated;
+    }
+    private boolean disabled;
+
+    @ValidProperty(false)
+    @Column(name = "disabled")
+    @Override
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    @Override
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    @Override
+    public Query getInsertQuery(EntityManager em) {
+        return em.createNativeQuery("insert into passing_border_point (id, `name`, department_id, updated, disabled) "
                 + "value (:id, :name, :department_id, :updated, :disabled)").
                 setParameter("id", id).
                 setParameter("name", name).
-                setParameter("department_id", department != null ? department.getId() : null).
+                setParameter("department_id", department.getId()).
                 setParameter("updated", updated).
                 setParameter("disabled", disabled);
     }
@@ -71,9 +112,20 @@ public class PassingBorderPoint extends Localizable{
                 + "updated = :updated, disabled = :disabled where id = :id").
                 setParameter("id", id).
                 setParameter("name", name).
-                setParameter("department_id", department != null ? department.getId() : null).
+                setParameter("department_id", department.getId()).
                 setParameter("updated", updated).
                 setParameter("disabled", disabled);
     }
+    private boolean needToUpdate;
 
+    @ValidProperty(false)
+    @Transient
+    @XmlTransient
+    public boolean isNeedToUpdate() {
+        return needToUpdate;
+    }
+
+    public void setNeedToUpdate(boolean needToUpdate) {
+        this.needToUpdate = needToUpdate;
+    }
 }
