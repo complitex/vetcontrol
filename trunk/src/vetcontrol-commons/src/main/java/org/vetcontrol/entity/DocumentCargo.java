@@ -60,8 +60,7 @@ public class DocumentCargo extends Synchronized implements IUpdated{
     @Embedded
     @AttributeOverrides({
         @AttributeOverride(name="name", column=@Column(name="cargo_sender_name")),
-        @AttributeOverride(name="country", column=@Column(name="cargo_sender_country_id")),
-        @AttributeOverride(name="address", column=@Column(name="cargo_sender_address"))
+        @AttributeOverride(name="country", column=@Column(name="cargo_sender_country_id"))
     })
     private CargoSenderEmbeddable cargoSenderEmbeddable;
 

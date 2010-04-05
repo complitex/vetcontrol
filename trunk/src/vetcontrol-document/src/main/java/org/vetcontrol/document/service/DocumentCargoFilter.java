@@ -19,10 +19,7 @@ public class DocumentCargoFilter implements Serializable {
     private boolean childDepartments;
     private MovementType movementType;
     private VehicleType vehicleType;
-    private String vehicleDetails;
-    private String cargoSenderName;
-    private String cargoReceiverName;
-    private String cargoProducerName;
+    private CargoReceiverEmbeddable receiver = new CargoReceiverEmbeddable();
     private String detentionDetails;
     private String details;
     private Locale currentLocale;
@@ -90,38 +87,6 @@ public class DocumentCargoFilter implements Serializable {
         this.vehicleType = vehicleType;
     }
 
-    public String getVehicleDetails() {
-        return vehicleDetails;
-    }
-
-    public void setVehicleDetails(String vehicleDetails) {
-        this.vehicleDetails = vehicleDetails;
-    }
-
-    public String getCargoSenderName() {
-        return cargoSenderName;
-    }
-
-    public void setCargoSenderName(String cargoSenderName) {
-        this.cargoSenderName = cargoSenderName;
-    }
-
-    public String getCargoReceiverName() {
-        return cargoReceiverName;
-    }
-
-    public void setCargoReceiverName(String cargoReceiverName) {
-        this.cargoReceiverName = cargoReceiverName;
-    }
-
-    public String getCargoProducerName() {
-        return cargoProducerName;
-    }
-
-    public void setCargoProducerName(String cargoProducerName) {
-        this.cargoProducerName = cargoProducerName;
-    }
-
     public String getDetentionDetails() {
         return detentionDetails;
     }
@@ -160,5 +125,13 @@ public class DocumentCargoFilter implements Serializable {
 
     public void setSyncStatus(Synchronized.SyncStatus syncStatus) {
         this.syncStatus = syncStatus;
+    }
+
+    public CargoReceiverEmbeddable getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(CargoReceiverEmbeddable receiver) {
+        this.receiver = receiver;
     }
 }
