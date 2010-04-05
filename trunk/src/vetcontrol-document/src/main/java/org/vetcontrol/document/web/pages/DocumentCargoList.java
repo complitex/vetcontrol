@@ -110,10 +110,9 @@ public class DocumentCargoList extends ListTemplatePage {
                 }));
 
         filterForm.add(new VehicleTypeChoicePanel("vehicleType", new PropertyModel<VehicleType>(filterObject, "vehicleType")));
-        
         filterForm.add(new TextField<String>("receiver.name"));
         filterForm.add(new TextField<String>("receiver.address"));
-
+        filterForm.add(new TextField<String>("sender.name"));
         DatePicker<Date> created = new DatePicker<Date>("created");
         filterForm.add(created);
 
@@ -181,6 +180,7 @@ public class DocumentCargoList extends ListTemplatePage {
                 item.add(new Label("vehicleType", VehicleTypeChoicePanel.getDysplayName(dc.getVehicleType())));
                 item.add(new Label("receiverName", dc.getCargoReceiver().getName()));
                 item.add(new Label("receiverAddress", dc.getCargoReceiver().getAddress()));
+                item.add(new Label("senderName", dc.getCargoSender().getName()));
                 item.add(new DateLabel("created", new Model<Date>(dc.getCreated()), new StyleDateConverter(true)));
 
                 Label syncStatus = new Label("syncStatus", getString(dc.getSyncStatus().name()));
@@ -202,6 +202,7 @@ public class DocumentCargoList extends ListTemplatePage {
         addOrderByBorder(filterForm, "order_vehicleType", OrderBy.VECHICLE_TYPE.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_receiver_name", OrderBy.RECEIVER_NAME.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_receiver_address", OrderBy.RECEIVER_ADDRESS.name(), dataProvider, dataView);
+        addOrderByBorder(filterForm, "order_sender_name", OrderBy.SENDER_NAME.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_created", OrderBy.CREATED.name(), dataProvider, dataView);
 
         ArrowOrderByBorder orderSyncStatus = new ArrowOrderByBorder("order_syncStatus", OrderBy.SYNC_STATUS.name(), dataProvider) {
