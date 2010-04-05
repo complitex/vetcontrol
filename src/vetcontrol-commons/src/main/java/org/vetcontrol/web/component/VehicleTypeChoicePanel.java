@@ -19,18 +19,18 @@ public final class VehicleTypeChoicePanel extends Panel {
 
     private static EnumChoiceRenderer<VehicleType> renderer;
 
-    public VehicleTypeChoicePanel(String id, IModel<VehicleType> model) {
+    public VehicleTypeChoicePanel(String id, IModel<VehicleType> model, boolean required) {
         super(id);
-        init(model);
+        init(model, required);
     }
 
-    private void init(IModel<VehicleType> model) {
+    private void init(IModel<VehicleType> model, boolean required) {
         if (renderer == null) {
             renderer = new EnumChoiceRenderer<VehicleType>(this);
         }
         DropDownChoice<VehicleType> select = new DropDownChoice<VehicleType>("select", model, Arrays.asList(VehicleType.values()),
                 renderer);
-        select.setRequired(true);
+        select.setRequired(required);
         add(select);
     }
 

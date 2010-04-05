@@ -34,6 +34,7 @@ import java.util.*;
 import java.util.Locale;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.PropertyModel;
+import org.vetcontrol.document.web.component.BookNamedChoiceRenderer;
 import org.vetcontrol.web.component.VehicleTypeChoicePanel;
 import org.vetcontrol.web.component.DatePicker;
 import org.vetcontrol.web.template.ListTemplatePage;
@@ -95,24 +96,17 @@ public class DocumentCargoList extends ListTemplatePage {
         filterForm.add(filter_reset);
 
         filterForm.add(new TextField<String>("id"));
+
         filterForm.add(new DropDownChoice<MovementType>("movementType", documentCargoBean.getList(MovementType.class),
-                new IChoiceRenderer<MovementType>() {
+                new BookNamedChoiceRenderer<MovementType>(systemLocale)));
 
-                    @Override
-                    public Object getDisplayValue(MovementType object) {
-                        return object.getDisplayName(getLocale(), systemLocale);
-                    }
-
-                    @Override
-                    public String getIdValue(MovementType object, int index) {
-                        return String.valueOf(object.getId());
-                    }
-                }));
-
-        filterForm.add(new VehicleTypeChoicePanel("vehicleType", new PropertyModel<VehicleType>(filterObject, "vehicleType")));
+        filterForm.add(new VehicleTypeChoicePanel("vehicleType", new PropertyModel<VehicleType>(filter, "vehicleType"), false));
         filterForm.add(new TextField<String>("receiver.name"));
         filterForm.add(new TextField<String>("receiver.address"));
         filterForm.add(new TextField<String>("sender.name"));
+
+        filterForm.add(new DropDownChoice<CountryBook>("sender.country", documentCargoBean.getList(CountryBook.class),
+                new BookNamedChoiceRenderer<CountryBook>(systemLocale)));
         DatePicker<Date> created = new DatePicker<Date>("created");
         filterForm.add(created);
 
@@ -181,6 +175,7 @@ public class DocumentCargoList extends ListTemplatePage {
                 item.add(new Label("receiverName", dc.getCargoReceiver().getName()));
                 item.add(new Label("receiverAddress", dc.getCargoReceiver().getAddress()));
                 item.add(new Label("senderName", dc.getCargoSender().getName()));
+                item.add(new Label("senderCountry", dc.getCargoSender().getCountry().getDisplayName(getLocale(), systemLocale)));
                 item.add(new DateLabel("created", new Model<Date>(dc.getCreated()), new StyleDateConverter(true)));
 
                 Label syncStatus = new Label("syncStatus", getString(dc.getSyncStatus().name()));
@@ -203,6 +198,7 @@ public class DocumentCargoList extends ListTemplatePage {
         addOrderByBorder(filterForm, "order_receiver_name", OrderBy.RECEIVER_NAME.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_receiver_address", OrderBy.RECEIVER_ADDRESS.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_sender_name", OrderBy.SENDER_NAME.name(), dataProvider, dataView);
+        addOrderByBorder(filterForm, "order_sender_country", OrderBy.SENDER_COUNTRY.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_created", OrderBy.CREATED.name(), dataProvider, dataView);
 
         ArrowOrderByBorder orderSyncStatus = new ArrowOrderByBorder("order_syncStatus", OrderBy.SYNC_STATUS.name(), dataProvider) {
