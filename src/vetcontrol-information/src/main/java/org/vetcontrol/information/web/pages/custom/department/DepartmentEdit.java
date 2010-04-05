@@ -121,9 +121,28 @@ public final class DepartmentEdit extends FormTemplatePage {
                 return departmentDAO.getAvailableDepartments(department);
             }
         };
+        IModel<Department> parentModel = new IModel<Department>() {
+
+            @Override
+            public Department getObject() {
+                return department.getParent();
+            }
+
+            @Override
+            public void setObject(Department parent) {
+                if (parent != null) {
+                    department.setParent(parent);
+                    department.setLevel(parent.getLevel() + 1);
+                }
+            }
+
+            @Override
+            public void detach() {
+            }
+        };
         BookChoiceRenderer parentRenderer = new BookChoiceRenderer(BeanPropertyUtil.getPropertyByName(Department.class, "parent"), systemLocale);
         final DropDownChoice parent = new DropDownChoice("parent",
-                new PropertyModel(department, "parent"),
+                parentModel,
                 parentDepartmentsModel,
                 parentRenderer);
         parent.setOutputMarkupId(true);
@@ -322,6 +341,7 @@ public final class DepartmentEdit extends FormTemplatePage {
 
     private void disableDepartment() {
         bookDAO.disable(department);
+        disableReferences();
         logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, DepartmentEdit.class, Department.class, "ID: " + department.getId());
     }
 
@@ -354,6 +374,14 @@ public final class DepartmentEdit extends FormTemplatePage {
             }
         });
         return toolbarButtons;
+    }
+
+    private void disableReferences() {
+        for (PassingBorderPoint borderPoint : department.getPassingBorderPoints()) {
+            if (!BeanPropertyUtil.isNewBook(borderPoint)) {
+                bookDAO.disable(borderPoint);
+            }
+        }
     }
 
     private class PassingBorderPointListItem extends ListItem<PassingBorderPoint> {
