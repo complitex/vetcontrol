@@ -15,6 +15,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
+import org.vetcontrol.util.book.entity.annotation.ValidProperty;
 
 /**
  * 2.4.3.1 Справочник структурных единиц
@@ -28,11 +29,6 @@ public class Department extends Localizable {
 
     private List<StringCulture> names = new ArrayList<StringCulture>();
 
-    /**
-     * Get the value of names
-     *
-     * @return the value of names
-     */
     @Transient
     @MappedProperty("name")
     @Column(length = 50, nullable = false)
@@ -41,21 +37,11 @@ public class Department extends Localizable {
         return names;
     }
 
-    /**
-     * Set the value of names
-     *
-     * @param names new value of names
-     */
     public void setNames(List<StringCulture> names) {
         this.names = names;
     }
     private Department parent;
 
-    /**
-     * Get the value of parent
-     *
-     * @return the value of parent
-     */
     @BookReference(referencedProperty = "names")
     @ManyToOne(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
@@ -65,13 +51,11 @@ public class Department extends Localizable {
         return parent;
     }
 
-    /**
-     * Set the value of parent
-     *
-     * @param parent new value of parent
-     */
     public void setParent(Department parent) {
         this.parent = parent;
+        if (parent != null) {
+            level = parent.getLevel() + 1;
+        }
     }
     private CustomsPoint customsPoint;
 
@@ -79,6 +63,7 @@ public class Department extends Localizable {
     @ManyToOne(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "custom_point_id", nullable = true)
+    @XmlIDREF
     public CustomsPoint getCustomsPoint() {
         return customsPoint;
     }
@@ -86,45 +71,59 @@ public class Department extends Localizable {
     public void setCustomsPoint(CustomsPoint customsPoint) {
         this.customsPoint = customsPoint;
     }
+    private Integer level;
+
+    @ValidProperty(false)
+    @Column(name = "level", nullable = false)
+    public Integer getLevel() {
+        return level;
+    }
+
+    private void setLevel(Integer level) {
+        this.level = level;
+    }
+    private List<PassingBorderPoint> passingBorderPoints = new ArrayList<PassingBorderPoint>();
+
+    @ValidProperty(false)
+    @Transient
+    @XmlTransient
+    public List<PassingBorderPoint> getPassingBorderPoints() {
+        return passingBorderPoints;
+    }
+
+    public void setPassingBorderPoints(List<PassingBorderPoint> passingBorderPoints) {
+        this.passingBorderPoints = passingBorderPoints;
+    }
+
+    public void addPassingBorderPoint(PassingBorderPoint borderPoint) {
+        borderPoint.setDepartment(this);
+        passingBorderPoints.add(borderPoint);
+    }
 
     @Override
     public Query getInsertQuery(EntityManager em) {
-        return em.createNativeQuery("insert into department (id, `name`, parent_id, updated, disabled) "
-                + "value (:id, :name, :parent_id, :updated, :disabled)").setParameter("id", id).setParameter("name", name).setParameter("parent_id", parent != null ? parent.getId() : null).setParameter("updated", updated).setParameter("disabled", disabled);
+        return em.createNativeQuery("insert into department (id, `name`, parent_id, custom_point_id, `level`, updated, disabled) "
+                + "value (:id, :name, :parent_id, :updated, :custom_point_id, :level, :disabled)").
+                setParameter("id", id).
+                setParameter("name", name).
+                setParameter("parent_id", parent != null ? parent.getId() : null).
+                setParameter("custom_point_id", customsPoint != null ? customsPoint.getId() : null).
+                setParameter("level", level).
+                setParameter("updated", updated).
+                setParameter("disabled", disabled);
     }
 
     @Override
     public Query getUpdateQuery(EntityManager em) {
         return em.createNativeQuery("update department set `name` = :name, parent_id = :parent_id, "
-                + "updated = :updated, disabled = :disabled where id = :id").setParameter("id", id).setParameter("name", name).setParameter("parent_id", parent != null ? parent.getId() : null).setParameter("updated", updated).setParameter("disabled", disabled);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Department)) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
-
-        Department that = (Department) o;
-
-        if (parent != null ? !parent.equals(that.parent) : that.parent != null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (parent != null ? parent.hashCode() : 0);
-        return result;
+                + "custom_point_id = :custom_point_id, `level` = :level, updated = :updated, disabled = :disabled where id = :id").
+                setParameter("id", id).
+                setParameter("name", name).
+                setParameter("parent_id", parent != null ? parent.getId() : null).
+                setParameter("custom_point_id", customsPoint != null ? customsPoint.getId() : null).
+                setParameter("level", level).
+                setParameter("updated", updated).
+                setParameter("disabled", disabled);
     }
 
     @Override
