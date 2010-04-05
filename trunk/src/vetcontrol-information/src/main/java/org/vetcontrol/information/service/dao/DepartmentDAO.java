@@ -105,6 +105,7 @@ public class DepartmentDAO {
     public void saveOrUpdate(Department department) {
         bookDAO.saveOrUpdate(department);
         for (PassingBorderPoint borderPoint : department.getPassingBorderPoints()) {
+            borderPoint.setDepartment(department);
             if (borderPoint.isNeedToUpdate()) {
                 bookDAO.saveOrUpdate(borderPoint);
             }

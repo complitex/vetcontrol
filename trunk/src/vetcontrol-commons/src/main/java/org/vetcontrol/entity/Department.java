@@ -53,9 +53,6 @@ public class Department extends Localizable {
 
     public void setParent(Department parent) {
         this.parent = parent;
-        if (parent != null) {
-            level = parent.getLevel() + 1;
-        }
     }
     private CustomsPoint customsPoint;
 
@@ -79,7 +76,7 @@ public class Department extends Localizable {
         return level;
     }
 
-    private void setLevel(Integer level) {
+    public void setLevel(Integer level) {
         this.level = level;
     }
     private List<PassingBorderPoint> passingBorderPoints = new ArrayList<PassingBorderPoint>();

@@ -151,10 +151,10 @@ INSERT INTO `stringculture`(`id`, `locale`, `value`) VALUES
 (57,'ru','литр'),(58,'en','молоко обезжиренное'),(58,'ru','молоко обезжиренное'),(59,'en','хлеб белый'),
 (59,'ru','хлеб белый'),(60,'en','хлеб черный'),(60,'ru','хлеб черный'),(61,'en','сыр голландский'),
 (61,'ru','сыр голландский'),(62,'en','сыр алтайский'),(62,'ru','сыр алтайский'),(63,'en','Пункт 1'),
-(63,'ru','Пункт 1'),(64,'en','Пункт 2'),(64,'ru','Пункт 2'),(65,'en','Пункт 3'),(65,'ru','Пункт 3'),
-(66,'ru','Вид1'), (67,'ru','Вид2'), (68,'ru','Вид3'),
-(69, 'ru', 'Россия'), (69, 'en', 'Russia'), (70, 'ru', 'Англия'), (70, 'en', 'England'),
-(71, 'ru', 'Таможня 1'), (72, 'ru', 'Таможня 2');
+--(63,'ru','Пункт 1'),(64,'en','Пункт 2'),(64,'ru','Пункт 2'),(65,'en','Пункт 3'),(65,'ru','Пункт 3'),
+(64,'ru','Вид1'), (65,'ru','Вид2'), (66,'ru','Вид3'),
+(67, 'ru', 'Россия'), (67, 'en', 'Russia'), (68, 'ru', 'Англия'), (68, 'en', 'England'),
+(69, 'ru', 'Таможня 1'), (70, 'ru', 'Таможня 2');
 
 UPDATE `generator` SET `generatorValue` = 72 WHERE `generatorName` = 'books';
 
@@ -162,17 +162,17 @@ INSERT INTO `unit_type`(`id`, `name`) VALUES (1,47),(2,48),(3,49),(4,50),(5,51),
 
 INSERT INTO `cargo_type`(`id`, `name`, `ukt_zed_code`) VALUES (1,52,'2602000000'),(2,53,'2603000000'),(3,54,'2605000000');
 
-INSERT INTO `cargo_mode`(`id`, `name`, `parent_id`) VALUES (3,68, null), (1,66,3), (2,67,3);
+INSERT INTO `cargo_mode`(`id`, `name`, `parent_id`) VALUES (3,66, null), (1,64,3), (2,65,3);
 
 INSERT INTO `cargo_mode_cargo_type` VALUES (1, 1, CURRENT_TIMESTAMP), (1, 2, CURRENT_TIMESTAMP);
 
 INSERT INTO `cargo_mode_unit_type` VALUES (1, 1, CURRENT_TIMESTAMP);
 
---INSERT INTO `passing_border_point`(`id`, `name`) VALUES (1,68),(2,69),(3,70);
-INSERT INTO `countrybook`(`id`, `name`) VALUES (1, 69), (2, 70);
+INSERT INTO `passing_border_point`(`id`, `name`, `department_id`) VALUES (1, 'Пункт 1', 17),(2, 'Пункт 2', 17),(3, 'Пункт 3', 17);
+INSERT INTO `countrybook`(`id`, `name`) VALUES (1, 67), (2, 68);
 INSERT INTO `cargo_producer`(`id`, `name`, `country_id`) VALUES (1,44, 1),(2,45, 1),(3,46, 2);
 
-INSERT INTO `customs_point`(`id`, `name`) VALUES(1, 71), (2, 72);
+INSERT INTO `customs_point`(`id`, `name`) VALUES(1, 69), (2, 70);
 
 UPDATE `department` d SET d.`custom_point_id` = 1 WHERE d.`id` = 2;
 
