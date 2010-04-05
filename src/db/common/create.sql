@@ -155,7 +155,6 @@ CREATE TABLE  `cargo_sender` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` varchar(100) NOT NULL,
     `country_id` bigint(20) NOT NULL,
-    `address` varchar(100) NOT NULL,
     PRIMARY KEY (`id`),
     KEY `FK_cargo_sender_country_ref` (`country_id`),
     CONSTRAINT `FK_cargo_sender_country_ref` FOREIGN KEY (`country_id`) REFERENCES `countrybook` (`id`)
@@ -396,7 +395,6 @@ CREATE TABLE `document_cargo` (
 
   `cargo_sender_name` varchar(100) NOT NULL,
   `cargo_sender_country_id` bigint(20) NOT NULL,
-  `cargo_sender_address` varchar(100) NOT NULL,
 
   `cargo_receiver_name` varchar(100) NOT NULL,
   `cargo_receiver_address` varchar(100) NOT NULL,

@@ -21,17 +21,8 @@ import org.hibernate.annotations.FetchMode;
 public class CargoSenderEmbeddable implements Serializable {
 
     private String name;
-    private String address;
     private CountryBook country;
 
-    @Column(name = "address", nullable = false)
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
 
     @ManyToOne(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
@@ -65,9 +56,6 @@ public class CargoSenderEmbeddable implements Serializable {
         if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
             return false;
         }
-        if ((this.address == null) ? (other.address != null) : !this.address.equals(other.address)) {
-            return false;
-        }
         if (this.country != other.country && (this.country == null || !this.country.id.equals(other.country.id))) {
             return false;
         }
@@ -78,7 +66,6 @@ public class CargoSenderEmbeddable implements Serializable {
     public int hashCode() {
         int hash = 7;
         hash = 13 * hash + (this.name != null ? this.name.hashCode() : 0);
-        hash = 13 * hash + (this.address != null ? this.address.hashCode() : 0);
         hash = 13 * hash + (this.country != null ? this.country.id.hashCode() : 0);
         return hash;
     }
