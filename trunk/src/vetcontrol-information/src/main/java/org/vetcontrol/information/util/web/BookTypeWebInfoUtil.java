@@ -13,6 +13,7 @@ import org.vetcontrol.information.web.pages.AddUpdateBookEntryPage;
 import org.vetcontrol.information.web.pages.BookPage;
 import org.vetcontrol.information.web.pages.custom.cargomode.CargoModeEdit;
 import org.vetcontrol.information.web.pages.custom.cargomode.CargoModeList;
+import org.vetcontrol.information.web.pages.custom.department.DepartmentEdit;
 import org.vetcontrol.util.book.BookTypes;
 
 /**
@@ -41,7 +42,7 @@ public final class BookTypeWebInfoUtil {
         //TODO: change book edit page!
         PageParameters listPageParams = new PageParameters();
         listPageParams.add(BookPage.BOOK_TYPE, Department.class.getName());
-        BookWebInfo departmentWebInfo = new BookWebInfo(BookPage.class, AddUpdateBookEntryPage.class, listPageParams);
+        BookWebInfo departmentWebInfo = new BookWebInfo(BookPage.class, DepartmentEdit.class, listPageParams);
         info.put(Department.class, departmentWebInfo);
     }
 

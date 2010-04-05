@@ -40,6 +40,8 @@ import org.apache.wicket.model.PropertyModel;
 import org.vetcontrol.entity.ILongId;
 import org.vetcontrol.entity.Log;
 import org.vetcontrol.information.service.dao.IBookDAO;
+import org.vetcontrol.information.util.web.BookTypeWebInfoUtil;
+import org.vetcontrol.information.util.web.BookWebInfo;
 import org.vetcontrol.information.util.web.CanEditUtil;
 import org.vetcontrol.information.web.component.edit.AutoCompleteSelectPanel;
 import org.vetcontrol.information.web.component.edit.BooleanPanel;
@@ -184,7 +186,7 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
             @Override
             public void update() {
                 saveOrUpdate(bookEntry, initial);
-                goToBooksPage(bookTypeName);
+                goToBooksPage();
             }
 
             @Override
@@ -195,7 +197,7 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
                 //save new book entry.
                 BeanPropertyUtil.clearBook(bookEntry);
                 saveOrUpdate(bookEntry, initial);
-                goToBooksPage(bookTypeName);
+                goToBooksPage();
             }
         };
         add(confirmationDialog);
@@ -206,7 +208,7 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
             public void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 if (BeanPropertyUtil.isNewBook(bookEntry)) {
                     saveOrUpdate(bookEntry, initial);
-                    goToBooksPage(bookTypeName);
+                    goToBooksPage();
                 } else {
                     confirmationDialog.open(target);
                 }
@@ -224,7 +226,7 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
 
             @Override
             public void onClick() {
-                goToBooksPage(bookTypeName);
+                goToBooksPage();
             }
         };
         cancel.setVisible(CanEditUtil.canEdit(bookEntry));
@@ -234,7 +236,7 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
 
             @Override
             public void onClick() {
-                goToBooksPage(bookTypeName);
+                goToBooksPage();
             }
         };
         back.setVisible(!CanEditUtil.canEdit(bookEntry));
@@ -272,10 +274,9 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
         logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, AddUpdateBookEntryPage.class, bookEntry.getClass(), "ID: " + id);
     }
 
-    private void goToBooksPage(String typeName) {
-        PageParameters params = new PageParameters();
-        params.add(BookPage.BOOK_TYPE, typeName);
-        setResponsePage(BookPage.class, params);
+    private void goToBooksPage() {
+        BookWebInfo bookWebInfo = BookTypeWebInfoUtil.getInfo(bookEntry.getClass());
+        setResponsePage(bookWebInfo.getListPage(), bookWebInfo.getListPageParameters());
     }
 
     private String getBookTypeName(Serializable bookEntry) {
@@ -290,7 +291,7 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
             @Override
             protected void onClick() {
                 disableBookEntry();
-                goToBooksPage(getBookTypeName(bookEntry));
+                goToBooksPage();
             }
 
             @Override
