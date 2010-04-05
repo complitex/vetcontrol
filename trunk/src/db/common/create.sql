@@ -134,6 +134,7 @@ CREATE TABLE  `department` (
     `name` bigint(20) NOT NULL,
     `parent_id` bigint(20) NULL,
     `custom_point_id` bigint(20) NULL,
+    `level` int(2) NOT NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
  /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
   `disabled` tinyint(1) NOT NULL default '0',
@@ -143,7 +144,7 @@ CREATE TABLE  `department` (
     KEY `FK_department_parent` (`parent_id`),
     CONSTRAINT `FK_department_parent` FOREIGN KEY (`parent_id`) REFERENCES `department` (`id`),
     KEY `FK_department_custom_point` (`custom_point_id`),
-    CONSTRAINT `FK_department_custom_point` FOREIGN KEY (`custom_point_id`) REFERENCES `custom_point` (`id`),
+    CONSTRAINT `FK_department_custom_point` FOREIGN KEY (`custom_point_id`) REFERENCES `customs_point` (`id`),
     KEY `department_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -353,14 +354,14 @@ CREATE TABLE  `bad_epizootic_situation` (
 DROP TABLE IF EXISTS `passing_border_point`;
 CREATE TABLE  `passing_border_point` (
     `id` bigint(20) NOT NULL auto_increment,
-    `name` bigint(20) NOT NULL,
+    `name` varchar(100) NOT NULL,
     `department_id` bigint(20) NOT NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
  /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
   `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
-    KEY `FK_passing_border_point_name` (`name`),
-    CONSTRAINT `FK_passing_border_point_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+--    KEY `FK_passing_border_point_name` (`name`),
+--    CONSTRAINT `FK_passing_border_point_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
     KEY `FK_passing_border_point_department` (`department_id`),
     CONSTRAINT `FK_passing_border_point_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`),
     KEY `passing_border_point_updated_INDEX` (`updated`)
