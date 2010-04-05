@@ -20,6 +20,7 @@ public class DocumentCargoFilter implements Serializable {
     private MovementType movementType;
     private VehicleType vehicleType;
     private CargoReceiverEmbeddable receiver = new CargoReceiverEmbeddable();
+    private CargoSenderEmbeddable sender = new CargoSenderEmbeddable();
     private String detentionDetails;
     private String details;
     private Locale currentLocale;
@@ -134,4 +135,13 @@ public class DocumentCargoFilter implements Serializable {
     public void setReceiver(CargoReceiverEmbeddable receiver) {
         this.receiver = receiver;
     }
+
+    public CargoSenderEmbeddable getSender() {
+        return sender;
+    }
+
+    public void setSender(CargoSenderEmbeddable sender) {
+        this.sender = sender;
+    }
+    
 }

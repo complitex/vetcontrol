@@ -23,7 +23,7 @@ public class DocumentCargoBean {
 
     public static enum OrderBy {
 
-        ID, MOVEMENT_TYPE, VECHICLE_TYPE, RECEIVER_NAME, RECEIVER_ADDRESS, CREATED, SYNC_STATUS
+        ID, MOVEMENT_TYPE, VECHICLE_TYPE, RECEIVER_NAME, RECEIVER_ADDRESS, SENDER_NAME, SENDER_COUNTRY, CREATED, SYNC_STATUS
     }
     @PersistenceContext
     private EntityManager em;
@@ -134,6 +134,9 @@ public class DocumentCargoBean {
             case RECEIVER_ADDRESS:
                 order += "dc.cargoReceiver.address";
                 break;
+            case SENDER_NAME:
+                order += "dc.cargoSender.name";
+                break;
             case CREATED:
                 order += " order by dc.created";
                 break;
@@ -202,6 +205,10 @@ public class DocumentCargoBean {
                 where += " and upper(dc.cargoReceiver.address) like :cargoReceiverAddress";
             }
 
+            if(filter.getSender().getName() != null){
+                where += " and upper(dc.cargoSender.name) like :cargoSenderName";
+            }
+
             if (filter.getDetentionDetails() != null) {
                 where += " and upper(dc.detentionDetails) like :detentionDetails";
             }
@@ -235,6 +242,7 @@ public class DocumentCargoBean {
             addParameter(query, "vehicleType", filter.getVehicleType());
             addParameter(query, "cargoReceiverName", filter.getReceiver().getName());
             addParameter(query, "cargoReceiverAddress", filter.getReceiver().getAddress());
+            addParameter(query, "cargoSenderName", filter.getSender().getName());
             addParameter(query, "detentionDetails", filter.getDetentionDetails());
             addParameter(query, "details", filter.getDetails());
             if (filter.getCreated() != null) {
