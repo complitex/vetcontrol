@@ -4,6 +4,7 @@ import com.sun.jersey.api.client.GenericType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.Update;
+import org.vetcontrol.entity.UpdateItem;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.sync.SyncRequestEntity;
 
@@ -68,17 +69,21 @@ public class UpdateSyncBean extends SyncInfo{
     }
 
     private void removeIfExist(Update update){
-        Long count = em.createQuery("select count(*) from Update u where u.version = :version", Long.class)
-                .setParameter("version", update.getVersion())
-                .getSingleResult();
+        try {
+            Update u = em.createQuery("select u from Update u where u.version = :version", Update.class)
+                    .setParameter("version", update.getVersion())
+                    .getSingleResult();
 
-        if (count > 0){
-            em.createQuery("delete from UpdateItem ui where ui.update.version = :version")
-                    .setParameter("version", update.getVersion())
-                    .executeUpdate();
-            em.createQuery("delete from Update u where u.version = :version")
-                    .setParameter("version", update.getVersion())
-                    .executeUpdate();
+            for (UpdateItem ui : u.getItems()){
+                em.remove(ui);
+            }
+
+            em.remove(u);             
+
+            em.flush();
+            em.close();
+        } catch (Exception e) {
+            //skip
         }
     }
 
