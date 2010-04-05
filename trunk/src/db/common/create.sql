@@ -399,7 +399,7 @@ CREATE TABLE `document_cargo` (
   `cargo_receiver_name` varchar(100) NOT NULL,
   `cargo_receiver_address` varchar(100) NOT NULL,
 
-  `passing_border_point_id` bigint(20) DEFAULT NULL,
+  `passing_border_point_id` bigint(20) NOT NULL,
   `details` varchar(255) DEFAULT NULL,
   `detention_details` varchar(255) DEFAULT NULL,
   `sync_status` varchar(64) DEFAULT NULL,

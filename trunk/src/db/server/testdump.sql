@@ -151,7 +151,6 @@ INSERT INTO `stringculture`(`id`, `locale`, `value`) VALUES
 (57,'ru','литр'),(58,'en','молоко обезжиренное'),(58,'ru','молоко обезжиренное'),(59,'en','хлеб белый'),
 (59,'ru','хлеб белый'),(60,'en','хлеб черный'),(60,'ru','хлеб черный'),(61,'en','сыр голландский'),
 (61,'ru','сыр голландский'),(62,'en','сыр алтайский'),(62,'ru','сыр алтайский'),(63,'en','Пункт 1'),
---(63,'ru','Пункт 1'),(64,'en','Пункт 2'),(64,'ru','Пункт 2'),(65,'en','Пункт 3'),(65,'ru','Пункт 3'),
 (64,'ru','Вид1'), (65,'ru','Вид2'), (66,'ru','Вид3'),
 (67, 'ru', 'Россия'), (67, 'en', 'Russia'), (68, 'ru', 'Англия'), (68, 'en', 'England'),
 (69, 'ru', 'Таможня 1'), (70, 'ru', 'Таможня 2');
@@ -176,17 +175,17 @@ INSERT INTO `customs_point`(`id`, `name`) VALUES(1, 69), (2, 70);
 
 UPDATE `department` d SET d.`custom_point_id` = 1 WHERE d.`id` = 2;
 
---INSERT INTO `document_cargo`(`id`, `client_id`, `department_id`, `creator_id`, `created`, `updated`, `movement_type_id`,
---                                `vehicle_type_id`, `vehicle_details`, `cargo_sender_id`, `cargo_receiver_id`,
---                                `cargo_producer_id`, `passing_border_point_id`, `details`, `detention_details`, `sync_status`)
---                                VALUES
---                  (1,1,17,30, '2010-01-15 17:59:09', '2010-01-15 17:59:09', 1,1, 'транспорт 1', 1,2,3,1, 'примечание 3','задержан 2', 'NOT_SYNCHRONIZED'),
---                  (2,1,17,30, '2010-02-15 17:48:00', '2010-02-15 17:48:00', 1,1, 'транспорт 2', 1,2,3,1, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
---                  (3,1,17,30, '2010-02-16 17:48:00', '2010-02-16 17:48:00', 3,1, 'транспорт 2', 1,2,3,1, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
---                  (4,1,17,30, '2010-03-30 17:48:00', '2010-03-30 17:48:00', 1,1, 'транспорт 3', 1,2,3,1, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
---                  (5,1,17,30, '2010-03-31 17:48:00', '2010-03-31 17:48:00', 2,1, 'транспорт 3', 1,2,3,1, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
---                  (6,1,17,30, '2010-02-16 17:25:00', '2010-02-16 17:25:00', 2,1, 'транспорт 4', 1,2,3,1, 'примечание','задержан', 'NOT_SYNCHRONIZED');
---
+INSERT INTO `document_cargo`(`id`, `client_id`, `department_id`, `creator_id`, `created`, `updated`, `movement_type_id`,
+                                `vehicle_type`, `cargo_sender_name`, `cargo_sender_country_id`, `cargo_receiver_name`,
+                                `cargo_receiver_address`, `passing_border_point_id`, `details`, `detention_details`, `sync_status`)
+                                VALUES
+                  (1,1,17,30, '2010-01-15 17:59:09', '2010-01-15 17:59:09', 1,'CAR', 'sender 1',1, 'receiver 1', 'receiver 1 address', 1, 'примечание 3','задержан 2', 'NOT_SYNCHRONIZED');
+--                  (2,1,17,30, '2010-02-15 17:48:00', '2010-02-15 17:48:00', 1,'CAR', 'sender 2',1,'receiver 2', 'receiver 2 address', 2, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
+--                  (3,1,17,30, '2010-02-16 17:48:00', '2010-02-16 17:48:00', 3,'CAR', 'sender 3',1,'receiver 3', 'receiver 3 address', 3, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
+--                  (4,1,17,30, '2010-03-30 17:48:00', '2010-03-30 17:48:00', 1,'CAR', 'sender 1',2,'receiver 1', 'receiver 1 address', 1, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
+--                  (5,1,17,30, '2010-03-31 17:48:00', '2010-03-31 17:48:00', 2,'CAR', 'sender 2',2,'receiver 2', 'receiver 2 address', 2, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
+--                  (6,1,17,30, '2010-02-16 17:25:00', '2010-02-16 17:25:00', 2,'CAR', 'sender 1',1,'receiver 1', 'receiver 1 address', 1, 'примечание','задержан', 'NOT_SYNCHRONIZED');
+
 --INSERT INTO `cargo`(`document_cargo_id`, `client_id`, `department_id`, `cargo_type_id`, `unit_type_id`, `count`, `certificate_date`,
 --`certificate_details`, `sync_status`)
 -- VALUES (1,1,17,1,1,20,'2010-01-15','сертификат 1', 'NOT_SYNCHRONIZED'),

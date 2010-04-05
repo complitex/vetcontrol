@@ -23,6 +23,7 @@
                     <th class="center" wicket:id="order_receiver_name"><wicket:message key="document.cargo.cargo_receiver_name"/></th>
                     <th class="center" wicket:id="order_receiver_address"><wicket:message key="document.cargo.cargo_receiver_address"/></th>
                     <th class="center" wicket:id="order_sender_name"><wicket:message key="document.cargo.cargo_sender_name"/></th>
+                    <th class="center" wicket:id="order_sender_country"><wicket:message key="document.cargo.cargo_sender_country"/></th>
                     <th class="center" wicket:id="order_created"><wicket:message key="document.cargo.date_created"/></th>
                     <th class="center">
                         <span wicket:id="order_syncStatus"><wicket:message key="document.cargo.syncStatus"/></span>
@@ -38,6 +39,7 @@
                     <th class="center"><input type="text" wicket:id="receiver.name"/></th>
                     <th class="center"><input type="text" wicket:id="receiver.address"/></th>
                     <th class="center"><input type="text" wicket:id="sender.name"/></th>
+                    <th class="center"><select wicket:id="sender.country"></select></th>
 
                     <th class="center">
                         <div style="width:102px">
@@ -58,6 +60,7 @@
                     <td><span wicket:id="receiverName"></span></td>
                     <td><span wicket:id="receiverAddress"></span></td>
                     <td><span wicket:id="senderName"></span></td>
+                    <td><span wicket:id="senderCountry"></span></td>
                     <td><span wicket:id="created"></span></td>
                     <td><span wicket:id="syncStatus"></span></td>
                     <td><span wicket:id="action"></span></td>

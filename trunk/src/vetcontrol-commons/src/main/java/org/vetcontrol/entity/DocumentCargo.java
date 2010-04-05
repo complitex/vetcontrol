@@ -17,68 +17,61 @@ import java.util.List;
 @IdClass(ClientEntityId.class)
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DocumentCargo extends Synchronized implements IUpdated{
+public class DocumentCargo extends Synchronized implements IUpdated {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Id
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id")
     @XmlIDREF
     private Client client;
-
     @Id
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "department_id")
     @XmlIDREF
     private Department department;
-
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "creator_id")
     @XmlIDREF
     private User creator;
-
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
-
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
-
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "movement_type_id")
     @XmlIDREF
     private MovementType movementType;
-
     @Enumerated(EnumType.STRING)
+    @Column(name = "vehicle_type", nullable = false)
     private VehicleType vehicleType;
-
     @OneToMany(mappedBy = "documentCargo")
     @XmlTransient
     private List<Cargo> cargos = new ArrayList<Cargo>();
-
     @Embedded
     @AttributeOverrides({
-        @AttributeOverride(name="name", column=@Column(name="cargo_sender_name")),
-        @AttributeOverride(name="country", column=@Column(name="cargo_sender_country_id"))
+        @AttributeOverride(name = "name", column =
+        @Column(name = "cargo_sender_name")),
+        @AttributeOverride(name = "country", column =
+        @Column(name = "cargo_sender_country_id"))
     })
-    private CargoSenderEmbeddable cargoSenderEmbeddable;
-
+    private CargoSenderEmbeddable cargoSender;
     @Embedded
     @AttributeOverrides({
-        @AttributeOverride(name="name", column=@Column(name="cargo_receiver_name")),
-        @AttributeOverride(name="address", column=@Column(name="cargo_receiver_address"))
+        @AttributeOverride(name = "name", column =
+        @Column(name = "cargo_receiver_name")),
+        @AttributeOverride(name = "address", column =
+        @Column(name = "cargo_receiver_address"))
     })
-    private CargoReceiverEmbeddable cargoReceiverEmbeddable;
-
-    @ManyToOne(optional = false)
+    private CargoReceiverEmbeddable cargoReceiver;
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "passing_border_point_id")
     @XmlIDREF
     private PassingBorderPoint passingBorderPoint;
-
     @Column(name = "detention_details", length = 255)
     private String detentionDetails;
-
     @Column(name = "details", length = 255)
     private String details;
 
@@ -122,10 +115,12 @@ public class DocumentCargo extends Synchronized implements IUpdated{
         this.created = created;
     }
 
+    @Override
     public Date getUpdated() {
         return updated;
     }
 
+    @Override
     public void setUpdated(Date updated) {
         this.updated = updated;
     }
@@ -155,19 +150,19 @@ public class DocumentCargo extends Synchronized implements IUpdated{
     }
 
     public CargoSenderEmbeddable getCargoSender() {
-        return cargoSenderEmbeddable;
+        return cargoSender;
     }
 
     public void setCargoSender(CargoSenderEmbeddable cargoSenderEmbeddable) {
-        this.cargoSenderEmbeddable = cargoSenderEmbeddable;
+        this.cargoSender = cargoSenderEmbeddable;
     }
 
     public CargoReceiverEmbeddable getCargoReceiver() {
-        return cargoReceiverEmbeddable;
+        return cargoReceiver;
     }
 
     public void setCargoReceiver(CargoReceiverEmbeddable cargoReceiverEmbeddable) {
-        this.cargoReceiverEmbeddable = cargoReceiverEmbeddable;
+        this.cargoReceiver = cargoReceiverEmbeddable;
     }
 
     public PassingBorderPoint getPassingBorderPoint() {
@@ -194,57 +189,8 @@ public class DocumentCargo extends Synchronized implements IUpdated{
         this.details = details;
     }
 
-    public String getDisplayId(){
-        return (department != null ? department.getId() : "0") + "." +
-               (client != null ? client.getId() : "0")  + "." + id;        
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DocumentCargo)) return false;
-        if (!super.equals(o)) return false;
-
-        DocumentCargo that = (DocumentCargo) o;
-
-        if (cargoReceiverEmbeddable != null ? !cargoReceiverEmbeddable.equals(that.cargoReceiverEmbeddable) : that.cargoReceiverEmbeddable != null)
-            return false;
-        if (cargoSenderEmbeddable != null ? !cargoSenderEmbeddable.equals(that.cargoSenderEmbeddable) : that.cargoSenderEmbeddable != null) return false;
-        if (cargos != null ? !cargos.equals(that.cargos) : that.cargos != null) return false;
-        if (client != null ? !client.equals(that.client) : that.client != null) return false;
-        if (created != null ? !created.equals(that.created) : that.created != null) return false;
-        if (creator != null ? !creator.equals(that.creator) : that.creator != null) return false;
-        if (department != null ? !department.equals(that.department) : that.department != null) return false;
-        if (details != null ? !details.equals(that.details) : that.details != null) return false;
-        if (detentionDetails != null ? !detentionDetails.equals(that.detentionDetails) : that.detentionDetails != null)
-            return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (movementType != null ? !movementType.equals(that.movementType) : that.movementType != null) return false;
-        if (passingBorderPoint != null ? !passingBorderPoint.equals(that.passingBorderPoint) : that.passingBorderPoint != null)
-            return false;
-        if (updated != null ? !updated.equals(that.updated) : that.updated != null) return false;
-        if (vehicleType != null ? !vehicleType.equals(that.vehicleType) : that.vehicleType != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (id != null ? id.hashCode() : 0);
-        result = 31 * result + (client != null ? client.hashCode() : 0);
-        result = 31 * result + (department != null ? department.hashCode() : 0);
-        result = 31 * result + (creator != null ? creator.hashCode() : 0);
-        result = 31 * result + (created != null ? created.hashCode() : 0);
-        result = 31 * result + (updated != null ? updated.hashCode() : 0);
-        result = 31 * result + (movementType != null ? movementType.hashCode() : 0);
-        result = 31 * result + (vehicleType != null ? vehicleType.hashCode() : 0);
-        result = 31 * result + (cargos != null ? cargos.hashCode() : 0);
-        result = 31 * result + (cargoSenderEmbeddable != null ? cargoSenderEmbeddable.hashCode() : 0);
-        result = 31 * result + (cargoReceiverEmbeddable != null ? cargoReceiverEmbeddable.hashCode() : 0);
-        result = 31 * result + (passingBorderPoint != null ? passingBorderPoint.hashCode() : 0);
-        result = 31 * result + (detentionDetails != null ? detentionDetails.hashCode() : 0);
-        result = 31 * result + (details != null ? details.hashCode() : 0);
-        return result;
+    public String getDisplayId() {
+        return (department != null ? department.getId() : "0") + "."
+                + (client != null ? client.getId() : "0") + "." + id;
     }
 }

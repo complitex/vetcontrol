@@ -137,11 +137,13 @@ public class DocumentCargoBean {
             case SENDER_NAME:
                 order += "dc.cargoSender.name";
                 break;
+            case SENDER_COUNTRY:
+                order += getOrderLocaleFilter("country");
             case CREATED:
-                order += " order by dc.created";
+                order += "dc.created";
                 break;
             case SYNC_STATUS:
-                order += " order by dc.syncStatus";
+                order += "dc.syncStatus";
                 break;
         }
         order += (asc ? " asc" : " desc");
@@ -153,7 +155,7 @@ public class DocumentCargoBean {
     }
 
     private String getOrderLocaleFilter(String entity) {
-        return " order by m_" + entity;
+        return " m_" + entity;
     }
 
     private String getSelectLocaleFilter(String entity) {
@@ -165,7 +167,10 @@ public class DocumentCargoBean {
 
         if (OrderBy.MOVEMENT_TYPE.equals(orderBy)) {
             join += getSelectLocaleFilter("movementType");
+        } else if(OrderBy.SENDER_COUNTRY.equals(orderBy)){
+            join += " left join dc.cargoSender.country.namesMap as m_country ";
         }
+
         return join;
     }
 
@@ -209,6 +214,10 @@ public class DocumentCargoBean {
                 where += " and upper(dc.cargoSender.name) like :cargoSenderName";
             }
 
+             if(filter.getSender().getCountry() != null){
+                where += " and dc.cargoSender.country  = :senderCountry";
+            }
+
             if (filter.getDetentionDetails() != null) {
                 where += " and upper(dc.detentionDetails) like :detentionDetails";
             }
@@ -243,6 +252,7 @@ public class DocumentCargoBean {
             addParameter(query, "cargoReceiverName", filter.getReceiver().getName());
             addParameter(query, "cargoReceiverAddress", filter.getReceiver().getAddress());
             addParameter(query, "cargoSenderName", filter.getSender().getName());
+            addParameter(query, "senderCountry", filter.getSender().getCountry());
             addParameter(query, "detentionDetails", filter.getDetentionDetails());
             addParameter(query, "details", filter.getDetails());
             if (filter.getCreated() != null) {
