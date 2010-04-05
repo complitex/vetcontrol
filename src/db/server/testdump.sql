@@ -174,6 +174,8 @@ INSERT INTO `cargo_producer`(`id`, `name`, `country_id`) VALUES (1,44, 1),(2,45,
 
 INSERT INTO `customs_point`(`id`, `name`) VALUES(1, 71), (2, 72);
 
+UPDATE `department` d SET d.`custom_point_id` = 1 WHERE d.`id` = 2;
+
 --INSERT INTO `document_cargo`(`id`, `client_id`, `department_id`, `creator_id`, `created`, `updated`, `movement_type_id`,
 --                                `vehicle_type_id`, `vehicle_details`, `cargo_sender_id`, `cargo_receiver_id`,
 --                                `cargo_producer_id`, `passing_border_point_id`, `details`, `detention_details`, `sync_status`)
