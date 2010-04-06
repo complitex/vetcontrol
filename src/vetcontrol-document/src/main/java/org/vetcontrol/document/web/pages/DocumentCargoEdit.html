@@ -3,7 +3,33 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml"  xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
 <head>
-    <wicket:head><title wicket:id="title"></title></wicket:head>
+    <wicket:head>
+        <title wicket:id="title"></title>
+        <style type="text/css">
+            div.wicket-aa-container {
+                border-width: 1px;
+                border-color: #cccccc;
+                border-style: solid;
+            }
+
+            div.wicket-aa {
+                background-color: white;
+                padding: 2px;
+                text-align:left;
+            }
+
+            div.wicket-aa ul {
+                list-style:none;
+                padding: 2px;
+                margin:0;
+            }
+
+            div.wicket-aa ul li.selected {
+                background-color:#ECEFF1;
+                margin:0;
+            }
+        </style>
+    </wicket:head>
 </head>
 
 <body>
@@ -24,25 +50,29 @@
                 <td><select id="vehicle_type" wicket:id="document.cargo.vehicle_type"></select></td>
             </tr>
             <tr>
-                <th><label for="vehicle_details"><wicket:message key="document.cargo.vehicle_details"/><b class="blue">*</b>:</label></th>
-                <td><input id="vehicle_details" wicket:id="document.cargo.vehicle_details"/></td>
+                <th><label for="cargo_sender_country"><wicket:message key="document.cargo.cargo_sender_country"/><b class="blue">*</b>:</label></th>
+                <td><select id="cargo_sender_country" wicket:id="document.cargo.cargo_sender_country"></select></td>
             </tr>
             <tr>
-                <th><label for="cargo_sender"><wicket:message key="document.cargo.cargo_sender"/><b class="blue">*</b>:</label></th>
-                <td><select id="cargo_sender" wicket:id="document.cargo.cargo_sender"></select></td>
+                <th><label for="cargo_sender_name"><wicket:message key="document.cargo.cargo_sender_name"/><b class="blue">*</b>:</label></th>
+                <td><input type="text" id="cargo_sender_name" wicket:id="document.cargo.cargo_sender_name"/></td>
             </tr>
             <tr>
-                <th><label for="cargo_receiver"><wicket:message key="document.cargo.cargo_receiver"/><b class="blue">*</b>:</label></th>
-                <td><select id="cargo_receiver" wicket:id="document.cargo.cargo_receiver"></select></td>
+                <th><label for="cargo_receiver_name"><wicket:message key="document.cargo.cargo_receiver_name"/><b class="blue">*</b>:</label></th>
+                <td><input type="text" id="cargo_receiver_name" wicket:id="document.cargo.cargo_receiver_name"/></td>
             </tr>
             <tr>
+                <th><label for="cargo_receiver_address"><wicket:message key="document.cargo.cargo_receiver_address"/><b class="blue">*</b>:</label></th>
+                <td><input type="text" id="cargo_receiver_address" wicket:id="document.cargo.cargo_receiver_address"/></td>
+            </tr>
+            <!-- <tr>
                 <th><label for="cargo_producer"><wicket:message key="document.cargo.cargo_producer"/><b class="blue">*</b>:</label></th>
                 <td><select id="cargo_producer" wicket:id="document.cargo.cargo_producer"></select></td>
             </tr>
             <tr>
                 <th><label for="passingBorderPoint"><wicket:message key="document.cargo.passingBorderPoint"/><b class="blue">*</b>:</label></th>
                 <td><select id="passingBorderPoint" wicket:id="document.cargo.passingBorderPoint"></select></td>
-            </tr>
+            </tr>-->
             <tr>
                 <th><label for="detention_details"><wicket:message key="document.cargo.detention_details"/>:</label></th>
                 <td><input id="detention_details" wicket:id="document.cargo.detention_details"/></td>
@@ -61,7 +91,7 @@
             <tr>
                 <th wicket:id="l_creator"></th>
                 <td wicket:id="creator"></td>
-            </tr>            
+            </tr>
             <tr>
                 <th wicket:id="l_created"></th>
                 <td wicket:id="created"></td>
@@ -74,21 +104,21 @@
                 <tr>
                     <th  class="center"><wicket:message key="document.cargo.cargo_type"/></th>
                     <th  class="center"><wicket:message key="document.cargo.count"/></th>
-                    <th  class="center"><wicket:message key="document.cargo.unit_type"/></th>                    
+                    <th  class="center"><wicket:message key="document.cargo.unit_type"/></th>
                     <th  class="center"><wicket:message key="document.cargo.certificate_detail"/></th>
                     <th  class="center"><wicket:message key="document.cargo.certificate_date"/></th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr wicket:id="document.cargo.cargo_list">                    
+                <tr wicket:id="document.cargo.cargo_list">
                     <td><span wicket:id="document.cargo.cargo_type"></span></td>
                     <td width="80px"><input wicket:id="document.cargo.count" type="text"/></td>
                     <td><select wicket:id="document.cargo.unit_type"></select></td>
                     <td><input wicket:id="document.cargo.certificate_detail" type="text"/></td>
                     <td width="102px"><div style="width:102px"><input style="width:80px" wicket:id="document.cargo.certificate_date" type="text" /></div></td>
                     <td><a href="#" wicket:id="document.cargo.delete" onfocus="$('.addCargo').focus();"><wicket:message key="document.cargo.delete"/>
-                        </a></td>
+                    </a></td>
                 </tr>
                 </tbody>
                 <tfoot>

@@ -8,6 +8,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.vetcontrol.util.book.entity.annotation.BookReference;
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
+import org.vetcontrol.util.book.entity.annotation.ValidProperty;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlIDREF;
@@ -15,7 +16,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
-import org.vetcontrol.util.book.entity.annotation.ValidProperty;
 
 /**
  * 2.4.3.1 Справочник структурных единиц
@@ -121,6 +121,30 @@ public class Department extends Localizable {
                 setParameter("level", level).
                 setParameter("updated", updated).
                 setParameter("disabled", disabled);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Department)) return false;
+        if (!super.equals(o)) return false;
+
+        Department that = (Department) o;
+
+        if (customsPoint != null ? !customsPoint.equals(that.customsPoint) : that.customsPoint != null) return false;
+        if (level != null ? !level.equals(that.level) : that.level != null) return false;
+        if (parent != null ? !parent.equals(that.parent) : that.parent != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (parent != null ? parent.hashCode() : 0);
+        result = 31 * result + (customsPoint != null ? customsPoint.hashCode() : 0);
+        result = 31 * result + (level != null ? level.hashCode() : 0);
+        return result;
     }
 
     @Override

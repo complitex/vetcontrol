@@ -4,19 +4,19 @@
  */
 package org.vetcontrol.entity;
 
-import java.util.Date;
-
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.vetcontrol.sync.LongAdapter;
 import org.vetcontrol.util.book.entity.annotation.BookReference;
 import org.vetcontrol.util.book.entity.annotation.ValidProperty;
+
+import javax.persistence.*;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.Date;
 
 /**
  * @author Artem
@@ -127,5 +127,31 @@ public class PassingBorderPoint implements ILongId, IBook, IUpdated, IDisabled, 
 
     public void setNeedToUpdate(boolean needToUpdate) {
         this.needToUpdate = needToUpdate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PassingBorderPoint)) return false;
+
+        PassingBorderPoint that = (PassingBorderPoint) o;
+
+        if (disabled != that.disabled) return false;
+        if (department != null ? !department.equals(that.department) : that.department != null) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (updated != null ? !updated.equals(that.updated) : that.updated != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (department != null ? department.hashCode() : 0);
+        result = 31 * result + (updated != null ? updated.hashCode() : 0);
+        result = 31 * result + (disabled ? 1 : 0);
+        return result;
     }
 }

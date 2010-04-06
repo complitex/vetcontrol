@@ -88,6 +88,7 @@ public class UpdateEdit extends FormTemplatePage{
                     "Обновление клиента не найдено. ID: " + id);
         }
 
+        assert updateObject != null;
         final String updateVersion = updateObject.getVersion();
 
         final IModel<Update> model = new Model<Update>(updateObject);
