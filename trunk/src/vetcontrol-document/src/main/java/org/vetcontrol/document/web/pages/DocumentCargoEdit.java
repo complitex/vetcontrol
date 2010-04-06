@@ -2,11 +2,14 @@ package org.vetcontrol.document.web.pages;
 
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.authorization.UnauthorizedInstantiationException;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.datetime.StyleDateConverter;
 import org.apache.wicket.datetime.markup.html.basic.DateLabel;
+import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteSettings;
+import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteTextField;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
@@ -23,15 +26,17 @@ import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
+import org.vetcontrol.web.component.DatePicker;
+import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.component.UKTZEDField;
+import org.vetcontrol.web.component.list.AjaxRemovableListView;
 import org.vetcontrol.web.template.FormTemplatePage;
 
 import javax.ejb.EJB;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
-import org.vetcontrol.web.component.DatePicker;
-import org.vetcontrol.web.component.Spacer;
-import org.vetcontrol.web.component.list.AjaxRemovableListView;
 
 import static org.vetcontrol.entity.Log.EVENT.*;
 import static org.vetcontrol.entity.Log.MODULE.DOCUMENT;
@@ -73,270 +78,349 @@ public class DocumentCargoEdit extends FormTemplatePage {
     }
 
     private void init(final ClientEntityId id) {
-        //TODO: uncomment
 
-//        //Модель данных
-//        DocumentCargo dc;
-//        try {
-//            dc = (id != null) ? documentCargoBean.loadDocumentCargo(id) : new DocumentCargo();
-//        } catch (Exception e) {
-//            log.error("Карточка на груз по id = " + id + " не найдена", e);
-//            getSession().error("Карточка на груз № " + id + " не найдена");
-//            logBean.error(DOCUMENT, EDIT, DocumentCargoEdit.class, DocumentCargo.class,
-//                    "Карточка не найдена. ID: " + id);
-//
-//            setResponsePage(DocumentCargoList.class);
-//            return;
-//        }
-//
-//        //Проверка доступа к данным
-//        User currentUser = userProfileBean.getCurrentUser();
-//
-//        //Установка подразделения по умолчанию
-//        if (dc.getId() == null) {
-//            dc.setDepartment(currentUser.getDepartment());
-//        }
-//
-//        if (id == null && !hasAnyRole(DOCUMENT_CREATE)) {
-//            log.error("Пользователю запрещен доступ на создание карточки на груз: " + currentUser.toString());
-//            logBean.error(DOCUMENT, CREATE, DocumentCargoEdit.class, DocumentCargo.class, "Доступ запрещен");
-//            throw new UnauthorizedInstantiationException(DocumentCargoEdit.class);
-//        }
-//
-//        if (id != null) {
-//            boolean authorized = hasAnyRole(DOCUMENT_EDIT)
-//                    && currentUser.getId().equals(dc.getCreator().getId());
-//
-//            if (!authorized && hasAnyRole(DOCUMENT_DEP_EDIT)) {
-//                authorized = currentUser.getDepartment().getId().equals(dc.getCreator().getDepartment().getId());
-//            }
-//
-//            if (!authorized && hasAnyRole(DOCUMENT_DEP_CHILD_EDIT)) {
-//                for (Department d = dc.getCreator().getDepartment(); d != null; d = d.getParent()) {
-//                    if (d.getId().equals(currentUser.getDepartment().getId())) {
-//                        authorized = true;
-//                        break;
-//                    }
-//                }
-//            }
-//
-//            if (!authorized || (!clientBean.isServer() && dc.getSyncStatus().equals(Synchronized.SyncStatus.SYNCHRONIZED))) {
-//                log.error("Пользователю запрещен доступ редактирование карточки на груз id = " + id + ": "
-//                        + currentUser.toString());
-//                logBean.error(DOCUMENT, EDIT, DocumentCargoEdit.class, DocumentCargo.class,
-//                        "Доступ запрещен. ID: " + id);
-//                throw new UnauthorizedInstantiationException(DocumentCargoEdit.class);
-//            }
-//        }
-//
-//        //Заголовок
-//        IModel title = new AbstractReadOnlyModel<String>() {
-//
-//            @Override
-//            public String getObject() {
-//                return (id != null)
-//                        ? getString("document.cargo.edit.title.edit") + " " + id
-//                        : getString("document.cargo.edit.title.create");
-//            }
-//        };
-//        add(new Label("title", title));
-//        add(new Label("header", title));
-//
-//        add(new FeedbackPanel("messages"));
-//
-//        final Model<DocumentCargo> documentCargoModel = new Model<DocumentCargo>(dc);
-//
-//        //Форма
-//        final Form form = new Form<DocumentCargo>("doc_cargo_edit_form", documentCargoModel) {
-//
-//            @Override
-//            protected void onValidate() {
-//                for (Cargo c : getModelObject().getCargos()) {
-//                    if (c.getCargoType() == null) {
-//                        error(getString("document.cargo.edit.message.cargo_type.not_found.error"));
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            protected void onSubmit() {
-//                try {
-//                    documentCargoBean.save(getModelObject());
-//                    setResponsePage(DocumentCargoList.class);
-//                    if (id == null) {
-//                        getSession().info(new StringResourceModel("document.cargo.edit.message.added", this, null,
-//                                new Object[]{getModelObject().getDisplayId()}).getString());
-//                    } else {
-//                        getSession().info(new StringResourceModel("document.cargo.edit.message.saved", this, null,
-//                                new Object[]{id}).getString());
-//                    }
-//
-//                    logBean.info(DOCUMENT, id == null ? CREATE : EDIT, DocumentCargoEdit.class, DocumentCargo.class,
-//                            "ID: " + getModelObject().getDisplayId());
-//                } catch (Exception e) {
-//                    getSession().error(new StringResourceModel("document.cargo.edit.message.save.error", this, null,
-//                            new Object[]{id}).getString());
-//
-//                    log.error("Ошибка сохранения карточки на груз № " + getModelObject().getDisplayId(), e);
-//
-//                    logBean.error(DOCUMENT, id == null ? CREATE : EDIT, DocumentCargoEdit.class,
-//                            DocumentCargo.class, "Ошибка сохранения в базу данных");
-//                }
-//            }
-//        };
-//        add(form);
-//
-//        Button cancel = new Button("cancel") {
-//
-//            @Override
-//            public void onSubmit() {
-//                setResponsePage(DocumentCargoList.class);
-//            }
-//        };
-//        cancel.setDefaultFormProcessing(false);
-//        form.add(cancel);
-//
-//        //Тип движения груза
-//        addDropDownChoice(form, "document.cargo.movement_type", MovementType.class, documentCargoModel, "movementType");
-//
-//        //Тип транспортного средства
-//        addDropDownChoice(form, "document.cargo.vehicle_type", VehicleType.class, documentCargoModel, "vehicleType");
-//
-//        //Тип транспортного средства - реквизиты
-//        TextField vehicleDetails = new TextField<String>("document.cargo.vehicle_details",
-//                new PropertyModel<String>(documentCargoModel, "vehicleDetails"));
-//        vehicleDetails.setRequired(true);
-//        form.add(vehicleDetails);
-//
-//        //Список грузов
-//        final WebMarkupContainer cargoContainer = new WebMarkupContainer("document.cargo.cargo_container");
-//        cargoContainer.setOutputMarkupId(true);
-//        form.add(cargoContainer);
-//
-//        //Добавить груз
-//        final AjaxSubmitLink addCargoLink = new AjaxSubmitLink("document.cargo.cargo.add", form) {
-//
-//            @Override
-//            public void onSubmit(AjaxRequestTarget target, Form form) {
-//                DocumentCargo dc = (DocumentCargo) form.getModelObject();
-//                Cargo cargo = new Cargo();
-//                cargo.setDocumentCargo(dc);
-//                dc.getCargos().add(cargo);
-//                target.addComponent(cargoContainer);
-//
-//                String setFocusOnNewCargo = "newCargoFirstInputId = $('.table_input tbody tr:last input[type=\"text\"]:first').attr('id');"
-//                        + "Wicket.Focus.setFocusOnId(newCargoFirstInputId);";
-//                target.appendJavascript(setFocusOnNewCargo);
-//            }
-//        };
-//        addCargoLink.setDefaultFormProcessing(false);
-//        cargoContainer.add(addCargoLink);
-//
-//
-//        final ListView cargoListView = new AjaxRemovableListView<Cargo>("document.cargo.cargo_list",
-//                new PropertyModel<List<Cargo>>(documentCargoModel, "cargos")) {
-//
-//            @Override
-//            protected void populateItem(final ListItem<Cargo> item) {
-//                addCargo(item);
-//                addRemoveSubmitLink("document.cargo.delete", form, item, addCargoLink, cargoContainer);
-//            }
-//        };
-//        cargoContainer.add(cargoListView);
-//
-//        //Отравитель
-//        addDropDownChoice(form, "document.cargo.cargo_sender", CargoSender.class, documentCargoModel, "cargoSender");
-//
-//        //Получатель
-//        addDropDownChoice(form, "document.cargo.cargo_receiver", CargoReceiver.class, documentCargoModel, "cargoReceiver");
-//
-//        //Производитель
-//        addDropDownChoice(form, "document.cargo.cargo_producer", CargoProducer.class, documentCargoModel, "cargoProducer");
-//
-//        //Пункт пропуска через границу
+        //Модель данных
+        DocumentCargo dc;
+        try {            
+            dc = (id != null) ? documentCargoBean.loadDocumentCargo(id) : new DocumentCargo();
+        } catch (Exception e) {
+            log.error("Карточка на груз по id = " + id + " не найдена", e);
+            getSession().error("Карточка на груз № " + id + " не найдена");
+            logBean.error(DOCUMENT, EDIT, DocumentCargoEdit.class, DocumentCargo.class,
+                    "Карточка не найдена. ID: " + id);
+
+            setResponsePage(DocumentCargoList.class);
+            return;
+        }
+
+        //Проверка доступа к данным
+        User currentUser = userProfileBean.getCurrentUser();
+
+        //Установка подразделения по умолчанию
+        if (dc.getId() == null) {
+            dc.setDepartment(currentUser.getDepartment());
+        }
+
+        if (id == null && !hasAnyRole(DOCUMENT_CREATE)) {
+            log.error("Пользователю запрещен доступ на создание карточки на груз: " + currentUser.toString());
+            logBean.error(DOCUMENT, CREATE, DocumentCargoEdit.class, DocumentCargo.class, "Доступ запрещен");
+            throw new UnauthorizedInstantiationException(DocumentCargoEdit.class);
+        }
+
+        if (id != null) {
+            boolean authorized = hasAnyRole(DOCUMENT_EDIT)
+                    && currentUser.getId().equals(dc.getCreator().getId());
+
+            if (!authorized && hasAnyRole(DOCUMENT_DEP_EDIT)) {
+                authorized = currentUser.getDepartment().getId().equals(dc.getCreator().getDepartment().getId());
+            }
+
+            if (!authorized && hasAnyRole(DOCUMENT_DEP_CHILD_EDIT)) {
+                for (Department d = dc.getCreator().getDepartment(); d != null; d = d.getParent()) {
+                    if (d.getId().equals(currentUser.getDepartment().getId())) {
+                        authorized = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!authorized || (!clientBean.isServer() && dc.getSyncStatus().equals(Synchronized.SyncStatus.SYNCHRONIZED))) {
+                log.error("Пользователю запрещен доступ редактирование карточки на груз id = " + id + ": "
+                        + currentUser.toString());
+                logBean.error(DOCUMENT, EDIT, DocumentCargoEdit.class, DocumentCargo.class,
+                        "Доступ запрещен. ID: " + id);
+                throw new UnauthorizedInstantiationException(DocumentCargoEdit.class);
+            }
+        }
+
+        //Заголовок
+        IModel title = new AbstractReadOnlyModel<String>() {
+
+            @Override
+            public String getObject() {
+                return (id != null)
+                        ? getString("document.cargo.edit.title.edit") + " " + id
+                        : getString("document.cargo.edit.title.create");
+            }
+        };
+        add(new Label("title", title));
+        add(new Label("header", title));
+
+        add(new FeedbackPanel("messages"));
+
+        final Model<DocumentCargo> documentCargoModel = new Model<DocumentCargo>(dc);
+
+        //Форма
+        final Form form = new Form<DocumentCargo>("doc_cargo_edit_form", documentCargoModel) {
+
+            @Override
+            protected void onValidate() {
+                for (Cargo c : getModelObject().getCargos()) {
+                    if (c.getCargoType() == null) {
+                        error(getString("document.cargo.edit.message.cargo_type.not_found.error"));
+                    }
+                }
+            }
+
+            @Override
+            protected void onSubmit() {
+                try {
+                    documentCargoBean.save(getModelObject());
+                    setResponsePage(DocumentCargoList.class);
+                    if (id == null) {
+                        getSession().info(new StringResourceModel("document.cargo.edit.message.added", this, null,
+                                new Object[]{getModelObject().getDisplayId()}).getString());
+                    } else {
+                        getSession().info(new StringResourceModel("document.cargo.edit.message.saved", this, null,
+                                new Object[]{id}).getString());
+                    }
+
+                    logBean.info(DOCUMENT, id == null ? CREATE : EDIT, DocumentCargoEdit.class, DocumentCargo.class,
+                            "ID: " + getModelObject().getDisplayId());
+                } catch (Exception e) {
+                    getSession().error(new StringResourceModel("document.cargo.edit.message.save.error", this, null,
+                            new Object[]{id}).getString());
+
+                    log.error("Ошибка сохранения карточки на груз № " + getModelObject().getDisplayId(), e);
+
+                    logBean.error(DOCUMENT, id == null ? CREATE : EDIT, DocumentCargoEdit.class,
+                            DocumentCargo.class, "Ошибка сохранения в базу данных");
+                }
+            }
+        };
+        add(form);
+
+        Button cancel = new Button("cancel") {
+
+            @Override
+            public void onSubmit() {
+                setResponsePage(DocumentCargoList.class);
+            }
+        };
+        cancel.setDefaultFormProcessing(false);
+        form.add(cancel);
+
+        //Тип движения груза
+        addDropDownChoice(form, "document.cargo.movement_type", MovementType.class, documentCargoModel, "movementType");
+
+        //Тип транспортного средства
+        DropDownChoice<VehicleType> ddcVehicleType = new DropDownChoice<VehicleType>("document.cargo.vehicle_type",
+                new PropertyModel<VehicleType>(documentCargoModel, "vehicleType"),
+                Arrays.asList(VehicleType.values()),
+                new EnumChoiceRenderer<VehicleType>(this));
+        ddcVehicleType.setRequired(true);
+        form.add(ddcVehicleType);
+
+        //Список грузов
+        final WebMarkupContainer cargoContainer = new WebMarkupContainer("document.cargo.cargo_container");
+        cargoContainer.setOutputMarkupId(true);
+        form.add(cargoContainer);
+
+        //Добавить груз
+        final AjaxSubmitLink addCargoLink = new AjaxSubmitLink("document.cargo.cargo.add", form) {
+
+            @Override
+            public void onSubmit(AjaxRequestTarget target, Form form) {
+                DocumentCargo dc = (DocumentCargo) form.getModelObject();
+                Cargo cargo = new Cargo();
+                cargo.setDocumentCargo(dc);
+                dc.getCargos().add(cargo);
+                target.addComponent(cargoContainer);
+
+                String setFocusOnNewCargo = "newCargoFirstInputId = $('.table_input tbody tr:last input[type=\"text\"]:first').attr('id');"
+                        + "Wicket.Focus.setFocusOnId(newCargoFirstInputId);";
+                target.appendJavascript(setFocusOnNewCargo);
+            }
+        };
+        addCargoLink.setDefaultFormProcessing(false);
+        cargoContainer.add(addCargoLink);
+
+
+        final ListView cargoListView = new AjaxRemovableListView<Cargo>("document.cargo.cargo_list",
+                new PropertyModel<List<Cargo>>(documentCargoModel, "cargos")) {
+
+            @Override
+            protected void populateItem(final ListItem<Cargo> item) {
+                addCargo(item);
+                addRemoveSubmitLink("document.cargo.delete", form, item, addCargoLink, cargoContainer);
+            }
+        };
+        cargoContainer.add(cargoListView);
+
+        //Отравитель Страна
+        DropDownChoice ddcSenderCountry = addDropDownChoice(form, "document.cargo.cargo_sender_country", CountryBook.class, documentCargoModel, "senderCountry");
+        ddcSenderCountry.add(new AjaxFormComponentUpdatingBehavior("onchange"){
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                //update model
+            }
+        });
+        ddcSenderCountry.setOutputMarkupId(true);
+
+        //Настройки автокомплита
+        AutoCompleteSettings settings = new AutoCompleteSettings();
+        settings.setAdjustInputWidth(false);
+
+        //Отравитель Название
+        final AutoCompleteTextField<String> senderName = new AutoCompleteTextField<String>("document.cargo.cargo_sender_name",
+                new PropertyModel<String>(documentCargoModel, "senderName"),  settings){
+
+            @Override
+            protected Iterator<String> getChoices(String input) {
+
+                return documentCargoBean
+                        .getSenderNames(documentCargoModel.getObject().getSenderCountry(), input)
+                        .iterator();
+            }
+
+        };
+        senderName.setRequired(true);
+        senderName.setOutputMarkupId(true);
+        form.add(senderName);
+
+        //Получатель Название
+        final AutoCompleteTextField<String> receiverName = new AutoCompleteTextField<String>("document.cargo.cargo_receiver_name",
+                new PropertyModel<String>(documentCargoModel, "receiverName"), settings){
+
+            @Override
+            protected Iterator<String> getChoices(String input) {
+
+                return documentCargoBean
+                        .getReceiverNames(input)
+                        .iterator();
+            }
+
+        };
+        receiverName.setRequired(true);
+        receiverName.setOutputMarkupId(true);
+        form.add(receiverName);
+
+         //Получатель Адрес
+        final AutoCompleteTextField<String> receiverAddress = new AutoCompleteTextField<String>("document.cargo.cargo_receiver_address",
+                new PropertyModel<String>(documentCargoModel, "receiverAddress"), settings){
+
+            @Override
+            protected Iterator<String> getChoices(String input) {
+
+                return documentCargoBean
+                        .getReceiverNames(input)
+                        .iterator();
+            }
+
+        };
+        receiverAddress.setRequired(true);
+        receiverAddress.setOutputMarkupId(true);
+        form.add(receiverAddress);
+
+        //Подстановка адреса при вводе получателя
+        receiverName.add(new AjaxFormComponentUpdatingBehavior("onchange"){
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                String address = receiverAddress.getModelObject();
+                String name = receiverName.getModelObject();
+
+                if ((address == null || address.isEmpty()) && name != null && !name.isEmpty()){
+                    address = documentCargoBean.getReceiverAddress(name);
+                    if (address != null){
+                        receiverAddress.setModelObject(address);
+                        target.addComponent(receiverAddress);
+                    }
+                }
+            }
+        });
+
+
+        //Производитель
+        //addDropDownChoice(form, "document.cargo.cargo_producer", CargoProducer.class, documentCargoModel, "cargoProducer");
+//        form.add(new DropDownChoice("document.cargo.cargo_producer"));
+
+        //Пункт пропуска через границу
 //        addDropDownChoice(form, "document.cargo.passingBorderPoint", PassingBorderPoint.class, documentCargoModel, "passingBorderPoint");
-//
-//        //Реквизиты акта задержания груза
-//        TextField detentionDetails = new TextField<String>("document.cargo.detention_details",
-//                new PropertyModel<String>(documentCargoModel, "detentionDetails"));
-//        form.add(detentionDetails);
-//
-//        boolean visible = id != null;
-//
-//        //Примечания
-//        TextArea details = new TextArea<String>("document.cargo.details",
-//                new PropertyModel<String>(documentCargoModel, "details"));
-//        form.add(details);
-//
-//        //Автор
-//        Label l_creator = new Label("l_creator", new ResourceModel("document.cargo.creator"));
-//        l_creator.setVisible(visible);
-//        form.add(l_creator);
-//
-//        String fullCreator = "";
-//        if (visible) {
-//            fullCreator = dc.getCreator().getFullName();
-//            if (dc.getCreator().getJob() != null) {
-//                fullCreator += ", " + dc.getCreator().getJob().getDisplayName(getLocale(), localeDAO.systemLocale());
-//            }
-//            if (dc.getDepartment() != null && !dc.getDepartment().getId().equals(dc.getCreator().getDepartment().getId())) {
-//                fullCreator += ", " + dc.getCreator().getDepartment().getDisplayName(getLocale(), localeDAO.systemLocale());
-//            }
-//        }
-//
-//        Label creator = new Label("creator", fullCreator);
-//        creator.setVisible(visible);
-//        form.add(creator);
-//
-//        //Подразделение
-//        List<Department> list = null;
-//
-//        try {
-//            list = documentCargoBean.getChildDepartments(currentUser.getDepartment());
-//            if (!list.contains(dc.getDepartment())) {
-//                list.add(dc.getDepartment());
-//            }
-//        } catch (Exception e) {
-//            log.error("Ошибка загрузки списка дочерних подразделений:", e);
-//            logBean.error(DOCUMENT, VIEW, DocumentCargoEdit.class, Department.class, "Ошибка загрузки данных из базы данных");
-//        }
-//
-//        //Если роль редактировать подразделение то отобразить выпадающий список иначе статический текс
-//        DropDownChoice<Department> ddcDepartment = new DropDownChoice<Department>("document.cargo.department",
-//                new PropertyModel<Department>(documentCargoModel, "department"), list,
-//                new IChoiceRenderer<Department>() {
-//
-//                    @Override
-//                    public Object getDisplayValue(Department department) {
-//                        return department.getDisplayName(getLocale(), localeDAO.systemLocale());
-//                    }
-//
-//                    @Override
-//                    public String getIdValue(Department department, int index) {
-//                        return String.valueOf(department.getId());
-//                    }
-//                });
-//
-//        ddcDepartment.setRequired(true);
-//        ddcDepartment.setVisible(hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) && id == null);
-//        form.add(ddcDepartment);
-//
-//        Label departmentLabel = new Label("document.cargo.department.label", dc.getDepartment().getDisplayName(getLocale(), localeDAO.systemLocale()));
-//        departmentLabel.setVisible(!hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) || id != null);
-//        form.add(departmentLabel);
-//
-//        //Дата создания
-//        Label l_created = new Label("l_created", new ResourceModel("document.cargo.created"));
-//        l_created.setVisible(visible);
-//        form.add(l_created);
-//
-//        DateLabel created = new DateLabel("created", new Model<Date>(
-//                visible ? documentCargoModel.getObject().getCreated() : new Date()),
-//                new StyleDateConverter(true));
-//        created.setVisible(visible);
-//        form.add(created);
-//
-//        form.add(new Spacer("spacer"));
+//        form.add(new DropDownChoice("document.cargo.passingBorderPoint"));
+
+        //Реквизиты акта задержания груза
+        TextField detentionDetails = new TextField<String>("document.cargo.detention_details",
+                new PropertyModel<String>(documentCargoModel, "detentionDetails"));
+        form.add(detentionDetails);
+
+        boolean visible = id != null;
+
+        //Примечания
+        TextArea details = new TextArea<String>("document.cargo.details",
+                new PropertyModel<String>(documentCargoModel, "details"));
+        form.add(details);
+
+        //Автор
+        Label l_creator = new Label("l_creator", new ResourceModel("document.cargo.creator"));
+        l_creator.setVisible(visible);
+        form.add(l_creator);
+
+        String fullCreator = "";
+        if (visible) {
+            fullCreator = dc.getCreator().getFullName();
+            if (dc.getCreator().getJob() != null) {
+                fullCreator += ", " + dc.getCreator().getJob().getDisplayName(getLocale(), localeDAO.systemLocale());
+            }
+            if (dc.getDepartment() != null && !dc.getDepartment().getId().equals(dc.getCreator().getDepartment().getId())) {
+                fullCreator += ", " + dc.getCreator().getDepartment().getDisplayName(getLocale(), localeDAO.systemLocale());
+            }
+        }
+
+        Label creator = new Label("creator", fullCreator);
+        creator.setVisible(visible);
+        form.add(creator);
+
+        //Подразделение
+        List<Department> list = null;
+
+        try {
+            list = documentCargoBean.getChildDepartments(currentUser.getDepartment());
+            if (!list.contains(dc.getDepartment())) {
+                list.add(dc.getDepartment());
+            }
+        } catch (Exception e) {
+            log.error("Ошибка загрузки списка дочерних подразделений:", e);
+            logBean.error(DOCUMENT, VIEW, DocumentCargoEdit.class, Department.class, "Ошибка загрузки данных из базы данных");
+        }
+
+        //Если роль редактировать подразделение то отобразить выпадающий список иначе статический текс
+        DropDownChoice<Department> ddcDepartment = new DropDownChoice<Department>("document.cargo.department",
+                new PropertyModel<Department>(documentCargoModel, "department"), list,
+                new IChoiceRenderer<Department>() {
+
+                    @Override
+                    public Object getDisplayValue(Department department) {
+                        return department.getDisplayName(getLocale(), localeDAO.systemLocale());
+                    }
+
+                    @Override
+                    public String getIdValue(Department department, int index) {
+                        return String.valueOf(department.getId());
+                    }
+                });
+
+        ddcDepartment.setRequired(true);
+        ddcDepartment.setVisible(hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) && id == null);
+        form.add(ddcDepartment);
+
+        Label departmentLabel = new Label("document.cargo.department.label", dc.getDepartment().getDisplayName(getLocale(), localeDAO.systemLocale()));
+        departmentLabel.setVisible(!hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) || id != null);
+        form.add(departmentLabel);
+
+        //Дата создания
+        Label l_created = new Label("l_created", new ResourceModel("document.cargo.created"));
+        l_created.setVisible(visible);
+        form.add(l_created);
+
+        DateLabel created = new DateLabel("created", new Model<Date>(
+                visible ? documentCargoModel.getObject().getCreated() : new Date()),
+                new StyleDateConverter(true));
+        created.setVisible(visible);
+        form.add(created);
+
+        form.add(new Spacer("spacer"));
     }
 
     private <T extends Localizable> DropDownChoice<T> addDropDownChoice(WebMarkupContainer container, String id, Class<T> bookClass, IModel<DocumentCargo> model, String property) {
@@ -413,8 +497,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
 
         //Количество
         TextField<Integer> count = new TextField<Integer>("document.cargo.count",
-                new PropertyModel<Integer>(item.getModel(), "count"));
-        count.setRequired(true);
+                new PropertyModel<Integer>(item.getModel(), "count"));        
         item.add(count);
 
         //Реквизиты сертификата
