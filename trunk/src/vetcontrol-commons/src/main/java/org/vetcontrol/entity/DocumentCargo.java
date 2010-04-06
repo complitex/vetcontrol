@@ -51,12 +51,11 @@ public class DocumentCargo extends Synchronized implements IUpdated {
     @XmlTransient
     private List<Cargo> cargos = new ArrayList<Cargo>();
     @Embedded
-    @AttributeOverrides({
-        @AttributeOverride(name = "name", column =
-        @Column(name = "cargo_sender_name")),
-        @AttributeOverride(name = "country", column =
-        @Column(name = "cargo_sender_country_id"))
-    })
+    @AttributeOverride(name = "name", column =
+    @Column(name = "cargo_sender_name"))
+    @AssociationOverrides({
+        @AssociationOverride(name = "country", joinColumns =
+        @JoinColumn(name = "cargo_sender_country_id"))})
     private CargoSenderEmbeddable cargoSender;
     @Embedded
     @AttributeOverrides({
