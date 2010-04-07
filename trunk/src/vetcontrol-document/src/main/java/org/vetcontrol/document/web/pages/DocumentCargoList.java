@@ -100,11 +100,11 @@ public class DocumentCargoList extends ListTemplatePage {
                 new BookNamedChoiceRenderer<MovementType>(systemLocale)));
 
         filterForm.add(new VehicleTypeChoicePanel("vehicleType", new PropertyModel<VehicleType>(filter, "vehicleType"), false));
-        filterForm.add(new TextField<String>("receiver.name"));
-        filterForm.add(new TextField<String>("receiver.address"));
-        filterForm.add(new TextField<String>("sender.name"));
+        filterForm.add(new TextField<String>("receiverName"));
+        filterForm.add(new TextField<String>("receiverAddress"));
+        filterForm.add(new TextField<String>("senderName"));
 
-        filterForm.add(new DropDownChoice<CountryBook>("sender.country", documentCargoBean.getList(CountryBook.class),
+        filterForm.add(new DropDownChoice<CountryBook>("senderCountry", documentCargoBean.getList(CountryBook.class),
                 new BookNamedChoiceRenderer<CountryBook>(systemLocale)));
         DatePicker<Date> created = new DatePicker<Date>("created");
         filterForm.add(created);

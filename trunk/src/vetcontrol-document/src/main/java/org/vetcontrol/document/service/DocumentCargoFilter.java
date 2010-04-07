@@ -19,8 +19,10 @@ public class DocumentCargoFilter implements Serializable {
     private boolean childDepartments;
     private MovementType movementType;
     private VehicleType vehicleType;
-    private CargoReceiverEmbeddable receiver = new CargoReceiverEmbeddable();
-    private CargoSenderEmbeddable sender = new CargoSenderEmbeddable();
+    private CountryBook senderCountry;
+    private String senderName;
+    private String receiverAddress;
+    private String receiverName;
     private String detentionDetails;
     private String details;
     private Locale currentLocale;
@@ -128,20 +130,36 @@ public class DocumentCargoFilter implements Serializable {
         this.syncStatus = syncStatus;
     }
 
-    public CargoReceiverEmbeddable getReceiver() {
-        return receiver;
+    public String getReceiverAddress() {
+        return receiverAddress;
     }
 
-    public void setReceiver(CargoReceiverEmbeddable receiver) {
-        this.receiver = receiver;
+    public void setReceiverAddress(String receiverAddress) {
+        this.receiverAddress = receiverAddress;
     }
 
-    public CargoSenderEmbeddable getSender() {
-        return sender;
+    public String getReceiverName() {
+        return receiverName;
     }
 
-    public void setSender(CargoSenderEmbeddable sender) {
-        this.sender = sender;
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
+    }
+
+    public CountryBook getSenderCountry() {
+        return senderCountry;
+    }
+
+    public void setSenderCountry(CountryBook senderCountry) {
+        this.senderCountry = senderCountry;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
     }
     
 }
