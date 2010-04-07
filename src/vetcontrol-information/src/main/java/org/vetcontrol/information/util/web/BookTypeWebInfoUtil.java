@@ -39,7 +39,6 @@ public final class BookTypeWebInfoUtil {
         info.put(CargoMode.class, new BookWebInfo(CargoModeList.class, CargoModeEdit.class, PageParameters.NULL));
 
         // 2. Department
-        //TODO: change book edit page!
         PageParameters listPageParams = new PageParameters();
         listPageParams.add(BookPage.BOOK_TYPE, Department.class.getName());
         BookWebInfo departmentWebInfo = new BookWebInfo(BookPage.class, DepartmentEdit.class, listPageParams);

@@ -25,6 +25,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.text.DateFormat;
 import java.util.*;
+import javax.persistence.Table;
 import org.apache.wicket.util.string.interpolator.VariableInterpolator;
 import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.util.book.entity.annotation.UIType;
@@ -91,6 +92,7 @@ public class BeanPropertyUtil {
                             Column column = (Column) annotation;
                             property.setNullable(column.nullable());
                             property.setLength(column.length());
+                            property.setColumnName(column.name());
                         }
 
                         if (annotation.annotationType().equals(MappedProperty.class)) {
@@ -99,7 +101,6 @@ public class BeanPropertyUtil {
                             property.setLocalizationForeignKeyProperty(excludeProp);
                             excludes.add(excludeProp);
                         }
-
 
                         if (annotation.annotationType().equals(BookReference.class)) {
                             property.setBookReference(true);
@@ -117,6 +118,7 @@ public class BeanPropertyUtil {
                         if (annotation.annotationType().equals(JoinColumn.class)) {
                             JoinColumn joinColumn = (JoinColumn) annotation;
                             property.setNullable(joinColumn.nullable());
+                            property.setColumnName(joinColumn.name());
                         }
                     }
                 }
@@ -127,6 +129,15 @@ public class BeanPropertyUtil {
 
             if (validProperty) {
                 filtered.add(property);
+            }
+        }
+
+        for (Property prop : filtered) {
+            for (Property p : filtered) {
+                if (p.getName().equals(prop.getLocalizationForeignKeyProperty())) {
+                    prop.setColumnName(p.getColumnName());
+                    break;
+                }
             }
         }
 
@@ -365,14 +376,7 @@ public class BeanPropertyUtil {
 
             for (Property prop : getProperties(book.getClass())) {
                 Class propType = prop.getType();
-                boolean isPrimitive = false;
-                for (Class primitive : PRIMITIVES) {
-                    if (primitive.isAssignableFrom(propType)) {
-                        isPrimitive = true;
-                        break;
-                    }
-                }
-                if (isPrimitive) {
+                if (isPrimitive(propType)) {
                     //simple property
                     Object value = getPropertyValue(book, prop.getName());
                     if (value != null) {
@@ -381,7 +385,6 @@ public class BeanPropertyUtil {
                 } else if (prop.isLocalizable()) {
                     //do nothing.
                 } else if (prop.isBookReference()) {
-
                     Object value = getPropertyValue(book, prop.getName());
                     if (value != null) {
                         Object ID = getPropertyValue(value, "id");
@@ -497,5 +500,28 @@ public class BeanPropertyUtil {
 
     public static String getDisabledPropertyName() {
         return "disabled";
+    }
+
+    public static String getDisabledColumnName() {
+        return "disabled";
+    }
+
+    public static String getTableName(Class<?> entity) {
+        Table tableAnnotation = entity.getAnnotation(Table.class);
+        if (tableAnnotation == null) {
+            throw new IllegalArgumentException("Entity definition must specify table name.");
+        }
+        return tableAnnotation.name();
+    }
+
+    public static boolean isPrimitive(Class type) {
+        boolean isPrimitive = false;
+        for (Class primitive : BeanPropertyUtil.PRIMITIVES) {
+            if (primitive.isAssignableFrom(type)) {
+                isPrimitive = true;
+                break;
+            }
+        }
+        return isPrimitive;
     }
 }

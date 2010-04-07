@@ -264,6 +264,27 @@ public class Property implements Serializable, Cloneable {
         this.bookReferencePattern = bookReferencePattern;
     }
 
+    protected String columnName;
+
+    /**
+     * Get the value of columnName
+     *
+     * @return the value of columnName
+     */
+    public String getColumnName() {
+        return columnName;
+    }
+
+    /**
+     * Set the value of columnName
+     *
+     * @param columnName new value of columnName
+     */
+    public void setColumnName(String columnName) {
+        this.columnName = columnName;
+    }
+
+
     @Override
     public Property clone() {
         try {

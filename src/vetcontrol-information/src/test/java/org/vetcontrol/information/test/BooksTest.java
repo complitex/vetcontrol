@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import org.hibernate.jdbc.Work;
+import org.junit.Test;
 import org.vetcontrol.util.book.entity.ShowBooksMode;
 
 /**
@@ -250,32 +251,32 @@ public class BooksTest {
 //        transaction.commit();
 //        entityManager.close();
 //    }
-//    @Test
 
+//    @Test
     public void test() {
 
-        cleanUp();
+//        cleanUp();
 
         EntityManager entityManager = managerFactory.createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
-
-        Sequence s = new Sequence();
-        s.setEntityManager(entityManager);
-        BookDAO bookDAO = new BookDAO();
-        bookDAO.setSequence(s);
-        bookDAO.setEntityManager(entityManager);
-
-        CountryBook book = new CountryBook("en");
-        book.addName(new StringCulture(new StringCultureId("en"), "england"));
-        book.addName(new StringCulture(new StringCultureId("ru"), "england2"));
-        bookDAO.saveOrUpdate(book);
-
-        CountryBook book2 = new CountryBook("ru");
-        book2.addName(new StringCulture(new StringCultureId("en"), "russian"));
-        book2.addName(new StringCulture(new StringCultureId("ru"), "russian2"));
-        bookDAO.saveOrUpdate(book2);
-
+//
+//        Sequence s = new Sequence();
+//        s.setEntityManager(entityManager);
+//        BookDAO bookDAO = new BookDAO();
+//        bookDAO.setSequence(s);
+//        bookDAO.setEntityManager(entityManager);
+//
+//        CountryBook book = new CountryBook("en");
+//        book.addName(new StringCulture(new StringCultureId("en"), "england"));
+//        book.addName(new StringCulture(new StringCultureId("ru"), "england2"));
+//        bookDAO.saveOrUpdate(book);
+//
+//        CountryBook book2 = new CountryBook("ru");
+//        book2.addName(new StringCulture(new StringCultureId("en"), "russian"));
+//        book2.addName(new StringCulture(new StringCultureId("ru"), "russian2"));
+//        bookDAO.saveOrUpdate(book2);
+//
         transaction.commit();
         entityManager.close();
 
@@ -294,6 +295,14 @@ public class BooksTest {
 //        for (CargoMode b : list) {
 //            System.out.println(b.getCargoType().getCode());
 //        }
+
+        String countQ = "SELECT COUNT(DISTINCT e.id) FROM unit_type e";
+        String query = "SELECT DISTINCT {c.*} FROM countrybook c "
+                + "ORDER BY (SELECT sc.value FROM stringculture sc WHERE sc.locale='ru' AND sc.id = c.name) ASC";
+        CountryBook c = (CountryBook) session.createSQLQuery(query).addEntity("c", CountryBook.class).setMaxResults(1).uniqueResult();
+        System.out.println("c.id = " + c.getId());
+        Long count = (Long)session.createSQLQuery(countQ).addEntity("e", UnitType.class).uniqueResult();
+        System.out.println("count = " + count);
 
         transaction.commit();
         entityManager.close();
@@ -398,7 +407,6 @@ public class BooksTest {
         entityManager.close();
 
     }
-
 //    @Test
 //    public void cloneTest() {
 //        EntityManager entityManager = managerFactory.createEntityManager();
