@@ -50,16 +50,22 @@ import static org.vetcontrol.web.security.SecurityRoles.*;
 public class DocumentCargoEdit extends FormTemplatePage {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentCargoEdit.class);
+
     @EJB(name = "DocumentBean")
     private DocumentCargoBean documentCargoBean;
+
     @EJB(name = "UserProfileBean")
     private UserProfileBean userProfileBean;
+
     @EJB(name = "CargoTypeBean")
     private CargoTypeBean cargoTypeBean;
+
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
+
     @EJB(name = "LogBean")
     private LogBean logBean;
+
     @EJB(name = "ClientBean")
     ClientBean clientBean;
 
@@ -307,7 +313,6 @@ public class DocumentCargoEdit extends FormTemplatePage {
                         .getReceiverNames(input)
                         .iterator();
             }
-
         };
         receiverAddress.setRequired(true);
         receiverAddress.setOutputMarkupId(true);
@@ -330,11 +335,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
                 }
             }
         });
-
-
-        //Производитель
-        //addDropDownChoice(form, "document.cargo.cargo_producer", CargoProducer.class, documentCargoModel, "cargoProducer");
-//        form.add(new DropDownChoice("document.cargo.cargo_producer"));
+                          
 
         //Пункт пропуска через границу
 //        addDropDownChoice(form, "document.cargo.passingBorderPoint", PassingBorderPoint.class, documentCargoModel, "passingBorderPoint");
@@ -468,6 +469,24 @@ public class DocumentCargoEdit extends FormTemplatePage {
         }
     }
 
+    private class CargoProducerModel extends LoadableDetachableModel<List<CargoProducer>> {
+
+        private CountryBook country;
+
+        private CargoProducerModel(CountryBook country) {
+            this.country = country;
+        }
+
+        public void setCountry(CountryBook country) {
+            this.country = country;
+        }
+
+        @Override
+        protected List<CargoProducer> load() {
+            return documentCargoBean.getCargoProducer(country);
+        }
+    }
+
     private void addCargo(ListItem<Cargo> item) {
         //Единицы измерения        
         UnitTypeModel unitTypeModel = new UnitTypeModel(item.getModelObject());
@@ -486,8 +505,6 @@ public class DocumentCargoEdit extends FormTemplatePage {
                         return String.valueOf(object.getId());
                     }
                 });
-
-        ddcUnitTypes.setRequired(true);
         ddcUnitTypes.setOutputMarkupId(true);
         item.add(ddcUnitTypes);
 
@@ -499,6 +516,58 @@ public class DocumentCargoEdit extends FormTemplatePage {
         TextField<Integer> count = new TextField<Integer>("document.cargo.count",
                 new PropertyModel<Integer>(item.getModel(), "count"));        
         item.add(count);
+
+        //Производитель Страна
+        CountryBook country = item.getModelObject().getCargoProducer() != null
+                ? item.getModelObject().getCargoProducer().getCountry()
+                : null;
+        
+        final DropDownChoice<CountryBook> ddcCountryBook = new DropDownChoice<CountryBook>("document.cargo.producer_country",
+                new Model<CountryBook>(country),
+                documentCargoBean.getList(CountryBook.class),
+                new IChoiceRenderer<CountryBook>(){
+
+                    @Override
+                    public Object getDisplayValue(CountryBook object) {
+                        return object.getDisplayName(getLocale(), localeDAO.systemLocale());
+                    }
+
+                    @Override
+                    public String getIdValue(CountryBook object, int index) {
+                        return object.getId().toString();
+                    }
+                });
+        item.add(ddcCountryBook);
+
+        //Производитель Название
+        final CargoProducerModel cargoProducerModel = new CargoProducerModel(country);
+
+        final DropDownChoice<CargoProducer> ddcCargoProducer = new DropDownChoice<CargoProducer>("document.cargo.producer_name",
+                new PropertyModel<CargoProducer>(item.getModelObject(), "cargoProducer"),
+                cargoProducerModel,
+                new IChoiceRenderer<CargoProducer>() {
+
+                    @Override
+                    public Object getDisplayValue(CargoProducer object) {
+                        return object.getDisplayName(getLocale(), localeDAO.systemLocale());
+                    }
+
+                    @Override
+                    public String getIdValue(CargoProducer object, int index) {
+                        return object.getId().toString();
+                    }
+                });
+        ddcCargoProducer.setOutputMarkupId(true);
+        item.add(ddcCargoProducer);
+
+        ddcCountryBook.add(new AjaxFormComponentUpdatingBehavior("onchange"){
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                cargoProducerModel.setCountry(ddcCountryBook.getModelObject());
+                target.addComponent(ddcCargoProducer);
+            }
+        });
 
         //Реквизиты сертификата
         TextField<String> certificateDetails = new TextField<String>("document.cargo.certificate_detail",

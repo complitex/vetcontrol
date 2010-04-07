@@ -6,25 +6,10 @@ package org.vetcontrol.entity;
 
 import org.vetcontrol.sync.LongAdapter;
 
-import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.Date;
 
 /**
  *
@@ -43,16 +28,19 @@ public class Vehicle extends Synchronized implements IUpdated {
     @XmlID
     @XmlJavaTypeAdapter(LongAdapter.class)
     private Long id;
+
     @Id
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
     @XmlIDREF
     private Client client;
+
     @Id
     @ManyToOne
     @JoinColumn(name = "department_id", nullable = false)
     @XmlIDREF
     private Department department;
+
     @ManyToOne
     @JoinColumns({
         @JoinColumn(name = "document_cargo_id", referencedColumnName = "id", insertable = false, updatable = false),
@@ -60,12 +48,16 @@ public class Vehicle extends Synchronized implements IUpdated {
         @JoinColumn(name = "client_id", referencedColumnName = "client_id", insertable = false, updatable = false)})
     @XmlTransient
     private DocumentCargo documentCargo;
+
     @Column(name = "document_cargo_id")
     private Long documentCargoId;
+
     @Column(name = "vehicle_details", length = 255)
     private String vehicleDetails;
+
     @Enumerated(EnumType.STRING)
     private VehicleType vehicleType;
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
 
@@ -143,5 +135,42 @@ public class Vehicle extends Synchronized implements IUpdated {
     @Override
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Vehicle)) return false;
+        if (!super.equals(o)) return false;
+
+        Vehicle vehicle = (Vehicle) o;
+
+        if (client != null ? !client.equals(vehicle.client) : vehicle.client != null) return false;
+        if (department != null ? !department.equals(vehicle.department) : vehicle.department != null) return false;
+        if (documentCargo != null ? !documentCargo.equals(vehicle.documentCargo) : vehicle.documentCargo != null)
+            return false;
+        if (documentCargoId != null ? !documentCargoId.equals(vehicle.documentCargoId) : vehicle.documentCargoId != null)
+            return false;
+        if (id != null ? !id.equals(vehicle.id) : vehicle.id != null) return false;
+        if (updated != null ? !updated.equals(vehicle.updated) : vehicle.updated != null) return false;
+        if (vehicleDetails != null ? !vehicleDetails.equals(vehicle.vehicleDetails) : vehicle.vehicleDetails != null)
+            return false;
+        if (vehicleType != vehicle.vehicleType) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (id != null ? id.hashCode() : 0);
+        result = 31 * result + (client != null ? client.hashCode() : 0);
+        result = 31 * result + (department != null ? department.hashCode() : 0);
+        result = 31 * result + (documentCargo != null ? documentCargo.hashCode() : 0);
+        result = 31 * result + (documentCargoId != null ? documentCargoId.hashCode() : 0);
+        result = 31 * result + (vehicleDetails != null ? vehicleDetails.hashCode() : 0);
+        result = 31 * result + (vehicleType != null ? vehicleType.hashCode() : 0);
+        result = 31 * result + (updated != null ? updated.hashCode() : 0);
+        return result;
     }
 }
