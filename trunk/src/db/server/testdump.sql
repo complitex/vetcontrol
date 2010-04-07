@@ -175,6 +175,11 @@ INSERT INTO `customs_point`(`id`, `name`) VALUES(1, 69), (2, 70);
 
 UPDATE `department` d SET d.`custom_point_id` = 1 WHERE d.`id` = 2;
 
+INSERT INTO `container_validator`(`id`, `prefix`, `carrier_abbr`, `carrier_name`) VALUES
+    (1, 'AAAU', null, 'Asia Container Leasing'),
+    (2, 'ACLU', 'ACL', 'Atlantic Container Line'),
+    (3, 'ACXU', 'Atlantic Cargo', 'Atlantic Cargo');
+
 INSERT INTO `document_cargo`(`id`, `client_id`, `department_id`, `creator_id`, `created`, `updated`, `movement_type_id`,
                                 `vehicle_type`, `cargo_sender_name`, `cargo_sender_country_id`, `cargo_receiver_name`,
                                 `cargo_receiver_address`, `passing_border_point_id`, `details`, `detention_details`, `sync_status`)

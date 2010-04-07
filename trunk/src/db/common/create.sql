@@ -378,7 +378,7 @@ CREATE TABLE  `container_validator` (
  /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
   `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
-    KEY `passing_border_point_updated_INDEX` (`updated`)
+    KEY `container_validator_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*documents*/
