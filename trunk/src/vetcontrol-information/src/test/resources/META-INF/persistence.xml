@@ -12,6 +12,8 @@
         <class>org.vetcontrol.entity.UnitType</class>
         <class>org.vetcontrol.entity.User</class>
         <class>org.vetcontrol.entity.Department</class>
+        <class>org.vetcontrol.entity.PassingBorderPoint</class>
+        <class>org.vetcontrol.entity.CustomsPoint</class>
         <class>org.vetcontrol.entity.UserGroup</class>
         <class>org.vetcontrol.entity.Job</class>
 
