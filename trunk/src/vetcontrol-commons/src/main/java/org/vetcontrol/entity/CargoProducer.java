@@ -1,16 +1,16 @@
 package org.vetcontrol.entity;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.vetcontrol.util.book.entity.annotation.BookReference;
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlIDREF;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.vetcontrol.util.book.entity.annotation.BookReference;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -72,5 +72,25 @@ public class CargoProducer extends Localizable{
                 setParameter("country_id", country.getId()).
                 setParameter("updated", updated).
                 setParameter("disabled", disabled);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CargoProducer)) return false;
+        if (!super.equals(o)) return false;
+
+        CargoProducer that = (CargoProducer) o;
+
+        if (country != null ? !country.equals(that.country) : that.country != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (country != null ? country.hashCode() : 0);
+        return result;
     }
 }
