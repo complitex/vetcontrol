@@ -26,7 +26,8 @@ public final class BookTypes {
             CargoType.class,
             Job.class,
             ArrestReason.class,
-            CountryWithBadEpizooticSituation.class));
+            CountryWithBadEpizooticSituation.class,
+            ContainerValidator.class));
     private static List<Class> customBookTypes = Collections.unmodifiableList((List) Arrays.asList(
             Department.class,
             CargoMode.class));
