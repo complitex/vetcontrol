@@ -121,8 +121,10 @@
                     <td><select wicket:id="document.cargo.producer_name"></select></td>
                     <td><input wicket:id="document.cargo.certificate_detail" type="text"/></td>
                     <td width="102px"><div style="width:102px"><input style="width:80px" wicket:id="document.cargo.certificate_date" type="text" /></div></td>
-                    <td><a href="#" wicket:id="document.cargo.delete" onfocus="$('.addCargo').focus();"><wicket:message key="document.cargo.delete"/>
-                    </a></td>
+                    <td>
+                        <a href="#" wicket:id="document.cargo.copy"><wicket:message key="document.cargo.copy"/></a>
+                        <a href="#" wicket:id="document.cargo.delete" onfocus="$('.addCargo').focus();"><wicket:message key="document.cargo.delete"/></a>
+                    </td>
                 </tr>
                 </tbody>
                 <tfoot>

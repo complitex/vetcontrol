@@ -248,6 +248,36 @@ public class DocumentCargoEdit extends FormTemplatePage {
             @Override
             protected void populateItem(final ListItem<Cargo> item) {
                 addCargo(item);
+
+                //Копировать
+                final AjaxSubmitLink copyCargoLink = new AjaxSubmitLink("document.cargo.copy", form) {
+
+                    @Override
+                    public void onSubmit(AjaxRequestTarget target, Form form) {
+                        DocumentCargo dc = (DocumentCargo) form.getModelObject();
+                        Cargo copyFrom = item.getModelObject();
+
+                        Cargo cargo = new Cargo();
+                        cargo.setCargoType(copyFrom.getCargoType());
+                        cargo.setUnitType(copyFrom.getUnitType());
+                        cargo.setCount(copyFrom.getCount());
+                        cargo.setCertificateDetails(copyFrom.getCertificateDetails());
+                        cargo.setCertificateDate(copyFrom.getCertificateDate());
+                        cargo.setCargoProducer(copyFrom.getCargoProducer());
+
+                        cargo.setDocumentCargo(dc);
+                        dc.getCargos().add(cargo);
+                        
+                        target.addComponent(cargoContainer);
+
+                        String setFocusOnNewCargo = "newCargoFirstInputId = $('.table_input tbody tr:last input[type=\"text\"]:first').attr('id');"
+                                + "Wicket.Focus.setFocusOnId(newCargoFirstInputId);";
+                        target.appendJavascript(setFocusOnNewCargo);
+                    }
+                };
+                copyCargoLink.setDefaultFormProcessing(false);
+                item.add(copyCargoLink);
+
                 addRemoveSubmitLink("document.cargo.delete", form, item, addCargoLink, cargoContainer);
             }
         };
@@ -520,7 +550,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
         //Производитель Страна
         CountryBook country = item.getModelObject().getCargoProducer() != null
                 ? item.getModelObject().getCargoProducer().getCountry()
-                : null;
+                : item.getModelObject().getDocumentCargo().getSenderCountry();
         
         final DropDownChoice<CountryBook> ddcCountryBook = new DropDownChoice<CountryBook>("document.cargo.producer_country",
                 new Model<CountryBook>(country),
