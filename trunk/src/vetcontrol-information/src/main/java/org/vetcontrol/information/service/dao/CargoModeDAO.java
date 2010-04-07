@@ -45,7 +45,7 @@ public class CargoModeDAO {
 
     public static enum OrderBy {
 
-        ID("id"), NAME("name"), UKTZED("uktzed"), PARENT("parent");
+        ID("id"), NAME("name"), UKTZED("uktzed"), PARENT_NAME("parent.name");
         private String propertyName;
 
         private OrderBy(String propertyName) {
@@ -100,14 +100,14 @@ public class CargoModeDAO {
             String property = null;
             switch (orderBy) {
                 case NAME:
-                case PARENT:
+                case PARENT_NAME:
                     property = orderBy.getPropertyName();
                     break;
             }
             if (property != null) {
                 queryBuilder.append("(SELECT sc.value FROM StringCulture sc WHERE cm.").
                         append(property).
-                        append(" = sc.id.id AND sc.id  .locale = :locale) ");
+                        append(" = sc.id.id AND sc.id.locale = :locale) ");
                 params.put("locale", currentLocale.getLanguage());
             } else {
                 queryBuilder.append("'1' ");
@@ -156,7 +156,7 @@ public class CargoModeDAO {
             case UKTZED:
                 order.append(" ct.code ");
                 break;
-            case PARENT:
+            case PARENT_NAME:
                 order.append(" 2 ");
                 break;
         }

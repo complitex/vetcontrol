@@ -175,7 +175,7 @@ public class CargoModeList extends ListTemplatePage {
             filterForm.add(showBooksModePanel);
             filterForm.add(cargoModes);
 
-            addOrderByBorder(filterForm, "parentNameHeader", OrderBy.PARENT.getPropertyName(), dataProvider, cargoModes);
+            addOrderByBorder(filterForm, "parentNameHeader", OrderBy.PARENT_NAME.getPropertyName(), dataProvider, cargoModes);
             addOrderByBorder(filterForm, "nameHeader", OrderBy.NAME.getPropertyName(), dataProvider, cargoModes);
             addOrderByBorder(filterForm, "uktzedHeader", OrderBy.UKTZED.getPropertyName(), dataProvider, cargoModes);
 
