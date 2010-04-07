@@ -1,40 +1,33 @@
 package org.vetcontrol.db.populate;
 
-import org.vetcontrol.db.populate.util.GenerateUtil;
+import static org.vetcontrol.db.populate.util.GenerateUtil.*;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.information.service.dao.BookDAO;
 import org.vetcontrol.information.service.dao.IBookDAO;
 import org.vetcontrol.information.service.generator.Sequence;
-import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.util.book.Property;
+import static org.vetcontrol.util.book.BeanPropertyUtil.*;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vetcontrol.util.book.BookTypes;
 
 public class ServerPopulator extends AbstractPopulator {
 
     /*--------------------------Settings------------------------------------------------------*/
     private static final String SERVER_PERSISTENCE_UNIT_NAME = "populate.server";
     //count of books to generate
-    private static final int BOOK_COUNT = 100;
+    private static final int BOOK_COUNT = 60;
     //count of CargoModeCargoType entries for one CargoMode to generate. The same true for CargoModeUnitType.
     private static final int LINK_TABLE_ROWS = 2;
+    //count of first level CargoModes
+    private static final int ROOT_CARGO_MODE_COUNT = 2;
     /*--------------------------- End settings -----------------------------------------------*/
-    private static final Class[] BOOKS = {
-        RegisteredProducts.class,
-        CountryBook.class,
-        VehicleType.class,
-        CustomsPoint.class,
-        MovementType.class,
-        CargoProducer.class,
-        UnitType.class,
-        CargoType.class,
-        Job.class,
-        ArrestReason.class,
-        PassingBorderPoint.class,
-        CountryWithBadEpizooticSituation.class
-    };
+    private static final Logger log = LoggerFactory.getLogger(ServerPopulator.class);
+    private static final List<Class> COMMON_BOOKS = BookTypes.common();
     private static final String[] SUPPORTED_LOCALES = {"en", "ru"};
     private Sequence sequence;
     private IBookDAO bookDAO;
@@ -47,15 +40,21 @@ public class ServerPopulator extends AbstractPopulator {
     protected void populate() {
 
         //cargo mode
-        for (int i = 0; i < BOOK_COUNT; i++) {
+        log.info("Start populate {} entity", CargoMode.class.getSimpleName());
+        for (int i = 0; i < ROOT_CARGO_MODE_COUNT; i++) {
             startTransaction();
             initServer();
-            populateCargoMode();
+            CargoMode rootCargoMode = populateRootCargoMode();
+            for (int j = 0; j < BOOK_COUNT / ROOT_CARGO_MODE_COUNT; j++) {
+                populateCargoMode(rootCargoMode);
+            }
             endTransaction();
         }
+        log.info("End populate {} entity", CargoMode.class.getSimpleName());
 
         //remaining books
-        for (Class entity : BOOKS) {
+        for (Class entity : COMMON_BOOKS) {
+            log.info("Start populate {} entity", entity.getSimpleName());
             int count = count(entity);
             for (int i = count; i < BOOK_COUNT; i++) {
                 startTransaction();
@@ -63,17 +62,25 @@ public class ServerPopulator extends AbstractPopulator {
                 populate(entity, true);
                 endTransaction();
             }
+            log.info("End populate {} entity", entity.getSimpleName());
         }
     }
 
-    private void populateCargoMode() {
-        CargoMode cargoMode = populate(CargoMode.class, true);
+    private CargoMode populateRootCargoMode() {
+        //first level
+        return populate(CargoMode.class, false);
+    }
+
+    private void populateCargoMode(CargoMode root) {
+        //second level
+        CargoMode cargoMode = populate(CargoMode.class, false);
+        cargoMode.setParent(root);
 
         for (int i = 0; i < LINK_TABLE_ROWS; i++) {
-            CargoType ct = populate(CargoType.class, false);
+            CargoType ct = populate(CargoType.class, true);
             CargoModeCargoType cmct = new CargoModeCargoType();
             cmct.setId(new CargoModeCargoType.Id(cargoMode.getId(), ct.getId()));
-            cmct.setUpdated(GenerateUtil.generateFutureDate());
+            cmct.setUpdated(generateFutureDate());
             getEntityManager().merge(cmct);
         }
 
@@ -81,7 +88,7 @@ public class ServerPopulator extends AbstractPopulator {
             UnitType ut = populate(UnitType.class, true);
             CargoModeUnitType cmut = new CargoModeUnitType();
             cmut.setId(new CargoModeUnitType.Id(cargoMode.getId(), ut.getId()));
-            cmut.setUpdated(GenerateUtil.generateFutureDate());
+            cmut.setUpdated(generateFutureDate());
             getEntityManager().merge(cmut);
         }
     }
@@ -95,41 +102,36 @@ public class ServerPopulator extends AbstractPopulator {
             }
 
             T bookEntry = entityClass.newInstance();
-            for (Property prop : BeanPropertyUtil.getProperties(entityClass)) {
+            for (Property prop : getProperties(entityClass)) {
                 if (prop.isLocalizable()) {
                     int length = prop.getLength();
-                    List<StringCulture> values = (List<StringCulture>) BeanPropertyUtil.getPropertyValue(bookEntry, prop.getName());
+                    List<StringCulture> values = (List<StringCulture>) getPropertyValue(bookEntry, prop.getName());
                     for (String locale : SUPPORTED_LOCALES) {
-                        StringCulture sc = new StringCulture(new StringCultureId(locale), GenerateUtil.generateString(length));
-                        sc.setUpdated(GenerateUtil.generateFutureDate());
+                        StringCulture sc = new StringCulture(new StringCultureId(locale), generateString(length));
+                        sc.setUpdated(generateFutureDate());
                         values.add(sc);
                     }
                 } else if (prop.isBookReference()) {
-                    Object reference = populate(prop.getType(), true);
-                    BeanPropertyUtil.setPropertyValue(bookEntry, prop.getName(), reference);
+                    if (!entityClass.equals(prop.getType())) {
+                        Object reference = populate(prop.getType(), true);
+                        setPropertyValue(bookEntry, prop.getName(), reference);
+                    }
                 } else {
                     Class propertyType = prop.getType();
-                    boolean isPrimitive = false;
-                    for (Class primitive : BeanPropertyUtil.PRIMITIVES) {
-                        if (primitive.isAssignableFrom(propertyType)) {
-                            isPrimitive = true;
-                            break;
-                        }
-                    }
-                    if (isPrimitive) {
+                    if (isPrimitive(propertyType)) {
                         Object value = null;
                         if (String.class.isAssignableFrom(propertyType)) {
-                            value = GenerateUtil.generateString(prop.getLength());
+                            value = generateString(prop.getLength());
                         } else if (Date.class.isAssignableFrom(propertyType)) {
-                            value = GenerateUtil.generateDate();
+                            value = generateDate();
                         } else {
                             throw new UnsupportedOperationException("Unhandled type. Class : " + entityClass + ", property type : " + propertyType);
                         }
-                        BeanPropertyUtil.setPropertyValue(bookEntry, prop.getName(), value);
+                        setPropertyValue(bookEntry, prop.getName(), value);
                     }
                 }
             }
-            BeanPropertyUtil.setPropertyValue(bookEntry, BeanPropertyUtil.getVersionPropertyName(), GenerateUtil.generateFutureDate());
+            setPropertyValue(bookEntry, getVersionPropertyName(), generateFutureDate());
             saveBook((Serializable) bookEntry);
             return bookEntry;
         } catch (Exception e) {
@@ -138,11 +140,7 @@ public class ServerPopulator extends AbstractPopulator {
     }
 
     private void saveBook(Serializable object) {
-        try {
-            bookDAO.saveOrUpdate(object);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        bookDAO.saveOrUpdate(object);
     }
 
     private void initServer() {
