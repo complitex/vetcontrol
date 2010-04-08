@@ -28,6 +28,7 @@ CREATE TABLE  `user` (
   KEY `fk_user_department` (`department_id`),
   CONSTRAINT `fk_job` FOREIGN KEY (`job_id`) REFERENCES `job` (`id`),
   CONSTRAINT `fk_user_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`),
+  CONSTRAINT `fk_passing_border_point` FOREIGN KEY (`passing_border_point_id`) REFERENCES `passing_border_point` (`id`),
     KEY `user_updated_INDEX` (`updated`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 

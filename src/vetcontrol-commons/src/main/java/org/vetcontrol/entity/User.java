@@ -55,10 +55,15 @@ public class User implements ILongId, IUpdated, IQuery{
     @XmlTransient
     private List<UserGroup> userGroups = new ArrayList<UserGroup>();
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "department_id", nullable = false)
     @XmlIDREF
     private Department department;
+
+    @ManyToOne
+    @JoinColumn(name = "passing_border_point_id")
+    @XmlIDREF
+    private PassingBorderPoint passingBorderPoint;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
@@ -151,6 +156,14 @@ public class User implements ILongId, IUpdated, IQuery{
         this.department = department;
     }
 
+    public PassingBorderPoint getPassingBorderPoint() {
+        return passingBorderPoint;
+    }
+
+    public void setPassingBorderPoint(PassingBorderPoint passingBorderPoint) {
+        this.passingBorderPoint = passingBorderPoint;
+    }
+
     public String getLocale() {
         return locale;
     }
@@ -197,7 +210,7 @@ public class User implements ILongId, IUpdated, IQuery{
     public Query getUpdateQuery(EntityManager em){
         return em.createNativeQuery("update user set login = :login, _password = :_password, first_name = :first_name, " +
                 "middle_name = :middle_name, last_name = :last_name, job_id = :job_id, department_id = :department_id, " +
-                "updated = :updated where id = :id")
+                "passing_border_point_id = :passing_border_point_id, updated = :updated where id = :id")
                 .setParameter("id", id)
                 .setParameter("login", login)
                 .setParameter("_password", password)
@@ -206,6 +219,7 @@ public class User implements ILongId, IUpdated, IQuery{
                 .setParameter("last_name", lastName)
                 .setParameter("job_id", job != null ? job.getId() : null)
                 .setParameter("department_id", department.getId())
+                .setParameter("passing_border_point_id", passingBorderPoint)
                 .setParameter("updated", updated);
     }
 
@@ -220,6 +234,7 @@ public class User implements ILongId, IUpdated, IQuery{
                 .append(", job: ").append(job)
                 .append(", userGroups: ").append(userGroups)
                 .append(", department: ").append(department)
+                .append(", passingBorderPoint: ").append(passingBorderPoint)
                 .append("]").toString();
     }
 
@@ -238,69 +253,48 @@ public class User implements ILongId, IUpdated, IQuery{
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+
+        User user = (User) o;
+
+        if (changePassword != null ? !changePassword.equals(user.changePassword) : user.changePassword != null)
             return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (department != null ? !department.equals(user.department) : user.department != null) return false;
+        if (firstName != null ? !firstName.equals(user.firstName) : user.firstName != null) return false;
+        if (id != null ? !id.equals(user.id) : user.id != null) return false;
+        if (job != null ? !job.equals(user.job) : user.job != null) return false;
+        if (lastName != null ? !lastName.equals(user.lastName) : user.lastName != null) return false;
+        if (locale != null ? !locale.equals(user.locale) : user.locale != null) return false;
+        if (login != null ? !login.equals(user.login) : user.login != null) return false;
+        if (middleName != null ? !middleName.equals(user.middleName) : user.middleName != null) return false;
+        if (pageSize != null ? !pageSize.equals(user.pageSize) : user.pageSize != null) return false;
+        if (passingBorderPoint != null ? !passingBorderPoint.equals(user.passingBorderPoint) : user.passingBorderPoint != null)
             return false;
-        }
-        final User other = (User) obj;
-        if ((id == null && other.id != null) || (id != null && other.id == null) || (this.id != null && !this.id.equals(other.id))){
-            return false;
-        }
-        if ((this.login == null) ? (other.login != null) : !this.login.equals(other.login)) {
-            return false;
-        }
-        if ((this.password == null) ? (other.password != null) : !this.password.equals(other.password)) {
-            return false;
-        }
-        if ((this.firstName == null) ? (other.firstName != null) : !this.firstName.equals(other.firstName)) {
-            return false;
-        }
-        if ((this.middleName == null) ? (other.middleName != null) : !this.middleName.equals(other.middleName)) {
-            return false;
-        }
-        if ((this.lastName == null) ? (other.lastName != null) : !this.lastName.equals(other.lastName)) {
-            return false;
-        }
-        if ((job != null && other.job == null) || (job == null && other.job != null)){
-            return false;
-        }
-        if (this.job != null && other.job != null) {
-            if ((job.getId() != null && other.job.getId() == null) || (job.getId() == null && other.job.getId() != null)){
-                return false;
-            }
-            if (job.getId() != null && other.job.getId() != null && !job.getId().equals(other.job.getId())){
-                return false;
-            }
-        }
-        if ((department != null && other.department == null) || (department == null && other.department != null)){
-            return false;
-        }
-        if (this.department != null && other.department != null) {
-            if ((department.getId() != null && other.department.getId() == null) || (department.getId() == null && other.department.getId() != null)){
-                return false;
-            }
-            if (department.getId() != null && other.department.getId() != null && !department.getId().equals(other.department.getId())){
-                return false;
-            }
-        }
+        if (password != null ? !password.equals(user.password) : user.password != null) return false;
+        if (updated != null ? !updated.equals(user.updated) : user.updated != null) return false;
+        if (userGroups != null ? !userGroups.equals(user.userGroups) : user.userGroups != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 37 * hash + (this.id != null ? this.id.hashCode() : 0);
-        hash = 37 * hash + (this.login != null ? this.login.hashCode() : 0);
-        hash = 37 * hash + (this.password != null ? this.password.hashCode() : 0);
-        hash = 37 * hash + (this.firstName != null ? this.firstName.hashCode() : 0);
-        hash = 37 * hash + (this.middleName != null ? this.middleName.hashCode() : 0);
-        hash = 37 * hash + (this.lastName != null ? this.lastName.hashCode() : 0);
-        hash = 37 * hash + (this.job != null ? (this.job.getId() != null ? this.job.getId().hashCode() : 0) : 0);
-        hash = 37 * hash + (this.department != null ? (this.department.getId() != null ? this.department.getId().hashCode() : 0) : 0);
-        return hash;
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (login != null ? login.hashCode() : 0);
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (changePassword != null ? changePassword.hashCode() : 0);
+        result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
+        result = 31 * result + (middleName != null ? middleName.hashCode() : 0);
+        result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
+        result = 31 * result + (job != null ? job.hashCode() : 0);
+        result = 31 * result + (userGroups != null ? userGroups.hashCode() : 0);
+        result = 31 * result + (department != null ? department.hashCode() : 0);
+        result = 31 * result + (passingBorderPoint != null ? passingBorderPoint.hashCode() : 0);
+        result = 31 * result + (updated != null ? updated.hashCode() : 0);
+        result = 31 * result + (locale != null ? locale.hashCode() : 0);
+        result = 31 * result + (pageSize != null ? pageSize.hashCode() : 0);
+        return result;
     }
 }

@@ -23,19 +23,21 @@ public class UserBean {
 
     public static enum OrderBy {
 
-        LOGIN, FIRST_NAME, LAST_NAME, MIDDLE_NAME, JOB, DEPARTMENT
+        LOGIN, FIRST_NAME, LAST_NAME, MIDDLE_NAME, JOB, DEPARTMENT, PASSING_BORDER_POINT
     }
     @PersistenceContext
     private EntityManager entityManager;
 
     public List<User> getUsers(int first, int count, OrderBy orderBy, boolean asc, String filter, Locale locale) {
-        String select = "SELECT DISTINCT u FROM User u left join u.department.namesMap dn left join u.job.namesMap jn ";
+        String select = "SELECT DISTINCT u FROM User u left join u.department.namesMap dn left join u.job.namesMap jn " +
+                "left join u.passingBorderPoint pbp ";
 
         String where = "";
         if (filter != null) {
             where += "WHERE upper(u.login) like :filter or upper(u.firstName) like :filter "
                     + "or upper(u.lastName) like :filter or upper(u.middleName) like :filter "
-                    + "or upper(dn.value) like :filter or upper(jn.value) like :filter";
+                    + "or upper(dn) like :filter or upper(jn) like :filter "
+                    + "or upper(pbp.name) like :filter";
         }
 
         String order = "";
@@ -58,6 +60,8 @@ public class UserBean {
             case DEPARTMENT:
                 order = " order by dn";
                 break;
+            case PASSING_BORDER_POINT:
+                order = " order by pbp.name";
         }
 
         TypedQuery<User> query = entityManager.createQuery(select + where + order + (asc ? " asc" : " desc"), User.class);
@@ -70,13 +74,15 @@ public class UserBean {
     }
 
     public Long getUserCount(String filter) {
-        String select = "SELECT COUNT(DISTINCT u) FROM User u left join u.department.namesMap dn left join u.job.namesMap jn ";
+        String select = "SELECT COUNT(DISTINCT u) FROM User u left join u.department.namesMap dn left join u.job.namesMap jn " +
+                "left join u.passingBorderPoint pbp ";
 
         String where = "";
         if (filter != null) {
             where += "WHERE upper(u.login) like :filter or upper(u.firstName) like :filter "
                     + "or upper(u.lastName) like :filter or upper(u.middleName) like :filter "
-                    + "or upper(dn.value) like :filter or upper(jn.value) like :filter";
+                    + "or upper(dn) like :filter or upper(jn) like :filter "
+                    + "or upper(pbp.name) like :filter";
         }
 
         TypedQuery<Long> query = entityManager.createQuery(select + where, Long.class);
@@ -94,6 +100,13 @@ public class UserBean {
 
     public List<Department> getDepartments() {
         return entityManager.createQuery("from Department", Department.class).getResultList();
+    }
+
+    public List<PassingBorderPoint> getPassingBorderPoints(Department department){
+        return entityManager.createQuery("select pbp from PassingBorderPoint pbp " +
+                "where pbp.department = :department and pbp.disabled = false", PassingBorderPoint.class)
+                .setParameter("department", department)
+                .getResultList();
     }
 
     public List<Job> getJobs(){
