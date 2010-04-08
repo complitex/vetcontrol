@@ -4,7 +4,6 @@
  */
 package org.vetcontrol.information.web.pages;
 
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -82,8 +81,6 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
         if (bookEntry == null) {
             throw new IllegalArgumentException("selected book entry may not be null");
         }
-        final String bookTypeName = getBookTypeName(bookEntry);
-
         final Locale systemLocale = localeDAO.systemLocale();
 
         //title

@@ -31,7 +31,7 @@ public class Department extends Localizable {
 
     @Transient
     @MappedProperty("name")
-    @Column(length = 50, nullable = false)
+    @Column(length = 100, nullable = false)
     @XmlTransient
     public List<StringCulture> getNames() {
         return names;

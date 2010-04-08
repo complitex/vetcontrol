@@ -38,7 +38,7 @@ public class CountryBook extends Localizable {
 
     @MappedProperty("name")
     @Transient
-    @Column(length = 10, nullable = false)
+    @Column(length = 20, nullable = false)
     @XmlTransient
     public List<StringCulture> getNames() {
         return this.names;

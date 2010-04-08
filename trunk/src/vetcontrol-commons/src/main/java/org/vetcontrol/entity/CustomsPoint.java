@@ -22,7 +22,7 @@ public class CustomsPoint extends Localizable{
 
     @Transient
     @MappedProperty("name")
-    @Column(length = 20, nullable = false)
+    @Column(length = 100, nullable = false)
     @XmlTransient
     public List<StringCulture> getNames() {
         return names;
