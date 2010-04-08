@@ -12,6 +12,7 @@ import javax.ejb.Stateless;
 import javax.persistence.*;
 import java.math.BigInteger;
 import java.util.List;
+import org.vetcontrol.web.component.VehicleTypeChoicePanel;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -126,7 +127,11 @@ public class DocumentCargoBean {
                 order += getOrderLocaleFilter("movementType");
                 break;
             case VECHICLE_TYPE:
-                order += "dc.vehicleType";
+                order += " (CASE dc.vehicleType ";
+                for (VehicleType vehicleType : VehicleType.values()) {
+                    order += "WHEN '" + vehicleType.name() + "' THEN '" + VehicleTypeChoicePanel.getDysplayName(vehicleType) + "' ";
+                }
+                order += "END)";
                 break;
             case RECEIVER_NAME:
                 order += "dc.receiverName";
@@ -297,49 +302,34 @@ public class DocumentCargoBean {
         }
     }
 
-    public List<String> getSenderNames(CountryBook country, String filterName){
-        return em.createQuery("select dc.senderName from DocumentCargo dc " +
-                "where dc.senderCountry = :country and dc.senderName like :filterName " +
-                "group by dc.senderName order by dc.senderName asc", String.class)
-                .setParameter("country", country)
-                .setParameter("filterName", "%" + filterName + "%")
-                .setMaxResults(10)
-                .getResultList();
+    public List<String> getSenderNames(CountryBook country, String filterName) {
+        return em.createQuery("select dc.senderName from DocumentCargo dc "
+                + "where dc.senderCountry = :country and dc.senderName like :filterName "
+                + "group by dc.senderName order by dc.senderName asc", String.class).setParameter("country", country).setParameter("filterName", "%" + filterName + "%").setMaxResults(10).getResultList();
     }
 
-    public List<String> getReceiverNames(String filterName){
-        return em.createQuery("select dc.receiverName from DocumentCargo dc " +
-                "where dc.receiverName like :filterName " +
-                "group by dc.receiverName order by dc.receiverName asc", String.class)
-                .setParameter("filterName", "%" + filterName + "%")
-                .setMaxResults(10)
-                .getResultList();
+    public List<String> getReceiverNames(String filterName) {
+        return em.createQuery("select dc.receiverName from DocumentCargo dc "
+                + "where dc.receiverName like :filterName "
+                + "group by dc.receiverName order by dc.receiverName asc", String.class).setParameter("filterName", "%" + filterName + "%").setMaxResults(10).getResultList();
     }
 
-     public List<String> getReceiverAddresses(String filterName){
-        return em.createQuery("select dc.receiverAddress from DocumentCargo dc " +
-                "where dc.receiverAddress like :filterName " +
-                "group by dc.receiverAddress order by dc.receiverAddress asc", String.class)
-                .setParameter("filterName", "%" + filterName + "%")
-                .setMaxResults(10)
-                .getResultList();
+    public List<String> getReceiverAddresses(String filterName) {
+        return em.createQuery("select dc.receiverAddress from DocumentCargo dc "
+                + "where dc.receiverAddress like :filterName "
+                + "group by dc.receiverAddress order by dc.receiverAddress asc", String.class).setParameter("filterName", "%" + filterName + "%").setMaxResults(10).getResultList();
     }
 
-    public String getReceiverAddress(String receiverName){
+    public String getReceiverAddress(String receiverName) {
         try {
-            return em.createQuery("select dc.receiverAddress from DocumentCargo dc " +
-                    "where dc.receiverName = :receiverName", String.class)
-                    .setParameter("receiverName", receiverName)
-                    .setMaxResults(1)
-                    .getSingleResult();
+            return em.createQuery("select dc.receiverAddress from DocumentCargo dc "
+                    + "where dc.receiverName = :receiverName", String.class).setParameter("receiverName", receiverName).setMaxResults(1).getSingleResult();
         } catch (NoResultException e) {
             return "";
         }
     }
 
-    public List<CargoProducer> getCargoProducer(CountryBook country){
-        return em.createQuery("select cp from CargoProducer cp where cp.country = :country and cp.disabled = false", CargoProducer.class)
-                .setParameter("country", country)
-                .getResultList();
+    public List<CargoProducer> getCargoProducer(CountryBook country) {
+        return em.createQuery("select cp from CargoProducer cp where cp.country = :country and cp.disabled = false", CargoProducer.class).setParameter("country", country).getResultList();
     }
 }
