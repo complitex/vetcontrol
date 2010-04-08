@@ -19,7 +19,7 @@ CREATE TABLE  `user` (
   `last_name` VARCHAR(45) DEFAULT NULL,
    `job_id` BIGINT(20) DEFAULT NULL,
   `department_id` BIGINT(20) DEFAULT NULL,
-   `passing_border_point_id` BIGINT(20) DEFAULT NULL
+   `passing_border_point_id` BIGINT(20) DEFAULT NULL,
   `updated` TIMESTAMP NOT NULL DEFAULT NOW(),
   `locale` VARCHAR(2) NULL,
   `page_size` INT(3) NULL,
