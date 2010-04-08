@@ -153,7 +153,7 @@ INSERT INTO `stringculture`(`id`, `locale`, `value`) VALUES
 
 UPDATE `generator` SET `generatorValue` = 66 WHERE `generatorName` = 'books';
 
-INSERT INTO `countrybook`(`id`, `name`) VALUES (1, 63), (2, 64);
+INSERT INTO `countrybook`(`id`, `code`, `name`) VALUES (1, 'ru', 63), (2, 'en', 64);
 
 INSERT INTO `cargo_producer`(`id`, `name`, `country_id`) VALUES (1,38, 1),(2,39, 1),(3,40, 2);
 
@@ -163,9 +163,9 @@ INSERT INTO `cargo_type`(`id`, `name`, `ukt_zed_code`) VALUES (1,53,'2602000000'
 
 INSERT INTO `cargo_mode`(`id`, `name`, `parent_id`) VALUES (3,62, null), (1,60,3), (2,61,3);
 
-INSERT INTO `cargo_mode_cargo_type` VALUES (1, 1, CURRENT_TIMESTAMP), (1, 2, CURRENT_TIMESTAMP);
+INSERT INTO `cargo_mode_cargo_type`(`cargo_mode_id`, `cargo_type_id`) VALUES (1, 1), (1, 2);
 
-INSERT INTO `cargo_mode_unit_type` VALUES (1, 1, CURRENT_TIMESTAMP);
+INSERT INTO `cargo_mode_unit_type`(`cargo_mode_id`, `unit_type_id`) VALUES (1, 1);
 
 -- INSERT INTO `passing_border_point`(`id`, `name`, `department_id`) VALUES (1, 'Пункт 1', 17),(2, 'Пункт 2', 17),(3, 'Пункт 3', 17);
 
