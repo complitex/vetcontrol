@@ -163,7 +163,7 @@ INSERT INTO `cargo_type`(`id`, `name`, `ukt_zed_code`) VALUES (1,52,'2602000000'
 
 INSERT INTO `cargo_mode`(`id`, `name`, `parent_id`) VALUES (3,66, null), (1,64,3), (2,65,3);
 
-INSERT INTO `cargo_mode_cargo_type` VALUES (1, 1, CURRENT_TIMESTAMP), (1, 2, CURRENT_TIMESTAMP), (1, 3, CURRENT_TIMESTAMP);
+INSERT INTO `cargo_mode_cargo_type` VALUES (1, 1, CURRENT_TIMESTAMP), (1, 2, CURRENT_TIMESTAMP);
 
 INSERT INTO `cargo_mode_unit_type` VALUES (1, 1, CURRENT_TIMESTAMP);
 
@@ -195,7 +195,7 @@ INSERT INTO `cargo`(`id`, `client_id`, `department_id`, `document_cargo_id`, `ca
  `count`, `certificate_date`, `certificate_details`, `sync_status`)
  VALUES (1,1,17,1,1,1,1,null,20,'2010-01-15','сертификат 1', 'NOT_SYNCHRONIZED'),
         (2,1,17,2,1,2,2,null,30,'2010-02-15','сертификат 2', 'NOT_SYNCHRONIZED'),
-        (3,1,17,2,3,3,3,null,23,'2010-02-15','сертификат 2', 'NOT_SYNCHRONIZED'),
+        (3,1,17,2,2,3,3,null,23,'2010-02-15','сертификат 2', 'NOT_SYNCHRONIZED'),
         (4,1,17,2,2,4,1,null,73,'2010-02-15','сертификат 2', 'NOT_SYNCHRONIZED'),
         (5,1,17,4,1,5,1,null,40, '2010-03-30', 'сертификат 3', 'NOT_SYNCHRONIZED'),
         (6,1,17,4,1,6,2,null,89, '2010-03-30', 'сертификат 3', 'NOT_SYNCHRONIZED'),
