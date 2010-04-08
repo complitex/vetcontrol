@@ -11,7 +11,7 @@ package org.vetcontrol.information.util.web;
  */
 public class Constants {
 
-    public static final int TEXT_FIELD_MAX_LENGTH = 40;
+    public static final int TEXT_FIELD_MAX_LENGTH = 100;
 
     public static final int TEXT_LIMIT = 30;
     public static final int TITLE_LIMIT = 45;

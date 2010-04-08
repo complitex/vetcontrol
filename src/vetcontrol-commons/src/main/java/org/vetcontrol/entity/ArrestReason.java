@@ -21,7 +21,7 @@ public class ArrestReason extends Localizable{
 
     @MappedProperty("name")
     @Transient
-    @Column(length = 50, nullable = false)
+    @Column(length = 100, nullable = false)
     @XmlTransient
     public List<StringCulture> getNames() {
         return names;

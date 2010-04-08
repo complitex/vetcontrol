@@ -23,7 +23,7 @@ public class UnitType extends Localizable {
 
     @Transient
     @MappedProperty("name")
-    @Column(length = 20, nullable = false)
+    @Column(length = 50, nullable = false)
     @XmlTransient
     public List<StringCulture> getNames() {
         return names;
@@ -46,7 +46,7 @@ public class UnitType extends Localizable {
 
     @Transient
     @MappedProperty("shortName")
-    @Column(length = 5, nullable = true)
+    @Column(length = 10, nullable = true)
     @XmlTransient
     public List<StringCulture> getShortNames() {
         return shortNames;

@@ -45,7 +45,7 @@ public class RegisteredProducts extends Localizable{
 
     @MappedProperty("classificator")
     @Transient
-    @Column(length = 10, nullable = false)
+    @Column(length = 100, nullable = false)
     @XmlTransient
     public List<StringCulture> getClassificators() {
         return classificators;
@@ -108,7 +108,7 @@ public class RegisteredProducts extends Localizable{
 
     @MappedProperty("name")
     @Transient
-    @Column(length = 10, nullable = false)
+    @Column(length = 100, nullable = false)
     public List<StringCulture> getNames() {
         return names;
     }

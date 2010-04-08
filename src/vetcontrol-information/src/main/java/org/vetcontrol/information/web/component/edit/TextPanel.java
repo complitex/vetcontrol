@@ -44,7 +44,7 @@ public final class TextPanel extends Panel {
         }
 
         if (prop.getLength() > 0) {
-            if (prop.getLength() < Constants.TEXT_FIELD_MAX_LENGTH) {
+            if (prop.getLength() <= Constants.TEXT_FIELD_MAX_LENGTH) {
                 textArea.setVisible(false);
             } else {
                 textField.setVisible(false);
