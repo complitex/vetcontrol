@@ -56,6 +56,7 @@ public class Vehicle extends Synchronized implements IUpdated {
     private String vehicleDetails;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "vehicle_type")
     private VehicleType vehicleType;
 
     @Temporal(TemporalType.TIMESTAMP)
