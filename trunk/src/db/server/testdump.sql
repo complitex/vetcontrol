@@ -167,7 +167,7 @@ INSERT INTO `cargo_mode_cargo_type` VALUES (1, 1, CURRENT_TIMESTAMP), (1, 2, CUR
 
 INSERT INTO `cargo_mode_unit_type` VALUES (1, 1, CURRENT_TIMESTAMP);
 
-INSERT INTO `passing_border_point`(`id`, `name`, `department_id`) VALUES (1, 'Пункт 1', 17),(2, 'Пункт 2', 17),(3, 'Пункт 3', 17);
+-- INSERT INTO `passing_border_point`(`id`, `name`, `department_id`) VALUES (1, 'Пункт 1', 17),(2, 'Пункт 2', 17),(3, 'Пункт 3', 17);
 
 INSERT INTO `customs_point`(`id`, `name`) VALUES(1, 65), (2, 66);
 

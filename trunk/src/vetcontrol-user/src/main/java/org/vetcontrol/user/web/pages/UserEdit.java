@@ -2,6 +2,8 @@ package org.vetcontrol.user.web.pages;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
@@ -14,6 +16,7 @@ import org.vetcontrol.service.LogBean;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.user.service.UserBean;
+import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.security.SecurityWebListener;
 import org.vetcontrol.web.template.FormTemplatePage;
@@ -24,7 +27,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.vetcontrol.web.component.Spacer;
 
 import static org.vetcontrol.entity.Log.EVENT.CREATE;
 import static org.vetcontrol.entity.Log.EVENT.EDIT;
@@ -170,16 +172,16 @@ public class UserEdit extends FormTemplatePage {
                 new PropertyModel<Job>(userModel, "job"),
                 jobs, new IChoiceRenderer<Job>() {
 
-            @Override
-            public Object getDisplayValue(Job job) {
-                return job.getDisplayName(getLocale(), localeDAO.systemLocale());
-            }
+                    @Override
+                    public Object getDisplayValue(Job job) {
+                        return job.getDisplayName(getLocale(), localeDAO.systemLocale());
+                    }
 
-            @Override
-            public String getIdValue(Job job, int index) {
-                return String.valueOf(job.getId());
-            }
-        });
+                    @Override
+                    public String getIdValue(Job job, int index) {
+                        return String.valueOf(job.getId());
+                    }
+                });
 
         form.add(ddcJob);
 
@@ -194,20 +196,53 @@ public class UserEdit extends FormTemplatePage {
                 new PropertyModel<Department>(userModel, "department"),
                 departments, new IChoiceRenderer<Department>() {
 
-            @Override
-            public Object getDisplayValue(Department department) {
-                return department.getDisplayName(getLocale(), localeDAO.systemLocale());
-            }
+                    @Override
+                    public Object getDisplayValue(Department department) {
+                        return department.getDisplayName(getLocale(), localeDAO.systemLocale());
+                    }
+
+                    @Override
+                    public String getIdValue(Department department, int index) {
+                        return String.valueOf(department.getId());
+                    }
+                });
+        ddcDepartment.setOutputMarkupId(true);
+        ddcDepartment.setRequired(true);
+        form.add(ddcDepartment);
+
+        //Passing Border Point drop down menu
+        final DropDownChoice ddcPassingBorderPoint = new DropDownChoice<PassingBorderPoint>("user.passing_border_point",
+                new PropertyModel<PassingBorderPoint>(userModel, "passingBorderPoint"),
+                new LoadableDetachableModel<List<PassingBorderPoint>>(){
+
+                    @Override
+                    protected List<PassingBorderPoint> load() {
+                        return userBean.getPassingBorderPoints(userModel.getObject().getDepartment());
+                    }
+                },
+                new IChoiceRenderer<PassingBorderPoint>(){
+
+                    @Override
+                    public Object getDisplayValue(PassingBorderPoint object) {
+                        return object.getName();
+                    }
+
+                    @Override
+                    public String getIdValue(PassingBorderPoint object, int index) {
+                        return object.getId().toString();
+                    }
+                });
+        ddcPassingBorderPoint.setOutputMarkupId(true);
+        form.add(ddcPassingBorderPoint);
+
+        //Passing Border Point ajax update
+        ddcDepartment.add(new AjaxFormComponentUpdatingBehavior("onchange"){
 
             @Override
-            public String getIdValue(Department department, int index) {
-                return String.valueOf(department.getId());
+            protected void onUpdate(AjaxRequestTarget target) {
+                target.addComponent(ddcPassingBorderPoint);
             }
         });
-
-        ddcDepartment.setRequired(true);
-
-        form.add(ddcDepartment);
 
         //User groups checkbox select
 

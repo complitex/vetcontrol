@@ -2,7 +2,6 @@ package org.vetcontrol.user.web.pages;
 
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.apache.wicket.extensions.markup.html.repeater.data.sort.OrderByBorder;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
@@ -10,13 +9,12 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.User;
@@ -25,6 +23,7 @@ import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UIPreferences.PreferenceType;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.user.service.UserBean;
+import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
 import org.vetcontrol.web.component.paging.PagingNavigator;
 import org.vetcontrol.web.component.toolbar.AddUserButton;
 import org.vetcontrol.web.component.toolbar.ToolbarButton;
@@ -35,8 +34,6 @@ import javax.ejb.EJB;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.wicket.model.ResourceModel;
-import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -97,6 +94,7 @@ public class UserList extends TemplatePage {
                 try {
                     return userBean.getUsers(first, count, order, sortParam.isAscending(), filter, getSession().getLocale()).iterator();
                 } catch (Exception e) {
+                    error("Ошибка получения списка пользователей из базы данных");
                     log.error("Ошибка получения списка пользователей из базы данных", e);
                 }
                 return null;
@@ -107,6 +105,7 @@ public class UserList extends TemplatePage {
                 try {
                     return userBean.getUserCount(filterForm.getModelObject()).intValue();
                 } catch (Exception e) {
+                    error("Ошибка получения количества списка пользователей из базы данных");
                     log.error("Ошибка получения количества списка пользователей из базы данных", e);
                 }
                 return 0;
@@ -140,6 +139,7 @@ public class UserList extends TemplatePage {
                     userItem.add(new Label("job",""));                                        
                 }
                 userItem.add(new Label("department", user.getDepartment().getDisplayName(getLocale(), localeDAO.systemLocale())));
+                userItem.add(new Label("passingBorderPoint", user.getPassingBorderPoint() != null ? user.getPassingBorderPoint().getName() : ""));
                 Link<UserEdit> edit = new BookmarkablePageLink<UserEdit>("edit", UserEdit.class,
                         new PageParameters("user_id=" + user.getId()));
                 edit.add(new Label("login", user.getLogin()));
@@ -149,37 +149,43 @@ public class UserList extends TemplatePage {
         };
 
         //Ссылки для активации сортировки по полям
-        add(new ArrowOrderByBorder("order_last_name", "LAST_NAME", userSort) {
+        add(new ArrowOrderByBorder("order_last_name", UserBean.OrderBy.LAST_NAME.name(), userSort) {
 
             protected void onSortChanged() {
                 userDataView.setCurrentPage(0);
             }
         });
-        add(new ArrowOrderByBorder("order_first_name", "FIRST_NAME", userSort) {
+        add(new ArrowOrderByBorder("order_first_name", UserBean.OrderBy.FIRST_NAME.name(), userSort) {
 
             protected void onSortChanged() {
                 userDataView.setCurrentPage(0);
             }
         });
-        add(new ArrowOrderByBorder("order_middle_name", "MIDDLE_NAME", userSort) {
+        add(new ArrowOrderByBorder("order_middle_name", UserBean.OrderBy.MIDDLE_NAME.name(), userSort) {
 
             protected void onSortChanged() {
                 userDataView.setCurrentPage(0);
             }
         });
-        add(new ArrowOrderByBorder("order_job", "JOB", userSort) {
+        add(new ArrowOrderByBorder("order_job", UserBean.OrderBy.JOB.name(), userSort) {
 
             protected void onSortChanged() {
                 userDataView.setCurrentPage(0);
             }
         });
-        add(new ArrowOrderByBorder("order_department", "DEPARTMENT", userSort) {
+        add(new ArrowOrderByBorder("order_department", UserBean.OrderBy.DEPARTMENT.name(), userSort) {
 
             protected void onSortChanged() {
                 userDataView.setCurrentPage(0);
             }
         });
-        add(new ArrowOrderByBorder("order_login", "LOGIN", userSort) {
+        add(new ArrowOrderByBorder("order_passing_border_point", UserBean.OrderBy.PASSING_BORDER_POINT.name(), userSort) {
+
+            protected void onSortChanged() {
+                userDataView.setCurrentPage(0);
+            }
+        });
+        add(new ArrowOrderByBorder("order_login", UserBean.OrderBy.LOGIN.name(), userSort) {
 
             protected void onSortChanged() {
                 userDataView.setCurrentPage(0);
