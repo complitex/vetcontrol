@@ -433,12 +433,52 @@ public class DocumentCargoEdit extends FormTemplatePage {
                 });
 
         ddcDepartment.setRequired(true);
+        ddcDepartment.setOutputMarkupId(true);
         ddcDepartment.setVisible(hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) && id == null);
         form.add(ddcDepartment);
 
-        Label departmentLabel = new Label("document.cargo.department.label", dc.getDepartment().getDisplayName(getLocale(), localeDAO.systemLocale()));
+        Label departmentLabel = new Label("document.cargo.department.label",
+                dc.getDepartment().getDisplayName(getLocale(), localeDAO.systemLocale()));
         departmentLabel.setVisible(!hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) || id != null);
         form.add(departmentLabel);
+
+        //Пункт пропуска через границу
+        final DropDownChoice<PassingBorderPoint> ddcPassingBorderPoint = new DropDownChoice<PassingBorderPoint>("document.cargo.passingBorderPoint",
+                new PropertyModel<PassingBorderPoint>(documentCargoModel, "passingBorderPoint"),
+                new LoadableDetachableModel<List<PassingBorderPoint>>(){
+
+                    @Override
+                    protected List<PassingBorderPoint> load() {
+                        return documentCargoBean.getPassingBorderPoints(documentCargoModel.getObject().getDepartment());
+                    }
+                }, new IChoiceRenderer<PassingBorderPoint>() {
+
+                    @Override
+                    public Object getDisplayValue(PassingBorderPoint object) {
+                        return object.getName();
+                    }
+
+                    @Override
+                    public String getIdValue(PassingBorderPoint object, int index) {
+                        return object.getId().toString();
+                    }
+                });
+        ddcPassingBorderPoint.setOutputMarkupId(true);
+        ddcPassingBorderPoint.setVisible(hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) && id == null);
+        form.add(ddcPassingBorderPoint);
+
+        ddcDepartment.add(new AjaxFormComponentUpdatingBehavior("onchange"){
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                target.addComponent(ddcPassingBorderPoint);
+            }
+        });
+
+        Label passingBorderPointLabel = new Label("document.cargo.passingBorderPoint.label",
+                dc.getPassingBorderPoint() != null ? dc.getPassingBorderPoint().getName() : "");
+        passingBorderPointLabel.setVisible(!hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) || id != null);
+        form.add(passingBorderPointLabel);
 
         //Дата создания
         Label l_created = new Label("l_created", new ResourceModel("document.cargo.created"));

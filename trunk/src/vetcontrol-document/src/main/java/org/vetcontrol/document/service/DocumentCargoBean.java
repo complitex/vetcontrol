@@ -4,6 +4,7 @@ import org.vetcontrol.entity.*;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.util.DateUtil;
+import org.vetcontrol.web.component.VehicleTypeChoicePanel;
 import org.vetcontrol.web.security.SecurityRoles;
 
 import javax.annotation.security.RolesAllowed;
@@ -12,7 +13,6 @@ import javax.ejb.Stateless;
 import javax.persistence.*;
 import java.math.BigInteger;
 import java.util.List;
-import org.vetcontrol.web.component.VehicleTypeChoicePanel;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -292,6 +292,13 @@ public class DocumentCargoBean {
         list.add(0, department);
 
         return list;
+    }
+
+    public List<PassingBorderPoint> getPassingBorderPoints(Department department){
+        return em.createQuery("select pbp from PassingBorderPoint pbp " +
+                "where pbp.department = :department and pbp.disabled = false", PassingBorderPoint.class)
+                .setParameter("department", department)
+                .getResultList();        
     }
 
     public ClientEntityId getDocumentCargoId(Long id, Long clientId, Long departmentId) {

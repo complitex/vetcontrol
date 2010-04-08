@@ -27,9 +27,10 @@ CREATE TABLE  `user` (
   UNIQUE KEY `index_login` (`login`),
   KEY `fk_job` (`job_id`),
   KEY `fk_user_department` (`department_id`),
+  KEY `fk_border_point` (`passing_border_point_id`),
   CONSTRAINT `fk_job` FOREIGN KEY (`job_id`) REFERENCES `job` (`id`),
   CONSTRAINT `fk_user_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`),
-  CONSTRAINT `fk_passing_border_point` FOREIGN KEY (`passing_border_point_id`) REFERENCES `passing_border_point` (`id`),
+  CONSTRAINT `fk_border_point` FOREIGN KEY (`passing_border_point_id`) REFERENCES `passing_border_point` (`id`),
     KEY `user_updated_INDEX` (`updated`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
@@ -395,7 +396,7 @@ CREATE TABLE `document_cargo` (
   `movement_type_id` bigint(20) NOT NULL,
   `vehicle_type` varchar(10) NOT NULL,
 
-  `cargo_mode_id` bigint(20) NOT NULL,
+  `cargo_mode_id` bigint(20) DEFAULT NULL,
 
   `cargo_sender_name` varchar(100) NOT NULL,
   `cargo_sender_country_id` bigint(20) NOT NULL,
