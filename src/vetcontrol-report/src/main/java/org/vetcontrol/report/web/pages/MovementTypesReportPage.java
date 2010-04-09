@@ -35,7 +35,6 @@ import org.vetcontrol.report.service.dao.MovementTypesReportDAO;
 import org.vetcontrol.report.util.jasper.ExportType;
 import org.vetcontrol.report.util.movementtypes.CellFormatter;
 import org.vetcontrol.report.web.component.PrintButton;
-import org.vetcontrol.report.web.component.RowNumberLabel;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UIPreferences.PreferenceType;
 import org.vetcontrol.util.DateUtil;
@@ -135,20 +134,20 @@ public final class MovementTypesReportPage extends TemplatePage {
             protected void populateItem(Item<MovementTypesReport> item) {
                 MovementTypesReport report = item.getModelObject();
 
-                item.add(new RowNumberLabel("rowNumber", item));
+                item.add(new Label("rowNumber", String.valueOf(report.getOrder())));
 
-                item.add(new Label("cargoModeName", report.getCargoModeName()));
+                item.add(new Label("cargoModeName", CellFormatter.cargoModeName(report.getCargoModeName(), report.getParentCargoModeName())));
 
-                item.add(new Label("export", getFormattedReportData(report.getExport(), report.getUnitTypeName())));
-                item.add(new Label("import", getFormattedReportData(report.getImprt(), report.getUnitTypeName())));
-                item.add(new Label("transit", getFormattedReportData(report.getTransit(), report.getUnitTypeName())));
-                item.add(new Label("importTransit", getFormattedReportData(report.getImportTransit(), report.getUnitTypeName())));
+                item.add(new Label("export", CellFormatter.format(report.getExport(), report.getUnitTypeName())));
+                item.add(new Label("import", CellFormatter.format(report.getImprt(), report.getUnitTypeName())));
+                item.add(new Label("transit", CellFormatter.format(report.getTransit(), report.getUnitTypeName())));
+                item.add(new Label("importTransit", CellFormatter.format(report.getImportTransit(), report.getUnitTypeName())));
 
-                item.add(new Label("exportInCurrentMonth", getFormattedReportData(report.getExportInCurrentMonth(), report.getUnitTypeName())));
-                item.add(new Label("importInCurrentMonth", getFormattedReportData(report.getImprtInCurrentMonth(), report.getUnitTypeName())));
-                item.add(new Label("transitInCurrentMonth", getFormattedReportData(report.getTransitInCurrentMonth(), report.getUnitTypeName())));
+                item.add(new Label("exportInCurrentMonth", CellFormatter.format(report.getExportInCurrentMonth(), report.getUnitTypeName())));
+                item.add(new Label("importInCurrentMonth", CellFormatter.format(report.getImprtInCurrentMonth(), report.getUnitTypeName())));
+                item.add(new Label("transitInCurrentMonth", CellFormatter.format(report.getTransitInCurrentMonth(), report.getUnitTypeName())));
                 item.add(new Label("importTransitInCurrentMonth",
-                        getFormattedReportData(report.getImportTransitInCurrentMonth(), report.getUnitTypeName())));
+                        CellFormatter.format(report.getImportTransitInCurrentMonth(), report.getUnitTypeName())));
             }
         };
 
@@ -182,10 +181,6 @@ public final class MovementTypesReportPage extends TemplatePage {
         textDepartment.add(departmentAttribute);
         add(textDepartment);
 
-    }
-
-    private String getFormattedReportData(Number data, String unitTypeName) {
-        return CellFormatter.format(data, unitTypeName);
     }
 
     @Override

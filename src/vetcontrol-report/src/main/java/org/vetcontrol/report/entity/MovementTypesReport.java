@@ -10,8 +10,9 @@ import java.io.Serializable;
  *
  * @author Artem
  */
-public class MovementTypesReport implements Serializable {
+public class MovementTypesReport extends Ordered implements Serializable {
 
+    private String parentCargoModeName;
     private String cargoModeName;
     private String unitTypeName;
     private Number export;
@@ -22,6 +23,14 @@ public class MovementTypesReport implements Serializable {
     private Number imprtInCurrentMonth;
     private Number transitInCurrentMonth;
     private Number importTransitInCurrentMonth;
+
+    public String getParentCargoModeName() {
+        return parentCargoModeName;
+    }
+
+    public void setParentCargoModeName(String parentCargoModeName) {
+        this.parentCargoModeName = parentCargoModeName;
+    }
 
     public String getCargoModeName() {
         return cargoModeName;

@@ -39,7 +39,6 @@ import org.vetcontrol.report.util.DateConverter;
 import org.vetcontrol.report.util.jasper.ExportType;
 import org.vetcontrol.report.util.regionalcontrol.CellFormatter;
 import org.vetcontrol.report.web.component.PrintButton;
-import org.vetcontrol.report.web.component.RowNumberLabel;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.util.DateUtil;
@@ -144,7 +143,7 @@ public final class RegionalControlReportPage extends TemplatePage {
             protected void populateItem(Item<RegionalControlReport> item) {
                 RegionalControlReport report = item.getModelObject();
 
-                item.add(new RowNumberLabel("rowNumber", item));
+                item.add(new Label("rowNumber", String.valueOf(report.getOrder())));
 
                 item.add(new Label("cargoArrived", CellFormatter.formatCargoArrived(report.getCargoArrived(), reportLocale)));
                 item.add(new Label("cargoProducerName", report.getCargoProducerName()));

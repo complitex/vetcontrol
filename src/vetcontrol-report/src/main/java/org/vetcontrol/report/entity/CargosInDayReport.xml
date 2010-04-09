@@ -7,23 +7,15 @@
                     (SELECT sc.value FROM stringculture sc WHERE sc.id =
                             (SELECT ct.name FROM cargo_type ct WHERE ct.id = c.cargo_type_id)
                             AND sc.locale= :locale) AS cargoTypeName,
+                    (SELECT d.cargo_sender_name) AS cargoSenderName,
+                    (SELECT d.cargo_receiver_name) AS cargoReceiverName,
                     (SELECT sc.value FROM stringculture sc WHERE sc.id =
-                            (SELECT s.name FROM cargo_sender s WHERE s.id = d.cargo_sender_id)
-                            AND sc.locale= :locale) AS cargoSenderName,
-                    (SELECT sc.value FROM stringculture sc WHERE sc.id =
-                            (SELECT r.name FROM cargo_receiver r WHERE r.id = d.cargo_receiver_id)
-                            AND sc.locale= :locale) AS cargoReceiverName,
-                    (SELECT sc.value FROM stringculture sc WHERE sc.id =
-                            (SELECT p.name FROM cargo_producer p WHERE p.id = d.cargo_producer_id)
+                            (SELECT cp.name FROM cargo_producer cp WHERE cp.id = c.cargo_producer_id)
                             AND sc.locale= :locale) AS cargoProducerName,
-                    (CASE (d.vehicle_type_id) WHEN 1 THEN 1 ELSE 0 END) AS car,
-                    (CASE (d.vehicle_type_id) WHEN 2 THEN 1 ELSE 0 END) AS ship,
-                    (CASE (d.vehicle_type_id) WHEN 3 THEN 1 ELSE 0 END) AS container,
-                    (CASE (d.vehicle_type_id) WHEN 4 THEN 1 ELSE 0 END) AS carriage,
-                    (CASE (d.vehicle_type_id) WHEN 5 THEN 1 ELSE 0 END) AS aircraft,
-                    c.count AS `count`,
+                    (SELECT d.vehicle_type) AS vehicleType,
+                    (SELECT c.`count`) AS `count`,
                     (SELECT sc.value FROM stringculture sc WHERE sc.id =
-                            (SELECT ut.name FROM unit_type ut WHERE ut.id = c.unit_type_id)
+                            (SELECT ut.short_name FROM unit_type ut WHERE ut.id = c.unit_type_id)
                             AND sc.locale= :locale) AS unitTypeName
 
             FROM cargo c
