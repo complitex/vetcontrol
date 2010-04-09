@@ -21,9 +21,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.lang.PropertyResolver;
 import org.apache.wicket.util.string.Strings;
-import org.vetcontrol.util.book.BeanPropertyUtil;
-import org.vetcontrol.information.util.web.Constants;
+import static org.vetcontrol.util.book.BeanPropertyUtil.*;
 import org.vetcontrol.information.util.web.ResourceUtil;
+import org.vetcontrol.information.util.web.TruncateUtil;
 import org.vetcontrol.information.web.component.list.DateFilter;
 import org.vetcontrol.information.web.component.list.BookTextFilter;
 import org.vetcontrol.information.web.model.AutoCompleteBookReferenceModel;
@@ -61,31 +61,18 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
             asString = ResourceUtil.getString(String.valueOf(propertyValue), component);
         } else if (property.isBookReference() && property.getUiType().equals(UIType.AUTO_COMPLETE)
                 && !Strings.isEmpty(property.getBookReferencePattern())) {
-            asString = BeanPropertyUtil.applyPattern(property.getBookReferencePattern(), propertyValue, systemLocale);
+            asString = applyPattern(property.getBookReferencePattern(), propertyValue, systemLocale);
         } else {
-            asString = BeanPropertyUtil.getPropertyAsString(propertyValue, property, systemLocale);
+            asString = getPropertyAsString(propertyValue, property, systemLocale);
         }
 
-        String value = asString;
-        String title = null;
-        if (value.length() > Constants.TEXT_LIMIT) {
-            title = value;
-            //Show overall text as title
-            /*
-            if (title.length() > Constants.TITLE_LIMIT) {
-            title = title.substring(0, Constants.TITLE_LIMIT);
-            title += Constants.CONTINUE;
-            }
-             */
+        //Show overall text as title
+        String title = asString;
 
-            value = value.substring(0, Constants.TEXT_LIMIT);
-            value += Constants.CONTINUE;
-        }
+        String value = TruncateUtil.TRUNCATE_SELECT_VALUE_IN_LIST_PAGE.truncate(asString, property);
 
         Label label = new Label(componentId, value);
-        if (title != null) {
-            label.add(new SimpleAttributeModifier("title", title));
-        }
+        label.add(new SimpleAttributeModifier("title", title));
 
         item.add(label);
     }
@@ -100,7 +87,7 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
             if (property.getUiType().equals(UIType.SELECT)) {
                 return new ChoiceFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form,
                         bookViewDAO.getContent(property.getType(), ShowBooksMode.ENABLED),
-                        new BookChoiceRenderer(property, systemLocale), false);
+                        new BookChoiceRenderer(property, systemLocale, TruncateUtil.TRUNCATE_SELECT_VALUE_IN_LIST_PAGE), false);
             } else if (property.getUiType().equals(UIType.AUTO_COMPLETE)) {
                 return new BookTextFilter(componentId,
                         new AutoCompleteBookReferenceModel(property, new PropertyModel(form.getDefaultModel(), getPropertyExpression())), form, property);

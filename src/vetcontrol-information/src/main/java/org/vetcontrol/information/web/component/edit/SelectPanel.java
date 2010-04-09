@@ -9,6 +9,7 @@ import java.util.Locale;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.vetcontrol.information.util.web.TruncateUtil;
 import org.vetcontrol.information.web.component.BookChoiceRenderer;
 import org.vetcontrol.util.book.Property;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
@@ -22,7 +23,7 @@ public final class SelectPanel extends Panel {
     public SelectPanel(String id, IModel model, final Property property, List books, final Locale systemLocale, boolean enabled) {
         super(id);
 
-        BookChoiceRenderer choiceRenderer = new BookChoiceRenderer(property, systemLocale);
+        BookChoiceRenderer choiceRenderer = new BookChoiceRenderer(property, systemLocale, TruncateUtil.TRUNCATE_SELECT_VALUE_IN_EDIT_PAGE);
         DropDownChoice dropDownChoice = new DropDownChoice("select", model, books, choiceRenderer);
         dropDownChoice.setEnabled(enabled);
         dropDownChoice.setLabel(new DisplayPropertyLocalizableModel(property, this));

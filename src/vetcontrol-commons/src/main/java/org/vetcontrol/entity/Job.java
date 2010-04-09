@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
+import org.vetcontrol.util.book.entity.annotation.ViewLength;
 
 /**
  * @author Artem
@@ -27,6 +28,7 @@ public class Job extends Localizable {
     @MappedProperty("name")
     @Column(length = 100, nullable = false)
     @XmlTransient
+    @ViewLength(100)
     public List<StringCulture> getNames() {
         return names;
     }
@@ -44,4 +46,5 @@ public class Job extends Localizable {
     public Query getUpdateQuery(EntityManager em) {
         return getUpdateQuery(em, "job");
     }
+
 }

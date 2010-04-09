@@ -284,6 +284,25 @@ public class Property implements Serializable, Cloneable {
         this.columnName = columnName;
     }
 
+    protected int viewLength;
+
+    /**
+     * Get the value of viewLength
+     *
+     * @return the value of viewLength
+     */
+    public int getViewLength() {
+        return viewLength;
+    }
+
+    /**
+     * Set the value of viewLength
+     *
+     * @param viewLength new value of viewLength
+     */
+    public void setViewLength(int viewLength) {
+        this.viewLength = viewLength;
+    }
 
     @Override
     public Property clone() {

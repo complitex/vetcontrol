@@ -39,6 +39,7 @@ import org.vetcontrol.information.service.dao.IBookDAO;
 import org.vetcontrol.information.util.web.BookTypeWebInfoUtil;
 import org.vetcontrol.information.util.web.BookWebInfo;
 import org.vetcontrol.information.util.web.CanEditUtil;
+import org.vetcontrol.information.util.web.TruncateUtil;
 import org.vetcontrol.information.web.component.BookChoiceRenderer;
 import org.vetcontrol.information.web.component.edit.LocalizableTextPanel;
 import org.vetcontrol.information.web.component.edit.SaveUpdateConfirmationDialog;
@@ -140,7 +141,8 @@ public final class DepartmentEdit extends FormTemplatePage {
             public void detach() {
             }
         };
-        BookChoiceRenderer parentRenderer = new BookChoiceRenderer(BeanPropertyUtil.getPropertyByName(Department.class, "parent"), systemLocale);
+        BookChoiceRenderer parentRenderer = new BookChoiceRenderer(BeanPropertyUtil.getPropertyByName(Department.class, "parent"), systemLocale,
+                TruncateUtil.TRUNCATE_SELECT_VALUE_IN_EDIT_PAGE);
         final DropDownChoice parent = new DropDownChoice("parent",
                 parentModel,
                 parentDepartmentsModel,
@@ -176,7 +178,7 @@ public final class DepartmentEdit extends FormTemplatePage {
             }
         };
         BookChoiceRenderer customsPointRenderer = new BookChoiceRenderer(BeanPropertyUtil.getPropertyByName(Department.class, "customsPoint"),
-                systemLocale);
+                systemLocale, TruncateUtil.TRUNCATE_SELECT_VALUE_IN_EDIT_PAGE);
         final DropDownChoice customsPoint = new DropDownChoice("customsPoint",
                 new PropertyModel(department, "customsPoint"),
                 customsPointModel,

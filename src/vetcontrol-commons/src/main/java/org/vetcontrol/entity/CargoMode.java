@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlIDREF;
 import org.vetcontrol.util.book.entity.annotation.BookReference;
+import org.vetcontrol.util.book.entity.annotation.ViewLength;
 
 /**
  * 2.4.3.12 Справочник видов грузов
@@ -66,6 +67,7 @@ public class CargoMode extends Localizable {
     @MappedProperty("name")
     @Column(length = 500, nullable = false)
     @XmlTransient
+    @ViewLength(50)
     public List<StringCulture> getNames() {
         return names;
     }
@@ -80,6 +82,7 @@ public class CargoMode extends Localizable {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "parent_id", nullable = true)
     @XmlIDREF
+    @ViewLength(50)
     public CargoMode getParent() {
         return parent;
     }

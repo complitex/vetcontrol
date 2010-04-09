@@ -46,9 +46,9 @@ import org.vetcontrol.entity.UnitType;
 import org.vetcontrol.information.service.dao.CargoModeDAO;
 import org.vetcontrol.information.service.dao.IBookDAO;
 import org.vetcontrol.information.util.web.BookTypeWebInfoUtil;
-import org.vetcontrol.information.util.web.BookWebInfo;
 import org.vetcontrol.information.util.web.CanEditUtil;
 import org.vetcontrol.information.util.web.Constants;
+import org.vetcontrol.information.util.web.TruncateUtil;
 import org.vetcontrol.information.web.component.BookChoiceRenderer;
 import org.vetcontrol.information.web.component.edit.AbstractAutoCompleteTextField;
 import org.vetcontrol.information.web.component.edit.LocalizableTextPanel;
@@ -341,7 +341,8 @@ public final class CargoModeEdit extends FormTemplatePage {
                 return cargoModeDAO.getRootCargoModes();
             }
         };
-        BookChoiceRenderer parentChoiceRenderer = new BookChoiceRenderer(BeanPropertyUtil.getPropertyByName(CargoMode.class, "parent"), systemLocale);
+        BookChoiceRenderer parentChoiceRenderer = new BookChoiceRenderer(BeanPropertyUtil.getPropertyByName(CargoMode.class, "parent"), systemLocale,
+                TruncateUtil.TRUNCATE_SELECT_VALUE_IN_EDIT_PAGE);
         final DropDownChoice parentChoice = new DropDownChoice("parent",
                 new PropertyModel(cargoModeModel, "parent"),
                 rootCargoModeModel,
