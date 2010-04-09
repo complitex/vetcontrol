@@ -75,7 +75,7 @@ public class ClientPopulator extends AbstractPopulator {
         cargo.setCertificateDate(new Date());
         cargo.setCertificateDetails(GenerateUtil.generateString(255));
         cargo.setClient(client);
-        cargo.setCount(GenerateUtil.generateInt(1000));
+//        cargo.setCount(GenerateUtil.generateInt(1000));
         cargo.setDepartment(department);
         cargo.setDocumentCargoId(documentCargoId);
         cargo.setSyncStatus(SyncStatus.NOT_SYNCHRONIZED);
