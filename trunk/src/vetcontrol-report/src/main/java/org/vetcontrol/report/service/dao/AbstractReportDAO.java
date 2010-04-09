@@ -5,7 +5,6 @@
 package org.vetcontrol.report.service.dao;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -16,6 +15,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
+import org.vetcontrol.report.entity.Ordered;
 import org.vetcontrol.report.entity.ReportParameter;
 import org.vetcontrol.report.util.QueryLoader;
 import org.vetcontrol.util.book.service.HibernateSessionTransformer;
@@ -54,10 +54,19 @@ public abstract class AbstractReportDAO<T extends Serializable> {
                     query.setParameter(entry.getKey(), entry.getValue());
                 }
             }
-            return query.setFirstResult(first).
+            List<T> results = query.setFirstResult(first).
                     setMaxResults(count).
                     setResultTransformer(Transformers.aliasToBean(reportEntityType)).
                     list();
+            
+            if (Ordered.class.isAssignableFrom(reportEntityType)) {
+                int order = first + 1;
+                for (T result : results) {
+                    ((Ordered) result).setOrder(order++);
+                }
+            }
+
+            return results;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -76,8 +85,7 @@ public abstract class AbstractReportDAO<T extends Serializable> {
                     query.setParameter(entry.getKey(), entry.getValue());
                 }
             }
-            BigInteger size = (BigInteger) query.uniqueResult();
-            return size != null ? size.intValue() : 0;
+            return ((Number) query.uniqueResult()).intValue();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

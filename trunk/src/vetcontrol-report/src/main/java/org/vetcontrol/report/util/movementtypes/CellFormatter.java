@@ -17,4 +17,8 @@ public class CellFormatter {
         }
         return value + " " + unitTypeName;
     }
+
+    public static String cargoModeName(String cargoModeName, String parentCargoModeName) {
+        return parentCargoModeName + ", " + cargoModeName;
+    }
 }

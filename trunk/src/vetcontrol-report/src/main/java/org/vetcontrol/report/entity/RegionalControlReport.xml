@@ -4,21 +4,18 @@
     <entry key="all">
         <![CDATA[
             SELECT
-                (SELECT d.created FROM document_cargo d WHERE 
-                        d.id = dc.id AND d.client_id = dc.client_id AND d.department_id = dc.department_id) AS cargoArrived,
+                (SELECT dc.created) AS cargoArrived,
                 (SELECT sc.value FROM stringculture sc WHERE sc.id =
-                (SELECT cp.name FROM cargo_producer cp WHERE cp.id =  dc.cargo_producer_id)
+                (SELECT cp.name FROM cargo_producer cp WHERE cp.id =  c.cargo_producer_id)
                 AND sc.locale = :locale) AS cargoProducerName,
-                (SELECT sc.value FROM stringculture sc WHERE sc.id =
-                (SELECT cr.name FROM cargo_receiver cr WHERE cr.id = dc.cargo_receiver_id)
-                AND sc.locale= :locale) AS cargoReceiverName,
+                (SELECT dc.cargo_receiver_name) AS cargoReceiverName,
                 (SELECT sc.value FROM stringculture sc WHERE sc.id =
                 (SELECT ct.name FROM cargo_type ct WHERE ct.id = c.cargo_type_id)
                 AND sc.locale= :locale) AS cargoTypeName,
                 (SELECT ct.ukt_zed_code FROM cargo_type ct WHERE ct.id = c.cargo_type_id) AS cargoTypeCode,
-                c.count AS `count`,
+                (SELECT c.`count`) AS `count`,
                 (SELECT sc.value FROM stringculture sc WHERE sc.id =
-                (SELECT ut.name FROM unit_type ut WHERE ut.id = c.unit_type_id)
+                (SELECT ut.short_name FROM unit_type ut WHERE ut.id = c.unit_type_id)
                 AND sc.locale= :locale) AS unitTypeName,
                 (SELECT sc.value FROM stringculture sc WHERE sc.id =
                 (SELECT mt.name FROM movement_type mt WHERE mt.id = dc.movement_type_id)

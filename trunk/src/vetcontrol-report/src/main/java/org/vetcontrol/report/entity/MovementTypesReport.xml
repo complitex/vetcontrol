@@ -4,44 +4,41 @@
     <entry key="all">
         <![CDATA[
         SELECT
+                (SELECT sc.value FROM stringculture sc WHERE sc.id = parent.name
+                AND sc.locale = :locale) AS parentCargoModeName,
                 (SELECT sc.value FROM stringculture sc WHERE sc.id =
-                (SELECT cm.name FROM cargo_mode cm WHERE cm.id = cmct.cargo_mode_id)
+                (SELECT cm.name FROM cargo_mode cm WHERE cm.id = dc.cargo_mode_id)
                 AND sc.locale = :locale) AS cargoModeName,
-                (SELECT sc.value FROM stringculture sc where sc.id = ut.name
+                (SELECT sc.value FROM stringculture sc where sc.id =
+                (SELECT ut.short_name FROM unit_type ut WHERE ut.id = c.unit_type_id)
                 AND sc.locale = :locale) AS unitTypeName,
-                CAST(SUM(CASE WHEN (mt.id = 1) THEN c.count ELSE 0 END) AS UNSIGNED) AS imprt,
-                CAST(SUM(CASE WHEN (mt.id = 2) THEN c.count ELSE 0 END) AS UNSIGNED) AS export,
-                CAST(SUM(CASE WHEN (mt.id = 3) THEN c.count ELSE 0 END) AS UNSIGNED) AS transit,
-                CAST(SUM(CASE WHEN (mt.id = 4) THEN c.count ELSE 0 END) AS UNSIGNED) AS importTransit,
+                CAST(SUM(CASE WHEN (dc.movement_type_id = 1) THEN c.`count` ELSE 0 END) AS UNSIGNED) AS imprt,
+                CAST(SUM(CASE WHEN (dc.movement_type_id = 2) THEN c.`count` ELSE 0 END) AS UNSIGNED) AS export,
+                CAST(SUM(CASE WHEN (dc.movement_type_id = 3) THEN c.`count` ELSE 0 END) AS UNSIGNED) AS transit,
+                CAST(SUM(CASE WHEN (dc.movement_type_id = 4) THEN c.`count` ELSE 0 END) AS UNSIGNED) AS importTransit,
 
                 /* in current month */
-                CAST(SUM(CASE WHEN (mt.id = 1 AND MONTH(dc.created) = MONTH(:endDate)) THEN c.count ELSE 0 END) AS UNSIGNED) AS imprtInCurrentMonth,
-                CAST(SUM(CASE WHEN (mt.id = 2 AND MONTH(dc.created) = MONTH(:endDate)) THEN c.count ELSE 0 END) AS UNSIGNED) AS exportInCurrentMonth,
-                CAST(SUM(CASE WHEN (mt.id = 3 AND MONTH(dc.created) = MONTH(:endDate)) THEN c.count ELSE 0 END) AS UNSIGNED) AS transitInCurrentMonth,
-                CAST(SUM(CASE WHEN (mt.id = 4 AND MONTH(dc.created) = MONTH(:endDate)) THEN c.count ELSE 0 END) AS UNSIGNED) AS importTransitInCurrentMonth
+                CAST(SUM(CASE WHEN (dc.movement_type_id = 1 AND MONTH(dc.created) = MONTH(:endDate)) THEN c.`count` ELSE 0 END) AS UNSIGNED) AS imprtInCurrentMonth,
+                CAST(SUM(CASE WHEN (dc.movement_type_id = 2 AND MONTH(dc.created) = MONTH(:endDate)) THEN c.`count` ELSE 0 END) AS UNSIGNED) AS exportInCurrentMonth,
+                CAST(SUM(CASE WHEN (dc.movement_type_id = 3 AND MONTH(dc.created) = MONTH(:endDate)) THEN c.`count` ELSE 0 END) AS UNSIGNED) AS transitInCurrentMonth,
+                CAST(SUM(CASE WHEN (dc.movement_type_id = 4 AND MONTH(dc.created) = MONTH(:endDate)) THEN c.`count` ELSE 0 END) AS UNSIGNED) AS importTransitInCurrentMonth
 
         FROM cargo c
-        LEFT JOIN cargo_mode_cargo_type cmct ON cmct.cargo_type_id = c.cargo_type_id
-        LEFT JOIN unit_type ut ON c.unit_type_id = ut.id
         JOIN document_cargo dc ON (c.document_cargo_id = dc.id AND c.client_id = dc.client_id AND c.department_id = dc.department_id)
-        LEFT JOIN movement_type mt ON mt.id = dc.movement_type_id
+        JOIN cargo_mode parent ON (parent.id = (SELECT cm.parent_id FROM cargo_mode cm WHERE dc.cargo_mode_id = cm.id))
         WHERE dc.created>= :startDate AND dc.created <= :endDate AND dc.department_id = :department
-        GROUP BY cmct.cargo_mode_id, ut.id
-        ORDER BY cargoModeName
+        GROUP BY parent.id, dc.cargo_mode_id, c.unit_type_id
+        ORDER BY 1,2
 ]]>
     </entry>
     <entry key="size">
         <![CDATA[
         SELECT COUNT(*) FROM (SELECT 1
                                 FROM cargo c
-                                LEFT JOIN cargo_mode_cargo_type cmct ON cmct.cargo_type_id = c.cargo_type_id
-                                LEFT JOIN unit_type ut ON c.unit_type_id = ut.id
-                                JOIN document_cargo dc ON
-                                    (c.document_cargo_id = dc.id AND c.client_id = dc.client_id AND c.department_id = dc.department_id)
-                                LEFT JOIN movement_type mt ON mt.id = dc.movement_type_id
+                                JOIN document_cargo dc ON (c.document_cargo_id = dc.id AND c.client_id = dc.client_id AND c.department_id = dc.department_id)
+                                JOIN cargo_mode parent ON (parent.id = (SELECT cm.parent_id FROM cargo_mode cm WHERE dc.cargo_mode_id = cm.id))
                                 WHERE dc.created>= :startDate AND dc.created <= :endDate AND dc.department_id = :department
-                                GROUP BY cmct.cargo_mode_id, ut.id) report
+                                GROUP BY parent.id, dc.cargo_mode_id, c.unit_type_id) report
 ]]>
     </entry>
-
 </properties>

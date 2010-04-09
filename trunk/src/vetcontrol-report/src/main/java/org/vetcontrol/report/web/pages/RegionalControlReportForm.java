@@ -13,7 +13,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
-import org.odlabs.wiquery.ui.datepicker.DatePicker;
+import org.vetcontrol.web.component.DatePicker;
 import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.FormTemplatePage;
@@ -54,15 +54,9 @@ public final class RegionalControlReportForm extends FormTemplatePage {
         };
 
         final DatePicker<Date> startDate = new DatePicker<Date>("startDate", startDateModel, Date.class);
-        startDate.setButtonImage("images/calendar.gif");
-        startDate.setButtonImageOnly(true);
-        startDate.setShowOn(DatePicker.ShowOnEnum.BOTH);
         startDate.setRequired(true);
 
         final DatePicker<Date> endDate = new DatePicker<Date>("endDate", endDateModel, Date.class);
-        endDate.setButtonImage("images/calendar.gif");
-        endDate.setButtonImageOnly(true);
-        endDate.setShowOn(DatePicker.ShowOnEnum.BOTH);
         endDate.setRequired(true);
 
         Form form = new Form("form") {

@@ -12,7 +12,7 @@ import java.util.Date;
  *
  * @author Artem
  */
-public class RegionalControlReport implements Serializable {
+public class RegionalControlReport extends Ordered implements Serializable {
 
     private Date cargoArrived;
     private String cargoProducerName;

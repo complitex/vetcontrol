@@ -29,6 +29,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.vetcontrol.entity.VehicleType;
 import org.vetcontrol.report.entity.CargosInDayReport;
 import org.vetcontrol.report.entity.CargosInDayReportParameter;
 import org.vetcontrol.report.jasper.cargosinday.CargosInDayReportServlet;
@@ -38,7 +39,6 @@ import org.vetcontrol.report.util.cargosinday.CellFormatter;
 import org.vetcontrol.report.util.DateConverter;
 import org.vetcontrol.report.util.jasper.ExportType;
 import org.vetcontrol.report.web.component.PrintButton;
-import org.vetcontrol.report.web.component.RowNumberLabel;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
@@ -137,17 +137,17 @@ public final class CargosInDayReportPage extends TemplatePage {
             protected void populateItem(Item<CargosInDayReport> item) {
                 CargosInDayReport report = item.getModelObject();
 
-                item.add(new RowNumberLabel("rowNumber", item));
+                item.add(new Label("rowNumber", String.valueOf(report.getOrder())));
 
                 item.add(new Label("cargoTypeName", report.getCargoTypeName()));
                 item.add(new Label("cargoProducerName", report.getCargoProducerName()));
                 item.add(new Label("cargoReceiverName", report.getCargoReceiverName()));
                 item.add(new Label("cargoSenderName", report.getCargoSenderName()));
-                item.add(new Label("isCar", CellFormatter.formatExistenceData(report.getCar())));
-                item.add(new Label("isShip", CellFormatter.formatExistenceData(report.getShip())));
-                item.add(new Label("isContainer", CellFormatter.formatExistenceData(report.getContainer())));
-                item.add(new Label("isCarriage", CellFormatter.formatExistenceData(report.getCarriage())));
-                item.add(new Label("isAircraft", CellFormatter.formatExistenceData(report.getAircraft())));
+                item.add(new Label("isCar", CellFormatter.formatExistenceData(report.getVehicleType(), VehicleType.CAR)));
+                item.add(new Label("isShip", CellFormatter.formatExistenceData(report.getVehicleType(), VehicleType.SHIP)));
+                item.add(new Label("isContainer", CellFormatter.formatExistenceData(report.getVehicleType(), VehicleType.CONTAINER)));
+                item.add(new Label("isCarriage", CellFormatter.formatExistenceData(report.getVehicleType(), VehicleType.CARRIAGE)));
+                item.add(new Label("isAircraft", CellFormatter.formatExistenceData(report.getVehicleType(), VehicleType.AIRCRAFT)));
                 item.add(new Label("count", CellFormatter.formatCountData(report.getCount(), report.getUnitTypeName())));
             }
         };
