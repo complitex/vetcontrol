@@ -432,7 +432,7 @@ CREATE TABLE  `cargo` (
   `unit_type_id` bigint(20) DEFAULT NULL,
   `cargo_producer_id` bigint(20) NOT NULL,
   `vehicle_id` bigint(20) DEFAULT NULL,
-  `count` int(11) DEFAULT NULL,
+  `count` DOUBLE (11,2) DEFAULT NULL,
   `certificate_date` date NOT NULL,
   `certificate_details` varchar(255) NOT NULL,
   `updated` timestamp DEFAULT NOW(),

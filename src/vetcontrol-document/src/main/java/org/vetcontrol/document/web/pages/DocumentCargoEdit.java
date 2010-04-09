@@ -27,7 +27,6 @@ import org.vetcontrol.service.LogBean;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.web.component.DatePicker;
-import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.component.UKTZEDField;
 import org.vetcontrol.web.component.list.AjaxRemovableListView;
 import org.vetcontrol.web.template.FormTemplatePage;
@@ -266,9 +265,9 @@ public class DocumentCargoEdit extends FormTemplatePage {
                         cargo.setCargoProducer(copyFrom.getCargoProducer());
 
                         cargo.setDocumentCargo(dc);
-                        dc.getCargos().add(cargo);
-                        
+                        dc.getCargos().add(cargo);                         
                         target.addComponent(cargoContainer);
+
 
                         String setFocusOnNewCargo = "newCargoFirstInputId = $('.table_input tbody tr:last input[type=\"text\"]:first').attr('id');"
                                 + "Wicket.Focus.setFocusOnId(newCargoFirstInputId);";
@@ -365,11 +364,6 @@ public class DocumentCargoEdit extends FormTemplatePage {
                 }
             }
         });
-                          
-
-        //Пункт пропуска через границу
-//        addDropDownChoice(form, "document.cargo.passingBorderPoint", PassingBorderPoint.class, documentCargoModel, "passingBorderPoint");
-//        form.add(new DropDownChoice("document.cargo.passingBorderPoint"));
 
         //Реквизиты акта задержания груза
         TextField detentionDetails = new TextField<String>("document.cargo.detention_details",
@@ -491,7 +485,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
         created.setVisible(visible);
         form.add(created);
 
-        form.add(new Spacer("spacer"));
+//        form.add(new Spacer("spacer"));
     }
 
     private <T extends Localizable> DropDownChoice<T> addDropDownChoice(WebMarkupContainer container, String id, Class<T> bookClass, IModel<DocumentCargo> model, String property) {
@@ -583,8 +577,8 @@ public class DocumentCargoEdit extends FormTemplatePage {
                 ddcUnitTypes));
 
         //Количество
-        TextField<Integer> count = new TextField<Integer>("document.cargo.count",
-                new PropertyModel<Integer>(item.getModel(), "count"));        
+        TextField<Double> count = new TextField<Double>("document.cargo.count",
+                new PropertyModel<Double>(item.getModel(), "count"));        
         item.add(count);
 
         //Производитель Страна
