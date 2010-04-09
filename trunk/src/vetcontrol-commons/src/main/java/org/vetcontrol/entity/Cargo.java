@@ -54,8 +54,8 @@ public class Cargo extends Synchronized implements IUpdated{
     @XmlIDREF
     private UnitType unitType;
 
-    @Column(name = "count", nullable = true)
-    private Integer count;
+    @Column(name = "count", nullable = true, precision = 2)
+    private Double count;
 
     @Column(name = "certificate_details", length = 255, nullable = false)
     private String certificateDetails;
@@ -150,11 +150,11 @@ public class Cargo extends Synchronized implements IUpdated{
         this.unitType = unitType;
     }
 
-    public Integer getCount() {
+    public Double getCount() {
         return count;
     }
 
-    public void setCount(Integer count) {
+    public void setCount(Double count) {
         this.count = count;
     }
 
