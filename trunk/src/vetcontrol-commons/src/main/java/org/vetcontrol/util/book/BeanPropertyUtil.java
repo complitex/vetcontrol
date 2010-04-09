@@ -29,6 +29,7 @@ import javax.persistence.Table;
 import org.apache.wicket.util.string.interpolator.VariableInterpolator;
 import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.util.book.entity.annotation.UIType;
+import org.vetcontrol.util.book.entity.annotation.ViewLength;
 
 /**
  *
@@ -119,6 +120,11 @@ public class BeanPropertyUtil {
                             JoinColumn joinColumn = (JoinColumn) annotation;
                             property.setNullable(joinColumn.nullable());
                             property.setColumnName(joinColumn.name());
+                        }
+
+                        if(annotation.annotationType().equals(ViewLength.class)){
+                            ViewLength viewLength = (ViewLength)annotation;
+                            property.setViewLength(viewLength.value());
                         }
                     }
                 }

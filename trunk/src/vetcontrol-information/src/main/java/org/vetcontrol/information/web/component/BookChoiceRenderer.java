@@ -4,10 +4,10 @@
  */
 package org.vetcontrol.information.web.component;
 
-import java.util.List;
 import java.util.Locale;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
-import org.vetcontrol.util.book.BeanPropertyUtil;
+import org.vetcontrol.information.util.web.ITruncate;
+import static org.vetcontrol.util.book.BeanPropertyUtil.*;
 import org.vetcontrol.util.book.Property;
 
 /**
@@ -15,48 +15,27 @@ import org.vetcontrol.util.book.Property;
  * @author Artem
  */
 public class BookChoiceRenderer extends ChoiceRenderer<Object> {
-    
+
     private Property property;
     private Locale systemLocale;
+    private ITruncate truncateLogic;
 
-    public BookChoiceRenderer(Property property, Locale systemLocale) {
+    public BookChoiceRenderer(Property property, Locale systemLocale, ITruncate truncateLogic) {
         this.property = property;
         this.systemLocale = systemLocale;
+        this.truncateLogic = truncateLogic;
     }
 
     @Override
     public Object getDisplayValue(Object object) {
-        try {
-            List<Property> props = BeanPropertyUtil.getProperties(object.getClass());
-            for (Property prop : props) {
-                if (prop.getName().equals(property.getReferencedField())) {
-                    Object value = BeanPropertyUtil.getPropertyValue(object, prop.getName());
-                    if (prop.isLocalizable()) {
-                        return BeanPropertyUtil.getPropertyAsString(value, prop, systemLocale);
-                    } else {
-                        return value;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            //TODO: remove it after testing.
-            throw new RuntimeException(e);
-        }
-        return "";
+        Property referencedProperty = getPropertyByName(object.getClass(), property.getReferencedField());
+        Object value = getPropertyValue(object, referencedProperty.getName());
+        String stringValue = getPropertyAsString(value, referencedProperty, systemLocale);
+        return truncateLogic.truncate(stringValue, property);
     }
 
     @Override
     public String getIdValue(Object object, int index) {
-        if (object != null) {
-            try {
-                Object id = BeanPropertyUtil.getPropertyValue(object, "id");
-                return id.toString();
-            } catch (Exception e) {
-                //TODO: remove it after testing.
-                    throw new RuntimeException(e);
-            }
-        }
-
-        return String.valueOf(index);
+        return getPropertyValue(object, "id").toString();
     }
 }

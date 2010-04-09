@@ -32,7 +32,7 @@ import org.vetcontrol.entity.CargoMode;
 import org.vetcontrol.information.service.dao.CargoModeDAO;
 import org.vetcontrol.information.service.dao.CargoModeDAO.OrderBy;
 import org.vetcontrol.information.util.web.BookTypeWebInfoUtil;
-import org.vetcontrol.information.util.web.Constants;
+import org.vetcontrol.information.util.web.TruncateUtil;
 import org.vetcontrol.information.util.web.cargomode.CargoModeFilterBean;
 import org.vetcontrol.information.web.component.BookChoiceRenderer;
 import org.vetcontrol.information.web.component.list.EditPanel;
@@ -41,7 +41,8 @@ import org.vetcontrol.information.web.model.DisplayBookClassModel;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UIPreferences.PreferenceType;
 import org.vetcontrol.service.dao.ILocaleDAO;
-import org.vetcontrol.util.book.BeanPropertyUtil;
+import static org.vetcontrol.util.book.BeanPropertyUtil.*;
+import org.vetcontrol.util.book.Property;
 import org.vetcontrol.util.book.entity.ShowBooksMode;
 import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
 import org.vetcontrol.web.component.paging.PagingNavigator;
@@ -119,7 +120,8 @@ public class CargoModeList extends ListTemplatePage {
                     return cargoModeDAO.getRootCargoModes();
                 }
             };
-            BookChoiceRenderer parentChoiceRenderer = new BookChoiceRenderer(BeanPropertyUtil.getPropertyByName(CargoMode.class, "parent"), systemLocale);
+            BookChoiceRenderer parentChoiceRenderer = new BookChoiceRenderer(getPropertyByName(CargoMode.class, "parent"), systemLocale,
+                    TruncateUtil.TRUNCATE_SELECT_VALUE_IN_LIST_PAGE);
             DropDownChoice<CargoMode> filterParent = new DropDownChoice<CargoMode>("parent", rootCargoModeModel, parentChoiceRenderer);
             filterForm.add(filterParent);
 
@@ -159,8 +161,8 @@ public class CargoModeList extends ListTemplatePage {
                 @Override
                 protected void populateItem(Item<CargoMode> item) {
                     CargoMode cargoMode = item.getModelObject();
-                    item.add(getNameLabel("parentNameValue", cargoMode.getParent(), systemLocale));
-                    item.add(getNameLabel("nameValue", cargoMode, systemLocale));
+                    item.add(getNameLabel("parentNameValue", cargoMode.getParent(), systemLocale, "parent"));
+                    item.add(getNameLabel("nameValue", cargoMode, systemLocale, "names"));
                     item.add(getUktzedLabel(cargoMode));
                     item.add(new EditPanel("edit", item.getModel()) {
 
@@ -194,24 +196,20 @@ public class CargoModeList extends ListTemplatePage {
                 value.append(", ");
             }
         }
-        return getLabel("uktzedValue", value.toString() != null ? value.toString() : "");
+        return getLabel("uktzedValue", value.toString() != null ? value.toString() : "", null);
     }
 
-    private Label getNameLabel(String id, CargoMode cargoMode, Locale systemLocale) {
+    private Label getNameLabel(String id, CargoMode cargoMode, Locale systemLocale, String propertyName) {
         String value = "";
         if (cargoMode != null) {
             value = cargoMode.getDisplayName(getLocale(), systemLocale);
         }
-        return getLabel(id, value);
+        return getLabel(id, value, getPropertyByName(CargoMode.class, propertyName));
     }
 
-    private Label getLabel(String id, String text) {
-        String title = null;
-        if (text.length() > Constants.TEXT_LIMIT) {
-            title = text;
-            text = text.substring(0, Constants.TEXT_LIMIT);
-            text += Constants.CONTINUE;
-        }
+    private Label getLabel(String id, String fullText, Property property) {
+        String title = fullText;
+        String text = TruncateUtil.TRUNCATE_SELECT_VALUE_IN_LIST_PAGE.truncate(fullText, property);
 
         Label label = new Label(id, text);
         if (title != null) {

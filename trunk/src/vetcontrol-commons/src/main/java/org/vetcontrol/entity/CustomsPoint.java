@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
+import org.vetcontrol.util.book.entity.annotation.ViewLength;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -24,6 +25,7 @@ public class CustomsPoint extends Localizable{
     @MappedProperty("name")
     @Column(length = 100, nullable = false)
     @XmlTransient
+    @ViewLength(100)
     public List<StringCulture> getNames() {
         return names;
     }
