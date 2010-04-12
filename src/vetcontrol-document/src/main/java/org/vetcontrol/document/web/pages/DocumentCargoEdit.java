@@ -151,7 +151,9 @@ public class DocumentCargoEdit extends FormTemplatePage {
         add(new Label("title", title));
         add(new Label("header", title));
 
-        add(new FeedbackPanel("messages"));
+        final FeedbackPanel feedbackPanel = new FeedbackPanel("messages");
+        feedbackPanel.setOutputMarkupId(true);
+        add(feedbackPanel);
 
         final Model<DocumentCargo> documentCargoModel = new Model<DocumentCargo>(dc);
 
@@ -214,73 +216,15 @@ public class DocumentCargoEdit extends FormTemplatePage {
                 Arrays.asList(VehicleType.values()),
                 new EnumChoiceRenderer<VehicleType>(this));
         ddcVehicleType.setRequired(true);
+        ddcVehicleType.setOutputMarkupId(true);
         form.add(ddcVehicleType);
 
-        //Список грузов
-        final WebMarkupContainer cargoContainer = new WebMarkupContainer("document.cargo.cargo_container");
-        cargoContainer.setOutputMarkupId(true);
-        form.add(cargoContainer);
-
-        //Добавить груз
-        final AjaxSubmitLink addCargoLink = new AjaxSubmitLink("document.cargo.cargo.add", form) {
-
+        ddcVehicleType.add(new AjaxFormComponentUpdatingBehavior("onchange"){
             @Override
-            public void onSubmit(AjaxRequestTarget target, Form form) {
-                DocumentCargo dc = (DocumentCargo) form.getModelObject();
-                Cargo cargo = new Cargo();
-                cargo.setDocumentCargo(dc);
-                dc.getCargos().add(cargo);
-                target.addComponent(cargoContainer);
-
-                String setFocusOnNewCargo = "newCargoFirstInputId = $('.table_input tbody tr:last input[type=\"text\"]:first').attr('id');"
-                        + "Wicket.Focus.setFocusOnId(newCargoFirstInputId);";
-                target.appendJavascript(setFocusOnNewCargo);
+            protected void onUpdate(AjaxRequestTarget target) {
+                //update model
             }
-        };
-        addCargoLink.setDefaultFormProcessing(false);
-        cargoContainer.add(addCargoLink);
-
-
-        final ListView cargoListView = new AjaxRemovableListView<Cargo>("document.cargo.cargo_list",
-                new PropertyModel<List<Cargo>>(documentCargoModel, "cargos")) {
-
-            @Override
-            protected void populateItem(final ListItem<Cargo> item) {
-                addCargo(item);
-
-                //Копировать
-                final AjaxSubmitLink copyCargoLink = new AjaxSubmitLink("document.cargo.copy", form) {
-
-                    @Override
-                    public void onSubmit(AjaxRequestTarget target, Form form) {
-                        DocumentCargo dc = (DocumentCargo) form.getModelObject();
-                        Cargo copyFrom = item.getModelObject();
-
-                        Cargo cargo = new Cargo();
-                        cargo.setCargoType(copyFrom.getCargoType());
-                        cargo.setUnitType(copyFrom.getUnitType());
-                        cargo.setCount(copyFrom.getCount());
-                        cargo.setCertificateDetails(copyFrom.getCertificateDetails());
-                        cargo.setCertificateDate(copyFrom.getCertificateDate());
-                        cargo.setCargoProducer(copyFrom.getCargoProducer());
-
-                        cargo.setDocumentCargo(dc);
-                        dc.getCargos().add(cargo);                         
-                        target.addComponent(cargoContainer);
-
-
-                        String setFocusOnNewCargo = "newCargoFirstInputId = $('.table_input tbody tr:last input[type=\"text\"]:first').attr('id');"
-                                + "Wicket.Focus.setFocusOnId(newCargoFirstInputId);";
-                        target.appendJavascript(setFocusOnNewCargo);
-                    }
-                };
-                copyCargoLink.setDefaultFormProcessing(false);
-                item.add(copyCargoLink);
-
-                addRemoveSubmitLink("document.cargo.delete", form, item, addCargoLink, cargoContainer);
-            }
-        };
-        cargoContainer.add(cargoListView);
+        });
 
         //Отравитель Страна
         DropDownChoice ddcSenderCountry = addDropDownChoice(form, "document.cargo.cargo_sender_country", CountryBook.class, documentCargoModel, "senderCountry");
@@ -364,11 +308,6 @@ public class DocumentCargoEdit extends FormTemplatePage {
                 }
             }
         });
-
-        //Реквизиты акта задержания груза
-        TextField detentionDetails = new TextField<String>("document.cargo.detention_details",
-                new PropertyModel<String>(documentCargoModel, "detentionDetails"));
-        form.add(detentionDetails);
 
         boolean visible = id != null;
 
@@ -485,6 +424,155 @@ public class DocumentCargoEdit extends FormTemplatePage {
         created.setVisible(visible);
         form.add(created);
 
+        //Блок транспортных средств
+        final WebMarkupContainer vehicleContainer = new WebMarkupContainer("document.cargo.vehicle_container");
+        vehicleContainer.setOutputMarkupId(true);
+        form.add(vehicleContainer);
+
+        //Блок грузов
+        final WebMarkupContainer cargoContainer = new WebMarkupContainer("document.cargo.cargo_container");
+        cargoContainer.setOutputMarkupId(true);
+        form.add(cargoContainer);
+
+        //Добавить транспортное средство
+        final AjaxSubmitLink addVehicleLink = new AjaxSubmitLink("document.cargo.vehicle.add", form) {
+
+            @Override
+            public void onSubmit(AjaxRequestTarget target, Form form) {
+                DocumentCargo dc = (DocumentCargo) form.getModelObject();
+
+                if (!dc.getVehicleType().isCompound() && dc.getVehicles().size() > 1){
+                    target.addComponent(feedbackPanel);
+                    getSession().error(getString("document.cargo.vehicle.add.error"));
+                    
+                    return;
+                }
+
+                Vehicle vehicle = new Vehicle();
+                vehicle.setDocumentCargo(dc);
+                dc.getVehicles().add(vehicle);                
+
+                target.addComponent(vehicleContainer);
+                target.addComponent(cargoContainer);
+
+                String setFocusOnNewCargo = "newVehicleFirstInputId = $('.table_input tbody tr:last input[type=\"text\"]:first').attr('id');"
+                        + "Wicket.Focus.setFocusOnId(newVehicleFirstInputId);";
+                target.appendJavascript(setFocusOnNewCargo);
+            }
+        };
+        addVehicleLink.setDefaultFormProcessing(false);
+        vehicleContainer.add(addVehicleLink);
+
+        //Список транспортных средств
+        final ListView<Vehicle> vehicleListView = new AjaxRemovableListView<Vehicle>("document.cargo.vehicle_list",
+                new PropertyModel<List<Vehicle>>(documentCargoModel, "vehicles")) {
+
+            @Override
+            protected void populateItem(final ListItem<Vehicle> item) {
+                Vehicle vehicle = item.getModelObject();
+
+                TextField details = new TextField<String>("document.cargo.vehicle.details",
+                        new PropertyModel<String>(vehicle, "vehicleDetails"));
+                details.setOutputMarkupId(true);
+                item.add(details);
+
+                details.add(new AjaxFormComponentUpdatingBehavior("onchange"){
+
+                    @Override
+                    protected void onUpdate(AjaxRequestTarget target) {
+                        target.addComponent(cargoContainer);
+                    }
+                });
+
+                addRemoveSubmitLink("document.cargo.vehicle.delete", form, item, addVehicleLink,
+                        vehicleContainer, cargoContainer, feedbackPanel);
+            }
+
+            @Override
+            protected boolean validate(ListItem<Vehicle> item) {
+                Vehicle vehicle = item.getModelObject();
+
+                for (Cargo cargo : documentCargoModel.getObject().getCargos()){
+                    if (vehicle.equals(cargo.getVehicle())){
+                        getSession().error(new StringResourceModel("document.cargo.vehicle.delete.error", this, null,
+                                new Object[]{vehicle.getVehicleDetails()}).getString());
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        };
+        vehicleContainer.add(vehicleListView);       
+
+        //Добавить груз
+        final AjaxSubmitLink addCargoLink = new AjaxSubmitLink("document.cargo.cargo.add", form) {
+
+            @Override
+            public void onSubmit(AjaxRequestTarget target, Form form) {
+                DocumentCargo dc = (DocumentCargo) form.getModelObject();
+
+                Cargo cargo = new Cargo();
+                cargo.setDocumentCargo(dc);
+                dc.getCargos().add(cargo);
+
+                if (!dc.getVehicleType().isCompound() && !dc.getVehicles().isEmpty()){
+                    cargo.setVehicle(dc.getVehicles().get(0));
+                }
+
+                target.addComponent(cargoContainer);
+                target.addComponent(vehicleContainer);
+
+                String setFocusOnNewCargo = "newCargoFirstInputId = $('.table_input tbody tr:last input[type=\"text\"]:first').attr('id');"
+                        + "Wicket.Focus.setFocusOnId(newCargoFirstInputId);";
+                target.appendJavascript(setFocusOnNewCargo);
+            }
+        };
+        addCargoLink.setDefaultFormProcessing(false);
+        cargoContainer.add(addCargoLink);
+
+        //Список грузов
+        final ListView cargoListView = new AjaxRemovableListView<Cargo>("document.cargo.cargo_list",
+                new PropertyModel<List<Cargo>>(documentCargoModel, "cargos")) {
+
+            @Override
+            protected void populateItem(final ListItem<Cargo> item) {
+                addCargo(item);
+
+                //Копировать
+                final AjaxSubmitLink copyCargoLink = new AjaxSubmitLink("document.cargo.copy", form) {
+
+                    @Override
+                    public void onSubmit(AjaxRequestTarget target, Form form) {
+                        DocumentCargo dc = (DocumentCargo) form.getModelObject();
+                        Cargo copyFrom = item.getModelObject();
+
+                        Cargo cargo = new Cargo();
+                        cargo.setCargoType(copyFrom.getCargoType());
+                        cargo.setUnitType(copyFrom.getUnitType());
+                        cargo.setCount(copyFrom.getCount());
+                        cargo.setCertificateDetails(copyFrom.getCertificateDetails());
+                        cargo.setCertificateDate(copyFrom.getCertificateDate());
+                        cargo.setCargoProducer(copyFrom.getCargoProducer());
+
+                        cargo.setDocumentCargo(dc);
+                        dc.getCargos().add(cargo);
+                        target.addComponent(cargoContainer);
+
+
+                        String setFocusOnNewCargo = "newCargoFirstInputId = $('.table_input tbody tr:last input[type=\"text\"]:first').attr('id');"
+                                + "Wicket.Focus.setFocusOnId(newCargoFirstInputId);";
+                        target.appendJavascript(setFocusOnNewCargo);
+                    }
+                };
+                copyCargoLink.setDefaultFormProcessing(false);
+                item.add(copyCargoLink);
+
+                addRemoveSubmitLink("document.cargo.delete", form, item, addCargoLink, cargoContainer);
+            }
+        };
+        cargoContainer.add(cargoListView);
+
 //        form.add(new Spacer("spacer"));
     }
 
@@ -581,6 +669,32 @@ public class DocumentCargoEdit extends FormTemplatePage {
                 new PropertyModel<Double>(item.getModel(), "count"));        
         item.add(count);
 
+        //Транспортное средство
+         final DropDownChoice<Vehicle> ddcVehicle = new DropDownChoice<Vehicle>("document.cargo.vehicle",
+                new PropertyModel<Vehicle>(item.getModel(), "vehicle"),
+                item.getModelObject().getDocumentCargo().getVehicles(),
+                new IChoiceRenderer<Vehicle>(){
+
+                    @Override
+                    public Object getDisplayValue(Vehicle object) {
+                        return object.getVehicleDetails();
+                    }
+
+                    @Override
+                    public String getIdValue(Vehicle object, int index) {
+                        return index + ":" +object.getId();
+                    }
+                });
+        item.add(ddcVehicle);
+        ddcVehicle.setRequired(true);
+
+        ddcVehicle.add(new AjaxFormComponentUpdatingBehavior("onchange"){
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                //update model
+            }
+        });
+
         //Производитель Страна
         CountryBook country = item.getModelObject().getCargoProducer() != null
                 ? item.getModelObject().getCargoProducer().getCountry()
@@ -622,6 +736,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
                     }
                 });
         ddcCargoProducer.setOutputMarkupId(true);
+        ddcCargoProducer.setRequired(true);
         item.add(ddcCargoProducer);
 
         ddcCountryBook.add(new AjaxFormComponentUpdatingBehavior("onchange"){

@@ -56,8 +56,13 @@ public class DocumentCargo extends Synchronized implements IUpdated {
     private VehicleType vehicleType;
 
     @OneToMany(mappedBy = "documentCargo")
+    @OrderBy("id")
     @XmlTransient
     private List<Cargo> cargos = new ArrayList<Cargo>();
+
+    @OneToMany(mappedBy = "documentCargo")
+    @XmlTransient
+    private List<Vehicle> vehicles = new ArrayList<Vehicle>();
 
     @ManyToOne
     @JoinColumn(name = "cargo_sender_country_id")
@@ -157,6 +162,14 @@ public class DocumentCargo extends Synchronized implements IUpdated {
         this.cargos = cargos;
     }
 
+    public List<Vehicle> getVehicles() {
+        return vehicles;
+    }
+
+    public void setVehicles(List<Vehicle> vehicles) {
+        this.vehicles = vehicles;
+    }
+
     public CountryBook getSenderCountry() {
         return senderCountry;
     }
@@ -246,6 +259,7 @@ public class DocumentCargo extends Synchronized implements IUpdated {
         if (senderName != null ? !senderName.equals(that.senderName) : that.senderName != null) return false;
         if (updated != null ? !updated.equals(that.updated) : that.updated != null) return false;
         if (vehicleType != that.vehicleType) return false;
+        if (vehicles != null ? !vehicles.equals(that.vehicles) : that.vehicles != null) return false;
 
         return true;
     }
@@ -262,6 +276,7 @@ public class DocumentCargo extends Synchronized implements IUpdated {
         result = 31 * result + (movementType != null ? movementType.hashCode() : 0);
         result = 31 * result + (vehicleType != null ? vehicleType.hashCode() : 0);
         result = 31 * result + (cargos != null ? cargos.hashCode() : 0);
+        result = 31 * result + (vehicles != null ? vehicles.hashCode() : 0);
         result = 31 * result + (senderCountry != null ? senderCountry.hashCode() : 0);
         result = 31 * result + (senderName != null ? senderName.hashCode() : 0);
         result = 31 * result + (receiverAddress != null ? receiverAddress.hashCode() : 0);
