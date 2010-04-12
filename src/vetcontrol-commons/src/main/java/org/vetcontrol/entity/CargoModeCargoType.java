@@ -53,20 +53,31 @@ public class CargoModeCargoType implements IUpdated, IQuery, IEmbeddedId<CargoMo
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (o != null && o instanceof Id) {
-                Id that = (Id) o;
-                return this.cargoModeId.equals(that.cargoModeId)
-                        && this.cargoTypeId.equals(that.cargoTypeId);
-            } else {
+        public boolean equals(Object obj) {
+            if (obj == null) {
                 return false;
             }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final Id other = (Id) obj;
+            if (this.cargoModeId != other.cargoModeId && (this.cargoModeId == null || !this.cargoModeId.equals(other.cargoModeId))) {
+                return false;
+            }
+            if (this.cargoTypeId != other.cargoTypeId && (this.cargoTypeId == null || !this.cargoTypeId.equals(other.cargoTypeId))) {
+                return false;
+            }
+            return true;
         }
 
         @Override
         public int hashCode() {
-            return 2*cargoModeId.hashCode() + 3*cargoTypeId.hashCode();
+            int hash = 7;
+            hash = 97 * hash + (this.cargoModeId != null ? this.cargoModeId.hashCode() : 0);
+            hash = 97 * hash + (this.cargoTypeId != null ? this.cargoTypeId.hashCode() : 0);
+            return hash;
         }
+
     }
     @EmbeddedId
     private Id id = new Id();

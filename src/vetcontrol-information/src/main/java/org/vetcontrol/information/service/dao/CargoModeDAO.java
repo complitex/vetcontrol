@@ -27,7 +27,7 @@ import org.vetcontrol.entity.DeletedEmbeddedId;
 import org.vetcontrol.entity.UnitType;
 import org.vetcontrol.information.util.web.cargomode.CargoModeFilterBean;
 import org.vetcontrol.util.DateUtil;
-import org.vetcontrol.util.book.BeanPropertyUtil;
+import static org.vetcontrol.util.book.BeanPropertyUtil.*;
 import org.vetcontrol.util.book.entity.ShowBooksMode;
 import org.vetcontrol.util.book.service.HibernateSessionTransformer;
 
@@ -123,7 +123,7 @@ public class CargoModeDAO {
             case ALL:
                 break;
             default:
-                where.append(" AND cm." + BeanPropertyUtil.getDisabledPropertyName() + " = :disabled ");
+                where.append(" AND cm." + getDisabledPropertyName() + " = :disabled ");
                 params.put("disabled", showBooksMode.equals(ShowBooksMode.ENABLED) ? Boolean.FALSE : Boolean.TRUE);
                 break;
         }
@@ -273,34 +273,36 @@ public class CargoModeDAO {
     }
 
     public List<CargoType> getAvailableCargoTypes(String search, int count, List<CargoType> exclude) {
-        StringBuilder query = new StringBuilder("SELECT DISTINCT ct FROM CargoType ct "
-                + "WHERE ct." + BeanPropertyUtil.getDisabledPropertyName() + " = FALSE AND ct.code LIKE :search ");
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("SELECT DISTINCT ct FROM CargoType ct WHERE ct.").
+                append(getDisabledPropertyName()).
+                append(" = FALSE AND ct.code LIKE :search ");
 
         if (exclude != null && !exclude.isEmpty()) {
-            query.append(" AND ct.id NOT IN (");
+            queryBuilder.append(" AND ct.id NOT IN (");
             for (int i = 0; i < exclude.size(); i++) {
                 CargoType cargoTypeToExclude = exclude.get(i);
-                query.append(cargoTypeToExclude.getId());
+                queryBuilder.append(cargoTypeToExclude.getId());
                 if (i < exclude.size() - 1) {
-                    query.append(", ");
+                    queryBuilder.append(", ");
                 }
             }
-            query.append(")");
+            queryBuilder.append(")");
         }
-        query.append(" ORDER BY ct.code");
+        queryBuilder.append(" ORDER BY ct.code");
 
-        TypedQuery<CargoType> typedQuery = entityManager.createQuery(query.toString(), CargoType.class).
+        TypedQuery<CargoType> typedQuery = entityManager.createQuery(queryBuilder.toString(), CargoType.class).
                 setParameter("search", "%" + search + "%").
                 setMaxResults(count);
         return typedQuery.getResultList();
     }
 
     public List<UnitType> getAvailableUnitTypes(List<UnitType> exclude) {
-        StringBuilder query = new StringBuilder("SELECT DISTINCT ut FROM UnitType ut "
-                + "WHERE ut." + BeanPropertyUtil.getDisabledPropertyName() + " = FALSE ");
+        StringBuilder query = new StringBuilder();
+        query.append("SELECT DISTINCT ut FROM UnitType ut ");
 
         if (exclude != null && !exclude.isEmpty()) {
-            query.append(" AND ut.id NOT IN (");
+            query.append(" WHERE ut.id NOT IN (");
             for (int i = 0; i < exclude.size(); i++) {
                 UnitType unitTypeToExclude = exclude.get(i);
                 query.append(unitTypeToExclude.getId());
@@ -317,8 +319,9 @@ public class CargoModeDAO {
     }
 
     public List<CargoMode> getRootCargoModes() {
-        String queryString = "SELECT cm FROM CargoMode cm WHERE cm.parent IS NULL ";
-        List<CargoMode> rootCargoModes = entityManager.createQuery(queryString, CargoMode.class).getResultList();
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("SELECT cm FROM CargoMode cm WHERE cm.parent IS NULL");
+        List<CargoMode> rootCargoModes = entityManager.createQuery(queryBuilder.toString(), CargoMode.class).getResultList();
         bookDAO.addLocalizationSupport(rootCargoModes);
         return rootCargoModes;
     }

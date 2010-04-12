@@ -151,7 +151,7 @@ public final class CargoModeEdit extends FormTemplatePage {
 
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
-                    target.addComponent(unitTypeSelect);
+//                    target.addComponent(unitTypeSelect);
                 }
             });
 
@@ -268,7 +268,6 @@ public final class CargoModeEdit extends FormTemplatePage {
                     target.addComponent(autoCompleteTextField);
                 }
             });
-//            autoCompleteTextField.setRequired(true);
             autoCompleteTextField.setOutputMarkupId(true);
             add(autoCompleteTextField);
         }
@@ -469,17 +468,18 @@ public final class CargoModeEdit extends FormTemplatePage {
         //save and cancel links.
         AjaxSubmitLink save = new AjaxSubmitLink("save") {
 
+            private boolean validated;
+
             @Override
             public void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 if (validate()) {
-                    if (cargoModeModel.getObject().getId() == null) {
+                    if (BeanPropertyUtil.isNewBook(cargoModeModel.getObject())) {
                         //new entry
                         saveOrUpdate(cargoModeModel, initial);
                         setResponsePage(getListPage());
                     } else {
                         confirmationDialog.open(target);
                     }
-
                 } else {
                     target.addComponent(messages);
                     target.addComponent(form);
@@ -488,26 +488,34 @@ public final class CargoModeEdit extends FormTemplatePage {
 
             @Override
             protected void onError(AjaxRequestTarget target, Form<?> form) {
+                validate();
                 target.addComponent(messages);
+                validated = false;
             }
 
             private boolean validate() {
-                boolean validated = true;
-                for (CargoModeCargoType cargoModeCargoType : cargoModeModel.getObject().getCargoModeCargoTypes()) {
-                    CargoType cargoType = cargoModeCargoType.getCargoType();
-                    if (cargoType == null) {
-                        validated = false;
-                        error(getString(CARGO_TYPE_INCORRECT));
+                if (!validated) {
+                    validated = true;
+                    boolean isValid = true;
+                    for (CargoModeCargoType cargoModeCargoType : cargoModeModel.getObject().getCargoModeCargoTypes()) {
+                        CargoType cargoType = cargoModeCargoType.getCargoType();
+                        if (cargoType == null) {
+                            isValid = false;
+                            error(getString(CARGO_TYPE_INCORRECT));
+                            break;
+                        }
                     }
-                }
-                for (CargoModeUnitType cargoModeUnitType : cargoModeModel.getObject().getCargoModeUnitTypes()) {
-                    UnitType unitType = cargoModeUnitType.getUnitType();
-                    if (unitType == null) {
-                        validated = false;
-                        error(getString(UNIT_TYPE_INCORRECT));
+                    for (CargoModeUnitType cargoModeUnitType : cargoModeModel.getObject().getCargoModeUnitTypes()) {
+                        UnitType unitType = cargoModeUnitType.getUnitType();
+                        if (unitType == null) {
+                            isValid = false;
+                            error(getString(UNIT_TYPE_INCORRECT));
+                            break;
+                        }
                     }
+                    return isValid;
                 }
-                return validated;
+                return false;
             }
         };
         save.setVisible(CanEditUtil.canEdit(cargoModeModel.getObject()));

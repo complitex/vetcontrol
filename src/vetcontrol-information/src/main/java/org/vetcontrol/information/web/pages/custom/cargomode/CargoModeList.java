@@ -79,7 +79,6 @@ public class CargoModeList extends ListTemplatePage {
 
             final Locale systemLocale = localeDAO.systemLocale();
 
-            //title
             add(new Label("title", new DisplayBookClassModel(CargoMode.class)));
             Label bookName = new Label("bookName", new DisplayBookClassModel(CargoMode.class));
 
@@ -92,7 +91,6 @@ public class CargoModeList extends ListTemplatePage {
 
             Panel showBooksModePanel = new ShowBooksModePanel("showBooksModePanel", showBooksModeModel);
 
-            //Фильтр
             CargoModeFilterBean filterObject = preferences.getPreference(PreferenceType.FILTER,
                     FILTER_KEY, CargoModeFilterBean.class);
             if (filterObject == null) {

@@ -276,6 +276,8 @@ public final class DepartmentEdit extends FormTemplatePage {
         //save and cancel links.
         AjaxSubmitLink save = new AjaxSubmitLink("save") {
 
+            private boolean validated;
+
             @Override
             public void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 if (validate()) {
@@ -296,15 +298,21 @@ public final class DepartmentEdit extends FormTemplatePage {
             protected void onError(AjaxRequestTarget target, Form<?> form) {
                 validate();
                 target.addComponent(messages);
+                validated = false;
             }
 
             private boolean validate() {
-                if (validatePassingBorderPoints()) {
+                if (!validated) {
+                    validated = true;
+                    for (PassingBorderPoint borderPoint : department.getPassingBorderPoints()) {
+                        if (Strings.isEmpty(borderPoint.getName())) {
+                            error(getString(PASSING_BORDER_POINT_NAME_REQUIRED));
+                            return false;
+                        }
+                    }
                     return true;
-                } else {
-                    error(getString(PASSING_BORDER_POINT_NAME_REQUIRED));
-                    return false;
                 }
+                return false;
             }
         };
         save.setVisible(CanEditUtil.canEdit(department));
@@ -331,15 +339,6 @@ public final class DepartmentEdit extends FormTemplatePage {
         form.add(back);
 
         form.add(new Spacer("spacer"));
-    }
-
-    private boolean validatePassingBorderPoints() {
-        for (PassingBorderPoint borderPoint : department.getPassingBorderPoints()) {
-            if (Strings.isEmpty(borderPoint.getName())) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private void goToListPage() {

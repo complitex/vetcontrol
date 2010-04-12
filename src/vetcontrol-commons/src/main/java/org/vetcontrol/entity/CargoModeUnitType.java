@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.vetcontrol.entity;
 
 import javax.persistence.*;
@@ -54,34 +53,43 @@ public class CargoModeUnitType implements IQuery, IUpdated, IEmbeddedId<CargoMod
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (o != null && o instanceof Id) {
-                Id that = (Id) o;
-                return this.cargoModeId.equals(that.cargoModeId)
-                        && this.unitTypeId.equals(that.unitTypeId);
-            } else {
+        public boolean equals(Object obj) {
+            if (obj == null) {
                 return false;
             }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final Id other = (Id) obj;
+            if (this.cargoModeId != other.cargoModeId && (this.cargoModeId == null || !this.cargoModeId.equals(other.cargoModeId))) {
+                return false;
+            }
+            if (this.unitTypeId != other.unitTypeId && (this.unitTypeId == null || !this.unitTypeId.equals(other.unitTypeId))) {
+                return false;
+            }
+            return true;
         }
 
         @Override
         public int hashCode() {
-            return 2*cargoModeId.hashCode() + 3*unitTypeId.hashCode();
+            int hash = 5;
+            hash = 73 * hash + (this.cargoModeId != null ? this.cargoModeId.hashCode() : 0);
+            hash = 73 * hash + (this.unitTypeId != null ? this.unitTypeId.hashCode() : 0);
+            return hash;
         }
+
+        
     }
     @EmbeddedId
     private Id id = new Id();
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cargo_mode_id", insertable = false, updatable = false)
     @XmlTransient
     private CargoMode cargoMode;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "unit_type_id", insertable = false, updatable = false)
     @XmlTransient
     private UnitType unitType;
-
     @Transient
     @XmlTransient
     private boolean needToUpdateVersion;
@@ -122,7 +130,6 @@ public class CargoModeUnitType implements IQuery, IUpdated, IEmbeddedId<CargoMod
     public void setNeedToUpdateVersion(boolean needToUpdateVersion) {
         this.needToUpdateVersion = needToUpdateVersion;
     }
-
     @Column(name = "updated", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
@@ -137,33 +144,39 @@ public class CargoModeUnitType implements IQuery, IUpdated, IEmbeddedId<CargoMod
 
     @Override
     public Query getInsertQuery(EntityManager em) {
-        return em.createNativeQuery("insert into cargo_mode_unit_type (cargo_mode_id, unit_type_id, updated) " +
-                "value (:cargo_mode_id, :unit_type_id, :updated)")
-                .setParameter("cargo_mode_id", id.cargoModeId)
-                .setParameter("unit_type_id", id.unitTypeId)
-                .setParameter("updated", updated);
+        return em.createNativeQuery("insert into cargo_mode_unit_type (cargo_mode_id, unit_type_id, updated) "
+                + "value (:cargo_mode_id, :unit_type_id, :updated)").setParameter("cargo_mode_id", id.cargoModeId).setParameter("unit_type_id", id.unitTypeId).setParameter("updated", updated);
     }
 
     @Override
     public Query getUpdateQuery(EntityManager em) {
-        return em.createNativeQuery("update cargo_mode_unit_type set updated = :updated " +
-                "where cargo_mode_id = :cargo_mode_id and unit_type_id = :unit_type_id")
-                .setParameter("cargo_mode_id", id.cargoModeId)
-                .setParameter("unit_type_id", id.unitTypeId)
-                .setParameter("updated", updated);
+        return em.createNativeQuery("update cargo_mode_unit_type set updated = :updated "
+                + "where cargo_mode_id = :cargo_mode_id and unit_type_id = :unit_type_id").setParameter("cargo_mode_id", id.cargoModeId).setParameter("unit_type_id", id.unitTypeId).setParameter("updated", updated);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CargoModeUnitType)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof CargoModeUnitType)) {
+            return false;
+        }
 
         CargoModeUnitType that = (CargoModeUnitType) o;
 
-        if (cargoMode != null ? !cargoMode.equals(that.cargoMode) : that.cargoMode != null) return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (unitType != null ? !unitType.equals(that.unitType) : that.unitType != null) return false;
-        if (updated != null ? !updated.equals(that.updated) : that.updated != null) return false;
+        if (cargoMode != null ? !cargoMode.equals(that.cargoMode) : that.cargoMode != null) {
+            return false;
+        }
+        if (id != null ? !id.equals(that.id) : that.id != null) {
+            return false;
+        }
+        if (unitType != null ? !unitType.equals(that.unitType) : that.unitType != null) {
+            return false;
+        }
+        if (updated != null ? !updated.equals(that.updated) : that.updated != null) {
+            return false;
+        }
 
         return true;
     }
@@ -179,8 +192,6 @@ public class CargoModeUnitType implements IQuery, IUpdated, IEmbeddedId<CargoMod
 
     @Override
     public String toString() {
-        return "cmId = "+id.cargoModeId + " utId = "+id.unitTypeId;
+        return "cmId = " + id.cargoModeId + " utId = " + id.unitTypeId;
     }
-
-
 }
