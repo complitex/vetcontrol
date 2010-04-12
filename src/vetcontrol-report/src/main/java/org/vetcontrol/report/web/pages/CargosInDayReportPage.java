@@ -148,7 +148,7 @@ public final class CargosInDayReportPage extends TemplatePage {
                 item.add(new Label("isContainer", CellFormatter.formatExistenceData(report.getVehicleType(), VehicleType.CONTAINER)));
                 item.add(new Label("isCarriage", CellFormatter.formatExistenceData(report.getVehicleType(), VehicleType.CARRIAGE)));
                 item.add(new Label("isAircraft", CellFormatter.formatExistenceData(report.getVehicleType(), VehicleType.AIRCRAFT)));
-                item.add(new Label("count", CellFormatter.formatCountData(report.getCount(), report.getUnitTypeName())));
+                item.add(new Label("count", CellFormatter.formatCountData(report.getCount(), report.getUnitTypeName(), localeService.getReportLocale())));
             }
         };
 

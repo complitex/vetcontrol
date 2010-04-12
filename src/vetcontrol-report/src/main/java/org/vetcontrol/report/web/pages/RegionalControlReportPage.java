@@ -149,7 +149,7 @@ public final class RegionalControlReportPage extends TemplatePage {
                 item.add(new Label("cargoProducerName", report.getCargoProducerName()));
                 item.add(new Label("cargoReceiverName", report.getCargoReceiverName()));
                 item.add(new Label("cargoTypeName", CellFormatter.formatCargoType(report.getCargoTypeName(), report.getCargoTypeCode())));
-                item.add(new Label("count", CellFormatter.formatCount(report.getCount(), report.getUnitTypeName())));
+                item.add(new Label("count", CellFormatter.formatCount(report.getCount(), report.getUnitTypeName(), localeService.getReportLocale())));
                 item.add(new Label("movementType", report.getMovementTypeName()));
             }
         };

@@ -116,7 +116,7 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="405" y="0" width="63" height="20"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.formatCount($F{count}, $F{unitTypeName})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.formatCount($F{count}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="468" y="0" width="74" height="20"/>

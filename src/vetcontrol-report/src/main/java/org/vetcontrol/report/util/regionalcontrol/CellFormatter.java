@@ -4,6 +4,7 @@
  */
 package org.vetcontrol.report.util.regionalcontrol;
 
+import java.text.NumberFormat;
 import java.util.Date;
 import java.util.Locale;
 import org.vetcontrol.util.DateUtil;
@@ -24,11 +25,11 @@ public class CellFormatter {
         return cargoTypeName + CARGO_TYPE_DELIMETER + cargoTypeCode;
     }
 
-    public static String formatCount(Number count, String unitTypeName) {
-        int value = count.intValue();
+    public static String formatCount(Number count, String unitTypeName, Locale locale) {
+        double value = count.doubleValue();
         if (value == 0) {
             return "";
         }
-        return value + " " + unitTypeName;
+        return NumberFormat.getInstance(locale).format(count) + " " + unitTypeName;
     }
 }
