@@ -66,11 +66,7 @@
                 <tr>
                     <th><label for="cargo_receiver_address"><wicket:message key="document.cargo.cargo_receiver_address"/><b class="blue">*</b>:</label></th>
                     <td><input type="text" id="cargo_receiver_address" wicket:id="document.cargo.cargo_receiver_address"/></td>
-                </tr>
-                <tr>
-                    <th><label for="detention_details"><wicket:message key="document.cargo.detention_details"/>:</label></th>
-                    <td><input id="detention_details" wicket:id="document.cargo.detention_details"/></td>
-                </tr>
+                </tr>                
                 <tr>
                     <th><label for="details"><wicket:message key="document.cargo.details"/>:</label></th>
                     <td><textarea id="details" wicket:id="document.cargo.details" cols="50" rows="5"></textarea></td>
@@ -102,7 +98,25 @@
         </fieldset>
         <fieldset style="margin-bottom:10px">
             <legend>Транспортные средства</legend>
-            <div>ТС</div>
+            <div wicket:id="document.cargo.vehicle_container">
+                <table  border="0" cellspacing="0" cellpadding="0" class="tbColor table_input">
+                    <tbody>
+                    <tr wicket:id="document.cargo.vehicle_list">                        
+                        <td><input type="text" wicket:id="document.cargo.vehicle.details" autocomplete="false"/></td>
+                        <td>
+                            <a href="#" wicket:id="document.cargo.vehicle.delete" onfocus="$('.addVehicle').focus();"><wicket:message key="document.cargo.delete"/></a>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td colspan="2" align="left">
+                            <a class="addVehicle" href="#" wicket:id="document.cargo.vehicle.add"><wicket:message key="document.cargo.vehicle.add"/></a>
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
         </fieldset>
         <fieldset style="margin-bottom:10px">
             <legend>Грузы</legend>
@@ -113,6 +127,7 @@
                         <th  class="center"><wicket:message key="document.cargo.cargo_type"/></th>
                         <th  class="center"><wicket:message key="document.cargo.count"/></th>
                         <th  class="center"><wicket:message key="document.cargo.unit_type"/></th>
+                        <th  class="center"><wicket:message key="document.cargo.vehicle"/></th>
                         <th  class="center"><wicket:message key="document.cargo.producer_country"/></th>
                         <th  class="center"><wicket:message key="document.cargo.producer_name"/></th>
                         <th  class="center"><wicket:message key="document.cargo.certificate_detail"/></th>
@@ -125,6 +140,7 @@
                         <td><span wicket:id="document.cargo.cargo_type"></span></td>
                         <td width="80px"><input wicket:id="document.cargo.count" type="text"/></td>
                         <td><select wicket:id="document.cargo.unit_type"></select></td>
+                        <td><select wicket:id="document.cargo.vehicle"></select></td>
                         <td><select wicket:id="document.cargo.producer_country"></select></td>
                         <td><select wicket:id="document.cargo.producer_name"></select></td>
                         <td><input wicket:id="document.cargo.certificate_detail" type="text"/></td>

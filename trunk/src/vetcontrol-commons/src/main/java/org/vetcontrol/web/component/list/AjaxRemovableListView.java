@@ -4,8 +4,6 @@
  */
 package org.vetcontrol.web.component.list;
 
-import java.io.Serializable;
-import java.util.List;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -16,6 +14,9 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  *
@@ -58,9 +59,16 @@ public abstract class AjaxRemovableListView<T extends Serializable> extends List
     protected AjaxSubmitLink getRemoveSubmitLink(String linkId, Form<?> form, final Component toFocus, final Component... toUpdate) {
         AjaxSubmitLink link = new AjaxSubmitLink(linkId, form) {
 
+            @SuppressWarnings({"unchecked"})
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                updateListViewOnRemoval(this, target, toFocus, toUpdate);
+                if (validate((ListItem<T>) this.getParent())) {
+                    updateListViewOnRemoval(this, target, toFocus, toUpdate);
+                }else{
+                    for (Component comp : toUpdate) {
+                        target.addComponent(comp);
+                    }
+                }
             }
         };
         link.setDefaultFormProcessing(false);
@@ -70,11 +78,22 @@ public abstract class AjaxRemovableListView<T extends Serializable> extends List
     protected AjaxLink getRemoveLink(String linkId, final Component toFocus, final Component... toUpdate) {
         return new AjaxLink(linkId) {
 
+            @SuppressWarnings({"unchecked"})
             @Override
             public void onClick(AjaxRequestTarget target) {
-                updateListViewOnRemoval(this, target, toFocus, toUpdate);
+                if (validate((ListItem<T>) this.getParent())) {
+                    updateListViewOnRemoval(this, target, toFocus, toUpdate);
+                }else{
+                    for (Component comp : toUpdate) {
+                        target.addComponent(comp);
+                    }
+                }
             }
         };
+    }
+
+    protected boolean validate(ListItem<T> item){
+        return true;
     }
 
     private static void updateListViewOnRemoval(AbstractLink link, AjaxRequestTarget target, Component toFocus, Component... toUpdate) {

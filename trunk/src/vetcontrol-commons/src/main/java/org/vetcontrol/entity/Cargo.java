@@ -88,6 +88,7 @@ public class Cargo extends Synchronized implements IUpdated{
     protected void preUpdate(){
         if (documentCargo != null){
             documentCargoId = documentCargo.getId();
+            vehicleId = vehicle.getId();
             client = documentCargo.getClient();
             department = documentCargo.getDepartment();
         }

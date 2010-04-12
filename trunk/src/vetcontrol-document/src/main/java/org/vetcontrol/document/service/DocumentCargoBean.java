@@ -37,15 +37,24 @@ public class DocumentCargoBean {
         DocumentCargo documentCargo = em.find(DocumentCargo.class, id);
         //load collection
         documentCargo.getCargos().size();
+        documentCargo.getVehicles().size();
+
         return documentCargo;
     }
 
     public void save(DocumentCargo documentCargo) {
         List<Cargo> cargos = documentCargo.getCargos();
+        List<Vehicle> vehicles = documentCargo.getVehicles();
+        
         documentCargo.setCargos(null);
+        documentCargo.setVehicles(null);
 
+        //edit
         if (documentCargo.getId() != null) {
-            List<Cargo> dbCargos = em.createQuery("from Cargo dc where dc.documentCargo = :documentCargo", Cargo.class).setParameter("documentCargo", documentCargo).getResultList();
+            //remove cargo
+            List<Cargo> dbCargos = em.createQuery("from Cargo c where c.documentCargo = :documentCargo", Cargo.class)
+                    .setParameter("documentCargo", documentCargo)
+                    .getResultList();
 
             for (Cargo db : dbCargos) {
                 boolean remove = true;
@@ -62,41 +71,92 @@ public class DocumentCargoBean {
                 }
             }
 
+            //remove vehicles
+            List<Vehicle> dbVehicles = em.createQuery("from Vehicle v where v.documentCargo = :documentCargo", Vehicle.class)
+                    .setParameter("documentCargo", documentCargo)
+                    .getResultList();
+
+            for (Vehicle db : dbVehicles) {
+                boolean remove = true;
+
+                for (Vehicle ui : vehicles) {
+                    if (db.getId().equals(ui.getId())) {
+                        remove = false;
+                        break;
+                    }
+                }
+
+                if (remove) {
+                    em.remove(db);
+                }
+            }
+
+            //save document cargo
             documentCargo.setUpdated(DateUtil.getCurrentDate());
             documentCargo.setSyncStatus(Synchronized.SyncStatus.NOT_SYNCHRONIZED);
 
             documentCargo = em.merge(documentCargo);
 
+             //save vehicle
+            for (Vehicle v : vehicles) {
+                v.setDocumentCargo(documentCargo);
+                v.setVehicleType(documentCargo.getVehicleType());
+                v.setSyncStatus(Synchronized.SyncStatus.NOT_SYNCHRONIZED);
+                v.setUpdated(DateUtil.getCurrentDate());
+
+                if (v.getId() == null){
+                    em.persist(v);
+                    em.flush();
+                    v.setId(getLastInsertId());
+                    em.clear();
+                }else{
+                    em.merge(v);
+                }
+            }
+
+            //save cargo
             for (Cargo c : cargos) {
                 c.setDocumentCargo(documentCargo);
                 c.setSyncStatus(Synchronized.SyncStatus.NOT_SYNCHRONIZED);
                 c.setUpdated(DateUtil.getCurrentDate());
 
                 em.merge(c);
-                em.flush();
-                em.clear();
             }
 
             documentCargo.setCargos(cargos);
-        } else {
+            documentCargo.setVehicles(vehicles);
+        }
+        // new
+        else {
+            //set
             documentCargo.setClient(clientBean.getCurrentClient());
             documentCargo.setSyncStatus(Synchronized.SyncStatus.NOT_SYNCHRONIZED);
             documentCargo.setCreator(userProfileBean.getCurrentUser());
             documentCargo.setCreated(DateUtil.getCurrentDate());
 
+            //save document
             em.persist(documentCargo);
             em.flush();
             documentCargo.setId(getLastInsertId());
             em.clear();
 
+            //save vehicle
+            for (Vehicle v : vehicles){
+                v.setDocumentCargo(documentCargo);
+                v.setVehicleType(documentCargo.getVehicleType());
+                v.setSyncStatus(Synchronized.SyncStatus.NOT_SYNCHRONIZED);
+                v.setUpdated(DateUtil.getCurrentDate());
+
+                em.persist(v);
+            }
+
+            //save cargo
             for (Cargo c : cargos) {
                 c.setDocumentCargo(documentCargo);
                 c.setSyncStatus(Synchronized.SyncStatus.NOT_SYNCHRONIZED);
                 c.setUpdated(DateUtil.getCurrentDate());
 
                 em.persist(c);
-                em.flush();
-                em.clear();
             }
         }
     }
