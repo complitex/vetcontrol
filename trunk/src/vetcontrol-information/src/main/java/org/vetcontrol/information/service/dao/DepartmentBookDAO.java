@@ -36,9 +36,7 @@ public class DepartmentBookDAO {
         getAvailableDepartments(department.getId(), exclude);
 
         StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("SELECT DISTINCT d FROM Department d WHERE d.").
-                append(BeanPropertyUtil.getDisabledPropertyName()).
-                append(" = FALSE AND d.level IN (1,2) ");
+        queryBuilder.append("SELECT DISTINCT d FROM Department d WHERE d.level IN (1,2)");
 
         if (!exclude.isEmpty()) {
             queryBuilder.append(" AND d.id NOT IN (");
@@ -67,9 +65,7 @@ public class DepartmentBookDAO {
         exclude.add(id);
 
         StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("SELECT d.id FROM Department d WHERE d.parent.id = :id AND d.").
-                append(BeanPropertyUtil.getDisabledPropertyName()).
-                append(" = FALSE");
+        queryBuilder.append("SELECT d.id FROM Department d WHERE d.parent.id = :id");
         List<Long> references = entityManager.createQuery(queryBuilder.toString(), Long.class).
                 setParameter("id", id).
                 getResultList();
@@ -82,9 +78,7 @@ public class DepartmentBookDAO {
 
     public List<CustomsPoint> getAvailableCustomsPoint() {
         StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("SELECT DISTINCT cp FROM CustomsPoint cp WHERE cp.").
-                append(BeanPropertyUtil.getDisabledPropertyName()).
-                append(" = FALSE");
+        queryBuilder.append("SELECT DISTINCT cp FROM CustomsPoint cp");
         List<CustomsPoint> availableCustomsPoint = entityManager.createQuery(queryBuilder.toString(), CustomsPoint.class).getResultList();
         bookDAO.addLocalizationSupport(availableCustomsPoint);
         return availableCustomsPoint;

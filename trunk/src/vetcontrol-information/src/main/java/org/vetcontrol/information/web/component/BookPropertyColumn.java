@@ -86,7 +86,7 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
         } else if (property.isBookReference()) {
             if (property.getUiType().equals(UIType.SELECT)) {
                 return new ChoiceFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form,
-                        bookViewDAO.getContent(property.getType(), ShowBooksMode.ENABLED),
+                        bookViewDAO.getContent(property.getType(), ShowBooksMode.ALL),
                         new BookChoiceRenderer(property, systemLocale, TruncateUtil.TRUNCATE_SELECT_VALUE_IN_LIST_PAGE), false);
             } else if (property.getUiType().equals(UIType.AUTO_COMPLETE)) {
                 return new BookTextFilter(componentId,

@@ -159,7 +159,7 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
                 } else if (isDate) {
                     datePanel = new DatePanel("datePanel", m, prop, CanEditUtil.canEdit(bookEntry));
                 } else if (isSelectable) {
-                    selectablePanel = new SelectPanel("selectablePanel", m, prop, bookDAO.getContent(prop.getType(), ShowBooksMode.ENABLED),
+                    selectablePanel = new SelectPanel("selectablePanel", m, prop, bookDAO.getContent(prop.getType(), ShowBooksMode.ALL),
                             systemLocale, CanEditUtil.canEdit(bookEntry));
                 } else if (isAutoComplete) {
                     autoCompleteSelectPanel = new AutoCompleteSelectPanel("autoCompleteSelectPanel", m, prop, CanEditUtil.canEdit(bookEntry));
@@ -274,10 +274,6 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
     private void goToBooksPage() {
         BookWebInfo bookWebInfo = BookTypeWebInfoUtil.getInfo(bookEntry.getClass());
         setResponsePage(bookWebInfo.getListPage(), bookWebInfo.getListPageParameters());
-    }
-
-    private String getBookTypeName(Serializable bookEntry) {
-        return bookEntry.getClass().getName();
     }
 
     @Override
