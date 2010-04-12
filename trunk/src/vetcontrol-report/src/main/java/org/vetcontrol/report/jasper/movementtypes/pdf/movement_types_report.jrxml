@@ -133,42 +133,42 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="135" y="0" width="48" height="18"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{export}, $F{unitTypeName})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{export}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="183" y="0" width="40" height="18"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{imprt}, $F{unitTypeName})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{imprt}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="223" y="0" width="45" height="18"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{transit}, $F{unitTypeName})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{transit}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="268" y="0" width="73" height="18"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{importTransit}, $F{unitTypeName})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{importTransit}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="341" y="0" width="41" height="18"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{exportInCurrentMonth}, $F{unitTypeName})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{exportInCurrentMonth}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="382" y="0" width="40" height="18"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{imprtInCurrentMonth}, $F{unitTypeName})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{imprtInCurrentMonth}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="422" y="0" width="45" height="18"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{transitInCurrentMonth}, $F{unitTypeName})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{transitInCurrentMonth}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="467" y="0" width="69" height="18"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{importTransitInCurrentMonth}, $F{unitTypeName})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[CellFormatter.format($F{importTransitInCurrentMonth}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="10" y="0" width="24" height="18"/>

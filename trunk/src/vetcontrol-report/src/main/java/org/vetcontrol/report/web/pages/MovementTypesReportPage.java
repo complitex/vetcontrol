@@ -138,16 +138,16 @@ public final class MovementTypesReportPage extends TemplatePage {
 
                 item.add(new Label("cargoModeName", CellFormatter.cargoModeName(report.getCargoModeName(), report.getParentCargoModeName())));
 
-                item.add(new Label("export", CellFormatter.format(report.getExport(), report.getUnitTypeName())));
-                item.add(new Label("import", CellFormatter.format(report.getImprt(), report.getUnitTypeName())));
-                item.add(new Label("transit", CellFormatter.format(report.getTransit(), report.getUnitTypeName())));
-                item.add(new Label("importTransit", CellFormatter.format(report.getImportTransit(), report.getUnitTypeName())));
+                item.add(new Label("export", CellFormatter.format(report.getExport(), report.getUnitTypeName(), localeService.getReportLocale())));
+                item.add(new Label("import", CellFormatter.format(report.getImprt(), report.getUnitTypeName(), localeService.getReportLocale())));
+                item.add(new Label("transit", CellFormatter.format(report.getTransit(), report.getUnitTypeName(), localeService.getReportLocale())));
+                item.add(new Label("importTransit", CellFormatter.format(report.getImportTransit(), report.getUnitTypeName(), localeService.getReportLocale())));
 
-                item.add(new Label("exportInCurrentMonth", CellFormatter.format(report.getExportInCurrentMonth(), report.getUnitTypeName())));
-                item.add(new Label("importInCurrentMonth", CellFormatter.format(report.getImprtInCurrentMonth(), report.getUnitTypeName())));
-                item.add(new Label("transitInCurrentMonth", CellFormatter.format(report.getTransitInCurrentMonth(), report.getUnitTypeName())));
+                item.add(new Label("exportInCurrentMonth", CellFormatter.format(report.getExportInCurrentMonth(), report.getUnitTypeName(), localeService.getReportLocale())));
+                item.add(new Label("importInCurrentMonth", CellFormatter.format(report.getImprtInCurrentMonth(), report.getUnitTypeName(), localeService.getReportLocale())));
+                item.add(new Label("transitInCurrentMonth", CellFormatter.format(report.getTransitInCurrentMonth(), report.getUnitTypeName(), localeService.getReportLocale())));
                 item.add(new Label("importTransitInCurrentMonth",
-                        CellFormatter.format(report.getImportTransitInCurrentMonth(), report.getUnitTypeName())));
+                        CellFormatter.format(report.getImportTransitInCurrentMonth(), report.getUnitTypeName(), localeService.getReportLocale())));
             }
         };
 
