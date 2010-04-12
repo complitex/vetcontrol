@@ -28,13 +28,14 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.util.string.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.CustomsPoint;
 import org.vetcontrol.entity.Department;
 import org.vetcontrol.entity.Log;
 import org.vetcontrol.entity.PassingBorderPoint;
-import org.vetcontrol.information.service.dao.DepartmentDAO;
+import org.vetcontrol.information.service.dao.DepartmentBookDAO;
 import org.vetcontrol.information.service.dao.IBookDAO;
 import org.vetcontrol.information.util.web.BookTypeWebInfoUtil;
 import org.vetcontrol.information.util.web.BookWebInfo;
@@ -70,8 +71,8 @@ public final class DepartmentEdit extends FormTemplatePage {
     IBookDAO bookDAO;
     @EJB(name = "LogBean")
     private LogBean logBean;
-    @EJB(name = "InformationDepartmentDAO")
-    private DepartmentDAO departmentDAO;
+    @EJB(name = "DepartmentBookDAO")
+    private DepartmentBookDAO departmentDAO;
     private static final Logger log = LoggerFactory.getLogger(DepartmentEdit.class);
     private static final String PASSING_BORDER_POINT_NAME_REQUIRED = "passing_border_point_name";
     private Department department;
@@ -277,20 +278,33 @@ public final class DepartmentEdit extends FormTemplatePage {
 
             @Override
             public void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                if (BeanPropertyUtil.isNewBook(department)) {
-                    //new entry
-                    saveOrUpdate(initial);
-                    goToListPage();
+                if (validate()) {
+                    if (BeanPropertyUtil.isNewBook(department)) {
+                        //new entry
+                        saveOrUpdate(initial);
+                        goToListPage();
+                    } else {
+                        confirmationDialog.open(target);
+                    }
+                    target.addComponent(form);
                 } else {
-                    confirmationDialog.open(target);
+                    target.addComponent(messages);
                 }
-
-                target.addComponent(form);
             }
 
             @Override
             protected void onError(AjaxRequestTarget target, Form<?> form) {
+                validate();
                 target.addComponent(messages);
+            }
+
+            private boolean validate() {
+                if (validatePassingBorderPoints()) {
+                    return true;
+                } else {
+                    error(getString(PASSING_BORDER_POINT_NAME_REQUIRED));
+                    return false;
+                }
             }
         };
         save.setVisible(CanEditUtil.canEdit(department));
@@ -317,6 +331,15 @@ public final class DepartmentEdit extends FormTemplatePage {
         form.add(back);
 
         form.add(new Spacer("spacer"));
+    }
+
+    private boolean validatePassingBorderPoints() {
+        for (PassingBorderPoint borderPoint : department.getPassingBorderPoints()) {
+            if (Strings.isEmpty(borderPoint.getName())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void goToListPage() {
@@ -388,6 +411,10 @@ public final class DepartmentEdit extends FormTemplatePage {
 
     private class PassingBorderPointListItem extends ListItem<PassingBorderPoint> {
 
+        private TextField<String> passingBorderPoint;
+        private AjaxLink activate;
+        private AjaxLink deactivate;
+
         public PassingBorderPointListItem(int index, IModel<PassingBorderPoint> model) {
             super(index, model);
             setOutputMarkupId(true);
@@ -405,8 +432,8 @@ public final class DepartmentEdit extends FormTemplatePage {
 
                 @Override
                 public void setObject(String object) {
-                    //log.info("name = " + object);
-                    boolean isTheSameName = isStringsEqual(object, getModelObject().getName());
+//                    log.info("name = " + object);
+                    boolean isTheSameName = areStringsEqual(object, getModelObject().getName());
                     if (!isTheSameName) {
                         getModelObject().setName(object);
                         getModelObject().setNeedToUpdate(true);
@@ -417,30 +444,26 @@ public final class DepartmentEdit extends FormTemplatePage {
                 public void detach() {
                 }
             };
-            final TextField<String> passingBorderPoint = new TextField<String>("passingBorderPointName", passingBorderPointModel) {
+            passingBorderPoint = new TextField<String>("passingBorderPointName", passingBorderPointModel) {
 
                 @Override
-                public String getValidatorKeyPrefix() {
-                    return PASSING_BORDER_POINT_NAME_REQUIRED;
+                public boolean isEnabled() {
+                    return CanEditUtil.canEdit(department) && !PassingBorderPointListItem.this.getModelObject().isDisabled();
                 }
             };
-            Property nameProp = BeanPropertyUtil.getPropertyByName(PassingBorderPoint.class, "name");
-            passingBorderPoint.add(new SimpleAttributeModifier("size", String.valueOf(nameProp.getLength())));
-            passingBorderPoint.add(new SimpleAttributeModifier("maxlength", String.valueOf(nameProp.getLength())));
-            passingBorderPoint.setRequired(true);
+            Property nameProperty = BeanPropertyUtil.getPropertyByName(PassingBorderPoint.class, "name");
+            passingBorderPoint.add(new SimpleAttributeModifier("size", String.valueOf(nameProperty.getLength())));
+            passingBorderPoint.add(new SimpleAttributeModifier("maxlength", String.valueOf(nameProperty.getLength())));
             passingBorderPoint.add(new AjaxFormComponentUpdatingBehavior("onblur") {
 
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
-                    target.addComponent(passingBorderPoint);
                 }
             });
-
-            passingBorderPoint.setEnabled(CanEditUtil.canEdit(department));
             add(passingBorderPoint);
 
             //activate link
-            AjaxLink activate = new AjaxLink("activate") {
+            activate = new AjaxLink("activate") {
 
                 @Override
                 public void onClick(AjaxRequestTarget target) {
@@ -458,7 +481,7 @@ public final class DepartmentEdit extends FormTemplatePage {
             add(activate);
 
             //deactivate link
-            AjaxLink deactivate = new AjaxLink("deactivate") {
+            deactivate = new AjaxLink("deactivate") {
 
                 @Override
                 public void onClick(AjaxRequestTarget target) {
@@ -477,7 +500,7 @@ public final class DepartmentEdit extends FormTemplatePage {
         }
     }
 
-    private static boolean isStringsEqual(String a, String b) {
+    private static boolean areStringsEqual(String a, String b) {
         if (a == b) {
             return true;
         }

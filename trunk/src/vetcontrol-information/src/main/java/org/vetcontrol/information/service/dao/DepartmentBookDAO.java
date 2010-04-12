@@ -22,9 +22,9 @@ import org.vetcontrol.util.book.BeanPropertyUtil;
  *
  * @author Artem
  */
-@Stateless(name = "InformationDepartmentDAO")
+@Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class DepartmentDAO {
+public class DepartmentBookDAO {
 
     @EJB
     private IBookDAO bookDAO;
