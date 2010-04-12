@@ -25,14 +25,25 @@ public class CargoReceiver implements ILocalBook, ILongId {
     public void setId(Long id) {
         this.id = id;
     }
-    private CargoReceiverEmbeddable cargoReceiverEmbeddable;
+    
+    private String name;
+    private String address;
 
-    @Embedded
-    public CargoReceiverEmbeddable getCargoReceiverEmbeddable() {
-        return cargoReceiverEmbeddable;
+    @Column(name = "address", nullable = false)
+    public String getAddress() {
+        return address;
     }
 
-    public void setCargoReceiverEmbeddable(CargoReceiverEmbeddable cargoReceiverEmbeddable) {
-        this.cargoReceiverEmbeddable = cargoReceiverEmbeddable;
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    @Column(name = "name", nullable = false)
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
