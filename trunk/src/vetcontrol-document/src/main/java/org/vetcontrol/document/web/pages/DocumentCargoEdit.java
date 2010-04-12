@@ -211,7 +211,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
         addDropDownChoice(form, "document.cargo.movement_type", MovementType.class, documentCargoModel, "movementType");
 
         //Тип транспортного средства
-        DropDownChoice<VehicleType> ddcVehicleType = new DropDownChoice<VehicleType>("document.cargo.vehicle_type",
+        final DropDownChoice<VehicleType> ddcVehicleType = new DropDownChoice<VehicleType>("document.cargo.vehicle_type",
                 new PropertyModel<VehicleType>(documentCargoModel, "vehicleType"),
                 Arrays.asList(VehicleType.values()),
                 new EnumChoiceRenderer<VehicleType>(this));
@@ -222,7 +222,9 @@ public class DocumentCargoEdit extends FormTemplatePage {
         ddcVehicleType.add(new AjaxFormComponentUpdatingBehavior("onchange"){
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
-                //update model
+                for (Vehicle vehicle : documentCargoModel.getObject().getVehicles()){
+                    vehicle.setVehicleType(ddcVehicleType.getModelObject());
+                }
             }
         });
 
@@ -441,7 +443,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
             public void onSubmit(AjaxRequestTarget target, Form form) {
                 DocumentCargo dc = (DocumentCargo) form.getModelObject();
 
-                if (!dc.getVehicleType().isCompound() && dc.getVehicles().size() > 1){
+                if (dc.getVehicleType() != null && !dc.getVehicleType().isCompound() && dc.getVehicles().size() > 1){
                     target.addComponent(feedbackPanel);
                     getSession().error(getString("document.cargo.vehicle.add.error"));
                     
@@ -450,6 +452,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
 
                 Vehicle vehicle = new Vehicle();
                 vehicle.setDocumentCargo(dc);
+                vehicle.setVehicleType(dc.getVehicleType());
                 dc.getVehicles().add(vehicle);                
 
                 target.addComponent(vehicleContainer);
@@ -469,7 +472,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
 
             @Override
             protected void populateItem(final ListItem<Vehicle> item) {
-                Vehicle vehicle = item.getModelObject();
+                final Vehicle vehicle = item.getModelObject();
 
                 TextField details = new TextField<String>("document.cargo.vehicle.details",
                         new PropertyModel<String>(vehicle, "vehicleDetails"));
@@ -480,9 +483,21 @@ public class DocumentCargoEdit extends FormTemplatePage {
 
                     @Override
                     protected void onUpdate(AjaxRequestTarget target) {
+                        if (!documentCargoBean.validate(vehicle)){
+                            if (VehicleType.CONTAINER.equals(vehicle.getVehicleType())){
+                                vehicle.setName(getString("document.cargo.vehicle.validate.container.error"));
+                                //TODO ajax update name field
+
+                            }
+                        }
+
                         target.addComponent(cargoContainer);
                     }
                 });
+
+                Label name = new Label("document.cargo.vehicle.name", new PropertyModel<String>(vehicle, "name"));
+                name.setOutputMarkupId(true);                
+                item.add(name);
 
                 addRemoveSubmitLink("document.cargo.vehicle.delete", form, item, addVehicleLink,
                         vehicleContainer, cargoContainer, feedbackPanel);

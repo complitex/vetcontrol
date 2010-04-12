@@ -99,10 +99,11 @@
         <fieldset style="margin-bottom:10px">
             <legend>Транспортные средства</legend>
             <div wicket:id="document.cargo.vehicle_container">
-                <table  border="0" cellspacing="0" cellpadding="0" class="tbColor table_input">
+                <table  border="0" cellspacing="2" cellpadding="2" class="table_input">
                     <tbody>
                     <tr wicket:id="document.cargo.vehicle_list">                        
                         <td><input type="text" wicket:id="document.cargo.vehicle.details" autocomplete="false"/></td>
+                        <td><span wicket:id="document.cargo.vehicle.name"></span></td>
                         <td>
                             <a href="#" wicket:id="document.cargo.vehicle.delete" onfocus="$('.addVehicle').focus();"><wicket:message key="document.cargo.delete"/></a>
                         </td>
@@ -110,7 +111,7 @@
                     </tbody>
                     <tfoot>
                     <tr>
-                        <td colspan="2" align="left">
+                        <td colspan="3" align="left">
                             <a class="addVehicle" href="#" wicket:id="document.cargo.vehicle.add"><wicket:message key="document.cargo.vehicle.add"/></a>
                         </td>
                     </tr>

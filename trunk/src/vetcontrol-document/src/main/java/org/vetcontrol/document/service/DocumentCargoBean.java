@@ -399,4 +399,30 @@ public class DocumentCargoBean {
     public List<CargoProducer> getCargoProducer(CountryBook country) {
         return em.createQuery("select cp from CargoProducer cp where cp.country = :country and cp.disabled = false", CargoProducer.class).setParameter("country", country).getResultList();
     }
+
+    public boolean validate(Vehicle vehicle){
+        if (vehicle == null){
+            return false;            
+        }
+
+        if (VehicleType.CONTAINER.equals(vehicle.getVehicleType())){
+            if (!vehicle.getVehicleDetails().matches("[a-zA-Z]{4}\\d{6}-\\d")){
+                return false;
+            }
+
+            String name = null;
+            try {
+                name = em.createQuery("select cv.carrierName from ContainerValidator cv where upper(cv.prefix) = :prefix", String.class)
+                        .setParameter("prefix", vehicle.getVehicleDetails().substring(0,4).toUpperCase())
+                        .getSingleResult();
+            } catch (NoResultException e) {
+                //nothing
+            }
+
+            vehicle.setName(name);
+        }
+
+        return true;
+    }
+
 }

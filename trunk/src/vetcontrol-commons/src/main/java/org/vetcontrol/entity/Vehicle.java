@@ -62,6 +62,10 @@ public class Vehicle extends Synchronized implements IUpdated {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
 
+    @Transient
+    @XmlTransient
+    private String name = "";
+
     @PrePersist
     @PreUpdate
     protected void preUpdate() {
@@ -136,6 +140,14 @@ public class Vehicle extends Synchronized implements IUpdated {
     @Override
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
