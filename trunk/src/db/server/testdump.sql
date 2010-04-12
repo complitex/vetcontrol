@@ -18,33 +18,33 @@ INSERT INTO `stringculture`(`id`, `locale`, `value`) VALUES
 (51,'en','Производитель 1'),(51,'ru','Производитель 1'),
 (52,'en','Производитель 2'),(52,'ru','Производитель 2'),(53,'en','Производитель 3'),(53,'ru','Производитель 3'),
 (54,'en','тонна'),(54,'ru','тонна'),(55,'en','голова'),(55,'ru','голова'),(56,'en','тыс. голов'),(56,'ru','тыс. голов'),
-(57,'en','штука'),(57,'ru','штука'),(58,'en','тыс. штук'),(58,'ru','тыс. штук'),(59,'en','молоко отборное'),
-(59,'ru','молоко  отборное'), (60,'en','хлеб белый'),(60,'ru','хлеб белый'),(61,'en','сыр алтайский'),
-(61,'ru','сыр алтайский'),(62,'en','молоко отборное'),
-(62,'ru','молоко отборное'),(63,'en','молоко топленое'),(63,'ru','молоко топленое'),(64,'en','литр'),
-(64,'ru','литр'),(65,'en','молоко обезжиренное'),(65,'ru','молоко обезжиренное'),(66,'en','хлеб белый'),
-(66,'ru','хлеб белый'),(67,'en','хлеб черный'),(67,'ru','хлеб черный'),(68,'en','сыр голландский'),
-(68,'ru','сыр голландский'),(69,'en','сыр алтайский'),(69,'ru','сыр алтайский'),(70,'en','Пункт 1'),
-(71,'ru','Вид1'), (72,'ru','Вид2'), (73,'ru','Вид3'),
-(74, 'ru', 'Россия'), (74, 'en', 'Russia'), (75, 'ru', 'Англия'), (75, 'en', 'England'),
-(76, 'ru', 'Таможня 1'), (77, 'ru', 'Таможня 2');
+(57,'en','штука'),(57,'ru','штука'),(58,'en','тыс. штук'),(58,'ru','тыс. штук'),(59,'en','литр'),(59,'ru','литр'),
+(60, 'ru', 'т.'), (60, 'en', 'т.'), (61, 'ru', 'г.'), (61, 'en', 'г.'), (62, 'ru', 'т.г.'), (62, 'en', 'т.г.'),
+(63,'ru','ш.'),(63,'en','ш.'),(64,'ru','т.ш.'),(64,'en','т.ш.'),(65,'ru','л.'),(65,'en','л.'),
+(66,'en','молоко отборное'), (66,'ru','молоко  отборное'), (67,'en','хлеб белый'),(67,'ru','хлеб белый'),
+(68,'en','сыр алтайский'), (68,'ru','сыр алтайский'),(69,'en','молоко топленое'),(69,'ru','молоко топленое'),
+(70,'en','молоко обезжиренное'),(70,'ru','молоко обезжиренное'), (71,'en','хлеб черный'),(71,'ru','хлеб черный'),
+(72,'en','сыр голландский'),(72,'ru','сыр голландский'),
+(73,'ru','Вид1'), (74,'ru','Вид2'), (75,'ru','Вид3'),
+(76, 'ru', 'Россия'), (76, 'en', 'Russia'), (77, 'ru', 'Англия'), (77, 'en', 'England'),
+(78, 'ru', 'Таможня 1'), (79, 'ru', 'Таможня 2');
 
-UPDATE `generator` SET `generatorValue` = 77 WHERE `generatorName` = 'books';
+UPDATE `generator` SET `generatorValue` = 79 WHERE `generatorName` = 'books';
 
-INSERT INTO `unit_type`(`id`, `name`) VALUES (1,54),(2,55),(3,56),(4,57),(5,58),(6,64);
+INSERT INTO `unit_type`(`id`, `name`, `short_name`) VALUES (1,54,60),(2,55,61),(3,56,62),(4,57,63),(5,58,64),(6,59,65);
 
-INSERT INTO `cargo_type`(`id`, `name`, `ukt_zed_code`) VALUES (1,59,'2602000000'),(2,60,'2603000000'),(3,61,'2605000000');
+INSERT INTO `cargo_type`(`id`, `name`, `ukt_zed_code`) VALUES (1,66,'2602000000'),(2,67,'2603000000'),(3,68,'2605000000');
 
-INSERT INTO `cargo_mode`(`id`, `name`, `parent_id`) VALUES (3,73, NULL), (1,71,3), (2,72,3);
+INSERT INTO `cargo_mode`(`id`, `name`, `parent_id`) VALUES (3,75, NULL), (1,73,3), (2,74,3);
 
 INSERT INTO `cargo_mode_cargo_type` VALUES (1, 1, CURRENT_TIMESTAMP), (1, 2, CURRENT_TIMESTAMP);
 
 INSERT INTO `cargo_mode_unit_type` VALUES (1, 1, CURRENT_TIMESTAMP);
 
-INSERT INTO `countrybook`(`id`, `name`) VALUES (1, 74), (2, 75);
+INSERT INTO `countrybook`(`id`, `name`) VALUES (1, 76), (2, 77);
 INSERT INTO `cargo_producer`(`id`, `name`, `country_id`) VALUES (1,51, 1),(2,52, 1),(3,53, 2);
 
-INSERT INTO `customs_point`(`id`, `name`) VALUES(1, 76), (2, 77);
+INSERT INTO `customs_point`(`id`, `name`) VALUES(1, 78), (2, 79);
 
 UPDATE `department` d SET d.`custom_point_id` = 1 WHERE d.`id` = 2;
 
@@ -66,9 +66,9 @@ INSERT INTO `document_cargo`(`id`, `client_id`, `department_id`, `creator_id`, `
 
 INSERT INTO `cargo`(`id`, `client_id`, `department_id`, `document_cargo_id`, `cargo_type_id`, `unit_type_id`, `cargo_producer_id`, `vehicle_id`,
  `count`, `certificate_date`, `certificate_details`, `sync_status`)
- VALUES (1,1,3,1,1,1,1,NULL,20,'2010-01-15','сертификат 1', 'NOT_SYNCHRONIZED'),
-        (2,1,3,2,1,2,2,NULL,30,'2010-02-15','сертификат 2', 'NOT_SYNCHRONIZED'),
-        (3,1,3,2,2,3,3,NULL,23,'2010-02-15','сертификат 2', 'NOT_SYNCHRONIZED'),
+ VALUES (1,1,3,1,1,1,1,NULL,20.2,'2010-01-15','сертификат 1', 'NOT_SYNCHRONIZED'),
+        (2,1,3,2,1,2,2,NULL,30.5,'2010-02-15','сертификат 2', 'NOT_SYNCHRONIZED'),
+        (3,1,3,2,2,3,3,NULL,23.8,'2010-02-15','сертификат 2', 'NOT_SYNCHRONIZED'),
         (4,1,3,2,2,4,1,NULL,73,'2010-02-15','сертификат 2', 'NOT_SYNCHRONIZED'),
         (5,1,3,4,1,5,1,NULL,40, '2010-03-30', 'сертификат 3', 'NOT_SYNCHRONIZED'),
         (6,1,3,4,1,6,2,NULL,89, '2010-03-30', 'сертификат 3', 'NOT_SYNCHRONIZED'),
