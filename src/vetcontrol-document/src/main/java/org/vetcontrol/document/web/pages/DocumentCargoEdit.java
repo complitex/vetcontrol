@@ -530,7 +530,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
                 cargo.setDocumentCargo(dc);
                 dc.getCargos().add(cargo);
 
-                if (!dc.getVehicleType().isCompound() && !dc.getVehicles().isEmpty()){
+                if (dc.getVehicleType() != null && !dc.getVehicleType().isCompound() && !dc.getVehicles().isEmpty()){
                     cargo.setVehicle(dc.getVehicles().get(0));
                 }
 
