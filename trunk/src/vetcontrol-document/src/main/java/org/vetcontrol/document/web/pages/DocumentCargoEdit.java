@@ -485,12 +485,11 @@ public class DocumentCargoEdit extends FormTemplatePage {
                     protected void onUpdate(AjaxRequestTarget target) {
                         if (!documentCargoBean.validate(vehicle)){
                             if (VehicleType.CONTAINER.equals(vehicle.getVehicleType())){
-                                vehicle.setName(getString("document.cargo.vehicle.validate.container.error"));
-                                //TODO ajax update name field
-
+                                vehicle.setName(getString("document.cargo.vehicle.validate.container.error"));                                
                             }
                         }
 
+                        target.addComponent(vehicleContainer);
                         target.addComponent(cargoContainer);
                     }
                 });
