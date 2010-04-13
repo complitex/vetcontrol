@@ -5,25 +5,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.ClientBean;
+import org.vetcontrol.service.LogBean;
 import org.vetcontrol.sync.Count;
 import org.vetcontrol.sync.SyncRequestEntity;
+import org.vetcontrol.sync.client.service.exception.DBOperationException;
+import org.vetcontrol.sync.client.service.exception.NetworkConnectionException;
 
+import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Status;
+import javax.transaction.UserTransaction;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Resource;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
-import javax.transaction.Status;
-import javax.transaction.UserTransaction;
-import org.vetcontrol.service.LogBean;
-import org.vetcontrol.sync.client.service.exception.DBOperationException;
-import org.vetcontrol.sync.client.service.exception.NetworkConnectionException;
 
 import static org.vetcontrol.sync.client.service.ClientFactory.createJSONClient;
 
@@ -38,9 +38,9 @@ public class BookSyncBean extends SyncInfo {
     private static final Logger log = LoggerFactory.getLogger(BookSyncBean.class);
     private static final int NETWORK_BATCH_SIZE = 100;
     private static final int DB_BATCH_SIZE = 1;
-    @EJB
+    @EJB(beanName = "ClientBean")
     private ClientBean clientBean;
-    @EJB
+    @EJB(beanName = "LogBean")
     private LogBean logBean;
     @Resource
     private UserTransaction userTransaction;

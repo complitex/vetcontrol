@@ -1,6 +1,5 @@
 package org.vetcontrol.sync.server.resources;
 
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.*;
@@ -9,9 +8,12 @@ import org.vetcontrol.service.LogBean;
 import org.vetcontrol.sync.SyncCargo;
 import org.vetcontrol.sync.SyncDocumentCargo;
 import org.vetcontrol.sync.SyncRequestEntity;
+import org.vetcontrol.sync.SyncVehicle;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -19,9 +21,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 import java.util.ResourceBundle;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -38,9 +39,9 @@ public class DocumentResourceBean {
     private static final ResourceBundle rb = ResourceBundle.getBundle("org.vetcontrol.sync.server.resources.ResourceBeans");
     @PersistenceContext
     private EntityManager em;
-    @EJB
+    @EJB(beanName = "LogBean")
     private LogBean logBean;
-    @EJB
+    @EJB(beanName = "ClientBean")
     private ClientBean clientBean;
 
     @PUT
@@ -95,7 +96,7 @@ public class DocumentResourceBean {
             int size = cargos.size();
 
             try {
-                for (Cargo cargo : syncCargo.getCargos()) {
+                for (Cargo cargo : cargos) {
                     if (cargo.getId() == null) {
                         continue;
                     }
@@ -107,8 +108,8 @@ public class DocumentResourceBean {
                     em.merge(cargo);
                 }
 
-                logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, DocumentCargo.class,
-                        rb.getString("info.sync.processed"), syncCargo.getCargos().size(),
+                logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Cargo.class,
+                        rb.getString("info.sync.processed"), size,
                         r.getRemoteHost(), client.getIp());
 
                 log.info("Синхронизация грузов. " + rb.getString("info.sync.processed.log"),
@@ -126,6 +127,50 @@ public class DocumentResourceBean {
         }
     }
 
+    @PUT
+    @Path("/vehicle")
+    public void putVehicles(SyncVehicle sycnVehicle, @Context HttpServletRequest r) {
+        Client client = getClient(sycnVehicle, r);
+
+        List<Vehicle> vehicles = sycnVehicle.getVehicles();
+        if (vehicles != null && !vehicles.isEmpty()) {
+            int size = vehicles.size();
+
+            try {
+                for (Vehicle vehicle : vehicles) {
+                    if (vehicle.getId() == null) {
+                        continue;
+                    }
+                    securityCheck(client, vehicle, r);
+
+                    vehicle.setClient(em.getReference(Client.class, vehicle.getClient().getId()));
+                    vehicle.setDepartment(em.getReference(Department.class, vehicle.getDepartment().getId()));
+
+                    em.merge(vehicle);
+                }
+
+                logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Vehicle.class,
+                        rb.getString("info.sync.processed"), size,
+                        r.getRemoteHost(), client.getIp());
+
+                log.info("Синхронизация транспортных средств. " + rb.getString("info.sync.processed.log"),
+                        new Object[]{client.getId(), size, r.getRemoteHost(), client.getIp()});
+            } catch (Exception e) {
+                logBean.error(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Vehicle.class,
+                        rb.getString("info.sync.processed"), size, r.getRemoteHost(), client.getIp());
+
+                log.error("Ошибка синхронизации транспортных средств. " + rb.getString("info.sync.processed.log"),
+                        new Object[]{client.getId(), size, r.getRemoteHost(), client.getIp()});
+                log.error(e.getLocalizedMessage(), e);
+
+                throw new WebApplicationException(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity(rb.getString("error.db.internal_server_error"))
+                        .type("text/plain;charset=UTF-8")
+                        .build());
+            }
+        }
+    }
+
     private <T extends SyncRequestEntity> Client getClient(T re, HttpServletRequest r) {
         try {
             return clientBean.getClient(re.getSecureKey());
@@ -135,7 +180,10 @@ public class DocumentResourceBean {
             logBean.error(Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Client.class,
                     rb.getString("error.secure_key.check") + "[ip: {0}]", r.getRemoteHost());
 
-            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).entity(rb.getString("error.secure_key.check")).type("text/plain;charset=UTF-8").build());
+            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN)
+                    .entity(rb.getString("error.secure_key.check"))
+                    .type("text/plain;charset=UTF-8")
+                    .build());
         }
     }
 
@@ -146,7 +194,10 @@ public class DocumentResourceBean {
             logBean.error(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, DocumentCargo.class,
                     rb.getString("error.document.check") + "[ip: {0}]", r.getRemoteHost());
 
-            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).entity(rb.getString("error.document.check")).type("text/plain;charset=UTF-8").build());
+            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN)
+                    .entity(rb.getString("error.document.check"))
+                    .type("text/plain;charset=UTF-8")
+                    .build());
         }
     }
 
@@ -157,7 +208,24 @@ public class DocumentResourceBean {
             logBean.error(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Cargo.class,
                     rb.getString("error.document.check") + "[ip: {0}]", r.getRemoteHost());
 
-            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).entity(rb.getString("error.document.check")).type("text/plain;charset=UTF-8").build());
+            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN)
+                    .entity(rb.getString("error.document.check"))
+                    .type("text/plain;charset=UTF-8")
+                    .build());
+        }
+    }
+
+    private void securityCheck(Client client, Vehicle vehicle, HttpServletRequest r) {
+        if (!vehicle.getClient().getId().equals(client.getId())) {
+            log.error(rb.getString("error.document.check") + "[ip: {}]", r.getRemoteHost());
+
+            logBean.error(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Vehicle.class,
+                    rb.getString("error.document.check") + "[ip: {0}]", r.getRemoteHost());
+
+            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN)
+                    .entity(rb.getString("error.document.check"))
+                    .type("text/plain;charset=UTF-8")
+                    .build());
         }
     }
 }

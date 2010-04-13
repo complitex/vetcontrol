@@ -40,9 +40,9 @@ public class DocumentCargoSyncBean extends SyncInfo {
     @Resource
     private UserTransaction ut;
 
-    public void process() {
-        processVehicle();
+    public void process() {        
         processDocumentCargo();
+        processVehicle();
         processCargo();
     }
 
