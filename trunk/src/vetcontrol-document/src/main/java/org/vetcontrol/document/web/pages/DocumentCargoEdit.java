@@ -443,7 +443,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
             public void onSubmit(AjaxRequestTarget target, Form form) {
                 DocumentCargo dc = (DocumentCargo) form.getModelObject();
 
-                if (dc.getVehicleType() != null && !dc.getVehicleType().isCompound() && dc.getVehicles().size() > 1){
+                if (dc.getVehicleType() != null && !dc.getVehicleType().isCompound() && dc.getVehicles().size() > 0){
                     target.addComponent(feedbackPanel);
                     getSession().error(getString("document.cargo.vehicle.add.error"));
                     
