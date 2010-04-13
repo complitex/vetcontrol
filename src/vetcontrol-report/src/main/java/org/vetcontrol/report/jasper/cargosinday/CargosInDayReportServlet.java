@@ -31,6 +31,7 @@ import net.sf.jasperreports.engine.export.JRTextExporterParameter;
 import org.vetcontrol.report.entity.CargosInDayReportParameter;
 import org.vetcontrol.report.service.LocaleService;
 import org.vetcontrol.report.service.dao.CargosInDayReportDAO;
+import org.vetcontrol.report.service.dao.DepartmentDAO;
 import org.vetcontrol.report.util.DateConverter;
 import org.vetcontrol.report.util.jasper.ExportType;
 import org.vetcontrol.report.util.jasper.ExportTypeUtil;
@@ -52,6 +53,8 @@ public class CargosInDayReportServlet extends HttpServlet {
     @EJB
     private CargosInDayReportDAO reportDAO;
     @EJB
+    private DepartmentDAO departmentDAO;
+    @EJB
     private LocaleService localeService;
     @EJB
     private DateConverter dateConverter;
@@ -72,7 +75,8 @@ public class CargosInDayReportServlet extends HttpServlet {
             ServletOutputStream servletOutputStream = response.getOutputStream();
             InputStream reportStream = null;
             Map<String, Object> params = new HashMap<String, Object>();
-            params.put("date", day);
+            params.put("day", day);
+            params.put("department", departmentDAO.getDepartmentName(departmentId, reportLocale));
             params.put(JRParameter.REPORT_LOCALE, reportLocale);
 
             Map<String, Object> daoParams = new HashMap<String, Object>();

@@ -3,8 +3,9 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<import value="org.vetcontrol.report.util.cargosinday.CellFormatter"/>
-        <import value="org.vetcontrol.entity.VehicleType"/>
+	<import value="org.vetcontrol.entity.VehicleType"/>
+	<import value="java.text.MessageFormat"/>
+	<import value="org.vetcontrol.report.util.cargosinday.Formatter"/>
 	<style name="base" isDefault="true" hAlign="Left" vAlign="Top" fontSize="7" isStrikeThrough="false" pdfFontName="org/vetcontrol/report/fonts/DejaVuSerif.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true">
 		<box topPadding="1" leftPadding="2">
 			<pen lineWidth="0.5" lineStyle="Solid"/>
@@ -21,30 +22,38 @@
 		</box>
 	</style>
 	<style name="Title" isDefault="false" hAlign="Center" vAlign="Middle" fontSize="7" pdfFontName="org/vetcontrol/report/fonts/DejaVuSerif.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
-	<parameter name="date" class="java.util.Date"/>
-        <field name="order" class="java.lang.Integer"/>
+	<parameter name="day" class="java.util.Date"/>
+	<parameter name="department" class="java.lang.String"/>
+	<field name="order" class="java.lang.Integer"/>
 	<field name="cargoTypeName" class="java.lang.String"/>
 	<field name="unitTypeName" class="java.lang.String"/>
 	<field name="cargoSenderName" class="java.lang.String"/>
 	<field name="cargoReceiverName" class="java.lang.String"/>
 	<field name="cargoProducerName" class="java.lang.String"/>
-        <field name="vehicleType" class="java.lang.String"/>
+	<field name="vehicleType" class="java.lang.String"/>
 	<field name="count" class="java.lang.Number"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="48" splitType="Stretch">
+		<band height="60" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Title" x="172" y="13" width="205" height="20"/>
+				<reportElement style="Title" x="39" y="21" width="509" height="21"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{title} +" " +java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT, $P{REPORT_LOCALE}).format($P{date})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String">
+                                    <![CDATA[MessageFormat.format($R{report.name}, $P{department}, Formatter.formatReportTitleDate($P{day}))]]>
+                                    </textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="13" y="33" width="535" height="10"/>
+				<reportElement positionType="Float" x="13" y="42" width="535" height="10"/>
 				<textElement/>
 				<text><![CDATA[____________________________________________________________________________________________________________________________________]]></text>
 			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Title" x="219" y="10" width="99" height="11"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{title}]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<pageHeader>
@@ -149,44 +158,32 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="413" y="0" width="3" height="21"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String">
-                                    <![CDATA[CellFormatter.formatExistenceData($F{vehicleType}, VehicleType.CAR)]]>
-                                    </textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatExistenceData($F{vehicleType}, VehicleType.CAR)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="425" y="0" width="3" height="21"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String">
-                                    <![CDATA[CellFormatter.formatExistenceData($F{vehicleType}, VehicleType.SHIP)]]>
-                                    </textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatExistenceData($F{vehicleType}, VehicleType.SHIP)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="437" y="0" width="3" height="21"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String">
-                                    <![CDATA[CellFormatter.formatExistenceData($F{vehicleType}, VehicleType.CONTAINER)]]>
-                                    </textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatExistenceData($F{vehicleType}, VehicleType.CONTAINER)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="449" y="0" width="3" height="21"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String">
-                                    <![CDATA[CellFormatter.formatExistenceData($F{vehicleType}, VehicleType.CARRIAGE)]]>
-                                    </textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatExistenceData($F{vehicleType}, VehicleType.CARRIAGE)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="461" y="0" width="3" height="21"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String">
-                                    <![CDATA[CellFormatter.formatExistenceData($F{vehicleType}, VehicleType.AIRCRAFT)]]>
-                                    </textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatExistenceData($F{vehicleType}, VehicleType.AIRCRAFT)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="473" y="0" width="75" height="21"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String">
-                                    <![CDATA[CellFormatter.formatCountData($F{count}, $F{unitTypeName}, $P{REPORT_LOCALE})]]>
-                                    </textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatCountData($F{count}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="13" y="0" width="26" height="21"/>

@@ -11,7 +11,10 @@ import java.util.Locale;
  *
  * @author Artem
  */
-public class CellFormatter {
+public final class Formatter {
+
+    private Formatter() {
+    }
 
     public static String format(Number data, String unitTypeName, Locale locale) {
         double value = data.doubleValue();
