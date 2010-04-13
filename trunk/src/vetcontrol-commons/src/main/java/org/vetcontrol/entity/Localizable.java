@@ -5,6 +5,7 @@ import org.vetcontrol.util.book.entity.annotation.ValidProperty;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
 import java.util.Map;
@@ -50,6 +51,7 @@ public abstract class Localizable implements IBook, ILongId, IUpdated, IQuery, I
             joinColumns = @JoinColumn(name="id", referencedColumnName="name"),
             uniqueConstraints = @UniqueConstraint(columnNames = {"id", "locale"}))
     @Column(name = "value")
+    @XmlTransient
     public Map<String, String> getNamesMap() {
         return namesMap;
     }
