@@ -29,7 +29,7 @@ public class JSONResolver {
             CountryWithBadEpizooticSituation.class, CustomsPoint.class,
             Department.class, Job.class, MovementType.class, PassingBorderPoint.class,
             RegisteredProducts.class, UnitType.class, Count.class,
-            DocumentCargo.class, Cargo.class, SyncCargo.class, SyncDocumentCargo.class, SyncRequestEntity.class,
+            DocumentCargo.class, Cargo.class, SyncCargo.class, SyncVehicle.class, SyncDocumentCargo.class, SyncRequestEntity.class,
             SyncLog.class, Log.class
     };
     
