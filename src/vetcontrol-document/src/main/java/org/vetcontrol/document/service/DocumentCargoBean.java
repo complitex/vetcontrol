@@ -148,6 +148,9 @@ public class DocumentCargoBean {
                 v.setUpdated(DateUtil.getCurrentDate());
 
                 em.persist(v);
+                em.flush();
+                v.setId(getLastInsertId());
+                em.clear();
             }
 
             //save cargo
