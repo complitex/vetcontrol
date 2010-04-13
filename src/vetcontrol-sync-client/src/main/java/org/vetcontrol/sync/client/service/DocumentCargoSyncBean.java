@@ -6,19 +6,20 @@ import org.vetcontrol.entity.*;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.sync.SyncCargo;
 import org.vetcontrol.sync.SyncDocumentCargo;
-
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.Date;
-import java.util.List;
-import javax.annotation.Resource;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
-import javax.transaction.UserTransaction;
+import org.vetcontrol.sync.SyncVehicle;
 import org.vetcontrol.sync.client.service.exception.DBOperationException;
 import org.vetcontrol.sync.client.service.exception.NetworkConnectionException;
+
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.UserTransaction;
+import java.util.Date;
+import java.util.List;
 
 import static org.vetcontrol.sync.client.service.ClientFactory.createJSONClient;
 
@@ -32,7 +33,7 @@ public class DocumentCargoSyncBean extends SyncInfo {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentCargoSyncBean.class);
     private static final int NETWORK_BATCH = 100;
-    @EJB
+    @EJB(beanName = "ClientBean")
     private ClientBean clientBean;
     @PersistenceContext
     private EntityManager em;
@@ -40,6 +41,7 @@ public class DocumentCargoSyncBean extends SyncInfo {
     private UserTransaction ut;
 
     public void process() {
+        processVehicle();
         processDocumentCargo();
         processCargo();
     }
@@ -169,7 +171,7 @@ public class DocumentCargoSyncBean extends SyncInfo {
                     sync(new SyncEvent(count, i * NETWORK_BATCH, Cargo.class));
                 } catch (Exception e) {
                     StringBuilder query = new StringBuilder("update Cargo c set c.syncStatus = :newSyncStatus"
-                            + " where c.id.id in (");
+                            + " where c.id in (");
                     for (int j = 0; j < cargos.size(); j++) {
                         query.append(cargos.get(j).getId());
                         if (j < cargos.size() - 1) {
@@ -201,7 +203,86 @@ public class DocumentCargoSyncBean extends SyncInfo {
         }
 
         complete(new SyncEvent(count, Cargo.class));
-        log.debug("++++++++++++++++++++ Synchronizing Complete: DocumentCargo +++++++++++++++++++\n");
+        log.debug("++++++++++++++++++++ Synchronizing Complete: Cargo +++++++++++++++++++\n");
+    }
+
+    private void processVehicle() {
+        String secureKey = clientBean.getCurrentSecureKey();
+
+        log.debug("\n==================== Synchronizing: Vehicle ============================");
+
+        start(new SyncEvent(0, Vehicle.class));
+
+        //TODO: why? This value is not used on the server side.
+        Date maxUpdated = getMaxUpdated(Vehicle.class);
+
+        int count = em.createQuery("select count(v) from Vehicle v where v.syncStatus = :syncStatus", Long.class).
+                setParameter("syncStatus", Synchronized.SyncStatus.NOT_SYNCHRONIZED).
+                getSingleResult().intValue();
+
+        boolean isNotSynchronizedExist = count > 0;
+        int i = 0;
+        while (isNotSynchronizedExist) {
+            List<Vehicle> vehicles = em.createQuery("select v from Vehicle v where v.syncStatus = :syncStatus order by v.updated", Vehicle.class).
+                    setParameter("syncStatus", Synchronized.SyncStatus.NOT_SYNCHRONIZED).
+                    setFirstResult(0).
+                    setMaxResults(NETWORK_BATCH).
+                    getResultList();
+            if (vehicles != null && !vehicles.isEmpty()) {
+                try {
+                    ut.begin();
+                    for (Vehicle c : vehicles) {
+                        c.setSyncStatus(Synchronized.SyncStatus.SYNCHRONIZED);
+                        em.merge(c);
+                    }
+                    ut.commit();
+                } catch (Exception e) {
+                    try {
+                        ut.rollback();
+                    } catch (Exception rollbackExc) {
+                        log.error("Couldn't to rollback transaction.", rollbackExc);
+                    }
+                    throw new DBOperationException("DB operation exception.", e, Vehicle.class, Log.EVENT.SYNC);
+                }
+
+                try {
+                    createJSONClient("/document/vehicle").put(new SyncVehicle(secureKey, maxUpdated, vehicles));
+                    sync(new SyncEvent(count, i * NETWORK_BATCH, Vehicle.class));
+                } catch (Exception e) {
+                    StringBuilder query = new StringBuilder("update Vehicle v set v.syncStatus = :newSyncStatus"
+                            + " where v.id in (");
+                    for (int j = 0; j < vehicles.size(); j++) {
+                        query.append(vehicles.get(j).getId());
+                        if (j < vehicles.size() - 1) {
+                            query.append(", ");
+                        }
+                    }
+                    query.append(")");
+
+                    try {
+                        ut.begin();
+                        em.createQuery(query.toString()).
+                                setParameter("newSyncStatus", Synchronized.SyncStatus.NOT_SYNCHRONIZED).
+                                executeUpdate();
+                        ut.commit();
+                    } catch (Exception updateExc) {
+                        log.error("Couldn't to recover vehicle state.", updateExc);
+                        try {
+                            ut.rollback();
+                        } catch (Exception rollbackExc) {
+                            log.error("Couldn't to rollback transaction.", rollbackExc);
+                        }
+                    }
+                    throw new NetworkConnectionException("Network connection exception.", e, Vehicle.class, Log.EVENT.SYNC);
+                }
+                i++;
+            } else {
+                isNotSynchronizedExist = false;
+            }
+        }
+
+        complete(new SyncEvent(count, Vehicle.class));
+        log.debug("++++++++++++++++++++ Synchronizing Complete: Vehicle +++++++++++++++++++\n");
     }
 
     private Date getMaxUpdated(Class<? extends IUpdated> entity) {

@@ -49,8 +49,8 @@ public class BookSyncBean extends SyncInfo {
     private boolean initial = false;
     public final static Class[] syncBooks = new Class[]{
         StringCulture.class,
-        ArrestReason.class, CargoMode.class, CargoProducer.class,
-        CargoType.class, CountryBook.class, CountryWithBadEpizooticSituation.class,
+        ArrestReason.class, CargoMode.class, CountryBook.class, CargoProducer.class,
+        CargoType.class, CountryWithBadEpizooticSituation.class,
         CustomsPoint.class, Department.class, Job.class, MovementType.class, PassingBorderPoint.class,
         RegisteredProducts.class, UnitType.class, CargoModeCargoType.class, CargoModeUnitType.class};
     private final Map<Class, GenericType> genericTypeMap = new HashMap<Class, GenericType>();
@@ -271,7 +271,9 @@ public class BookSyncBean extends SyncInfo {
             List<T> books = null;
             try {
                 books = ClientFactory.createJSONClient("/book/" + bookClass.getSimpleName()
-                        + "/list/" + i * NETWORK_BATCH_SIZE + "/" + NETWORK_BATCH_SIZE).post((GenericType<List<T>>) genericTypeMap.get(bookClass), new SyncRequestEntity(secureKey, maxUpdated, lastSyncStatus));
+                        + "/list/" + i * NETWORK_BATCH_SIZE + "/" + NETWORK_BATCH_SIZE)
+                        .post((GenericType<List<T>>) genericTypeMap.get(bookClass),
+                                new SyncRequestEntity(secureKey, maxUpdated, lastSyncStatus));
             } catch (Exception e) {
                 throw new NetworkConnectionException("Network connection exception.", e, bookClass, event);
             }
