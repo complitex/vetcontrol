@@ -35,7 +35,8 @@ import org.vetcontrol.report.entity.CargosInDayReportParameter;
 import org.vetcontrol.report.jasper.cargosinday.CargosInDayReportServlet;
 import org.vetcontrol.report.service.LocaleService;
 import org.vetcontrol.report.service.dao.CargosInDayReportDAO;
-import org.vetcontrol.report.util.cargosinday.CellFormatter;
+import org.vetcontrol.report.service.dao.DepartmentDAO;
+import org.vetcontrol.report.util.cargosinday.Formatter;
 import org.vetcontrol.report.util.DateConverter;
 import org.vetcontrol.report.util.jasper.ExportType;
 import org.vetcontrol.report.web.component.PrintButton;
@@ -56,6 +57,8 @@ public final class CargosInDayReportPage extends TemplatePage {
 
     @EJB(name = "CargosInDayReportDAO")
     private CargosInDayReportDAO reportDAO;
+    @EJB(name = "DepartmentDAO")
+    private DepartmentDAO departmentDAO;
     @EJB(name = "LocaleService")
     private LocaleService localeService;
     @EJB(name = "DateConverter")
@@ -84,7 +87,8 @@ public final class CargosInDayReportPage extends TemplatePage {
         final UIPreferences preferences = getPreferences();
 
         add(new Label("title", new ResourceModel("title")));
-        add(new Label("report.name", new StringResourceModel("report.name", null, new Object[]{day})));
+        add(new Label("report.name", new StringResourceModel("report.name", null,
+                new Object[]{departmentDAO.getDepartmentName(departmentId, reportLocale), Formatter.formatReportTitleDate(day)})));
 
         SortableDataProvider<CargosInDayReport> dataProvider = new SortableDataProvider<CargosInDayReport>() {
 
@@ -143,12 +147,12 @@ public final class CargosInDayReportPage extends TemplatePage {
                 item.add(new Label("cargoProducerName", report.getCargoProducerName()));
                 item.add(new Label("cargoReceiverName", report.getCargoReceiverName()));
                 item.add(new Label("cargoSenderName", report.getCargoSenderName()));
-                item.add(new Label("isCar", CellFormatter.formatExistenceData(report.getVehicleType(), VehicleType.CAR)));
-                item.add(new Label("isShip", CellFormatter.formatExistenceData(report.getVehicleType(), VehicleType.SHIP)));
-                item.add(new Label("isContainer", CellFormatter.formatExistenceData(report.getVehicleType(), VehicleType.CONTAINER)));
-                item.add(new Label("isCarriage", CellFormatter.formatExistenceData(report.getVehicleType(), VehicleType.CARRIAGE)));
-                item.add(new Label("isAircraft", CellFormatter.formatExistenceData(report.getVehicleType(), VehicleType.AIRCRAFT)));
-                item.add(new Label("count", CellFormatter.formatCountData(report.getCount(), report.getUnitTypeName(), localeService.getReportLocale())));
+                item.add(new Label("isCar", Formatter.formatExistenceData(report.getVehicleType(), VehicleType.CAR)));
+                item.add(new Label("isShip", Formatter.formatExistenceData(report.getVehicleType(), VehicleType.SHIP)));
+                item.add(new Label("isContainer", Formatter.formatExistenceData(report.getVehicleType(), VehicleType.CONTAINER)));
+                item.add(new Label("isCarriage", Formatter.formatExistenceData(report.getVehicleType(), VehicleType.CARRIAGE)));
+                item.add(new Label("isAircraft", Formatter.formatExistenceData(report.getVehicleType(), VehicleType.AIRCRAFT)));
+                item.add(new Label("count", Formatter.formatCountData(report.getCount(), report.getUnitTypeName(), localeService.getReportLocale())));
             }
         };
 

@@ -84,4 +84,15 @@ public class DateUtil {
 
         return c.getTime();
     }
+
+    public static boolean isTheSameDay(Date date1, Date date2){
+        Calendar c1 = Calendar.getInstance();
+        c1.setTime(date1);
+
+        Calendar c2 = Calendar.getInstance();
+        c2.setTime(date2);
+
+        return c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR) &&
+                c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR);
+    }
 }

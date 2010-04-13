@@ -33,7 +33,7 @@ import org.vetcontrol.report.service.LocaleService;
 import org.vetcontrol.report.service.dao.DepartmentDAO;
 import org.vetcontrol.report.service.dao.MovementTypesReportDAO;
 import org.vetcontrol.report.util.jasper.ExportType;
-import org.vetcontrol.report.util.movementtypes.CellFormatter;
+import org.vetcontrol.report.util.movementtypes.Formatter;
 import org.vetcontrol.report.web.component.PrintButton;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UIPreferences.PreferenceType;
@@ -136,18 +136,18 @@ public final class MovementTypesReportPage extends TemplatePage {
 
                 item.add(new Label("rowNumber", String.valueOf(report.getOrder())));
 
-                item.add(new Label("cargoModeName", CellFormatter.cargoModeName(report.getCargoModeName(), report.getParentCargoModeName())));
+                item.add(new Label("cargoModeName", Formatter.cargoModeName(report.getCargoModeName(), report.getParentCargoModeName())));
 
-                item.add(new Label("export", CellFormatter.format(report.getExport(), report.getUnitTypeName(), localeService.getReportLocale())));
-                item.add(new Label("import", CellFormatter.format(report.getImprt(), report.getUnitTypeName(), localeService.getReportLocale())));
-                item.add(new Label("transit", CellFormatter.format(report.getTransit(), report.getUnitTypeName(), localeService.getReportLocale())));
-                item.add(new Label("importTransit", CellFormatter.format(report.getImportTransit(), report.getUnitTypeName(), localeService.getReportLocale())));
+                item.add(new Label("export", Formatter.format(report.getExport(), report.getUnitTypeName(), localeService.getReportLocale())));
+                item.add(new Label("import", Formatter.format(report.getImprt(), report.getUnitTypeName(), localeService.getReportLocale())));
+                item.add(new Label("transit", Formatter.format(report.getTransit(), report.getUnitTypeName(), localeService.getReportLocale())));
+                item.add(new Label("importTransit", Formatter.format(report.getImportTransit(), report.getUnitTypeName(), localeService.getReportLocale())));
 
-                item.add(new Label("exportInCurrentMonth", CellFormatter.format(report.getExportInCurrentMonth(), report.getUnitTypeName(), localeService.getReportLocale())));
-                item.add(new Label("importInCurrentMonth", CellFormatter.format(report.getImprtInCurrentMonth(), report.getUnitTypeName(), localeService.getReportLocale())));
-                item.add(new Label("transitInCurrentMonth", CellFormatter.format(report.getTransitInCurrentMonth(), report.getUnitTypeName(), localeService.getReportLocale())));
+                item.add(new Label("exportInCurrentMonth", Formatter.format(report.getExportInCurrentMonth(), report.getUnitTypeName(), localeService.getReportLocale())));
+                item.add(new Label("importInCurrentMonth", Formatter.format(report.getImprtInCurrentMonth(), report.getUnitTypeName(), localeService.getReportLocale())));
+                item.add(new Label("transitInCurrentMonth", Formatter.format(report.getTransitInCurrentMonth(), report.getUnitTypeName(), localeService.getReportLocale())));
                 item.add(new Label("importTransitInCurrentMonth",
-                        CellFormatter.format(report.getImportTransitInCurrentMonth(), report.getUnitTypeName(), localeService.getReportLocale())));
+                        Formatter.format(report.getImportTransitInCurrentMonth(), report.getUnitTypeName(), localeService.getReportLocale())));
             }
         };
 

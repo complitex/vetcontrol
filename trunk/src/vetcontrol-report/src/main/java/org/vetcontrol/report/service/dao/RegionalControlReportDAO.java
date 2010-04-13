@@ -12,7 +12,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import org.vetcontrol.report.entity.RegionalControlReport;
-import org.vetcontrol.report.util.regionalcontrol.CellFormatter;
+import org.vetcontrol.report.util.regionalcontrol.Formatter;
 import org.vetcontrol.web.security.SecurityRoles;
 
 /**
@@ -27,7 +27,7 @@ public class RegionalControlReportDAO extends AbstractReportDAO<RegionalControlR
     public static enum OrderBy {
 
         CARGO_ARRIVED("cargoArrived"),
-        CARGO_TYPE("cargoTypeName + '" + CellFormatter.CARGO_TYPE_DELIMETER + "' + cargoTypeCode"),
+        CARGO_TYPE("cargoTypeName + '" + Formatter.CARGO_TYPE_DELIMETER + "' + cargoTypeCode"),
         CARGO_RECEIVER("cargoReceiverName"), CARGO_PRODUCER("cargoProducerName");
         private String name;
 

@@ -37,7 +37,7 @@ import org.vetcontrol.report.service.dao.DepartmentDAO;
 import org.vetcontrol.report.service.dao.RegionalControlReportDAO;
 import org.vetcontrol.report.util.DateConverter;
 import org.vetcontrol.report.util.jasper.ExportType;
-import org.vetcontrol.report.util.regionalcontrol.CellFormatter;
+import org.vetcontrol.report.util.regionalcontrol.Formatter;
 import org.vetcontrol.report.web.component.PrintButton;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UserProfileBean;
@@ -90,8 +90,11 @@ public final class RegionalControlReportPage extends TemplatePage {
         final UIPreferences preferences = getPreferences();
 
         add(new Label("title", new ResourceModel("title")));
-        add(new Label("report.name", new StringResourceModel("report.name", null,
-                new Object[]{departmentDAO.getDepartmentName(departmentId, reportLocale), startDate, endDate})));
+        boolean isTheSameDay = DateUtil.isTheSameDay(startDate, endDate);
+        String reportName = isTheSameDay ? "report.name2" : "report.name1";
+        add(new Label("report.name", new StringResourceModel(reportName, null,
+                new Object[]{departmentDAO.getDepartmentName(departmentId, reportLocale),
+                    Formatter.formatReportTitleDate(startDate), Formatter.formatReportTitleDate(endDate)})));
 
         SortableDataProvider<RegionalControlReport> dataProvider = new SortableDataProvider<RegionalControlReport>() {
 
@@ -145,11 +148,11 @@ public final class RegionalControlReportPage extends TemplatePage {
 
                 item.add(new Label("rowNumber", String.valueOf(report.getOrder())));
 
-                item.add(new Label("cargoArrived", CellFormatter.formatCargoArrived(report.getCargoArrived(), reportLocale)));
+                item.add(new Label("cargoArrived", Formatter.formatCargoArrived(report.getCargoArrived(), reportLocale)));
                 item.add(new Label("cargoProducerName", report.getCargoProducerName()));
                 item.add(new Label("cargoReceiverName", report.getCargoReceiverName()));
-                item.add(new Label("cargoTypeName", CellFormatter.formatCargoType(report.getCargoTypeName(), report.getCargoTypeCode())));
-                item.add(new Label("count", CellFormatter.formatCount(report.getCount(), report.getUnitTypeName(), localeService.getReportLocale())));
+                item.add(new Label("cargoTypeName", Formatter.formatCargoType(report.getCargoTypeName(), report.getCargoTypeCode())));
+                item.add(new Label("count", Formatter.formatCount(report.getCount(), report.getUnitTypeName(), localeService.getReportLocale())));
                 item.add(new Label("movementType", report.getMovementTypeName()));
             }
         };
