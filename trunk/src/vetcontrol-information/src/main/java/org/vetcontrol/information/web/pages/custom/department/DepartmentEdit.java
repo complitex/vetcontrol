@@ -54,6 +54,7 @@ import org.vetcontrol.util.book.BookHash;
 import org.vetcontrol.util.book.Property;
 import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.component.toolbar.DisableItemButton;
+import org.vetcontrol.web.component.toolbar.EnableItemButton;
 import org.vetcontrol.web.component.toolbar.ToolbarButton;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.FormTemplatePage;
@@ -368,6 +369,28 @@ public final class DepartmentEdit extends FormTemplatePage {
         disableReferences();
         logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, DepartmentEdit.class, Department.class, "ID: " + department.getId());
     }
+    
+    private void disableReferences() {
+        for (PassingBorderPoint borderPoint : department.getPassingBorderPoints()) {
+            if (!BeanPropertyUtil.isNewBook(borderPoint)) {
+                bookDAO.disable(borderPoint);
+            }
+        }
+    }
+
+    private void enableDepartment(){
+        bookDAO.enable(department);
+        enableReferences();
+        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, DepartmentEdit.class, Department.class, "ID: " + department.getId());
+    }
+
+    private void enableReferences(){
+        for (PassingBorderPoint borderPoint : department.getPassingBorderPoints()) {
+            if (!BeanPropertyUtil.isNewBook(borderPoint)) {
+                bookDAO.enable(borderPoint);
+            }
+        }
+    }
 
     private void updateDepartmentReferences(Department department) {
         Date newVersion = DateUtil.getCurrentDate();
@@ -397,15 +420,23 @@ public final class DepartmentEdit extends FormTemplatePage {
                 super.onBeforeRender();
             }
         });
-        return toolbarButtons;
-    }
+        toolbarButtons.add(new EnableItemButton(id) {
 
-    private void disableReferences() {
-        for (PassingBorderPoint borderPoint : department.getPassingBorderPoints()) {
-            if (!BeanPropertyUtil.isNewBook(borderPoint)) {
-                bookDAO.disable(borderPoint);
+            @Override
+            protected void onClick() {
+                enableDepartment();
+                goToListPage();
             }
-        }
+
+            @Override
+            protected void onBeforeRender() {
+                if (BeanPropertyUtil.isNewBook(department) || !CanEditUtil.canEditDisabled(department)) {
+                    setVisible(false);
+                }
+                super.onBeforeRender();
+            }
+        });
+        return toolbarButtons;
     }
 
     private class PassingBorderPointListItem extends ListItem<PassingBorderPoint> {
