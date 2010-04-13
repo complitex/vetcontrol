@@ -14,11 +14,19 @@ import org.vetcontrol.web.template.TemplateWebApplication;
  *
  * @author Artem
  */
-public abstract class CanEditUtil {
+public final class CanEditUtil {
+
+    private CanEditUtil(){}
 
     public static boolean canEdit(Serializable bookEntry) {
         TemplateWebApplication application = (TemplateWebApplication) Application.get();
         return application.hasAnyRole(SecurityRoles.INFORMATION_EDIT)
                 && !(Boolean) BeanPropertyUtil.getPropertyValue(bookEntry, BeanPropertyUtil.getDisabledPropertyName());
+    }
+
+    public static boolean canEditDisabled(Serializable bookEntry){
+        TemplateWebApplication application = (TemplateWebApplication) Application.get();
+        return application.hasAnyRole(SecurityRoles.INFORMATION_EDIT)
+                && (Boolean) BeanPropertyUtil.getPropertyValue(bookEntry, BeanPropertyUtil.getDisabledPropertyName());
     }
 }

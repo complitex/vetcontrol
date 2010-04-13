@@ -20,7 +20,6 @@ import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AbstractAutoCo
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteSettings;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -46,6 +45,7 @@ import org.vetcontrol.entity.UnitType;
 import org.vetcontrol.information.service.dao.CargoModeDAO;
 import org.vetcontrol.information.service.dao.IBookDAO;
 import org.vetcontrol.information.util.web.BookTypeWebInfoUtil;
+import org.vetcontrol.information.util.web.BookWebInfo;
 import org.vetcontrol.information.util.web.CanEditUtil;
 import org.vetcontrol.information.util.web.Constants;
 import org.vetcontrol.information.util.web.TruncateUtil;
@@ -62,6 +62,7 @@ import org.vetcontrol.util.book.BookHash;
 import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.component.list.AjaxRemovableListView;
 import org.vetcontrol.web.component.toolbar.DisableItemButton;
+import org.vetcontrol.web.component.toolbar.EnableItemButton;
 import org.vetcontrol.web.component.toolbar.ToolbarButton;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.FormTemplatePage;
@@ -444,7 +445,7 @@ public final class CargoModeEdit extends FormTemplatePage {
             @Override
             public void update() {
                 saveOrUpdate(cargoModeModel, initial);
-                setResponsePage(getListPage());
+                goToListPage();
             }
 
             @Override
@@ -461,7 +462,7 @@ public final class CargoModeEdit extends FormTemplatePage {
                     cmut.setNeedToUpdateVersion(true);
                 }
                 saveOrUpdate(cargoModeModel, initial);
-                setResponsePage(getListPage());
+                goToListPage();
             }
         };
         add(confirmationDialog);
@@ -476,7 +477,7 @@ public final class CargoModeEdit extends FormTemplatePage {
                     if (BeanPropertyUtil.isNewBook(cargoModeModel.getObject())) {
                         //new entry
                         saveOrUpdate(cargoModeModel, initial);
-                        setResponsePage(getListPage());
+                        goToListPage();
                     } else {
                         confirmationDialog.open(target);
                     }
@@ -525,7 +526,7 @@ public final class CargoModeEdit extends FormTemplatePage {
 
             @Override
             public void onClick() {
-                setResponsePage(getListPage());
+                goToListPage();
             }
         };
         cancel.setVisible(CanEditUtil.canEdit(cargoModeModel.getObject()));
@@ -535,7 +536,7 @@ public final class CargoModeEdit extends FormTemplatePage {
 
             @Override
             public void onClick() {
-                setResponsePage(getListPage());
+                goToListPage();
             }
         };
         back.setVisible(!CanEditUtil.canEdit(cargoModeModel.getObject()));
@@ -566,6 +567,11 @@ public final class CargoModeEdit extends FormTemplatePage {
         logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, CargoModeEdit.class, CargoMode.class, "ID: " + cargoMode.getId());
     }
 
+    private void enableCargoMode(CargoMode cargoMode) {
+        bookDAO.enable(cargoMode);
+        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, CargoModeEdit.class, CargoMode.class, "ID: " + cargoMode.getId());
+    }
+
     private void updateCargoModeReferences(IModel<CargoMode> cargoModeModel) {
         Date newVersion = DateUtil.getCurrentDate();
         for (CargoModeCargoType cmct : cargoModeModel.getObject().getCargoModeCargoTypes()) {
@@ -588,7 +594,7 @@ public final class CargoModeEdit extends FormTemplatePage {
             @Override
             protected void onClick() {
                 disableCargoMode(cargoModeModel.getObject());
-                setResponsePage(getListPage());
+                goToListPage();
             }
 
             @Override
@@ -599,6 +605,23 @@ public final class CargoModeEdit extends FormTemplatePage {
                 super.onBeforeRender();
             }
         });
+        toolbarButtons.add(new EnableItemButton(id) {
+
+            @Override
+            protected void onClick() {
+                enableCargoMode(cargoModeModel.getObject());
+                goToListPage();
+            }
+
+            @Override
+            protected void onBeforeRender() {
+                if (BeanPropertyUtil.isNewBook(cargoModeModel.getObject()) || !CanEditUtil.canEditDisabled(cargoModeModel.getObject())) {
+                    setVisible(false);
+                }
+                super.onBeforeRender();
+            }
+        });
+
         return toolbarButtons;
     }
 
@@ -606,8 +629,9 @@ public final class CargoModeEdit extends FormTemplatePage {
         return cargoMode.getParent() == null;
     }
 
-    private Class<? extends WebPage> getListPage() {
-        return BookTypeWebInfoUtil.getInfo(CargoMode.class).getListPage();
+    private void goToListPage() {
+        BookWebInfo cargoModeWebInfo = BookTypeWebInfoUtil.getInfo(CargoMode.class);
+        setResponsePage(cargoModeWebInfo.getListPage(), cargoModeWebInfo.getListPageParameters());
     }
 }
 

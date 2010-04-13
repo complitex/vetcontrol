@@ -55,6 +55,7 @@ import org.vetcontrol.util.book.Property;
 import org.vetcontrol.util.book.entity.ShowBooksMode;
 import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.component.toolbar.DisableItemButton;
+import org.vetcontrol.web.component.toolbar.EnableItemButton;
 
 /**
  *
@@ -271,6 +272,15 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
         logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, AddUpdateBookEntryPage.class, bookEntry.getClass(), "ID: " + id);
     }
 
+    private void enableBookEntry() {
+        Long id = -1L;
+        if (bookEntry instanceof ILongId) {
+            id = ((ILongId) bookEntry).getId();
+        }
+        bookDAO.enable(bookEntry);
+        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, AddUpdateBookEntryPage.class, bookEntry.getClass(), "ID: " + id);
+    }
+
     private void goToBooksPage() {
         BookWebInfo bookWebInfo = BookTypeWebInfoUtil.getInfo(bookEntry.getClass());
         setResponsePage(bookWebInfo.getListPage(), bookWebInfo.getListPageParameters());
@@ -290,6 +300,22 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
             @Override
             protected void onBeforeRender() {
                 if (BeanPropertyUtil.isNewBook(bookEntry) || !CanEditUtil.canEdit(bookEntry)) {
+                    setVisible(false);
+                }
+                super.onBeforeRender();
+            }
+        });
+        toolbarButtons.add(new EnableItemButton(id) {
+
+            @Override
+            protected void onClick() {
+                enableBookEntry();
+                goToBooksPage();
+            }
+
+            @Override
+            protected void onBeforeRender() {
+                if (BeanPropertyUtil.isNewBook(bookEntry) || !CanEditUtil.canEditDisabled(bookEntry)) {
                     setVisible(false);
                 }
                 super.onBeforeRender();

@@ -78,21 +78,30 @@ public class BookDAO extends BookViewDAO implements IBookDAO {
 
     @Override
     public void disable(Serializable book) {
+        switchActiveState(book, true);
+    }
+
+    @Override
+    public void enable(Serializable book) {
+        switchActiveState(book, false);
+    }
+
+    private void switchActiveState(Serializable book, boolean disabled) {
         try {
             StringBuilder updateQuery = new StringBuilder().append("UPDATE ").
                     append(book.getClass().getSimpleName()).
                     append(" a SET a.").
                     append(BeanPropertyUtil.getDisabledPropertyName()).
-                    append(" = TRUE").
+                    append(" = :disabled").
                     append(", a.").
                     append(BeanPropertyUtil.getVersionPropertyName()).
                     append(" = :updated").
                     append(" WHERE a.id = :id");
             getEntityManager().createQuery(updateQuery.toString()).
                     setParameter("updated", DateUtil.getCurrentDate(), TemporalType.TIMESTAMP).
+                    setParameter("disabled", disabled).
                     setParameter("id", BeanPropertyUtil.getPropertyValue(book, "id")).
                     executeUpdate();
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
