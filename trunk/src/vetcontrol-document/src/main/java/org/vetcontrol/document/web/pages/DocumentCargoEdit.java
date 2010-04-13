@@ -568,6 +568,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
                         cargo.setCertificateDetails(copyFrom.getCertificateDetails());
                         cargo.setCertificateDate(copyFrom.getCertificateDate());
                         cargo.setCargoProducer(copyFrom.getCargoProducer());
+                        cargo.setVehicle(copyFrom.getVehicle());                        
 
                         cargo.setDocumentCargo(dc);
                         dc.getCargos().add(cargo);
