@@ -12,6 +12,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vetcontrol.entity.CargoMode;
 import org.vetcontrol.entity.CargoType;
 import org.vetcontrol.service.CargoTypeBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
@@ -37,7 +38,7 @@ public class UKTZEDField extends Panel {
     @EJB(name = "CargoTypeBean")
     private CargoTypeBean cargoTypeBean;
 
-    public UKTZEDField(String id, final IModel<CargoType> model, final Component... ajaxUpdate) {
+    public UKTZEDField(String id, final IModel<CargoType> model, final CargoMode cargoMode, final Component... ajaxUpdate) {
         super(id, model);
 
         final Locale system = localeDAO.systemLocale();
@@ -75,7 +76,7 @@ public class UKTZEDField extends Panel {
 
             @Override
             protected Iterator<String> getChoices(String input) {
-                List<CargoType> cargoTypes = cargoTypeBean.getCargoTypesByCode(input, MAX_ITEM);
+                List<CargoType> cargoTypes = cargoTypeBean.getCargoTypesByCode(cargoMode, input, MAX_ITEM);
                 List<String> choices = new ArrayList<String>();
                 for (CargoType ct : cargoTypes){
                     choices.add(ct.getCode() + "\t" + ct.getDisplayName(getLocale(), system));
@@ -96,7 +97,7 @@ public class UKTZEDField extends Panel {
 
             @Override
             protected Iterator<String> getChoices(String input) {
-                List<CargoType> cargoTypes = cargoTypeBean.getCargoTypesByName(input, MAX_ITEM);
+                List<CargoType> cargoTypes = cargoTypeBean.getCargoTypesByName(cargoMode, input, MAX_ITEM);
                 List<String> choices = new ArrayList<String>();
                 for (CargoType ct : cargoTypes){
                     String s = ct.getDisplayName(getLocale(), system);
