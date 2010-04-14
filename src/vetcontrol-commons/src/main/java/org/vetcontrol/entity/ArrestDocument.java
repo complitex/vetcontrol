@@ -67,6 +67,8 @@ public class ArrestDocument extends Synchronized implements IUpdated {
     @Enumerated(EnumType.STRING)
     @Column(name = "vehicle_type", nullable = false)
     private VehicleType vehicleType;
+    @Column(name = "vehicle_details", nullable = false)
+    private String vehicleDetails;
     @ManyToOne
     @JoinColumn(name = "cargo_sender_country_id", nullable = false)
     private CountryBook senderCountry;
@@ -203,6 +205,14 @@ public class ArrestDocument extends Synchronized implements IUpdated {
 
     public void setVehicleType(VehicleType vehicleType) {
         this.vehicleType = vehicleType;
+    }
+
+    public String getVehicleDetails() {
+        return vehicleDetails;
+    }
+
+    public void setVehicleDetails(String vehicleDetails) {
+        this.vehicleDetails = vehicleDetails;
     }
 
     @Override
