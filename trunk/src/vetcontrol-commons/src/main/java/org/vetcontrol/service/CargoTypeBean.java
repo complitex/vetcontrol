@@ -1,16 +1,16 @@
 package org.vetcontrol.service;
 
-import java.util.Collections;
+import org.vetcontrol.entity.CargoMode;
 import org.vetcontrol.entity.CargoType;
 import org.vetcontrol.entity.UnitType;
+import org.vetcontrol.util.book.BeanPropertyUtil;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.util.Collections;
 import java.util.List;
-import org.vetcontrol.entity.CargoMode;
-import org.vetcontrol.util.book.BeanPropertyUtil;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -34,12 +34,41 @@ public class CargoTypeBean {
                 getResultList();
     }
 
+    public List<CargoType> getCargoTypesByName(CargoMode cargoMode, String filter, int count) {
+        if (cargoMode == null){
+            return getCargoTypesByName(filter, count);
+        }
+
+        return entityManager.createQuery("select distinct(c.cargoType) from CargoModeCargoType c " +
+                "left join c.cargoType.namesMap n where n like :filter" +
+                " and c.cargoMode = :cargoMode" +
+                " and c.cargoType." + BeanPropertyUtil.getDisabledPropertyName() + " = FALSE order by n", CargoType.class)
+                .setParameter("filter", "%" + filter + "%")
+                .setParameter("cargoMode", cargoMode)
+                .setMaxResults(count)
+                .getResultList();
+    }
+
     public List<CargoType> getCargoTypesByCode(String filter, int count) {
         return entityManager.createQuery("select distinct(ct) from CargoType ct where ct.code like :filter and ct."
                 + BeanPropertyUtil.getDisabledPropertyName() + " = FALSE order by ct.code", CargoType.class).
                 setParameter("filter", "%" + filter + "%").
                 setMaxResults(count).
                 getResultList();
+    }
+    
+    public List<CargoType> getCargoTypesByCode(CargoMode cargoMode, String filter, int count) {
+        if (cargoMode == null){
+            return getCargoTypesByCode(filter, count);
+        }
+
+        return entityManager.createQuery("select distinct(c.cargoType) from CargoModeCargoType c " +
+                "where c.cargoType.code like :filter and c.cargoMode = :cargoMode and c.cargoType."
+                + BeanPropertyUtil.getDisabledPropertyName() + " = FALSE order by c.cargoType.code", CargoType.class)
+                .setParameter("filter", "%" + filter + "%")
+                .setParameter("cargoMode", cargoMode)
+                .setMaxResults(count)
+                .getResultList();
     }
 
     public CargoType getCargoType(String code) {
@@ -54,7 +83,7 @@ public class CargoTypeBean {
     }
 
     public List<UnitType> getUnitTypes(CargoType cargoType) {
-        CargoMode cargoMode = null;
+        CargoMode cargoMode;
         try {
             cargoMode = entityManager.createQuery("SELECT cm FROM CargoMode cm WHERE cm.id IN "
                     + "(SELECT cmct.id.cargoModeId FROM CargoModeCargoType cmct WHERE cmct.cargoType = :cargoType) AND cm."
@@ -69,5 +98,14 @@ public class CargoTypeBean {
                 + "ut." + BeanPropertyUtil.getDisabledPropertyName() + " = FALSE", UnitType.class).
                 setParameter("cargoMode", cargoMode).
                 getResultList();
+    }
+
+    public CargoMode getCargoMode(CargoType cargoType){
+        List<CargoMode> list  = entityManager.createQuery("select c.cargoMode from CargoModeCargoType c " +
+                "where c.cargoType = :cargoType", CargoMode.class)
+                .setParameter("cargoType", cargoType)
+                .getResultList();
+
+        return !list.isEmpty() ? list.get(0) : null;
     }
 }

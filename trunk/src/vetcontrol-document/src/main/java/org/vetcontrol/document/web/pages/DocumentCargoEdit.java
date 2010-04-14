@@ -159,13 +159,22 @@ public class DocumentCargoEdit extends FormTemplatePage {
             protected void onValidate() {
                 DocumentCargo dc = getModelObject();
 
-                if (dc.getVehicleType() != null && !dc.getVehicleType().isCompound() && dc.getVehicles().size() > 0) {
+                if (dc.getVehicleType() != null && !dc.getVehicleType().isCompound() && dc.getVehicles().size() > 1) {
                     error(getString("document.cargo.vehicle.add.error"));
                 }
+
+                //Вид груза уникален для всех грузов
+                CargoMode cargoMode = getCargoMode(dc);
 
                 for (Cargo c : dc.getCargos()) {
                     if (c.getCargoType() == null) {
                         error(getString("document.cargo.edit.message.cargo_type.not_found.error"));
+                    }
+                    
+                    if (cargoMode != null && !cargoMode.equals(cargoTypeBean.getCargoMode(c.getCargoType()))){
+                        error(getString("document.cargo.edit.message.cargo_type.unique_cargo_mode.error") + ": " +
+                                c.getCargoType().getCode() + " - " +
+                                cargoMode.getDisplayName(getLocale(), localeDAO.systemLocale()));
                     }
                 }
             }
@@ -430,6 +439,25 @@ public class DocumentCargoEdit extends FormTemplatePage {
         cargoContainer.setOutputMarkupId(true);
         form.add(cargoContainer);
 
+        //Вид груза
+        final Label cargoModeLabel = new Label("document.cargo.cargo_mode", new LoadableDetachableModel<String>(){
+            @Override
+            protected String load() {
+                String s = "";
+
+                CargoMode cargoMode = getCargoMode(documentCargoModel.getObject());
+
+                if (cargoMode != null){
+                    s = getString("document.cargo.cargo_mode") + ": " +
+                            cargoMode.getDisplayName(getLocale(), localeDAO.systemLocale());
+                }
+
+                return s;
+            }
+        });
+        cargoModeLabel.setOutputMarkupId(true);
+        cargoContainer.add(cargoModeLabel);
+
         //Добавить транспортное средство
         final AjaxSubmitLink addVehicleLink = new AjaxSubmitLink("document.cargo.vehicle.add", form) {
 
@@ -449,6 +477,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
                 dc.getVehicles().add(vehicle);
 
                 target.addComponent(vehicleContainer);
+                target.addComponent(cargoModeLabel);
                 target.addComponent(cargoContainer);
 
                 String setFocusOnNewVehicle = "newVehicleFirstInputId = $('#vehicles tbody tr:last input[type=\"text\"]:first').attr('id');"
@@ -491,7 +520,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
                 item.add(name);
 
                 addRemoveSubmitLink("document.cargo.vehicle.delete", form, item, addVehicleLink,
-                        vehicleContainer, cargoContainer, feedbackPanel);
+                        vehicleContainer, cargoContainer, feedbackPanel, cargoModeLabel);
             }
 
             @Override
@@ -548,7 +577,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
 
             @Override
             protected void populateItem(final ListItem<Cargo> item) {
-                addCargo(item);
+                addCargo(item, getCargoMode(documentCargoModel.getObject()));
 
                 //Копировать
                 final AjaxSubmitLink copyCargoLink = new AjaxSubmitLink("document.cargo.copy", form) {
@@ -674,7 +703,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
         }
     }
 
-    private void addCargo(ListItem<Cargo> item) {
+    private void addCargo(ListItem<Cargo> item, CargoMode cargoMode) {
         //Единицы измерения        
         UnitTypeModel unitTypeModel = new UnitTypeModel(item.getModelObject());
 
@@ -697,7 +726,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
 
         //УКТЗЕД и Тип груза
         item.add(new UKTZEDField("document.cargo.cargo_type", new PropertyModel<CargoType>(item.getModel(), "cargoType"),
-                ddcUnitTypes));
+                cargoMode, ddcUnitTypes));
 
         //Количество
         TextField<Double> count = new TextField<Double>("document.cargo.count",
@@ -794,5 +823,16 @@ public class DocumentCargoEdit extends FormTemplatePage {
                 new PropertyModel<Date>(item.getModel(), "certificateDate"));
         certificateDate.setRequired(true);
         item.add(certificateDate);
+    }
+
+    private CargoMode getCargoMode(DocumentCargo documentCargo){
+        if (!documentCargo.getCargos().isEmpty()){
+            Cargo cargo = documentCargo.getCargos().get(0);
+
+            if (cargo.getCargoType() != null){
+                return cargoTypeBean.getCargoMode(cargo.getCargoType());
+            }
+        }
+        return null;
     }
 }
