@@ -554,20 +554,20 @@ public class DocumentCargoEdit extends FormTemplatePage {
                         //update item model
                         for (Iterator<? extends Component> it = item.iterator(); it.hasNext();){
                             Component component = it.next();
+
                             if (component instanceof FormComponent){
                                 FormComponent formComponent = (FormComponent)component;
-                                try
-                                {
+                                try {
                                     formComponent.inputChanged();
                                     formComponent.validate();
+
                                     if (formComponent.hasErrorMessage()){
                                         formComponent.invalid();
                                     }else {
-                                       formComponent.valid();
-                                       formComponent.updateModel();
+                                        formComponent.valid();
+                                        formComponent.updateModel();
                                     }
-                                }
-                                catch (RuntimeException e){
+                                } catch (RuntimeException e){
                                     // nothing
                                 }
                             }
