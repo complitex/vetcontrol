@@ -23,7 +23,6 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -50,6 +49,7 @@ import org.vetcontrol.information.util.web.CanEditUtil;
 import org.vetcontrol.information.util.web.Constants;
 import org.vetcontrol.information.util.web.TruncateUtil;
 import org.vetcontrol.information.web.component.BookChoiceRenderer;
+import org.vetcontrol.information.web.component.DisableAwareDropDownChoice;
 import org.vetcontrol.information.web.component.edit.AbstractAutoCompleteTextField;
 import org.vetcontrol.information.web.component.edit.LocalizableTextPanel;
 import org.vetcontrol.information.web.component.edit.SaveUpdateConfirmationDialog;
@@ -60,6 +60,8 @@ import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.util.book.BeanPropertyUtil;
 import org.vetcontrol.util.book.BookHash;
 import org.vetcontrol.web.component.Spacer;
+import org.vetcontrol.web.component.book.IDisableAwareChoiceRenderer;
+import org.vetcontrol.web.component.book.SimpleDisableAwareChoiceRenderer;
 import org.vetcontrol.web.component.list.AjaxRemovableListView;
 import org.vetcontrol.web.component.toolbar.DisableItemButton;
 import org.vetcontrol.web.component.toolbar.EnableItemButton;
@@ -108,13 +110,32 @@ public final class CargoModeEdit extends FormTemplatePage {
                 return cargoModeDAO.getAvailableUnitTypes(exclude);
             }
         }
-        private DropDownChoice<UnitType> unitTypeSelect;
 
-        public UnitTypesChoiceContainer(String id, final CargoMode cargoMode,
-                final CargoModeUnitType cargoModeUnitType, final IModel<UnitType> model, final Locale systemLocale) {
+        public UnitTypesChoiceContainer(String id, final CargoMode cargoMode, final CargoModeUnitType cargoModeUnitType,
+                final IModel<UnitType> model, final Locale systemLocale) {
             super(id);
 
-            IChoiceRenderer<UnitType> renderer = new IChoiceRenderer<UnitType>() {
+            IModel<UnitType> choiceModel = new IModel<UnitType>() {
+
+                @Override
+                public UnitType getObject() {
+                    return model.getObject();
+                }
+
+                @Override
+                public void setObject(UnitType object) {
+                    UnitType old = model.getObject();
+                    if (old == null || !old.equals(object)) {
+                        cargoModeUnitType.setNeedToUpdateVersion(true);
+                    }
+                    model.setObject(object);
+                }
+
+                @Override
+                public void detach() {
+                }
+            };
+            IDisableAwareChoiceRenderer<UnitType> renderer = new SimpleDisableAwareChoiceRenderer<UnitType>() {
 
                 @Override
                 public Object getDisplayValue(UnitType object) {
@@ -126,33 +147,13 @@ public final class CargoModeEdit extends FormTemplatePage {
                     return String.valueOf(object.getId());
                 }
             };
-            unitTypeSelect = new DropDownChoice<UnitType>("unitTypeSelect",
-                    new IModel<UnitType>() {
-
-                        @Override
-                        public UnitType getObject() {
-                            return model.getObject();
-                        }
-
-                        @Override
-                        public void setObject(UnitType object) {
-                            UnitType old = model.getObject();
-                            if (old == null || !old.equals(object)) {
-                                cargoModeUnitType.setNeedToUpdateVersion(true);
-                            }
-                            model.setObject(object);
-                        }
-
-                        @Override
-                        public void detach() {
-                        }
-                    }, new UnitTypesModel(cargoMode, cargoModeUnitType), renderer);
+            DropDownChoice<UnitType> unitTypeSelect = new DisableAwareDropDownChoice<UnitType>("unitTypeSelect", choiceModel,
+                    new UnitTypesModel(cargoMode, cargoModeUnitType), renderer);
             unitTypeSelect.setEnabled(CanEditUtil.canEdit(cargoModeModel.getObject()));
             unitTypeSelect.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
-//                    target.addComponent(unitTypeSelect);
                 }
             });
 
@@ -343,7 +344,7 @@ public final class CargoModeEdit extends FormTemplatePage {
         };
         BookChoiceRenderer parentChoiceRenderer = new BookChoiceRenderer(BeanPropertyUtil.getPropertyByName(CargoMode.class, "parent"), systemLocale,
                 TruncateUtil.TRUNCATE_SELECT_VALUE_IN_EDIT_PAGE);
-        final DropDownChoice parentChoice = new DropDownChoice("parent",
+        final DropDownChoice<CargoMode> parentChoice = new DisableAwareDropDownChoice<CargoMode>("parent",
                 new PropertyModel(cargoModeModel, "parent"),
                 rootCargoModeModel,
                 parentChoiceRenderer);

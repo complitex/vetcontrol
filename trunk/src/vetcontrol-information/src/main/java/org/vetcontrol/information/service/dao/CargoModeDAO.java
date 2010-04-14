@@ -314,8 +314,7 @@ public class CargoModeDAO {
         }
         query.append(" ORDER BY ut.id");
 
-        TypedQuery<UnitType> typedQuery = entityManager.createQuery(query.toString(), UnitType.class);
-        return typedQuery.getResultList();
+        return entityManager.createQuery(query.toString(), UnitType.class).getResultList();
     }
 
     public List<CargoMode> getRootCargoModes() {

@@ -7,7 +7,6 @@ package org.vetcontrol.information.util.web;
 
 import java.io.Serializable;
 import org.vetcontrol.util.book.Property;
-import org.vetcontrol.util.book.Property;
 
 /**
  *
