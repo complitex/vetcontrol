@@ -5,16 +5,16 @@
 package org.vetcontrol.information.web.component;
 
 import java.util.Locale;
-import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.vetcontrol.information.util.web.ITruncate;
 import static org.vetcontrol.util.book.BeanPropertyUtil.*;
 import org.vetcontrol.util.book.Property;
+import org.vetcontrol.web.component.book.SimpleDisableAwareChoiceRenderer;
 
 /**
  *
  * @author Artem
  */
-public class BookChoiceRenderer extends ChoiceRenderer<Object> {
+public class BookChoiceRenderer extends SimpleDisableAwareChoiceRenderer<Object>{
 
     private Property property;
     private Locale systemLocale;

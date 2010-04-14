@@ -42,6 +42,7 @@ import org.vetcontrol.information.util.web.BookWebInfo;
 import org.vetcontrol.information.util.web.CanEditUtil;
 import org.vetcontrol.information.util.web.TruncateUtil;
 import org.vetcontrol.information.web.component.BookChoiceRenderer;
+import org.vetcontrol.information.web.component.DisableAwareDropDownChoice;
 import org.vetcontrol.information.web.component.edit.LocalizableTextPanel;
 import org.vetcontrol.information.web.component.edit.SaveUpdateConfirmationDialog;
 import org.vetcontrol.information.web.model.DisplayBookClassModel;
@@ -145,7 +146,7 @@ public final class DepartmentEdit extends FormTemplatePage {
         };
         BookChoiceRenderer parentRenderer = new BookChoiceRenderer(BeanPropertyUtil.getPropertyByName(Department.class, "parent"), systemLocale,
                 TruncateUtil.TRUNCATE_SELECT_VALUE_IN_EDIT_PAGE);
-        final DropDownChoice parent = new DropDownChoice("parent",
+        final DropDownChoice<Department> parent = new DisableAwareDropDownChoice<Department>("parent",
                 parentModel,
                 parentDepartmentsModel,
                 parentRenderer);
@@ -181,7 +182,7 @@ public final class DepartmentEdit extends FormTemplatePage {
         };
         BookChoiceRenderer customsPointRenderer = new BookChoiceRenderer(BeanPropertyUtil.getPropertyByName(Department.class, "customsPoint"),
                 systemLocale, TruncateUtil.TRUNCATE_SELECT_VALUE_IN_EDIT_PAGE);
-        final DropDownChoice customsPoint = new DropDownChoice("customsPoint",
+        final DropDownChoice<CustomsPoint> customsPoint = new DisableAwareDropDownChoice<CustomsPoint>("customsPoint",
                 new PropertyModel(department, "customsPoint"),
                 customsPointModel,
                 customsPointRenderer);
