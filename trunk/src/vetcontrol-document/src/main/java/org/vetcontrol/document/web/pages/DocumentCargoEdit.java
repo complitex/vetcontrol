@@ -157,7 +157,13 @@ public class DocumentCargoEdit extends FormTemplatePage {
 
             @Override
             protected void onValidate() {
-                for (Cargo c : getModelObject().getCargos()) {
+                DocumentCargo dc = getModelObject();
+
+                if (dc.getVehicleType() != null && !dc.getVehicleType().isCompound() && dc.getVehicles().size() > 0) {
+                    error(getString("document.cargo.vehicle.add.error"));
+                }
+
+                for (Cargo c : dc.getCargos()) {
                     if (c.getCargoType() == null) {
                         error(getString("document.cargo.edit.message.cargo_type.not_found.error"));
                     }
