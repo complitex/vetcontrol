@@ -120,7 +120,11 @@ public class DocumentCargoBean {
                 c.setSyncStatus(Synchronized.SyncStatus.NOT_SYNCHRONIZED);
                 c.setUpdated(DateUtil.getCurrentDate());
 
-                em.merge(c);
+                if (c.getId() == null){
+                    em.persist(c);
+                }else{
+                    em.merge(c);
+                }                
             }
 
             documentCargo.setCargos(cargos);
