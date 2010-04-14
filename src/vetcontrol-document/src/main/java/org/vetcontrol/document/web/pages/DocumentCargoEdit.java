@@ -1,5 +1,6 @@
 package org.vetcontrol.document.web.pages;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -10,7 +11,6 @@ import org.apache.wicket.datetime.StyleDateConverter;
 import org.apache.wicket.datetime.markup.html.basic.DateLabel;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteSettings;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteTextField;
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
@@ -37,7 +37,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 
 import static org.vetcontrol.entity.Log.EVENT.*;
 import static org.vetcontrol.entity.Log.MODULE.DOCUMENT;
@@ -551,6 +550,29 @@ public class DocumentCargoEdit extends FormTemplatePage {
                     @Override
                     public void onSubmit(AjaxRequestTarget target, Form form) {
                         DocumentCargo dc = (DocumentCargo) form.getModelObject();
+
+                        //update item model
+                        for (Iterator<? extends Component> it = item.iterator(); it.hasNext();){
+                            Component component = it.next();
+                            if (component instanceof FormComponent){
+                                FormComponent formComponent = (FormComponent)component;
+                                try
+                                {
+                                    formComponent.inputChanged();
+                                    formComponent.validate();
+                                    if (formComponent.hasErrorMessage()){
+                                        formComponent.invalid();
+                                    }else {
+                                       formComponent.valid();
+                                       formComponent.updateModel();
+                                    }
+                                }
+                                catch (RuntimeException e){
+                                    // nothing
+                                }
+                            }
+                        }
+
                         Cargo copyFrom = item.getModelObject();
 
                         Cargo cargo = new Cargo();
