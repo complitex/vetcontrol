@@ -173,7 +173,7 @@ public class DocumentCargoBean {
     }
 
     public Long getDocumentCargosSize(DocumentCargoFilter filter) {
-        Query query = em.createQuery("select count(distinct dc) from DocumentCargo dc "
+        Query query = em.createQuery("select count(dc) from DocumentCargo dc "
                 + getJoin(filter, null)
                 + getWhere(filter));
         setParameters(filter, query);
@@ -182,7 +182,7 @@ public class DocumentCargoBean {
     }
 
     public List<DocumentCargo> getDocumentCargos(DocumentCargoFilter filter, int first, int count, OrderBy orderBy, boolean asc) {
-        String select = "select distinct dc from DocumentCargo dc " + getJoin(filter, orderBy);
+        String select = "select dc from DocumentCargo dc " + getJoin(filter, orderBy);
         String where = getWhere(filter);
 
         String order = " order by ";
