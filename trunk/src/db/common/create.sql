@@ -574,6 +574,54 @@ CREATE TABLE  `client_update_item` (
   CONSTRAINT `FK_update_id` FOREIGN KEY (`update_id`) REFERENCES `client_update` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `arrest_document`;
+CREATE TABLE `arrest_document` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `client_id` bigint(20) NOT NULL,
+    `department_id` bigint(20) NOT NULL,
+
+    `arrest_date` DATE NOT NULL,
+    `arrest_reason_id` bigint(20) NOT NULL,
+    `arrest_reason_details` VARCHAR(500) DEFAULT NULL,
+
+    `passing_border_point_id` bigint(20) NOT NULL,
+    `count` DOUBLE (11,2) NOT NULL,
+    `cargo_mode_id` bigint(20) NOT NULL,
+
+    `cargo_sender_name` VARCHAR(100) NOT NULL,
+    `cargo_sender_country_id` bigint(20) NOT NULL,
+
+    `cargo_receiver_name` VARCHAR(100) NOT NULL,
+    `cargo_receiver_address` VARCHAR(100) NOT NULL,
+
+    `cargo_type_id` bigint(20) NOT NULL,
+    `unit_type_id` bigint(20) NOT NULL,
+
+    `vehicle_type` VARCHAR(10) NOT NULL,
+    `vehicle_details` VARCHAR(255) NOT NULL,
+
+    `updated` TIMESTAMP DEFAULT NOW(),
+    `sync_status` VARCHAR(64) DEFAULT NULL,
+    PRIMARY KEY (`id`, `client_id`, `department_id`),
+    KEY `FK_arrest_client` (`client_id`),
+    CONSTRAINT `FK_arrest_client` FOREIGN KEY (`client_id`) REFERENCES `client` (`id`),
+    KEY `FK_arrest_department` (`department_id`),
+    CONSTRAINT `FK_arrest_cargo` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`),
+    KEY `FK_arrest_reason` (`arrest_reason_id`),
+    CONSTRAINT `FK_arrest_reason` FOREIGN KEY (`arrest_reason_id`) REFERENCES `arrest_reason` (`id`),
+    KEY `FK_arrest_passing_border_point` (`passing_border_point_id`),
+    CONSTRAINT `FK_arrest_passing_border_point` FOREIGN KEY (`passing_border_point_id`) REFERENCES `passing_border_point` (`id`),
+    KEY `FK_arrest_cargo_mode` (`cargo_mode_id`),
+    CONSTRAINT `FK_arrest_cargo_mode` FOREIGN KEY (`cargo_mode_id`) REFERENCES `cargo_mode` (`id`),
+    KEY `FK_arrest_cargo_sender_country` (`cargo_sender_country_id`),
+    CONSTRAINT `FK_arrest_cargo_sender_country` FOREIGN KEY (`cargo_sender_country_id`) REFERENCES `countrybook` (`id`),
+    KEY `FK_arrest_cargo_type` (`cargo_type_id`),
+    CONSTRAINT `FK_arrest_cargo_type` FOREIGN KEY (`cargo_type_id`) REFERENCES `cargo_type` (`id`),
+    KEY `FK_arrest_unit_type` (`unit_type_id`),
+    CONSTRAINT `FK_arrest_unit_type` FOREIGN KEY (`unit_type_id`) REFERENCES `unit_type` (`id`),
+    KEY `arrest_updated_INDEX` (`updated`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
