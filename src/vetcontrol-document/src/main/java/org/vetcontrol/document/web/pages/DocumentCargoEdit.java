@@ -715,7 +715,6 @@ public class DocumentCargoEdit extends FormTemplatePage {
                     }
                 });
         item.add(ddcVehicle);
-        ddcVehicle.setRequired(true);
 
         ddcVehicle.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
