@@ -10,6 +10,7 @@ import org.apache.wicket.datetime.StyleDateConverter;
 import org.apache.wicket.datetime.markup.html.basic.DateLabel;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteSettings;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteTextField;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
@@ -36,6 +37,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 
 import static org.vetcontrol.entity.Log.EVENT.*;
 import static org.vetcontrol.entity.Log.MODULE.DOCUMENT;
@@ -49,22 +51,16 @@ import static org.vetcontrol.web.security.SecurityRoles.*;
 public class DocumentCargoEdit extends FormTemplatePage {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentCargoEdit.class);
-
     @EJB(name = "DocumentBean")
     private DocumentCargoBean documentCargoBean;
-
     @EJB(name = "UserProfileBean")
     private UserProfileBean userProfileBean;
-
     @EJB(name = "CargoTypeBean")
     private CargoTypeBean cargoTypeBean;
-
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
-
     @EJB(name = "LogBean")
     private LogBean logBean;
-
     @EJB(name = "ClientBean")
     ClientBean clientBean;
 
@@ -86,7 +82,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
 
         //Модель данных
         DocumentCargo dc;
-        try {            
+        try {
             dc = (id != null) ? documentCargoBean.loadDocumentCargo(id) : new DocumentCargo();
         } catch (Exception e) {
             log.error("Карточка на груз по id = " + id + " не найдена", e);
@@ -219,10 +215,11 @@ public class DocumentCargoEdit extends FormTemplatePage {
         ddcVehicleType.setOutputMarkupId(true);
         form.add(ddcVehicleType);
 
-        ddcVehicleType.add(new AjaxFormComponentUpdatingBehavior("onchange"){
+        ddcVehicleType.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
-                for (Vehicle vehicle : documentCargoModel.getObject().getVehicles()){
+                for (Vehicle vehicle : documentCargoModel.getObject().getVehicles()) {
                     vehicle.setVehicleType(ddcVehicleType.getModelObject());
                 }
             }
@@ -230,7 +227,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
 
         //Отравитель Страна
         DropDownChoice ddcSenderCountry = addDropDownChoice(form, "document.cargo.cargo_sender_country", CountryBook.class, documentCargoModel, "senderCountry");
-        ddcSenderCountry.add(new AjaxFormComponentUpdatingBehavior("onchange"){
+        ddcSenderCountry.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
@@ -245,16 +242,13 @@ public class DocumentCargoEdit extends FormTemplatePage {
 
         //Отравитель Название
         final AutoCompleteTextField<String> senderName = new AutoCompleteTextField<String>("document.cargo.cargo_sender_name",
-                new PropertyModel<String>(documentCargoModel, "senderName"),  settings){
+                new PropertyModel<String>(documentCargoModel, "senderName"), settings) {
 
             @Override
             protected Iterator<String> getChoices(String input) {
 
-                return documentCargoBean
-                        .getSenderNames(documentCargoModel.getObject().getSenderCountry(), input)
-                        .iterator();
+                return documentCargoBean.getSenderNames(documentCargoModel.getObject().getSenderCountry(), input).iterator();
             }
-
         };
         senderName.setRequired(true);
         senderName.setOutputMarkupId(true);
@@ -262,31 +256,26 @@ public class DocumentCargoEdit extends FormTemplatePage {
 
         //Получатель Название
         final AutoCompleteTextField<String> receiverName = new AutoCompleteTextField<String>("document.cargo.cargo_receiver_name",
-                new PropertyModel<String>(documentCargoModel, "receiverName"), settings){
+                new PropertyModel<String>(documentCargoModel, "receiverName"), settings) {
 
             @Override
             protected Iterator<String> getChoices(String input) {
 
-                return documentCargoBean
-                        .getReceiverNames(input)
-                        .iterator();
+                return documentCargoBean.getReceiverNames(input).iterator();
             }
-
         };
         receiverName.setRequired(true);
         receiverName.setOutputMarkupId(true);
         form.add(receiverName);
 
-         //Получатель Адрес
+        //Получатель Адрес
         final AutoCompleteTextField<String> receiverAddress = new AutoCompleteTextField<String>("document.cargo.cargo_receiver_address",
-                new PropertyModel<String>(documentCargoModel, "receiverAddress"), settings){
+                new PropertyModel<String>(documentCargoModel, "receiverAddress"), settings) {
 
             @Override
             protected Iterator<String> getChoices(String input) {
 
-                return documentCargoBean
-                        .getReceiverNames(input)
-                        .iterator();
+                return documentCargoBean.getReceiverNames(input).iterator();
             }
         };
         receiverAddress.setRequired(true);
@@ -294,16 +283,16 @@ public class DocumentCargoEdit extends FormTemplatePage {
         form.add(receiverAddress);
 
         //Подстановка адреса при вводе получателя
-        receiverName.add(new AjaxFormComponentUpdatingBehavior("onchange"){
+        receiverName.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
                 String address = receiverAddress.getModelObject();
                 String name = receiverName.getModelObject();
 
-                if ((address == null || address.isEmpty()) && name != null && !name.isEmpty()){
+                if ((address == null || address.isEmpty()) && name != null && !name.isEmpty()) {
                     address = documentCargoBean.getReceiverAddress(name);
-                    if (address != null){
+                    if (address != null) {
                         receiverAddress.setModelObject(address);
                         target.addComponent(receiverAddress);
                     }
@@ -380,7 +369,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
         //Пункт пропуска через границу
         final DropDownChoice<PassingBorderPoint> ddcPassingBorderPoint = new DropDownChoice<PassingBorderPoint>("document.cargo.passingBorderPoint",
                 new PropertyModel<PassingBorderPoint>(documentCargoModel, "passingBorderPoint"),
-                new LoadableDetachableModel<List<PassingBorderPoint>>(){
+                new LoadableDetachableModel<List<PassingBorderPoint>>() {
 
                     @Override
                     protected List<PassingBorderPoint> load() {
@@ -388,21 +377,21 @@ public class DocumentCargoEdit extends FormTemplatePage {
                     }
                 }, new IChoiceRenderer<PassingBorderPoint>() {
 
-                    @Override
-                    public Object getDisplayValue(PassingBorderPoint object) {
-                        return object.getName();
-                    }
+            @Override
+            public Object getDisplayValue(PassingBorderPoint object) {
+                return object.getName();
+            }
 
-                    @Override
-                    public String getIdValue(PassingBorderPoint object, int index) {
-                        return object.getId().toString();
-                    }
-                });
+            @Override
+            public String getIdValue(PassingBorderPoint object, int index) {
+                return object.getId().toString();
+            }
+        });
         ddcPassingBorderPoint.setOutputMarkupId(true);
         ddcPassingBorderPoint.setVisible(hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) && id == null);
         form.add(ddcPassingBorderPoint);
 
-        ddcDepartment.add(new AjaxFormComponentUpdatingBehavior("onchange"){
+        ddcDepartment.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
@@ -443,28 +432,27 @@ public class DocumentCargoEdit extends FormTemplatePage {
             public void onSubmit(AjaxRequestTarget target, Form form) {
                 DocumentCargo dc = (DocumentCargo) form.getModelObject();
 
-                if (dc.getVehicleType() != null && !dc.getVehicleType().isCompound() && dc.getVehicles().size() > 0){
+                if (dc.getVehicleType() != null && !dc.getVehicleType().isCompound() && dc.getVehicles().size() > 0) {
                     target.addComponent(feedbackPanel);
                     getSession().error(getString("document.cargo.vehicle.add.error"));
-                    
                     return;
                 }
 
                 Vehicle vehicle = new Vehicle();
                 vehicle.setDocumentCargo(dc);
                 vehicle.setVehicleType(dc.getVehicleType());
-                dc.getVehicles().add(vehicle);                
+                dc.getVehicles().add(vehicle);
 
                 target.addComponent(vehicleContainer);
                 target.addComponent(cargoContainer);
 
-                String setFocusOnNewCargo = "newVehicleFirstInputId = $('.table_input tbody tr:last input[type=\"text\"]:first').attr('id');"
+                String setFocusOnNewVehicle = "newVehicleFirstInputId = $('#vehicles tbody tr:last input[type=\"text\"]:first').attr('id');"
                         + "Wicket.Focus.setFocusOnId(newVehicleFirstInputId);";
-                target.appendJavascript(setFocusOnNewCargo);
+                target.appendJavascript(setFocusOnNewVehicle);
             }
         };
         addVehicleLink.setDefaultFormProcessing(false);
-        vehicleContainer.add(addVehicleLink);
+        form.add(addVehicleLink);
 
         //Список транспортных средств
         final ListView<Vehicle> vehicleListView = new AjaxRemovableListView<Vehicle>("document.cargo.vehicle_list",
@@ -479,23 +467,22 @@ public class DocumentCargoEdit extends FormTemplatePage {
                 details.setOutputMarkupId(true);
                 item.add(details);
 
-                details.add(new AjaxFormComponentUpdatingBehavior("onchange"){
+                details.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
                     @Override
                     protected void onUpdate(AjaxRequestTarget target) {
-                        if (!documentCargoBean.validate(vehicle)){
-                            if (VehicleType.CONTAINER.equals(vehicle.getVehicleType())){
-                                vehicle.setName(getString("document.cargo.vehicle.validate.container.error"));                                
+                        if (!documentCargoBean.validate(vehicle)) {
+                            if (VehicleType.CONTAINER.equals(vehicle.getVehicleType())) {
+                                vehicle.setName(getString("document.cargo.vehicle.validate.container.error"));
                             }
                         }
-
                         target.addComponent(vehicleContainer);
                         target.addComponent(cargoContainer);
                     }
                 });
 
                 Label name = new Label("document.cargo.vehicle.name", new PropertyModel<String>(vehicle, "name"));
-                name.setOutputMarkupId(true);                
+                name.setOutputMarkupId(true);
                 item.add(name);
 
                 addRemoveSubmitLink("document.cargo.vehicle.delete", form, item, addVehicleLink,
@@ -506,8 +493,8 @@ public class DocumentCargoEdit extends FormTemplatePage {
             protected boolean validate(ListItem<Vehicle> item) {
                 Vehicle vehicle = item.getModelObject();
 
-                for (Cargo cargo : documentCargoModel.getObject().getCargos()){
-                    if (vehicle.equals(cargo.getVehicle())){
+                for (Cargo cargo : documentCargoModel.getObject().getCargos()) {
+                    if (vehicle.equals(cargo.getVehicle())) {
                         getSession().error(new StringResourceModel("document.cargo.vehicle.delete.error", this, null,
                                 new Object[]{vehicle.getVehicleDetails()}).getString());
                         return false;
@@ -517,7 +504,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
                 return true;
             }
         };
-        vehicleContainer.add(vehicleListView);       
+        vehicleContainer.add(vehicleListView);
 
         //Добавить груз
         final AjaxSubmitLink addCargoLink = new AjaxSubmitLink("document.cargo.cargo.add", form) {
@@ -530,20 +517,25 @@ public class DocumentCargoEdit extends FormTemplatePage {
                 cargo.setDocumentCargo(dc);
                 dc.getCargos().add(cargo);
 
-                if (dc.getVehicleType() != null && !dc.getVehicleType().isCompound() && !dc.getVehicles().isEmpty()){
+                if (dc.getVehicleType() != null && !dc.getVehicleType().isCompound() && !dc.getVehicles().isEmpty()) {
                     cargo.setVehicle(dc.getVehicles().get(0));
                 }
 
                 target.addComponent(cargoContainer);
                 target.addComponent(vehicleContainer);
 
-                String setFocusOnNewCargo = "newCargoFirstInputId = $('.table_input tbody tr:last input[type=\"text\"]:first').attr('id');"
+                String setFocusOnNewCargo = "newCargoFirstInputId = $('#cargos tbody tr:last input[type=\"text\"]:first').attr('id');"
                         + "Wicket.Focus.setFocusOnId(newCargoFirstInputId);";
                 target.appendJavascript(setFocusOnNewCargo);
             }
+
+//            @Override
+//            public String getMarkupId() {
+//                return "AddCargo";
+//            }
         };
         addCargoLink.setDefaultFormProcessing(false);
-        cargoContainer.add(addCargoLink);
+        form.add(addCargoLink);
 
         //Список грузов
         final ListView cargoListView = new AjaxRemovableListView<Cargo>("document.cargo.cargo_list",
@@ -568,7 +560,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
                         cargo.setCertificateDetails(copyFrom.getCertificateDetails());
                         cargo.setCertificateDate(copyFrom.getCertificateDate());
                         cargo.setCargoProducer(copyFrom.getCargoProducer());
-                        cargo.setVehicle(copyFrom.getVehicle());                        
+                        cargo.setVehicle(copyFrom.getVehicle());
 
                         cargo.setDocumentCargo(dc);
                         dc.getCargos().add(cargo);
@@ -681,14 +673,14 @@ public class DocumentCargoEdit extends FormTemplatePage {
 
         //Количество
         TextField<Double> count = new TextField<Double>("document.cargo.count",
-                new PropertyModel<Double>(item.getModel(), "count"));        
+                new PropertyModel<Double>(item.getModel(), "count"));
         item.add(count);
 
         //Транспортное средство
-         final DropDownChoice<Vehicle> ddcVehicle = new DropDownChoice<Vehicle>("document.cargo.vehicle",
+        final DropDownChoice<Vehicle> ddcVehicle = new DropDownChoice<Vehicle>("document.cargo.vehicle",
                 new PropertyModel<Vehicle>(item.getModel(), "vehicle"),
                 item.getModelObject().getDocumentCargo().getVehicles(),
-                new IChoiceRenderer<Vehicle>(){
+                new IChoiceRenderer<Vehicle>() {
 
                     @Override
                     public Object getDisplayValue(Vehicle object) {
@@ -697,13 +689,14 @@ public class DocumentCargoEdit extends FormTemplatePage {
 
                     @Override
                     public String getIdValue(Vehicle object, int index) {
-                        return index + ":" +object.getId();
+                        return index + ":" + object.getId();
                     }
                 });
         item.add(ddcVehicle);
         ddcVehicle.setRequired(true);
 
-        ddcVehicle.add(new AjaxFormComponentUpdatingBehavior("onchange"){
+        ddcVehicle.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
                 //update model
@@ -714,11 +707,11 @@ public class DocumentCargoEdit extends FormTemplatePage {
         CountryBook country = item.getModelObject().getCargoProducer() != null
                 ? item.getModelObject().getCargoProducer().getCountry()
                 : item.getModelObject().getDocumentCargo().getSenderCountry();
-        
+
         final DropDownChoice<CountryBook> ddcCountryBook = new DropDownChoice<CountryBook>("document.cargo.producer_country",
                 new Model<CountryBook>(country),
                 documentCargoBean.getList(CountryBook.class),
-                new IChoiceRenderer<CountryBook>(){
+                new IChoiceRenderer<CountryBook>() {
 
                     @Override
                     public Object getDisplayValue(CountryBook object) {
@@ -754,7 +747,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
         ddcCargoProducer.setRequired(true);
         item.add(ddcCargoProducer);
 
-        ddcCountryBook.add(new AjaxFormComponentUpdatingBehavior("onchange"){
+        ddcCountryBook.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
