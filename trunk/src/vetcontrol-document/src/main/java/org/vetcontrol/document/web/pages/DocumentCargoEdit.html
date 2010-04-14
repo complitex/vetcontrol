@@ -99,30 +99,24 @@
         <fieldset style="margin-bottom:10px">
             <legend>Транспортные средства</legend>
             <div wicket:id="document.cargo.vehicle_container">
-                <table  border="0" cellspacing="2" cellpadding="2" class="table_input">
+                <table id="vehicles" border="0" cellspacing="2" cellpadding="2" class="table_input">
                     <tbody>
                     <tr wicket:id="document.cargo.vehicle_list">                        
-                        <td><input type="text" wicket:id="document.cargo.vehicle.details" autocomplete="false"/></td>
+                        <td><input type="text" wicket:id="document.cargo.vehicle.details" autocomplete="off"/></td>
                         <td><span wicket:id="document.cargo.vehicle.name"></span></td>
                         <td>
                             <a href="#" wicket:id="document.cargo.vehicle.delete" onfocus="$('.addVehicle').focus();"><wicket:message key="document.cargo.delete"/></a>
                         </td>
                     </tr>
                     </tbody>
-                    <tfoot>
-                    <tr>
-                        <td colspan="3" align="left">
-                            <a class="addVehicle" href="#" wicket:id="document.cargo.vehicle.add"><wicket:message key="document.cargo.vehicle.add"/></a>
-                        </td>
-                    </tr>
-                    </tfoot>
                 </table>
             </div>
+            <a class="addVehicle" href="#" wicket:id="document.cargo.vehicle.add"><wicket:message key="document.cargo.vehicle.add"/></a>
         </fieldset>
         <fieldset style="margin-bottom:10px">
             <legend>Грузы</legend>
             <div wicket:id="document.cargo.cargo_container">
-                <table  border="0" cellspacing="0" cellpadding="0" class="tbColor table_input">
+                <table id="cargos" border="0" cellspacing="0" cellpadding="0" class="tbColor table_input">
                     <thead>
                     <tr>
                         <th  class="center"><wicket:message key="document.cargo.cargo_type"/></th>
@@ -152,15 +146,9 @@
                         </td>
                     </tr>
                     </tbody>
-                    <tfoot>
-                    <tr>
-                        <td colspan="5" align="left">
-                            <a class="addCargo" href="#" wicket:id="document.cargo.cargo.add"><wicket:message key="document.cargo.cargo.add"/></a>
-                        </td>
-                    </tr>
-                    </tfoot>
                 </table>
             </div>
+            <a class="addCargo" href="#" wicket:id="document.cargo.cargo.add"><wicket:message key="document.cargo.cargo.add"/></a>
         </fieldset>
 
         <!--<div wicket:id="spacer"></div>-->
