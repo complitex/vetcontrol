@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.vetcontrol.report.service;
+package org.vetcontrol.report.commons.service;
 
 import java.util.Locale;
 import javax.ejb.EJB;

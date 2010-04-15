@@ -1,18 +1,15 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
-        <groupId>org.vetcontrol</groupId>
         <artifactId>vetcontrol</artifactId>
+        <groupId>org.vetcontrol</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-
-    <artifactId>vetcontrol-report</artifactId>
-    <packaging>jar</packaging>
-    <name>vetcontrol report</name>
-
+    <groupId>org.vetcontrol</groupId>
+    <artifactId>vetcontrol-report-commons</artifactId>
+    <name>vetcontrol report commons</name>
     <dependencies>
         <dependency>
             <groupId>org.vetcontrol</groupId>
@@ -20,23 +17,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.vetcontrol</groupId>
-            <artifactId>vetcontrol-report-commons</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.wicket</groupId>
-            <artifactId>wicket-extensions</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.wicket</groupId>
-            <artifactId>wicket-auth-roles</artifactId>
         </dependency>
 
         <dependency>
@@ -99,14 +81,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
-        <dependency>
-            <groupId>org.wiquery</groupId>
-            <artifactId>wiquery</artifactId>
-            <scope>system</scope>
-            <version>1.0</version>
-            <systemPath>${project.basedir}/../../lib/wiquery-1.0.jar</systemPath>
-        </dependency>
     </dependencies>
 
     <build>
@@ -148,3 +122,4 @@
         </plugins>
     </build>
 </project>
+

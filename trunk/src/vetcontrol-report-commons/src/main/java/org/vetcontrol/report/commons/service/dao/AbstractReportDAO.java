@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.vetcontrol.report.service.dao;
+package org.vetcontrol.report.commons.service.dao;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -15,9 +15,9 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
-import org.vetcontrol.report.entity.Ordered;
-import org.vetcontrol.report.entity.ReportParameter;
-import org.vetcontrol.report.util.QueryLoader;
+import org.vetcontrol.report.commons.entity.Ordered;
+import org.vetcontrol.report.commons.entity.ReportParameter;
+import org.vetcontrol.report.commons.util.QueryLoader;
 import org.vetcontrol.util.book.service.HibernateSessionTransformer;
 
 /**

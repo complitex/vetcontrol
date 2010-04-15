@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.vetcontrol.report.util;
+package org.vetcontrol.report.commons.util;
 
 import java.io.InputStream;
 import java.util.Properties;

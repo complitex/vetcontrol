@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.vetcontrol.report.util;
+package org.vetcontrol.report.commons.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -11,7 +11,7 @@ import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
-import org.vetcontrol.report.service.LocaleService;
+import org.vetcontrol.report.commons.service.LocaleService;
 
 /**
  *
