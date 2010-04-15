@@ -50,6 +50,12 @@ public class ArrestDocument extends Synchronized implements IUpdated {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "arrest_date", nullable = false)
     private Date arrestDate;
+
+    @ManyToOne
+    @JoinColumn(name="arrest_reason_id", nullable=false)
+    @XmlIDREF
+    private ArrestReason arrestReason;
+
     @Column(name = "arrest_reason_details", nullable = false)
     private String arrestReasonDetails;
     @ManyToOne
@@ -224,6 +230,14 @@ public class ArrestDocument extends Synchronized implements IUpdated {
 
     public void setDocumentCargoCreated(Date documentCargoCreated) {
         this.documentCargoCreated = documentCargoCreated;
+    }
+
+    public ArrestReason getArrestReason() {
+        return arrestReason;
+    }
+
+    public void setArrestReason(ArrestReason arrestReason) {
+        this.arrestReason = arrestReason;
     }
 
     @Override
