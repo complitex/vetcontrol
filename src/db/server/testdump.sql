@@ -27,9 +27,10 @@ INSERT INTO `stringculture`(`id`, `locale`, `value`) VALUES
 (72,'en','сыр голландский'),(72,'ru','сыр голландский'),
 (73,'ru','Вид1'), (74,'ru','Вид2'), (75,'ru','Вид3'),
 (76, 'ru', 'Россия'), (76, 'en', 'Russia'), (77, 'ru', 'Англия'), (77, 'en', 'England'),
-(78, 'ru', 'Таможня 1'), (79, 'ru', 'Таможня 2');
+(78, 'ru', 'Таможня 1'), (79, 'ru', 'Таможня 2'),
+(80, 'ru', 'Причина задержания 1'), (81, 'ru', 'Причина задержания 2'), (82, 'ru', 'Причина задержания 3');
 
-UPDATE `generator` SET `generatorValue` = 79 WHERE `generatorName` = 'books';
+UPDATE `generator` SET `generatorValue` = 82 WHERE `generatorName` = 'books';
 
 INSERT INTO `unit_type`(`id`, `name`, `short_name`) VALUES (1,54,60),(2,55,61),(3,56,62),(4,57,63),(5,58,64),(6,59,65);
 
@@ -41,7 +42,7 @@ INSERT INTO `cargo_mode_cargo_type` VALUES (1, 1, CURRENT_TIMESTAMP), (1, 2, CUR
 
 INSERT INTO `cargo_mode_unit_type` VALUES (1, 1, CURRENT_TIMESTAMP);
 
-INSERT INTO `countrybook`(`id`, `name`) VALUES (1, 76), (2, 77);
+INSERT INTO `countrybook`(`id`, `name`, `code`) VALUES (1, 76, 'ru'), (2, 77, 'en');
 INSERT INTO `cargo_producer`(`id`, `name`, `country_id`) VALUES (1,51, 1),(2,52, 1),(3,53, 2);
 
 INSERT INTO `customs_point`(`id`, `name`) VALUES(1, 78), (2, 79);
@@ -52,6 +53,8 @@ INSERT INTO `container_validator`(`id`, `prefix`, `carrier_abbr`, `carrier_name`
     (1, 'AAAU', NULL, 'Asia Container Leasing'),
     (2, 'ACLU', 'ACL', 'Atlantic Container Line'),
     (3, 'ACXU', 'Atlantic Cargo', 'Atlantic Cargo');
+
+INSERT INTO `arrest_reason`(`id`, `name`) VALUES (1,80), (2,81), (3,82);
 
 INSERT INTO `document_cargo`(`id`, `client_id`, `department_id`, `creator_id`, `cargo_mode_id`, `created`, `updated`, `movement_type_id`,
                                 `vehicle_type`, `cargo_sender_name`, `cargo_sender_country_id`, `cargo_receiver_name`,
@@ -73,3 +76,10 @@ INSERT INTO `cargo`(`id`, `client_id`, `department_id`, `document_cargo_id`, `ca
         (5,1,3,4,1,5,1,NULL,40, '2010-03-30', 'сертификат 3', 'NOT_SYNCHRONIZED'),
         (6,1,3,4,1,6,2,NULL,89, '2010-03-30', 'сертификат 3', 'NOT_SYNCHRONIZED'),
         (7,1,3,3,1,1,2,NULL,50,'2010-02-16', 'сертификат 4', 'NOT_SYNCHRONIZED');
+
+INSERT INTO `arrest_document`(`id`, `client_id`, `department_id`, `arrest_date`, `arrest_reason_id`, `arrest_reason_details`, `passing_border_point_id`,
+                                `count`, `cargo_mode_id`, `cargo_sender_name`, `cargo_sender_country_id`, `cargo_receiver_name`, `cargo_receiver_address`,
+                                `cargo_type_id`, `unit_type_id`, `vehicle_type`, `vehicle_details`, `document_cargo_created`, `updated`, `sync_status`)
+VALUES
+             (1,1,3,'2010-04-15 17:00:00',1,'Детали задержания.', 1, 20.83, 1, 'sender 1', 1, 'receiver 1', 'receiver 1 address', 1, 1, 'CAR', '1234567', '2010-04-15 16:00:00', '2010-04-15 17:00:00', 'NOT_SYNCHRONIZED'),
+             (2,1,3,'2010-04-15 17:10:00',2,'Детали задержания.', 1, 50.77, 1, 'sender 2', 2, 'receiver 2', 'receiver 2 address', 2, 1, 'CAR', '7654321', '2010-04-15 16:00:00', '2010-04-15 17:10:00', 'NOT_SYNCHRONIZED');
