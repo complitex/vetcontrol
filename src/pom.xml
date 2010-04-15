@@ -24,6 +24,7 @@
         <module>vetcontrol-web-client</module>
         <module>vetcontrol-client</module>
         <module>vetcontrol-configuration</module>
+        <module>vetcontrol-report-commons</module>
     </modules>
 
     <dependencyManagement>
@@ -68,6 +69,11 @@
             <dependency>
                 <groupId>org.vetcontrol</groupId>
                 <artifactId>vetcontrol-logging</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.vetcontrol</groupId>
+                <artifactId>vetcontrol-report-commons</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
