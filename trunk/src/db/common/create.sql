@@ -580,7 +580,7 @@ CREATE TABLE `arrest_document` (
     `client_id` bigint(20) NOT NULL,
     `department_id` bigint(20) NOT NULL,
 
-    `arrest_date` DATE NOT NULL,
+    `arrest_date` TIMESTAMP NOT NULL,
     `arrest_reason_id` bigint(20) NOT NULL,
     `arrest_reason_details` VARCHAR(500) DEFAULT NULL,
 
@@ -600,7 +600,9 @@ CREATE TABLE `arrest_document` (
     `vehicle_type` VARCHAR(10) NOT NULL,
     `vehicle_details` VARCHAR(255) NOT NULL,
 
-    `updated` TIMESTAMP DEFAULT NOW(),
+    `document_cargo_created` TIMESTAMP NOT NULL,
+
+    `updated` TIMESTAMP NOT NULL,
     `sync_status` VARCHAR(64) DEFAULT NULL,
     PRIMARY KEY (`id`, `client_id`, `department_id`),
     KEY `FK_arrest_client` (`client_id`),
