@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.vetcontrol.report.service.dao;
+package org.vetcontrol.report.commons.service.dao;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.vetcontrol.report.entity;
+package org.vetcontrol.report.commons.entity;
 
 /**
  *

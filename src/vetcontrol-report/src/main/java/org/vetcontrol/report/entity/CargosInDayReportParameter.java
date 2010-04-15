@@ -4,6 +4,8 @@
  */
 package org.vetcontrol.report.entity;
 
+import org.vetcontrol.report.commons.entity.ReportParameter;
+
 /**
  *
  * @author Artem

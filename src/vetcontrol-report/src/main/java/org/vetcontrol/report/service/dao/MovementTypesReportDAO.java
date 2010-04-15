@@ -4,6 +4,7 @@
  */
 package org.vetcontrol.report.service.dao;
 
+import org.vetcontrol.report.commons.service.dao.AbstractReportDAO;
 import java.util.Locale;
 import java.util.Map;
 import javax.annotation.security.RolesAllowed;

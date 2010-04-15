@@ -4,6 +4,7 @@
  */
 package org.vetcontrol.report.entity;
 
+import org.vetcontrol.report.commons.entity.Ordered;
 import java.io.Serializable;
 
 /**
