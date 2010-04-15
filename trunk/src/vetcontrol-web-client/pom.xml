@@ -47,6 +47,10 @@
         </dependency>
         <dependency>
             <groupId>org.vetcontrol</groupId>
+            <artifactId>vetcontrol-report-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.vetcontrol</groupId>
             <artifactId>vetcontrol-report</artifactId>
         </dependency>
         <dependency>
