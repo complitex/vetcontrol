@@ -47,7 +47,7 @@ public class ArrestDocument extends Synchronized implements IUpdated {
     @JoinColumn(name = "department_id", nullable = false)
     @XmlIDREF
     private Department department;
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "arrest_date", nullable = false)
     private Date arrestDate;
     @Column(name = "arrest_reason_details", nullable = false)
@@ -86,6 +86,9 @@ public class ArrestDocument extends Synchronized implements IUpdated {
     @JoinColumn(name = "cargo_mode_id", nullable = false)
     @XmlIDREF
     private CargoMode cargoMode;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "document_cargo_created", nullable = false)
+    private Date documentCargoCreated;
 
     public Date getArrestDate() {
         return arrestDate;
@@ -213,6 +216,14 @@ public class ArrestDocument extends Synchronized implements IUpdated {
 
     public void setVehicleDetails(String vehicleDetails) {
         this.vehicleDetails = vehicleDetails;
+    }
+
+    public Date getDocumentCargoCreated() {
+        return documentCargoCreated;
+    }
+
+    public void setDocumentCargoCreated(Date documentCargoCreated) {
+        this.documentCargoCreated = documentCargoCreated;
     }
 
     @Override
