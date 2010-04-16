@@ -5,6 +5,8 @@
 package org.vetcontrol.web.component;
 
 import java.util.Arrays;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.EnumChoiceRenderer;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -17,24 +19,20 @@ import org.vetcontrol.entity.VehicleType;
  */
 public final class VehicleTypeChoicePanel extends Panel {
 
-    private static EnumChoiceRenderer<VehicleType> renderer;
-
     public VehicleTypeChoicePanel(String id, IModel<VehicleType> model, boolean required) {
         super(id);
         init(model, required);
     }
 
     private void init(IModel<VehicleType> model, boolean required) {
-        if (renderer == null) {
-            renderer = new EnumChoiceRenderer<VehicleType>(this);
-        }
         DropDownChoice<VehicleType> select = new DropDownChoice<VehicleType>("select", model, Arrays.asList(VehicleType.values()),
-                renderer);
+                new EnumChoiceRenderer<VehicleType>(this));
         select.setRequired(required);
         add(select);
     }
 
-    public static final String getDysplayName(VehicleType vehicleType) {
-        return String.valueOf(renderer.getDisplayValue(vehicleType));
+    public static final String getDysplayName(VehicleType vehicleType, Locale locale) {
+        return ResourceBundle.getBundle(VehicleTypeChoicePanel.class.getName(), locale).
+                getString(VehicleType.class.getSimpleName() + "." + vehicleType.name());
     }
 }

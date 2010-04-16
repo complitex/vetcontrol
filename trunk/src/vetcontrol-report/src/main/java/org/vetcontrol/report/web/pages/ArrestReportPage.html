@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:wicket="http://wicket.apache.org">
+    <head>
+        <wicket:head><title wicket:id="title"></title></wicket:head>
+    </head>
+    <body>
+        <wicket:extend>
+            <center>
+                <h1>
+                    <wicket:message key="report.title"/>
+                    <br/>
+                    <span wicket:id="report.name"></span>
+                </h1>
+            </center>
+
+            <table class="tbColor" border="0" cellpadding="0" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th valign="top" class="center">
+                            <wicket:message key="report.header.number"/>
+                        </th>
+                        <th valign="top" class="center">
+                            <span wicket:id="report.header.department">
+                                <wicket:message key="report.header.department"/>
+                            </span>
+                        </th>
+                        <th valign="top" class="center">
+                            <span wicket:id="report.header.passingBorderPoint">
+                                <wicket:message key="report.header.passingBorderPoint"/>
+                            </span>
+                        </th>
+                        <th valign="top" class="center">
+                            <span wicket:id="report.header.arrestDate">
+                                <wicket:message key="report.header.arrestDate"/>
+                            </span>
+                        </th>
+                        <th valign="top" class="center">
+                            <span wicket:id="report.header.cargoInfo">
+                                <wicket:message key="report.header.cargoInfo"/>
+                            </span>
+                        </th>
+                        <th valign="top" class="center">
+                            <wicket:message key="report.header.cargoSender"/>
+                        </th>
+                        <th valign="top" class="center">
+                            <wicket:message key="report.header.cargoReceiver"/>
+                        </th>
+                        <th valign="top" class="center">
+                            <wicket:message key="report.header.arrestReason"/>
+                        </th>
+                        <th valign="top" class="center">
+                            <wicket:message key="report.header.documentCargoCreated"/>
+                        </th>
+                        <th valign="top" class="center" wicket:id="report.header.vehicleTypeBlock">
+                            <span wicket:id="report.header.vehicleType">
+                                <wicket:message key="report.header.vehicleType"/>
+                            </span>
+                        </th>
+                        <th valign="top" class="center" wicket:id="report.header.vehicleDetailsBlock">
+                            <wicket:message key="report.header.vehicleDetails"/>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr wicket:id="list">
+                        <td>
+                            <span wicket:id="rowNumber"></span>
+                        </td>
+                        <td>
+                            <span wicket:id="department"></span>
+                        </td>
+                        <td>
+                            <span wicket:id="passingBorderPoint"></span>
+                        </td>
+                        <td>
+                            <span wicket:id="arrestDate"></span>
+                        </td>
+                        <td>
+                            <span wicket:id="cargoInfo"></span>
+                        </td>
+                        <td>
+                            <span wicket:id="cargoSender"></span>
+                        </td>
+                        <td>
+                            <span wicket:id="cargoReceiver"></span>
+                        </td>
+                        <td>
+                            <span wicket:id="arrestReason"></span>
+                        </td>
+                        <td>
+                            <span wicket:id="documentCargoCreated"></span>
+                        </td>
+                        <td wicket:id="report.body.vehicleTypeBlock">
+                            <span wicket:id="vehicleType"></span>
+                        </td>
+                         <td wicket:id="report.body.vehicleDetailsBlock">
+                            <span wicket:id="vehicleDetails"></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div>
+                <span wicket:id="navigator"></span>
+            </div>
+
+            <div>
+                <br/>
+                <br/>
+                <br/>
+                <div>
+                    <wicket:link>
+                        <a href="ArrestReportForm.html">
+                            <wicket:message key="report.backToSetParams"/>
+                        </a>
+                    </wicket:link>
+                </div>
+                <div class="referenceToExport">
+                    <form id="pdfForm" target="_blank" method="post" action="ArrestReportServlet">
+                        <input type="hidden" value="pdf" name="ExportType"/>
+                        <input wicket:id="pdfStartDate" type="hidden"/>
+                        <input wicket:id="pdfEndDate" type="hidden"/>
+                        <input wicket:id="pdfArrestReportType" type="hidden"/>
+                    </form>
+                </div>
+                <div class="referenceToExport">
+                    <form id="textForm" target="_blank" method="post" action="ArrestReportServlet">
+                        <input type="hidden" value="text" name="ExportType"/>
+                        <input wicket:id="textStartDate" type="hidden"/>
+                        <input wicket:id="textEndDate" type="hidden"/>
+                        <input wicket:id="textArrestReportType" type="hidden"/>
+                    </form>
+                </div>
+            </div>
+        </wicket:extend>
+    </body>
+</html>

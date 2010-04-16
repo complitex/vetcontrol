@@ -100,6 +100,28 @@ public class ReportMenu extends ResourceTemplateMenu {
                     return "regional_control_report";
                 }
             });
+            links.add(new ITemplateLink() {
+
+                @Override
+                public String getLabel(Locale locale) {
+                    return getString(ReportMenu.class, locale, "arrest_report");
+                }
+
+                @Override
+                public Class<? extends Page> getPage() {
+                    return ArrestReportForm.class;
+                }
+
+                @Override
+                public PageParameters getParameters() {
+                    return PageParameters.NULL;
+                }
+
+                @Override
+                public String getTagId() {
+                    return "arrest_report";
+                }
+            });
         }
 
         return links;

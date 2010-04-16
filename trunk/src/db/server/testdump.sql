@@ -82,4 +82,6 @@ INSERT INTO `arrest_document`(`id`, `client_id`, `department_id`, `arrest_date`,
                                 `cargo_type_id`, `unit_type_id`, `vehicle_type`, `vehicle_details`, `document_cargo_created`, `updated`, `sync_status`)
 VALUES
              (1,1,3,'2010-04-15 17:00:00',1,'Детали задержания.', 1, 20.83, 1, 'sender 1', 1, 'receiver 1', 'receiver 1 address', 1, 1, 'CAR', '1234567', '2010-04-15 16:00:00', '2010-04-15 17:00:00', 'NOT_SYNCHRONIZED'),
-             (2,1,3,'2010-04-15 17:10:00',2,'Детали задержания.', 1, 50.77, 1, 'sender 2', 2, 'receiver 2', 'receiver 2 address', 2, 1, 'CAR', '7654321', '2010-04-15 16:00:00', '2010-04-15 17:10:00', 'NOT_SYNCHRONIZED');
+             (2,1,3,'2010-04-15 17:10:00',2,'Детали задержания.', 1, 50.77, 1, 'sender 2', 2, 'receiver 2', 'receiver 2 address', 2, 1, 'CAR', '7654321', '2010-04-15 16:00:00', '2010-04-15 17:10:00', 'NOT_SYNCHRONIZED'),
+             (3,1,3,'2010-04-15 17:20:00',3,'Детали задержания.', 2, 100, 1, 'sender 3', 1, 'receiver 3', 'receiver 3 address', 2, 1, 'SHIP', 'abc1234', '2010-04-15 16:00:00', '2010-04-15 17:20:00', 'NOT_SYNCHRONIZED'),
+             (4,1,3,'2010-04-15 17:30:00',1,'Детали задержания.', 2, 140, 1, 'sender 4', 2, 'receiver 4', 'receiver 4 address', 2, 1, 'AIRCRAFT', '', '2010-04-15 16:00:00', '2010-04-15 17:30:00', 'NOT_SYNCHRONIZED');

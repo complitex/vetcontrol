@@ -13,6 +13,7 @@ import javax.ejb.Stateless;
 import javax.persistence.*;
 import java.math.BigInteger;
 import java.util.List;
+import org.apache.wicket.Session;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -196,7 +197,7 @@ public class DocumentCargoBean {
             case VECHICLE_TYPE:
                 order += " (CASE dc.vehicleType ";
                 for (VehicleType vehicleType : VehicleType.values()) {
-                    order += "WHEN '" + vehicleType.name() + "' THEN '" + VehicleTypeChoicePanel.getDysplayName(vehicleType) + "' ";
+                    order += "WHEN '" + vehicleType.name() + "' THEN '" + VehicleTypeChoicePanel.getDysplayName(vehicleType, Session.get().getLocale()) + "' ";
                 }
                 order += "END)";
                 break;
