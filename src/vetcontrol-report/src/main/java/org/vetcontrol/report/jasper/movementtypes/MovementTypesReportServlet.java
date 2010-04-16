@@ -6,8 +6,6 @@ package org.vetcontrol.report.jasper.movementtypes;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -28,6 +26,8 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.export.JRTextExporterParameter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vetcontrol.report.entity.MovementTypesReportParameter;
 import org.vetcontrol.report.commons.service.LocaleService;
 import org.vetcontrol.report.commons.service.dao.DepartmentDAO;
@@ -36,6 +36,7 @@ import org.vetcontrol.report.commons.util.jasper.ExportType;
 import org.vetcontrol.report.commons.util.jasper.ExportTypeUtil;
 import org.vetcontrol.report.commons.util.jasper.JRCacheableDataSource;
 import org.vetcontrol.report.commons.util.jasper.TextExporterConstants;
+import org.vetcontrol.report.commons.util.servlet.ServletUtil;
 import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.web.security.SecurityRoles;
 
@@ -45,10 +46,13 @@ import org.vetcontrol.web.security.SecurityRoles;
  */
 @WebServlet(name = "MovementTypesReportServlet", urlPatterns = {"/MovementTypesReportServlet"})
 @RolesAllowed({SecurityRoles.LOCAL_AND_REGIONAL_REPORT})
-public class MovementTypesReportServlet extends HttpServlet {
+public final class MovementTypesReportServlet extends HttpServlet {
 
+    private static final Logger log = LoggerFactory.getLogger(MovementTypesReportServlet.class);
     public static final String MONTH_KEY = "month";
     public static final String DEPARTMENT_KEY = "department";
+    private static final String END_DATE_KEY = "endDate";
+    private static final String YEAR_KEY = "year";
     @EJB
     private MovementTypesReportDAO reportDAO;
     @EJB
@@ -58,11 +62,9 @@ public class MovementTypesReportServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ServletOutputStream servletOutputStream = null;
         try {
             ExportType exportType = ExportTypeUtil.getExportType(request);
-            if (exportType == null) {
-                return;
-            }
             int month = getMonth(request);
             Long departmentId = getDepartment(request);
 
@@ -74,15 +76,14 @@ public class MovementTypesReportServlet extends HttpServlet {
             String year = String.valueOf(DateUtil.getCurrentYear());
             String departmentName = departmentDAO.getDepartmentName(departmentId, reportLocale);
 
-            ServletOutputStream servletOutputStream = response.getOutputStream();
-
+            servletOutputStream = response.getOutputStream();
             InputStream reportStream = null;
             Map<String, Object> params = new HashMap<String, Object>();
-            params.put("endDate", endDate);
+            params.put(END_DATE_KEY, endDate);
+            params.put(MONTH_KEY, monthAsString);
+            params.put(YEAR_KEY, year);
+            params.put(DEPARTMENT_KEY, departmentName);
             params.put(JRParameter.REPORT_LOCALE, reportLocale);
-            params.put("month", monthAsString);
-            params.put("year", year);
-            params.put("department", departmentName);
 
             Map<String, Object> daoParams = new HashMap<String, Object>();
             daoParams.put(MovementTypesReportParameter.START_DATE, startDate);
@@ -95,8 +96,6 @@ public class MovementTypesReportServlet extends HttpServlet {
                     reportStream = getClass().getResourceAsStream("pdf/movement_types_report.jasper");
                     JasperRunManager.runReportToPdfStream(reportStream, servletOutputStream, params, dataSource);
                     response.setContentType("application/pdf");
-                    servletOutputStream.flush();
-                    servletOutputStream.close();
                     break;
                 case TEXT:
                     reportStream = getClass().getResourceAsStream("text/movement_types_report.jasper");
@@ -112,18 +111,21 @@ public class MovementTypesReportServlet extends HttpServlet {
 
                     response.setContentType("text/plain");
                     response.setCharacterEncoding("UTF-8");
-                    servletOutputStream.flush();
-                    servletOutputStream.close();
                     break;
             }
-        } catch (Exception e) {
-            // display stack trace in the browser
-            //TODO: remove
-            StringWriter stringWriter = new StringWriter();
-            PrintWriter printWriter = new PrintWriter(stringWriter);
-            e.printStackTrace(printWriter);
+        } catch (Throwable e) {
+            String error = ServletUtil.error(e, log);
             response.setContentType("text/plain");
-            response.getOutputStream().print(stringWriter.toString());
+            response.setCharacterEncoding("UTF-8");
+            if (servletOutputStream == null) {
+                servletOutputStream = response.getOutputStream();
+            }
+            servletOutputStream.print(error);
+        } finally {
+            if (servletOutputStream != null) {
+                servletOutputStream.flush();
+                servletOutputStream.close();
+            }
         }
     }
 
