@@ -16,7 +16,9 @@ public class CargosInDayReport extends Ordered implements Serializable {
 
     private String cargoTypeName;
     private String cargoSenderName;
+    private String cargoSenderCountry;
     private String cargoReceiverName;
+    private String cargoReceiverAddress;
     private String cargoProducerName;
     private String vehicleType;
     private Number count;
@@ -77,4 +79,21 @@ public class CargosInDayReport extends Ordered implements Serializable {
     public void setVehicleType(String vehicleType) {
         this.vehicleType = vehicleType;
     }
+
+    public String getCargoReceiverAddress() {
+        return cargoReceiverAddress;
+    }
+
+    public void setCargoReceiverAddress(String cargoReceiverAddress) {
+        this.cargoReceiverAddress = cargoReceiverAddress;
+    }
+
+    public String getCargoSenderCountry() {
+        return cargoSenderCountry;
+    }
+
+    public void setCargoSenderCountry(String cargoSenderCountry) {
+        this.cargoSenderCountry = cargoSenderCountry;
+    }
+
 }

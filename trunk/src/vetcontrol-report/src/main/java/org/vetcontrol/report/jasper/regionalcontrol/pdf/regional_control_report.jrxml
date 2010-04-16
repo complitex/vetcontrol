@@ -24,6 +24,7 @@
 	<field name="cargoTypeName" class="java.lang.String"/>
 	<field name="unitTypeName" class="java.lang.String"/>
 	<field name="cargoReceiverName" class="java.lang.String"/>
+        <field name="cargoReceiverAddress" class="java.lang.String"/>
 	<field name="cargoProducerName" class="java.lang.String"/>
 	<field name="count" class="java.lang.Number"/>
 	<field name="movementTypeName" class="java.lang.String"/>
@@ -43,7 +44,7 @@
                                         MessageFormat.format(str(
                                             DateUtil.isTheSameDay($P{startDate}, $P{endDate}) ? "report.name2" : "report.name1"
                                         ), 
-                                        new Object[]{$P{department}, Formatter.formatReportTitleDate($P{startDate}), Formatter.formatReportTitleDate($P{endDate})})
+                                        new Object[]{$P{department}, Formatter.formatReportTitleDate($P{startDate}, $P{REPORT_LOCALE}), Formatter.formatReportTitleDate($P{endDate}, $P{REPORT_LOCALE})})
                                     ]]>
                 </textFieldExpression>
 			</textField>
@@ -111,7 +112,7 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="183" y="0" width="97" height="20"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{cargoReceiverName}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatCargoReceiver($F{cargoReceiverName}, $F{cargoReceiverAddress})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="280" y="0" width="125" height="20"/>

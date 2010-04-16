@@ -28,8 +28,9 @@ public class RegionalControlReportDAO extends AbstractReportDAO<RegionalControlR
     public static enum OrderBy {
 
         CARGO_ARRIVED("cargoArrived"),
-        CARGO_TYPE("cargoTypeName + '" + Formatter.CARGO_TYPE_DELIMETER + "' + cargoTypeCode"),
-        CARGO_RECEIVER("cargoReceiverName"), CARGO_PRODUCER("cargoProducerName");
+        CARGO_TYPE("cargoTypeName"),
+        CARGO_RECEIVER("cargoReceiverName"),
+        CARGO_PRODUCER("cargoProducerName");
         private String name;
 
         private OrderBy(String name) {

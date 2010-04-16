@@ -94,7 +94,7 @@ public final class RegionalControlReportPage extends TemplatePage {
         String reportName = isTheSameDay ? "report.name2" : "report.name1";
         add(new Label("report.name", new StringResourceModel(reportName, null,
                 new Object[]{departmentDAO.getDepartmentName(departmentId, reportLocale),
-                    Formatter.formatReportTitleDate(startDate), Formatter.formatReportTitleDate(endDate)})));
+                    Formatter.formatReportTitleDate(startDate, reportLocale), Formatter.formatReportTitleDate(endDate, reportLocale)})));
 
         SortableDataProvider<RegionalControlReport> dataProvider = new SortableDataProvider<RegionalControlReport>() {
 
@@ -150,7 +150,7 @@ public final class RegionalControlReportPage extends TemplatePage {
 
                 item.add(new Label("cargoArrived", Formatter.formatCargoArrived(report.getCargoArrived(), reportLocale)));
                 item.add(new Label("cargoProducerName", report.getCargoProducerName()));
-                item.add(new Label("cargoReceiverName", report.getCargoReceiverName()));
+                item.add(new Label("cargoReceiver", Formatter.formatCargoReceiver(report.getCargoReceiverName(), report.getCargoReceiverAddress())));
                 item.add(new Label("cargoTypeName", Formatter.formatCargoType(report.getCargoTypeName(), report.getCargoTypeCode())));
                 item.add(new Label("count", Formatter.formatCount(report.getCount(), report.getUnitTypeName(), localeService.getReportLocale())));
                 item.add(new Label("movementType", report.getMovementTypeName()));

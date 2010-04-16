@@ -4,7 +4,6 @@
  */
 package org.vetcontrol.report.util.regionalcontrol;
 
-import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,11 +18,9 @@ public final class Formatter {
 
     private Formatter() {
     }
-    public static final String CARGO_TYPE_DELIMETER = ", ";
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
 
-    public static String formatReportTitleDate(Date date) {
-        return DATE_FORMAT.format(date);
+    public static String formatReportTitleDate(Date date, Locale locale) {
+        return new SimpleDateFormat("dd.MM.yyyy", locale).format(date);
     }
 
     public static String formatCargoArrived(Date cargoArrived, Locale locale) {
@@ -31,7 +28,7 @@ public final class Formatter {
     }
 
     public static String formatCargoType(String cargoTypeName, String cargoTypeCode) {
-        return cargoTypeName + CARGO_TYPE_DELIMETER + cargoTypeCode;
+        return cargoTypeName + ", " + cargoTypeCode;
     }
 
     public static String formatCount(Number count, String unitTypeName, Locale locale) {
@@ -40,5 +37,9 @@ public final class Formatter {
             return "";
         }
         return NumberFormat.getInstance(locale).format(count) + " " + unitTypeName;
+    }
+
+    public static String formatCargoReceiver(String cargoReceiverName, String cargoReceiverAddress) {
+        return cargoReceiverAddress + ", " + cargoReceiverName;
     }
 }

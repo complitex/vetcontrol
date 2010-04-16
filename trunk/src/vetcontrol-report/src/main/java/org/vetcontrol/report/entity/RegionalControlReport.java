@@ -18,6 +18,7 @@ public class RegionalControlReport extends Ordered implements Serializable {
     private Date cargoArrived;
     private String cargoProducerName;
     private String cargoReceiverName;
+    private String cargoReceiverAddress;
     private String cargoTypeName;
     private String cargoTypeCode;
     private Number count;
@@ -86,5 +87,13 @@ public class RegionalControlReport extends Ordered implements Serializable {
 
     public void setMovementTypeName(String movementTypeName) {
         this.movementTypeName = movementTypeName;
+    }
+
+    public String getCargoReceiverAddress() {
+        return cargoReceiverAddress;
+    }
+
+    public void setCargoReceiverAddress(String cargoReceiverAddress) {
+        this.cargoReceiverAddress = cargoReceiverAddress;
     }
 }

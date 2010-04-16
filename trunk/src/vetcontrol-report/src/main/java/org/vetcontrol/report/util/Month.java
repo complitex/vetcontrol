@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.vetcontrol.report.commons.util;
+package org.vetcontrol.report.util;
 
 import java.util.Locale;
 import org.vetcontrol.util.DateUtil;
