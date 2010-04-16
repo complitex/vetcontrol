@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM 'http://java.sun.com/dtd/properties.dtd'>
+<properties>
+    <entry key="all">
+        <![CDATA[
+            SELECT
+                    (SELECT sc.value FROM stringculture sc WHERE sc.id=
+                        (SELECT d.name FROM department d WHERE d.id = a.department_id)
+                        AND sc.locale = :locale) AS departmentName,
+                    (SELECT bp.name FROM passing_border_point bp WHERE bp.id = a.passing_border_point_id) AS passingBorderPointName,
+                    (SELECT a.arrest_date) AS arrestDate,
+                    (SELECT sc.value FROM stringculture sc WHERE sc.id=
+                        (SELECT ct.name FROM cargo_type ct WHERE ct.id = a.cargo_type_id)
+                        AND sc.locale = :locale) AS cargoTypeName,
+                    (SELECT a.`count`) AS `count`,
+                    (SELECT sc.value FROM stringculture sc WHERE sc.id=
+                        (SELECT ut.short_name FROM unit_type ut WHERE ut.id = a.unit_type_id)
+                        AND sc.locale = :locale) AS unitTypeName,
+                    (SELECT a.cargo_sender_name) AS cargoSenderName,
+                    (SELECT sc.value FROM stringculture sc WHERE sc.id=
+                        (SELECT c.name FROM countrybook c WHERE c.id = a.cargo_sender_country_id)
+                        AND sc.locale = :locale) AS cargoSenderCountry,
+                    (SELECT a.cargo_receiver_name) AS cargoReceiverName,
+                    (SELECT a.cargo_receiver_address) AS cargoReceiverAddress,
+                    (SELECT sc.value FROM stringculture sc WHERE sc.id=
+                        (SELECT ar.name FROM arrest_reason ar WHERE ar.id = a.arrest_reason_id)
+                        AND sc.locale = :locale) AS arrestReason,
+                    (SELECT a.arrest_reason_details) AS arrestReasonDetails,
+                    (SELECT a.document_cargo_created) AS documentCargoCreated
+
+                FROM arrest_document a
+                WHERE
+                (
+                 (a.department_id = :department)
+                 OR
+                 (a.department_id IN (SELECT d3.id FROM department d3 WHERE d3.parent_id = :department))
+                 OR
+                 (a.department_id IN (SELECT d3.id FROM department d3 WHERE d3.parent_id IN (SELECT d2.id FROM department d2 WHERE d2.parent_id = :department)))
+                )
+                AND a.arrest_date >= :startDate AND a.arrest_date <= :endDate
+                ORDER BY {0} {1}
+         ]]>
+    </entry>
+    <entry key="size">
+        <![CDATA[
+            SELECT COUNT(*)
+                FROM arrest_document a
+                WHERE
+                (
+                 (a.department_id = :department)
+                 OR
+                 (a.department_id IN (SELECT d3.id FROM department d3 WHERE d3.parent_id = :department))
+                 OR
+                 (a.department_id IN (SELECT d3.id FROM department d3 WHERE d3.parent_id IN (SELECT d2.id FROM department d2 WHERE d2.parent_id = :department)))
+                )
+                AND a.arrest_date >= :startDate AND a.arrest_date <= :endDate
+        ]]>
+    </entry>
+</properties>
