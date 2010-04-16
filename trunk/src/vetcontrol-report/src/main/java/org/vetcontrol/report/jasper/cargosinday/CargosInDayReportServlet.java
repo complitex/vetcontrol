@@ -6,8 +6,6 @@ package org.vetcontrol.report.jasper.cargosinday;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -28,6 +26,8 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.export.JRTextExporterParameter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vetcontrol.report.entity.CargosInDayReportParameter;
 import org.vetcontrol.report.commons.service.LocaleService;
 import org.vetcontrol.report.service.dao.CargosInDayReportDAO;
@@ -37,6 +37,7 @@ import org.vetcontrol.report.commons.util.jasper.ExportType;
 import org.vetcontrol.report.commons.util.jasper.ExportTypeUtil;
 import org.vetcontrol.report.commons.util.jasper.JRCacheableDataSource;
 import org.vetcontrol.report.commons.util.jasper.TextExporterConstants;
+import org.vetcontrol.report.commons.util.servlet.ServletUtil;
 import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.web.security.SecurityRoles;
 
@@ -46,8 +47,9 @@ import org.vetcontrol.web.security.SecurityRoles;
  */
 @WebServlet(name = "CargosInDayReportServlet", urlPatterns = {"/CargosInDayReportServlet"})
 @RolesAllowed({SecurityRoles.LOCAL_AND_REGIONAL_REPORT})
-public class CargosInDayReportServlet extends HttpServlet {
+public final class CargosInDayReportServlet extends HttpServlet {
 
+    private static final Logger log = LoggerFactory.getLogger(CargosInDayReportServlet.class);
     public static final String DAY_KEY = "day";
     public static final String DEPARTMENT_KEY = "department";
     @EJB
@@ -61,22 +63,20 @@ public class CargosInDayReportServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ServletOutputStream servletOutputStream = null;
         try {
             ExportType exportType = ExportTypeUtil.getExportType(request);
-            if (exportType == null) {
-                return;
-            }
             Date day = getDay(request);
             Date startDate = DateUtil.getBeginOfDay(day);
             Date endDate = DateUtil.getEndOfDay(day);
-            Long departmentId = getDepartment(request);
+            Long departmentId = getDepartmentId(request);
             Locale reportLocale = localeService.getReportLocale();
 
-            ServletOutputStream servletOutputStream = response.getOutputStream();
+            servletOutputStream = response.getOutputStream();
             InputStream reportStream = null;
             Map<String, Object> params = new HashMap<String, Object>();
-            params.put("day", day);
-            params.put("department", departmentDAO.getDepartmentName(departmentId, reportLocale));
+            params.put(DAY_KEY, day);
+            params.put(DEPARTMENT_KEY, departmentDAO.getDepartmentName(departmentId, reportLocale));
             params.put(JRParameter.REPORT_LOCALE, reportLocale);
 
             Map<String, Object> daoParams = new HashMap<String, Object>();
@@ -90,8 +90,6 @@ public class CargosInDayReportServlet extends HttpServlet {
                     reportStream = getClass().getResourceAsStream("pdf/cargos_in_day_report.jasper");
                     JasperRunManager.runReportToPdfStream(reportStream, servletOutputStream, params, dataSource);
                     response.setContentType("application/pdf");
-                    servletOutputStream.flush();
-                    servletOutputStream.close();
                     break;
                 case TEXT:
                     reportStream = getClass().getResourceAsStream("text/cargos_in_day_report.jasper");
@@ -107,18 +105,21 @@ public class CargosInDayReportServlet extends HttpServlet {
 
                     response.setContentType("text/plain");
                     response.setCharacterEncoding("UTF-8");
-                    servletOutputStream.flush();
-                    servletOutputStream.close();
                     break;
             }
-        } catch (Exception e) {
-            // display stack trace in the browser
-            //TODO: remove
-            StringWriter stringWriter = new StringWriter();
-            PrintWriter printWriter = new PrintWriter(stringWriter);
-            e.printStackTrace(printWriter);
+        } catch (Throwable e) {
+            String error = ServletUtil.error(e, log);
             response.setContentType("text/plain");
-            response.getOutputStream().print(stringWriter.toString());
+            response.setCharacterEncoding("UTF-8");
+            if (servletOutputStream == null) {
+                servletOutputStream = response.getOutputStream();
+            }
+            servletOutputStream.print(error);
+        } finally {
+            if (servletOutputStream != null) {
+                servletOutputStream.flush();
+                servletOutputStream.close();
+            }
         }
     }
 
@@ -126,7 +127,7 @@ public class CargosInDayReportServlet extends HttpServlet {
         return dateConverter.toDate(request.getParameter(DAY_KEY).trim());
     }
 
-    private Long getDepartment(HttpServletRequest request) {
+    private Long getDepartmentId(HttpServletRequest request) {
         return Long.valueOf(request.getParameter(DEPARTMENT_KEY).trim());
     }
 }
