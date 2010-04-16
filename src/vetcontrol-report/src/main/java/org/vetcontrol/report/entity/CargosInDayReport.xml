@@ -8,7 +8,11 @@
                             (SELECT ct.name FROM cargo_type ct WHERE ct.id = c.cargo_type_id)
                             AND sc.locale= :locale) AS cargoTypeName,
                     (SELECT d.cargo_sender_name) AS cargoSenderName,
+                    (SELECT sc.value FROM stringculture sc WHERE sc.id=
+                        (SELECT c.name FROM countrybook c WHERE c.id = d.cargo_sender_country_id)
+                        AND sc.locale = :locale) AS cargoSenderCountry,
                     (SELECT d.cargo_receiver_name) AS cargoReceiverName,
+                    (SELECT d.cargo_receiver_address) AS cargoReceiverAddress,
                     (SELECT sc.value FROM stringculture sc WHERE sc.id =
                             (SELECT cp.name FROM cargo_producer cp WHERE cp.id = c.cargo_producer_id)
                             AND sc.locale= :locale) AS cargoProducerName,

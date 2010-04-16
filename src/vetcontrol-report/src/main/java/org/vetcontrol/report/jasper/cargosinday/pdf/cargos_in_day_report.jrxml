@@ -28,7 +28,9 @@
 	<field name="cargoTypeName" class="java.lang.String"/>
 	<field name="unitTypeName" class="java.lang.String"/>
 	<field name="cargoSenderName" class="java.lang.String"/>
+        <field name="cargoSenderCountry" class="java.lang.String"/>
 	<field name="cargoReceiverName" class="java.lang.String"/>
+        <field name="cargoReceiverAddress" class="java.lang.String"/>
 	<field name="cargoProducerName" class="java.lang.String"/>
 	<field name="vehicleType" class="java.lang.String"/>
 	<field name="count" class="java.lang.Number"/>
@@ -41,7 +43,7 @@
 				<reportElement style="Title" x="28" y="21" width="520" height="19"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String">
-                                    <![CDATA[MessageFormat.format($R{report.name}, $P{department}, Formatter.formatReportTitleDate($P{day}))]]>
+                                    <![CDATA[MessageFormat.format($R{report.name}, $P{department}, Formatter.formatReportTitleDate($P{day}, $P{REPORT_LOCALE}))]]>
                                     </textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
@@ -133,12 +135,12 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="270" y="0" width="71" height="20"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{cargoReceiverName}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatCargoReceiver($F{cargoReceiverName}, $F{cargoReceiverAddress})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="341" y="0" width="72" height="20"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{cargoSenderName}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatCargoSender($F{cargoSenderName}, $F{cargoSenderCountry})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="413" y="0" width="12" height="20"/>

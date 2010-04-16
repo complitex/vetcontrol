@@ -19,7 +19,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.vetcontrol.entity.Department;
 import org.vetcontrol.report.commons.service.dao.DepartmentDAO;
-import org.vetcontrol.report.commons.util.Month;
+import org.vetcontrol.report.util.Month;
 import org.vetcontrol.report.web.components.DepartmentPicker;
 import org.vetcontrol.report.web.components.MonthPicker;
 import org.vetcontrol.util.DateUtil;

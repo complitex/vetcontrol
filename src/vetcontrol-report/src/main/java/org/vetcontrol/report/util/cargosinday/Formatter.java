@@ -17,13 +17,11 @@ import org.vetcontrol.entity.VehicleType;
  */
 public final class Formatter {
 
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
-
     private Formatter() {
     }
 
-    public static String formatReportTitleDate(Date date) {
-        return DATE_FORMAT.format(date);
+    public static String formatReportTitleDate(Date date, Locale locale) {
+        return new SimpleDateFormat("dd.MM.yyyy", locale).format(date);
     }
 
     public static String formatExistenceData(String fromDb, VehicleType vehicleType) {
@@ -36,5 +34,13 @@ public final class Formatter {
             return "";
         }
         return NumberFormat.getInstance(locale).format(count) + " " + unitTypeName;
+    }
+
+    public static String formatCargoSender(String cargoSenderName, String cargoSenderCountry) {
+        return cargoSenderCountry + ", " + cargoSenderName;
+    }
+
+    public static String formatCargoReceiver(String cargoReceiverName, String cargoReceiverAddress) {
+        return cargoReceiverAddress + ", " + cargoReceiverName;
     }
 }

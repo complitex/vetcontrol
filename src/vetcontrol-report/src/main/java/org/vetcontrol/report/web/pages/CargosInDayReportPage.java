@@ -88,7 +88,7 @@ public final class CargosInDayReportPage extends TemplatePage {
 
         add(new Label("title", new ResourceModel("title")));
         add(new Label("report.name", new StringResourceModel("report.name", null,
-                new Object[]{departmentDAO.getDepartmentName(departmentId, reportLocale), Formatter.formatReportTitleDate(day)})));
+                new Object[]{departmentDAO.getDepartmentName(departmentId, reportLocale), Formatter.formatReportTitleDate(day, reportLocale)})));
 
         SortableDataProvider<CargosInDayReport> dataProvider = new SortableDataProvider<CargosInDayReport>() {
 
@@ -145,8 +145,8 @@ public final class CargosInDayReportPage extends TemplatePage {
 
                 item.add(new Label("cargoTypeName", report.getCargoTypeName()));
                 item.add(new Label("cargoProducerName", report.getCargoProducerName()));
-                item.add(new Label("cargoReceiverName", report.getCargoReceiverName()));
-                item.add(new Label("cargoSenderName", report.getCargoSenderName()));
+                item.add(new Label("cargoReceiver", Formatter.formatCargoReceiver(report.getCargoReceiverName(), report.getCargoReceiverAddress())));
+                item.add(new Label("cargoSender", Formatter.formatCargoSender(report.getCargoSenderName(), report.getCargoSenderCountry())));
                 item.add(new Label("isCar", Formatter.formatExistenceData(report.getVehicleType(), VehicleType.CAR)));
                 item.add(new Label("isShip", Formatter.formatExistenceData(report.getVehicleType(), VehicleType.SHIP)));
                 item.add(new Label("isContainer", Formatter.formatExistenceData(report.getVehicleType(), VehicleType.CONTAINER)));
