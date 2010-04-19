@@ -68,7 +68,7 @@ public class Department extends Localizable {
     public void setCustomsPoint(CustomsPoint customsPoint) {
         this.customsPoint = customsPoint;
     }
-    private Integer level;
+    private Integer level = 1;
 
     @ValidProperty(false)
     @Column(name = "level", nullable = false)
@@ -100,7 +100,7 @@ public class Department extends Localizable {
     @Override
     public Query getInsertQuery(EntityManager em) {
         return em.createNativeQuery("insert into department (id, `name`, parent_id, custom_point_id, `level`, updated, disabled) "
-                + "value (:id, :name, :parent_id, :updated, :custom_point_id, :level, :disabled)").
+                + "value (:id, :name, :parent_id, :custom_point_id, :level, :updated, :disabled)").
                 setParameter("id", id).
                 setParameter("name", name).
                 setParameter("parent_id", parent != null ? parent.getId() : null).

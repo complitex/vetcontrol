@@ -51,7 +51,7 @@ public class BookSyncBean extends SyncInfo {
         StringCulture.class,
         ArrestReason.class, CargoMode.class, CountryBook.class, CargoProducer.class,
         CargoType.class, CountryWithBadEpizooticSituation.class,
-        CustomsPoint.class, Department.class, Job.class, MovementType.class, PassingBorderPoint.class,
+        CustomsPoint.class, Department.class, PassingBorderPoint.class, Job.class, MovementType.class,
         RegisteredProducts.class, UnitType.class, CargoModeCargoType.class, CargoModeUnitType.class};
     private final Map<Class, GenericType> genericTypeMap = new HashMap<Class, GenericType>();
 

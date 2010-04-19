@@ -282,7 +282,7 @@ public class BookResourceBean {
 
 
         String order = "";
-        if (CargoMode.class.equals(entity)){
+        if (CargoMode.class.equals(entity) || Department.class.equals(entity)){
             order = ", e.parent.id";            
         }
 

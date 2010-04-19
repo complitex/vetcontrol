@@ -137,6 +137,8 @@ public final class DepartmentEdit extends FormTemplatePage {
                 if (parent != null) {
                     department.setParent(parent);
                     department.setLevel(parent.getLevel() + 1);
+                } else {
+                    department.setLevel(1);
                 }
             }
 
@@ -370,7 +372,7 @@ public final class DepartmentEdit extends FormTemplatePage {
         disableReferences();
         logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, DepartmentEdit.class, Department.class, "ID: " + department.getId());
     }
-    
+
     private void disableReferences() {
         for (PassingBorderPoint borderPoint : department.getPassingBorderPoints()) {
             if (!BeanPropertyUtil.isNewBook(borderPoint)) {
@@ -379,13 +381,13 @@ public final class DepartmentEdit extends FormTemplatePage {
         }
     }
 
-    private void enableDepartment(){
+    private void enableDepartment() {
         bookDAO.enable(department);
         enableReferences();
         logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, DepartmentEdit.class, Department.class, "ID: " + department.getId());
     }
 
-    private void enableReferences(){
+    private void enableReferences() {
         for (PassingBorderPoint borderPoint : department.getPassingBorderPoints()) {
             if (!BeanPropertyUtil.isNewBook(borderPoint)) {
                 bookDAO.enable(borderPoint);
