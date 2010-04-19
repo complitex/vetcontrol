@@ -86,10 +86,11 @@ public final class ArrestDocumentReportServlet extends HttpServlet {
             switch (exportType) {
                 case PDF:
                     reportStream = getClass().getResourceAsStream("pdf/arrest_report.jasper");
-                    JasperRunManager.runReportToPdfStream(reportStream, servletOutputStream, params, dataSource);
                     response.setContentType("application/pdf");
+                    JasperRunManager.runReportToPdfStream(reportStream, servletOutputStream, params, dataSource);
                     break;
                 case TEXT:
+
                     reportStream = getClass().getResourceAsStream("text/arrest_report.jasper");
                     JasperPrint jasperPrint = JasperFillManager.fillReport(reportStream, params, dataSource);
 
@@ -99,10 +100,10 @@ public final class ArrestDocumentReportServlet extends HttpServlet {
                     textExporter.setParameter(JRTextExporterParameter.PAGE_WIDTH, TextExporterConstants.PAGE_WIDTH);
                     textExporter.setParameter(JRTextExporterParameter.PAGE_HEIGHT, TextExporterConstants.PAGE_HEIGHT);
 
-                    textExporter.exportReport();
-
                     response.setContentType("text/plain");
                     response.setCharacterEncoding("UTF-8");
+
+                    textExporter.exportReport();
                     break;
             }
         } catch (Throwable e) {
