@@ -118,8 +118,8 @@ public final class ArrestReportServlet extends HttpServlet {
                 case PDF:
                     reportStream = Thread.currentThread().getContextClassLoader().
                             getResourceAsStream(reportTemplatePath + "pdf" + reportName);
-                    JasperRunManager.runReportToPdfStream(reportStream, servletOutputStream, params, dataSource);
                     response.setContentType("application/pdf");
+                    JasperRunManager.runReportToPdfStream(reportStream, servletOutputStream, params, dataSource);
                     break;
                 case TEXT:
                     reportStream = Thread.currentThread().getContextClassLoader().
@@ -132,10 +132,9 @@ public final class ArrestReportServlet extends HttpServlet {
                     textExporter.setParameter(JRTextExporterParameter.PAGE_WIDTH, TextExporterConstants.PAGE_WIDTH);
                     textExporter.setParameter(JRTextExporterParameter.PAGE_HEIGHT, TextExporterConstants.PAGE_HEIGHT);
 
-                    textExporter.exportReport();
-
                     response.setContentType("text/plain");
                     response.setCharacterEncoding("UTF-8");
+                    textExporter.exportReport();
                     break;
             }
         } catch (Throwable e) {

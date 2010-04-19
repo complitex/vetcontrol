@@ -94,8 +94,8 @@ public final class MovementTypesReportServlet extends HttpServlet {
             switch (exportType) {
                 case PDF:
                     reportStream = getClass().getResourceAsStream("pdf/movement_types_report.jasper");
-                    JasperRunManager.runReportToPdfStream(reportStream, servletOutputStream, params, dataSource);
                     response.setContentType("application/pdf");
+                    JasperRunManager.runReportToPdfStream(reportStream, servletOutputStream, params, dataSource);
                     break;
                 case TEXT:
                     reportStream = getClass().getResourceAsStream("text/movement_types_report.jasper");
@@ -107,10 +107,9 @@ public final class MovementTypesReportServlet extends HttpServlet {
                     textExporter.setParameter(JRTextExporterParameter.PAGE_WIDTH, TextExporterConstants.PAGE_WIDTH);
                     textExporter.setParameter(JRTextExporterParameter.PAGE_HEIGHT, TextExporterConstants.PAGE_HEIGHT);
 
-                    textExporter.exportReport();
-
                     response.setContentType("text/plain");
                     response.setCharacterEncoding("UTF-8");
+                    textExporter.exportReport();
                     break;
             }
         } catch (Throwable e) {
