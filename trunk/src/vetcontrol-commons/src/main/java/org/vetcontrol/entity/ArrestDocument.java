@@ -50,12 +50,10 @@ public class ArrestDocument extends Synchronized implements IUpdated {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "arrest_date", nullable = false)
     private Date arrestDate;
-
     @ManyToOne
-    @JoinColumn(name="arrest_reason_id", nullable=false)
+    @JoinColumn(name = "arrest_reason_id", nullable = false)
     @XmlIDREF
     private ArrestReason arrestReason;
-
     @Column(name = "arrest_reason_details", nullable = false)
     private String arrestReasonDetails;
     @ManyToOne
@@ -95,6 +93,11 @@ public class ArrestDocument extends Synchronized implements IUpdated {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "document_cargo_created", nullable = false)
     private Date documentCargoCreated;
+    @Column(name = "certificate_details", length = 255, nullable = false)
+    private String certificateDetails;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "certificate_date", nullable = false)
+    private Date certificateDate;
 
     public Date getArrestDate() {
         return arrestDate;
@@ -238,6 +241,22 @@ public class ArrestDocument extends Synchronized implements IUpdated {
 
     public void setArrestReason(ArrestReason arrestReason) {
         this.arrestReason = arrestReason;
+    }
+
+    public Date getCertificateDate() {
+        return certificateDate;
+    }
+
+    public void setCertificateDate(Date certificateDate) {
+        this.certificateDate = certificateDate;
+    }
+
+    public String getCertificateDetails() {
+        return certificateDetails;
+    }
+
+    public void setCertificateDetails(String certificateDetails) {
+        this.certificateDetails = certificateDetails;
     }
 
     @Override

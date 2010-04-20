@@ -78,10 +78,10 @@ INSERT INTO `cargo`(`id`, `client_id`, `department_id`, `document_cargo_id`, `ca
         (7,1,3,3,1,1,2,NULL,50,'2010-02-16', 'сертификат 4', 'NOT_SYNCHRONIZED');
 
 INSERT INTO `arrest_document`(`id`, `client_id`, `department_id`, `arrest_date`, `arrest_reason_id`, `arrest_reason_details`, `passing_border_point_id`,
-                                `count`, `cargo_mode_id`, `cargo_sender_name`, `cargo_sender_country_id`, `cargo_receiver_name`, `cargo_receiver_address`,
+                                `count`, `cargo_mode_id`, `certificate_date`, `certificate_details`, `cargo_sender_name`, `cargo_sender_country_id`, `cargo_receiver_name`, `cargo_receiver_address`,
                                 `cargo_type_id`, `unit_type_id`, `vehicle_type`, `vehicle_details`, `document_cargo_created`, `updated`, `sync_status`)
 VALUES
-             (1,1,3,'2010-04-15 17:00:00',1,'Детали задержания.', 1, 20.83, 1, 'sender 1', 1, 'receiver 1', 'receiver 1 address', 1, 1, 'CAR', '1234567', '2010-04-15 16:00:00', '2010-04-15 17:00:00', 'NOT_SYNCHRONIZED'),
-             (2,1,3,'2010-04-15 17:10:00',2,'Детали задержания.', 1, 50.77, 1, 'sender 2', 2, 'receiver 2', 'receiver 2 address', 2, 1, 'CAR', '7654321', '2010-04-15 16:00:00', '2010-04-15 17:10:00', 'NOT_SYNCHRONIZED'),
-             (3,1,3,'2010-04-15 17:20:00',3,'Детали задержания.', 2, 100, 1, 'sender 3', 1, 'receiver 3', 'receiver 3 address', 2, 1, 'SHIP', 'abc1234', '2010-04-15 16:00:00', '2010-04-15 17:20:00', 'NOT_SYNCHRONIZED'),
-             (4,1,3,'2010-04-15 17:30:00',1,'Детали задержания.', 2, 140, 1, 'sender 4', 2, 'receiver 4', 'receiver 4 address', 2, 1, 'AIRCRAFT', '', '2010-04-15 16:00:00', '2010-04-15 17:30:00', 'NOT_SYNCHRONIZED');
+             (1,1,3,'2010-04-15 17:00:00',1,'Детали задержания.', 1, 20.83, 1, '2010-01-01', '№ 12345678', 'sender 1', 1, 'receiver 1', 'receiver 1 address', 1, 1, 'CAR', '1234567', '2010-04-15 16:00:00', '2010-04-15 17:00:00', 'NOT_SYNCHRONIZED'),
+             (2,1,3,'2010-04-15 17:10:00',2,'Детали задержания.', 1, 50.77, 1, '2010-01-02', '№ 12345678', 'sender 2', 2, 'receiver 2', 'receiver 2 address', 2, 1, 'CAR', '7654321', '2010-04-15 16:00:00', '2010-04-15 17:10:00', 'NOT_SYNCHRONIZED'),
+             (3,1,3,'2010-04-15 17:20:00',3,'Детали задержания.', 2, 100, 1, '2010-01-03', '№ 12345678', 'sender 3', 1, 'receiver 3', 'receiver 3 address', 2, 1, 'SHIP', 'abc1234', '2010-04-15 16:00:00', '2010-04-15 17:20:00', 'NOT_SYNCHRONIZED'),
+             (4,1,3,'2010-04-15 17:30:00',1,'Детали задержания.', 2, 140, 1, '2010-01-04', '№ 12345678', 'sender 4', 2, 'receiver 4', 'receiver 4 address', 2, 1, 'AIRCRAFT', '', '2010-04-15 16:00:00', '2010-04-15 17:30:00', 'NOT_SYNCHRONIZED');
