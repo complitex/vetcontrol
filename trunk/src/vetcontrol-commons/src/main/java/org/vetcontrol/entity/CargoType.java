@@ -1,13 +1,13 @@
 package org.vetcontrol.entity;
 
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
+import org.vetcontrol.util.book.entity.annotation.ViewLength;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
-import org.vetcontrol.util.book.entity.annotation.ViewLength;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -20,15 +20,15 @@ import org.vetcontrol.util.book.entity.annotation.ViewLength;
 @XmlRootElement
 public class CargoType extends Localizable {
 
-    private String uktZedCode;
+    private String code;
 
     @Column(name = "ukt_zed_code", nullable = false, length = 10, unique = true)
     public String getCode() {
-        return uktZedCode;
+        return code;
     }
 
     public void setCode(String uktZedCode) {
-        this.uktZedCode = uktZedCode;
+        this.code = uktZedCode;
     }
     private List<StringCulture> names = new ArrayList<StringCulture>();
 
@@ -52,7 +52,7 @@ public class CargoType extends Localizable {
                 .setParameter("id", id)
                 .setParameter("name", name)
                 .setParameter("updated", updated)
-                .setParameter("ukt_zed_code", uktZedCode)
+                .setParameter("ukt_zed_code", code)
                 .setParameter("disabled", disabled);
     }
 
@@ -63,7 +63,7 @@ public class CargoType extends Localizable {
                 .setParameter("id", id)
                 .setParameter("name", name)
                 .setParameter("updated", updated)
-                .setParameter("ukt_zed_code", uktZedCode)
+                .setParameter("ukt_zed_code", code)
                 .setParameter("disabled", disabled);
     }
 
@@ -75,7 +75,7 @@ public class CargoType extends Localizable {
 
         CargoType cargoType = (CargoType) o;
 
-        if (uktZedCode != null ? !uktZedCode.equals(cargoType.uktZedCode) : cargoType.uktZedCode != null) return false;
+        if (code != null ? !code.equals(cargoType.code) : cargoType.code != null) return false;
 
         return true;
     }
@@ -83,7 +83,7 @@ public class CargoType extends Localizable {
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (uktZedCode != null ? uktZedCode.hashCode() : 0);
+        result = 31 * result + (code != null ? code.hashCode() : 0);
         return result;
     }
 

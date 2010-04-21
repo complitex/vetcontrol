@@ -4,24 +4,12 @@
  */
 package org.vetcontrol.entity;
 
-import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Date;
 
 /**
  *
@@ -47,6 +35,10 @@ public class ArrestDocument extends Synchronized implements IUpdated {
     @JoinColumn(name = "department_id", nullable = false)
     @XmlIDREF
     private Department department;
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "creator_id")
+    @XmlIDREF
+    private User creator;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "arrest_date", nullable = false)
     private Date arrestDate;
@@ -153,6 +145,14 @@ public class ArrestDocument extends Synchronized implements IUpdated {
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    public User getCreator() {
+        return creator;
+    }
+
+    public void setCreator(User creator) {
+        this.creator = creator;
     }
 
     public Long getId() {
@@ -267,5 +267,10 @@ public class ArrestDocument extends Synchronized implements IUpdated {
     @Override
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    public String getDisplayId() {
+        return (department != null ? department.getId() : "0") + "."
+                + (client != null ? client.getId() : "0") + "." + id;
     }
 }

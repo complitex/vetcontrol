@@ -579,6 +579,7 @@ CREATE TABLE `arrest_document` (
     `id` bigint(20) NOT NULL AUTO_INCREMENT,
     `client_id` bigint(20) NOT NULL,
     `department_id` bigint(20) NOT NULL,
+    `creator_id` bigint(20) NOT NULL,
 
     `arrest_date` TIMESTAMP NOT NULL,
     `arrest_reason_id` bigint(20) NOT NULL,

@@ -1,5 +1,6 @@
 package org.vetcontrol.document.service;
 
+import org.apache.wicket.Session;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.UserProfileBean;
@@ -13,13 +14,12 @@ import javax.ejb.Stateless;
 import javax.persistence.*;
 import java.math.BigInteger;
 import java.util.List;
-import org.apache.wicket.Session;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 12.01.2010 18:22:06
  */
-@Stateless
+@Stateless(name = "DocumentCargoBean")
 @RolesAllowed({SecurityRoles.DOCUMENT_CREATE, SecurityRoles.DOCUMENT_EDIT, SecurityRoles.DOCUMENT_DEP_VIEW})
 public class DocumentCargoBean {
 
@@ -347,27 +347,9 @@ public class DocumentCargoBean {
         if (s != null) {
             query.setParameter(parameter, "%" + s.toUpperCase() + "%");
         }
-    }
+    }    
 
-    public <T> List<T> getList(Class<T> _class) {
-        return em.createQuery("from " + _class.getSimpleName(), _class).getResultList();
-    }
-
-    public List<Department> getChildDepartments(Department department) {
-        List<Department> list = em.createQuery("select d from Department d where d.parent = :department "
-                + "or d.parent.parent = :department", Department.class).setParameter("department", department).getResultList();
-
-        list.add(0, department);
-
-        return list;
-    }
-
-    public List<PassingBorderPoint> getPassingBorderPoints(Department department){
-        return em.createQuery("select pbp from PassingBorderPoint pbp " +
-                "where pbp.department = :department and pbp.disabled = false", PassingBorderPoint.class)
-                .setParameter("department", department)
-                .getResultList();        
-    }
+   
 
     public ClientEntityId getDocumentCargoId(Long id, Long clientId, Long departmentId) {
         try {
@@ -377,32 +359,7 @@ public class DocumentCargoBean {
         }
     }
 
-    public List<String> getSenderNames(CountryBook country, String filterName) {
-        return em.createQuery("select dc.senderName from DocumentCargo dc "
-                + "where dc.senderCountry = :country and dc.senderName like :filterName "
-                + "group by dc.senderName order by dc.senderName asc", String.class).setParameter("country", country).setParameter("filterName", "%" + filterName + "%").setMaxResults(10).getResultList();
-    }
 
-    public List<String> getReceiverNames(String filterName) {
-        return em.createQuery("select dc.receiverName from DocumentCargo dc "
-                + "where dc.receiverName like :filterName "
-                + "group by dc.receiverName order by dc.receiverName asc", String.class).setParameter("filterName", "%" + filterName + "%").setMaxResults(10).getResultList();
-    }
-
-    public List<String> getReceiverAddresses(String filterName) {
-        return em.createQuery("select dc.receiverAddress from DocumentCargo dc "
-                + "where dc.receiverAddress like :filterName "
-                + "group by dc.receiverAddress order by dc.receiverAddress asc", String.class).setParameter("filterName", "%" + filterName + "%").setMaxResults(10).getResultList();
-    }
-
-    public String getReceiverAddress(String receiverName) {
-        try {
-            return em.createQuery("select dc.receiverAddress from DocumentCargo dc "
-                    + "where dc.receiverName = :receiverName", String.class).setParameter("receiverName", receiverName).setMaxResults(1).getSingleResult();
-        } catch (NoResultException e) {
-            return "";
-        }
-    }
 
     public List<CargoProducer> getCargoProducer(CountryBook country) {
         return em.createQuery("select cp from CargoProducer cp where cp.country = :country and cp.disabled = false", CargoProducer.class).setParameter("country", country).getResultList();

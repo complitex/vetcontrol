@@ -9,8 +9,6 @@ import org.apache.wicket.authorization.UnauthorizedInstantiationException;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.datetime.StyleDateConverter;
 import org.apache.wicket.datetime.markup.html.basic.DateLabel;
-import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteSettings;
-import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteTextField;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
@@ -30,7 +28,6 @@ import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.web.component.DatePicker;
 import org.vetcontrol.web.component.UKTZEDField;
 import org.vetcontrol.web.component.list.AjaxRemovableListView;
-import org.vetcontrol.web.template.FormTemplatePage;
 
 import javax.ejb.EJB;
 import java.util.Arrays;
@@ -47,10 +44,10 @@ import static org.vetcontrol.web.security.SecurityRoles.*;
  *         Date: 12.01.2010 15:44:20
  */
 @AuthorizeInstantiation({DOCUMENT_CREATE, DOCUMENT_DEP_EDIT, DOCUMENT_DEP_CHILD_EDIT})
-public class DocumentCargoEdit extends FormTemplatePage {
+public class DocumentCargoEdit extends DocumentEditPage {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentCargoEdit.class);
-    @EJB(name = "DocumentBean")
+    @EJB(name = "DocumentCargoBean")
     private DocumentCargoBean documentCargoBean;
     @EJB(name = "UserProfileBean")
     private UserProfileBean userProfileBean;
@@ -170,7 +167,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
                     if (c.getCargoType() == null) {
                         error(getString("document.cargo.edit.message.cargo_type.not_found.error"));
                     }
-                    
+
                     if (cargoMode != null && !cargoMode.equals(cargoTypeBean.getCargoMode(c.getCargoType()))){
                         error(getString("document.cargo.edit.message.cargo_type.unique_cargo_mode.error") + ": " +
                                 c.getCargoType().getCode() + " - " +
@@ -218,7 +215,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
         form.add(cancel);
 
         //Тип движения груза
-        addDropDownChoice(form, "document.cargo.movement_type", MovementType.class, documentCargoModel, "movementType");
+        addBookDropDownChoice(form, "document.cargo.movement_type", MovementType.class, documentCargoModel, "movementType");
 
         //Тип транспортного средства
         final DropDownChoice<VehicleType> ddcVehicleType = new DropDownChoice<VehicleType>("document.cargo.vehicle_type",
@@ -239,80 +236,15 @@ public class DocumentCargoEdit extends FormTemplatePage {
             }
         });
 
-        //Отравитель Страна
-        DropDownChoice ddcSenderCountry = addDropDownChoice(form, "document.cargo.cargo_sender_country", CountryBook.class, documentCargoModel, "senderCountry");
-        ddcSenderCountry.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        //Отправитель
+        addSender(form, "document.cargo.cargo_sender_country", "senderCountry",
+                "document.cargo.cargo_sender_name", "senderName",
+                documentCargoModel);
 
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                //update model
-            }
-        });
-        ddcSenderCountry.setOutputMarkupId(true);
-
-        //Настройки автокомплита
-        AutoCompleteSettings settings = new AutoCompleteSettings();
-        settings.setAdjustInputWidth(false);
-
-        //Отравитель Название
-        final AutoCompleteTextField<String> senderName = new AutoCompleteTextField<String>("document.cargo.cargo_sender_name",
-                new PropertyModel<String>(documentCargoModel, "senderName"), settings) {
-
-            @Override
-            protected Iterator<String> getChoices(String input) {
-
-                return documentCargoBean.getSenderNames(documentCargoModel.getObject().getSenderCountry(), input).iterator();
-            }
-        };
-        senderName.setRequired(true);
-        senderName.setOutputMarkupId(true);
-        form.add(senderName);
-
-        //Получатель Название
-        final AutoCompleteTextField<String> receiverName = new AutoCompleteTextField<String>("document.cargo.cargo_receiver_name",
-                new PropertyModel<String>(documentCargoModel, "receiverName"), settings) {
-
-            @Override
-            protected Iterator<String> getChoices(String input) {
-
-                return documentCargoBean.getReceiverNames(input).iterator();
-            }
-        };
-        receiverName.setRequired(true);
-        receiverName.setOutputMarkupId(true);
-        form.add(receiverName);
-
-        //Получатель Адрес
-        final AutoCompleteTextField<String> receiverAddress = new AutoCompleteTextField<String>("document.cargo.cargo_receiver_address",
-                new PropertyModel<String>(documentCargoModel, "receiverAddress"), settings) {
-
-            @Override
-            protected Iterator<String> getChoices(String input) {
-
-                return documentCargoBean.getReceiverNames(input).iterator();
-            }
-        };
-        receiverAddress.setRequired(true);
-        receiverAddress.setOutputMarkupId(true);
-        form.add(receiverAddress);
-
-        //Подстановка адреса при вводе получателя
-        receiverName.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                String address = receiverAddress.getModelObject();
-                String name = receiverName.getModelObject();
-
-                if ((address == null || address.isEmpty()) && name != null && !name.isEmpty()) {
-                    address = documentCargoBean.getReceiverAddress(name);
-                    if (address != null) {
-                        receiverAddress.setModelObject(address);
-                        target.addComponent(receiverAddress);
-                    }
-                }
-            }
-        });
+        //Получатель
+        addReceiver(form, "document.cargo.cargo_receiver_name", "receiverName",
+                "document.cargo.cargo_receiver_address", "receiverAddress",
+                documentCargoModel);
 
         boolean visible = id != null;
 
@@ -341,82 +273,10 @@ public class DocumentCargoEdit extends FormTemplatePage {
         creator.setVisible(visible);
         form.add(creator);
 
-        //Подразделение
-        List<Department> list = null;
-
-        try {
-            list = documentCargoBean.getChildDepartments(currentUser.getDepartment());
-            if (!list.contains(dc.getDepartment())) {
-                list.add(dc.getDepartment());
-            }
-        } catch (Exception e) {
-            log.error("Ошибка загрузки списка дочерних подразделений:", e);
-            logBean.error(DOCUMENT, VIEW, DocumentCargoEdit.class, Department.class, "Ошибка загрузки данных из базы данных");
-        }
-
-        //Если роль редактировать подразделение то отобразить выпадающий список иначе статический текс
-        DropDownChoice<Department> ddcDepartment = new DropDownChoice<Department>("document.cargo.department",
-                new PropertyModel<Department>(documentCargoModel, "department"), list,
-                new IChoiceRenderer<Department>() {
-
-                    @Override
-                    public Object getDisplayValue(Department department) {
-                        return department.getDisplayName(getLocale(), localeDAO.systemLocale());
-                    }
-
-                    @Override
-                    public String getIdValue(Department department, int index) {
-                        return String.valueOf(department.getId());
-                    }
-                });
-
-        ddcDepartment.setRequired(true);
-        ddcDepartment.setOutputMarkupId(true);
-        ddcDepartment.setVisible(hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) && id == null);
-        form.add(ddcDepartment);
-
-        Label departmentLabel = new Label("document.cargo.department.label",
-                dc.getDepartment().getDisplayName(getLocale(), localeDAO.systemLocale()));
-        departmentLabel.setVisible(!hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) || id != null);
-        form.add(departmentLabel);
-
-        //Пункт пропуска через границу
-        final DropDownChoice<PassingBorderPoint> ddcPassingBorderPoint = new DropDownChoice<PassingBorderPoint>("document.cargo.passingBorderPoint",
-                new PropertyModel<PassingBorderPoint>(documentCargoModel, "passingBorderPoint"),
-                new LoadableDetachableModel<List<PassingBorderPoint>>() {
-
-                    @Override
-                    protected List<PassingBorderPoint> load() {
-                        return documentCargoBean.getPassingBorderPoints(documentCargoModel.getObject().getDepartment());
-                    }
-                }, new IChoiceRenderer<PassingBorderPoint>() {
-
-            @Override
-            public Object getDisplayValue(PassingBorderPoint object) {
-                return object.getName();
-            }
-
-            @Override
-            public String getIdValue(PassingBorderPoint object, int index) {
-                return object.getId().toString();
-            }
-        });
-        ddcPassingBorderPoint.setOutputMarkupId(true);
-        ddcPassingBorderPoint.setVisible(hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) && id == null);
-        form.add(ddcPassingBorderPoint);
-
-        ddcDepartment.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                target.addComponent(ddcPassingBorderPoint);
-            }
-        });
-
-        Label passingBorderPointLabel = new Label("document.cargo.passingBorderPoint.label",
-                dc.getPassingBorderPoint() != null ? dc.getPassingBorderPoint().getName() : "");
-        passingBorderPointLabel.setVisible(!hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) || id != null);
-        form.add(passingBorderPointLabel);
+        //Подразделение и Пункт пропуска через границу
+        addDepartmentAndPoint(form, "document.cargo.department", "department", "document.cargo.department.label",
+                "document.cargo.passingBorderPoint", "passingBorderPoint", "document.cargo.passingBorderPoint.label",
+                documentCargoModel, currentUser, visible);
 
         //Дата создания
         Label l_created = new Label("l_created", new ResourceModel("document.cargo.created"));
@@ -562,11 +422,6 @@ public class DocumentCargoEdit extends FormTemplatePage {
                         + "Wicket.Focus.setFocusOnId(newCargoFirstInputId);";
                 target.appendJavascript(setFocusOnNewCargo);
             }
-
-//            @Override
-//            public String getMarkupId() {
-//                return "AddCargo";
-//            }
         };
         addCargoLink.setDefaultFormProcessing(false);
         form.add(addCargoLink);
@@ -640,36 +495,7 @@ public class DocumentCargoEdit extends FormTemplatePage {
 //        form.add(new Spacer("spacer"));
     }
 
-    private <T extends Localizable> DropDownChoice<T> addDropDownChoice(WebMarkupContainer container, String id, Class<T> bookClass, IModel<DocumentCargo> model, String property) {
-        List<T> list = null;
 
-        try {
-            list = documentCargoBean.getList(bookClass);
-        } catch (Exception e) {
-            log.error("Ошибка загрузки списка справочников: " + bookClass, e);
-            logBean.error(DOCUMENT, VIEW, DocumentCargoEdit.class, bookClass, "Ошибка загрузки данных из базы данных");
-        }
-
-        DropDownChoice<T> ddc = new DropDownChoice<T>(id,
-                new PropertyModel<T>(model, property), list,
-                new IChoiceRenderer<T>() {
-
-                    @Override
-                    public Object getDisplayValue(T object) {
-                        return object.getDisplayName(getLocale(), localeDAO.systemLocale());
-                    }
-
-                    @Override
-                    public String getIdValue(T object, int index) {
-                        return String.valueOf(object.getId());
-                    }
-                });
-
-        ddc.setRequired(true);
-        container.add(ddc);
-
-        return ddc;
-    }
 
     private class UnitTypeModel extends LoadableDetachableModel<List<UnitType>> {
 
@@ -707,22 +533,8 @@ public class DocumentCargoEdit extends FormTemplatePage {
         //Единицы измерения        
         UnitTypeModel unitTypeModel = new UnitTypeModel(item.getModelObject());
 
-        DropDownChoice<UnitType> ddcUnitTypes = new DropDownChoice<UnitType>("document.cargo.unit_type",
-                new PropertyModel<UnitType>(item.getModelObject(), "unitType"), unitTypeModel,
-                new IChoiceRenderer<UnitType>() {
-
-                    @Override
-                    public Object getDisplayValue(UnitType object) {
-                        return object.getDisplayName(getLocale(), localeDAO.systemLocale());
-                    }
-
-                    @Override
-                    public String getIdValue(UnitType object, int index) {
-                        return String.valueOf(object.getId());
-                    }
-                });
-        ddcUnitTypes.setOutputMarkupId(true);
-        item.add(ddcUnitTypes);
+        DropDownChoice<UnitType> ddcUnitTypes =  addBookDropDownChoice(item, "document.cargo.unit_type",
+                item.getModel(), "unitType", unitTypeModel, false, true);
 
         //УКТЗЕД и Тип груза
         item.add(new UKTZEDField("document.cargo.cargo_type", new PropertyModel<CargoType>(item.getModel(), "cargoType"),
@@ -764,44 +576,14 @@ public class DocumentCargoEdit extends FormTemplatePage {
                 ? item.getModelObject().getCargoProducer().getCountry()
                 : item.getModelObject().getDocumentCargo().getSenderCountry();
 
-        final DropDownChoice<CountryBook> ddcCountryBook = new DropDownChoice<CountryBook>("document.cargo.producer_country",
-                new Model<CountryBook>(country),
-                documentCargoBean.getList(CountryBook.class),
-                new IChoiceRenderer<CountryBook>() {
-
-                    @Override
-                    public Object getDisplayValue(CountryBook object) {
-                        return object.getDisplayName(getLocale(), localeDAO.systemLocale());
-                    }
-
-                    @Override
-                    public String getIdValue(CountryBook object, int index) {
-                        return object.getId().toString();
-                    }
-                });
-        item.add(ddcCountryBook);
+        final DropDownChoice<CountryBook> ddcCountryBook = addBookDropDownChoice(item, "document.cargo.producer_country",
+                CountryBook.class, new Model<CountryBook>(country), true, false);
 
         //Производитель Название
         final CargoProducerModel cargoProducerModel = new CargoProducerModel(country);
 
-        final DropDownChoice<CargoProducer> ddcCargoProducer = new DropDownChoice<CargoProducer>("document.cargo.producer_name",
-                new PropertyModel<CargoProducer>(item.getModelObject(), "cargoProducer"),
-                cargoProducerModel,
-                new IChoiceRenderer<CargoProducer>() {
-
-                    @Override
-                    public Object getDisplayValue(CargoProducer object) {
-                        return object.getDisplayName(getLocale(), localeDAO.systemLocale());
-                    }
-
-                    @Override
-                    public String getIdValue(CargoProducer object, int index) {
-                        return object.getId().toString();
-                    }
-                });
-        ddcCargoProducer.setOutputMarkupId(true);
-        ddcCargoProducer.setRequired(true);
-        item.add(ddcCargoProducer);
+        final DropDownChoice<CargoProducer> ddcCargoProducer = addBookDropDownChoice(item, "document.cargo.producer_name",
+                item.getModel(), "cargoProducer", cargoProducerModel, true, true);
 
         ddcCountryBook.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
@@ -823,16 +605,5 @@ public class DocumentCargoEdit extends FormTemplatePage {
                 new PropertyModel<Date>(item.getModel(), "certificateDate"));
         certificateDate.setRequired(true);
         item.add(certificateDate);
-    }
-
-    private CargoMode getCargoMode(DocumentCargo documentCargo){
-        if (!documentCargo.getCargos().isEmpty()){
-            Cargo cargo = documentCargo.getCargos().get(0);
-
-            if (cargo.getCargoType() != null){
-                return cargoTypeBean.getCargoMode(cargo.getCargoType());
-            }
-        }
-        return null;
     }
 }
