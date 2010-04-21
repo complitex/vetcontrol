@@ -2,21 +2,20 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.vetcontrol.report.document.entity;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Locale;
 import org.vetcontrol.entity.ArrestDocument;
-import org.vetcontrol.util.book.BeanPropertyUtil;
-import org.vetcontrol.web.component.VehicleTypeChoicePanel;
+import static org.vetcontrol.util.book.BeanPropertyUtil.*;
+import static org.vetcontrol.web.component.VehicleTypeChoicePanel.getDysplayName;
 
 /**
  *
  * @author Artem
  */
-public class ArrestDocumentReport implements Serializable{
+public class ArrestDocumentReport implements Serializable {
 
     private String departmentName;
     private String passingBorderPointName;
@@ -175,24 +174,23 @@ public class ArrestDocumentReport implements Serializable{
     public ArrestDocumentReport() {
     }
 
-    public ArrestDocumentReport(ArrestDocument arrestDocument, Locale currectLocale, Locale systemLocale){
+    public ArrestDocumentReport(ArrestDocument arrestDocument, Locale reportLocale) {
         setArrestDate(arrestDocument.getArrestDate());
-        setArrestReason(arrestDocument.getArrestReason().getDisplayName(currectLocale, systemLocale));
+        setArrestReason(getLocalizablePropertyAsStringInLocale(arrestDocument.getArrestReason().getNames(), reportLocale));
         setArrestReasonDetails(arrestDocument.getArrestReasonDetails());
         setCargoReceiverAddress(arrestDocument.getReceiverAddress());
         setCargoReceiverName(arrestDocument.getReceiverName());
-        setCargoSenderCountry(arrestDocument.getSenderCountry().getDisplayName(currectLocale, systemLocale));
+        setCargoSenderCountry(getLocalizablePropertyAsStringInLocale(arrestDocument.getSenderCountry().getNames(), reportLocale));
         setCargoSenderName(arrestDocument.getSenderName());
-        setCargoTypeName(arrestDocument.getCargoType().getDisplayName(currectLocale, systemLocale));
-        setDepartmentName(arrestDocument.getDepartment().getDisplayName(currectLocale, systemLocale));
+        setCargoTypeName(getLocalizablePropertyAsStringInLocale(arrestDocument.getCargoType().getNames(), reportLocale));
+        setDepartmentName(getLocalizablePropertyAsStringInLocale(arrestDocument.getDepartment().getNames(), reportLocale));
         setPassingBorderPointName(arrestDocument.getPassingBorderPoint().getName());
         setCount(arrestDocument.getCount());
-        setUnitTypeName(BeanPropertyUtil.getLocalizablePropertyAsString(arrestDocument.getUnitType().getShortNames(), systemLocale, null));
-        setVehicleType(VehicleTypeChoicePanel.getDysplayName(arrestDocument.getVehicleType(), currectLocale));
+        setUnitTypeName(getLocalizablePropertyAsStringInLocale(arrestDocument.getUnitType().getShortNames(), reportLocale));
+        setVehicleType(getDysplayName(arrestDocument.getVehicleType(), reportLocale));
         setVehicleDetails(arrestDocument.getVehicleDetails());
         setCertificateDate(arrestDocument.getCertificateDate());
         setCertificateDetails(arrestDocument.getCertificateDetails());
         setId(arrestDocument.getDisplayId());
     }
-
 }

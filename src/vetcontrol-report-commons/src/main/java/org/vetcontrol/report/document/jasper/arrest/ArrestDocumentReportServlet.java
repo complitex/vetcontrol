@@ -6,7 +6,6 @@ package org.vetcontrol.report.document.jasper.arrest;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -32,15 +31,12 @@ import org.apache.wicket.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.ArrestDocument;
+import org.vetcontrol.report.commons.service.LocaleService;
 import org.vetcontrol.report.document.entity.ArrestDocumentReport;
-import org.vetcontrol.report.commons.service.dao.DepartmentDAO;
 import org.vetcontrol.report.commons.util.jasper.ExportType;
 import org.vetcontrol.report.commons.util.jasper.ExportTypeUtil;
 import org.vetcontrol.report.commons.util.jasper.TextExporterConstants;
 import org.vetcontrol.report.commons.util.servlet.ServletUtil;
-import org.vetcontrol.service.UserProfileBean;
-import org.vetcontrol.service.dao.ILocaleDAO;
-import org.vetcontrol.util.DateUtil;
 import static org.vetcontrol.web.security.SecurityRoles.*;
 
 /**
@@ -55,22 +51,21 @@ public final class ArrestDocumentReportServlet extends HttpServlet {
     public static final MetaDataKey<ArrestDocument> ARREST_DOCUMENT_KEY = new MetaDataKey<ArrestDocument>() {
     };
     @EJB
-    private ILocaleDAO localeDAO;
+    private LocaleService localeService;
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletOutputStream servletOutputStream = null;
         try {
             ExportType exportType = ExportTypeUtil.getExportType(request);
-            Locale reportLocale = request.getLocale();
-            Locale systemLocale = localeDAO.systemLocale();
+            Locale reportLocale = localeService.getReportLocale();
 
             servletOutputStream = response.getOutputStream();
             InputStream reportStream = null;
             Map<String, Object> params = new HashMap<String, Object>();
             params.put(JRParameter.REPORT_LOCALE, reportLocale);
 
-            ArrestDocumentReport source = new ArrestDocumentReport(getArrestDocument(), reportLocale, systemLocale);
+            ArrestDocumentReport source = new ArrestDocumentReport(getArrestDocument(), reportLocale);
 
             JRDataSource dataSource = new JRBeanArrayDataSource(new ArrestDocumentReport[]{source});
             switch (exportType) {
