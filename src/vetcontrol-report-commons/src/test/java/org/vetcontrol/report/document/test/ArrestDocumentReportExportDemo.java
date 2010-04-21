@@ -72,24 +72,24 @@ public class ArrestDocumentReportExportDemo {
     private static ArrestDocumentReport initReport() {
         ArrestDocumentReport report = new ArrestDocumentReport();
         report.setArrestDate(new Date());
-        report.setArrestReason("Arrest reason");
-        report.setArrestReasonDetails("Arrest reason details.");
-        report.setCargoReceiverAddress("Cargo receiver address");
-        report.setCargoReceiverName("Cargo receiver name");
-        report.setCargoSenderCountry("Argentina");
-        report.setCargoSenderName("Cargo sender very long name, NNNNNNNNNNNNNNNNNNNNNNNNNNNN NNNNNNNNNNNNN NNNNNNNNNNNNN NNNNNNNNNNNNN NNNNNNNNNNNNN NNNNNNNNNNN" +
+        report.setArrestReason("Причина задержания №1");
+        report.setArrestReasonDetails("Детали задержания.");
+        report.setCargoReceiverAddress("Адрес получателя");
+        report.setCargoReceiverName("Наименование получателя");
+        report.setCargoSenderCountry("Аргентина");
+        report.setCargoSenderName("Наименование отправителя, NNNNNNNNNNNNNNNNNNNNNNNNNNNN NNNNNNNNNNNNN NNNNNNNNNNNNN NNNNNNNNNNNNN NNNNNNNNNNNNN NNNNNNNNNNN" +
                 "MMMMMMMMMMM mmmmmmmmmmmm MMMMMMMMMMMMMM mmmmmmmmmmmmm MMMMMMMMMMMMMMMM");
-        report.setCargoTypeName("Cargo type very long name, 111111111111111111111111111111111111111111111111111111111111 1111111111111111222222222222222222222223" +
+        report.setCargoTypeName("Категория груза, 111111111111111111111111111111111111111111111111111111111111 1111111111111111222222222222222222222223" +
                 "9999999999999999999999999999999 9999999999999999999999999999999999999991 888888888888888888888888888888888888888888888888888888888888888888888888 " +
                 "7777777777 77777777777777777 77777777777777777777777777777 77777777777 7777777777 AAAAAAAAAAAAAAAAAA BBBBBBBBBBBB CCCCCCCCCC DDDDDDDDDDDDDDDDDDDD " +
                 "EEEEEEEEEEEEEEEEE FFFFFFFFFFFFFFFF GGGGGGGGGGGGGGGG HHHHHHHHHHHHHHHHH1 " +
                 "IIIIIIIIIIIIIIIIIIIIIIIII JJJJJJJJJJJJJJJJJ KKKKKKKKKKKK LLLLLLLLLLLLLLLLLL MMMMMM");
         report.setCertificateDate(new Date());
-        report.setCertificateDetails("Certificate details");
+        report.setCertificateDetails("№ 12345678");
         report.setCount(12.47);
         report.setDepartmentName("Кодимский ПДВСКН");
         report.setId("2");
-        report.setPassingBorderPointName("Пункт пропуска");
+        report.setPassingBorderPointName("Пункт пропуска №1 при Кодимском ПДВСКН");
         report.setUnitTypeName("кг.");
         report.setVehicleDetails("№ 1234567");
         report.setVehicleType("Контейнер");
