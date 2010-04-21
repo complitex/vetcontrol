@@ -92,7 +92,7 @@ public class ArrestDocumentReportExportDemo {
         report.setPassingBorderPointName("Пункт пропуска №1 при Кодимском ПДВСКН");
         report.setUnitTypeName("кг.");
         report.setVehicleDetails("№ 1234567");
-        report.setVehicleType("Контейнер");
+        report.setVehicleType("контейнер");
         return report;
     }
 }

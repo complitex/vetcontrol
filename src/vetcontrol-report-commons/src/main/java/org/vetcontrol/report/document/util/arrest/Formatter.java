@@ -9,7 +9,6 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import org.apache.wicket.util.string.Strings;
 
 /**
  *
@@ -18,14 +17,6 @@ import org.apache.wicket.util.string.Strings;
 public final class Formatter {
 
     private Formatter() {
-    }
-
-    public static String formatVehicleType(String vehicleType) {
-        if (Strings.isEmpty(vehicleType)) {
-            return "";
-        }
-        char first = vehicleType.charAt(0);
-        return Character.toLowerCase(first) + vehicleType.substring(1);
     }
 
     public static String formatArrestDate(Date date, Locale locale) {
