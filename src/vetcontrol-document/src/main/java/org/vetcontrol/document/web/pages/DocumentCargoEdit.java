@@ -165,6 +165,10 @@ public class DocumentCargoEdit extends DocumentEditPage {
                 //Вид груза уникален для всех грузов
                 CargoMode cargoMode = getCargoMode(dc);
 
+                if (cargoMode == null){
+                    error(getString("document.cargo.edit.message.cargo_type.null_cargo_mode.error"));
+                }                     
+
                 for (Cargo c : dc.getCargos()) {
                     if (c.getCargoType() == null) {
                         error(getString("document.cargo.edit.message.cargo_type.not_found.error"));
@@ -312,6 +316,10 @@ public class DocumentCargoEdit extends DocumentEditPage {
                 if (cargoMode != null){
                     s = getString("document.cargo.cargo_mode") + ": " +
                             cargoMode.getDisplayName(getLocale(), localeDAO.systemLocale());
+                }else if(!documentCargoModel.getObject().getCargos().isEmpty()
+                        && documentCargoModel.getObject().getCargos().get(0).getCargoType() != null){
+                    s= getString("document.cargo.cargo_mode") + ": " +
+                            getString("document.cargo.edit.message.cargo_type.null_cargo_mode.error");
                 }
 
                 return s;
@@ -490,10 +498,19 @@ public class DocumentCargoEdit extends DocumentEditPage {
                 item.add(copyCargoLink);
 
                 //Задержать груз
-                PageParameters pageParameters = new PageParameters("cargo_id=" + item.getModelObject().getId() + ","
+                PageParameters pageParameters = null;
+
+
+                if (item.getModelObject().getId() != null){
+                    pageParameters = new PageParameters("cargo_id=" + item.getModelObject().getId() + ","
                         + "client_id=" + item.getModelObject().getClient().getId() + ","
                         + "department_id=" + item.getModelObject().getDepartment().getId());
-                item.add(new BookmarkablePageLink<DocumentCargo>("document.cargo.arrest", ArrestDocumentEdit.class, pageParameters));
+                }
+
+                BookmarkablePageLink arrestLink = new BookmarkablePageLink<DocumentCargo>("document.cargo.arrest", ArrestDocumentEdit.class, pageParameters);
+                arrestLink.setVisible(item.getModelObject().getId() != null);
+
+                item.add(arrestLink);
 
                 addRemoveSubmitLink("document.cargo.delete", form, item, addCargoLink, cargoContainer);
             }
