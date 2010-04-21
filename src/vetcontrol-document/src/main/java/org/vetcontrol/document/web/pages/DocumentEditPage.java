@@ -38,18 +38,18 @@ public abstract class DocumentEditPage extends FormTemplatePage {
     private static final Logger log = LoggerFactory.getLogger(DocumentEditPage.class);
 
     @EJB(name = "DocumentBean")
-    protected DocumentBean documentBean;
+    private transient DocumentBean documentBean;
 
     @EJB(name = "LocaleDAO")
-    protected ILocaleDAO localeDAO;
+    private ILocaleDAO localeDAO;
 
-    protected Locale system = localeDAO.systemLocale();
+    private Locale system = localeDAO.systemLocale();
 
     @EJB(name = "LogBean")
-    protected LogBean logBean;
+    private LogBean logBean;
 
     @EJB(name = "CargoTypeBean")
-    protected CargoTypeBean cargoTypeBean;
+    private CargoTypeBean cargoTypeBean;
 
     protected CargoMode getCargoMode(DocumentCargo documentCargo){
         if (!documentCargo.getCargos().isEmpty()){

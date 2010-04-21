@@ -587,7 +587,7 @@ CREATE TABLE `arrest_document` (
 
     `passing_border_point_id` bigint(20) NOT NULL,
     `count` DOUBLE (11,2) NOT NULL,
-    `cargo_mode_id` bigint(20) NOT NULL,
+    `cargo_mode_id` bigint(20) DEFAULT NULL,
     `certificate_date` DATE NOT NULL,
     `certificate_details` VARCHAR(255) NOT NULL,
 
