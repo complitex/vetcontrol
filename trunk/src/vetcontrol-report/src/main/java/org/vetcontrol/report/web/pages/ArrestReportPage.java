@@ -34,7 +34,6 @@ import org.vetcontrol.report.entity.ArrestReportParameter;
 import org.vetcontrol.report.commons.service.LocaleService;
 import org.vetcontrol.report.commons.service.dao.DepartmentDAO;
 import org.vetcontrol.report.commons.util.DateConverter;
-import org.vetcontrol.report.commons.util.arrest.Formatter;
 import org.vetcontrol.report.commons.util.jasper.ExportType;
 import org.vetcontrol.report.commons.web.components.PrintButton;
 import org.vetcontrol.report.entity.ExtendedArrestReport;
@@ -100,8 +99,8 @@ public final class ArrestReportPage extends TemplatePage {
         String reportName = isTheSameDay ? "report.name1" : "report.name2";
         add(new Label("report.name", new StringResourceModel(reportName, null,
                 new Object[]{departmentDAO.getDepartmentName(departmentId, reportLocale),
-                    Formatter.formatReportTitleDate(startDate, reportLocale),
-                    Formatter.formatReportTitleDate(endDate, reportLocale)})));
+                    ExtendedFormatter.formatReportTitleDate(startDate, reportLocale),
+                    ExtendedFormatter.formatReportTitleDate(endDate, reportLocale)})));
 
         SortableDataProvider<ExtendedArrestReport> dataProvider = new SortableDataProvider<ExtendedArrestReport>() {
 
@@ -157,13 +156,13 @@ public final class ArrestReportPage extends TemplatePage {
 
                 item.add(new Label("department", report.getDepartmentName()));
                 item.add(new Label("passingBorderPoint", report.getPassingBorderPointName()));
-                item.add(new Label("arrestDate", Formatter.formatArrestDate(report.getArrestDate(), reportLocale)));
-                item.add(new Label("cargoInfo", Formatter.formatCargoInfo(report.getCargoTypeName(), report.getCount(),
+                item.add(new Label("arrestDate", ExtendedFormatter.formatArrestDate(report.getArrestDate(), reportLocale)));
+                item.add(new Label("cargoInfo", ExtendedFormatter.formatCargoInfo(report.getCargoTypeName(), report.getCount(),
                         report.getUnitTypeName(), reportLocale)));
-                item.add(new Label("cargoSender", Formatter.formatCargoSender(report.getCargoSenderName(), report.getCargoSenderCountry())));
-                item.add(new Label("cargoReceiver", Formatter.formatCargoReceiver(report.getCargoReceiverName(), report.getCargoReceiverAddress())));
-                item.add(new Label("arrestReason", Formatter.formatArrestReason(report.getArrestReason(), report.getArrestReasonDetails())));
-                item.add(new Label("documentCargoCreated", Formatter.formatDocumentCargoCreatedDate(report.getDocumentCargoCreated(), reportLocale)));
+                item.add(new Label("cargoSender", ExtendedFormatter.formatCargoSender(report.getCargoSenderName(), report.getCargoSenderCountry())));
+                item.add(new Label("cargoReceiver", ExtendedFormatter.formatCargoReceiver(report.getCargoReceiverName(), report.getCargoReceiverAddress())));
+                item.add(new Label("arrestReason", ExtendedFormatter.formatArrestReason(report.getArrestReason(), report.getArrestReasonDetails())));
+                item.add(new Label("documentCargoCreated", ExtendedFormatter.formatDocumentCargoCreatedDate(report.getDocumentCargoCreated(), reportLocale)));
 
                 WebMarkupContainer bodyVehicleTypeBlock = new WebMarkupContainer("report.body.vehicleTypeBlock");
                 bodyVehicleTypeBlock.setVisible(reportType == ArrestReportType.EXTENDED);

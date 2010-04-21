@@ -3,19 +3,20 @@
  * and open the template in the editor.
  */
 
-package org.vetcontrol.report.commons.entity;
+package org.vetcontrol.report.document.entity;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Locale;
 import org.vetcontrol.entity.ArrestDocument;
 import org.vetcontrol.util.book.BeanPropertyUtil;
+import org.vetcontrol.web.component.VehicleTypeChoicePanel;
 
 /**
  *
  * @author Artem
  */
-public class ArrestReport extends Ordered implements Serializable{
+public class ArrestDocumentReport implements Serializable{
 
     private String departmentName;
     private String passingBorderPointName;
@@ -29,7 +30,11 @@ public class ArrestReport extends Ordered implements Serializable{
     private String cargoReceiverAddress;
     private String arrestReason;
     private String arrestReasonDetails;
-    private Date documentCargoCreated;
+    private String vehicleType;
+    private String vehicleDetails;
+    private Date certificateDate;
+    private String certificateDetails;
+    private String id;
 
     public Date getArrestDate() {
         return arrestDate;
@@ -111,14 +116,6 @@ public class ArrestReport extends Ordered implements Serializable{
         this.departmentName = departmentName;
     }
 
-    public Date getDocumentCargoCreated() {
-        return documentCargoCreated;
-    }
-
-    public void setDocumentCargoCreated(Date documentCargoCreated) {
-        this.documentCargoCreated = documentCargoCreated;
-    }
-
     public String getPassingBorderPointName() {
         return passingBorderPointName;
     }
@@ -135,11 +132,50 @@ public class ArrestReport extends Ordered implements Serializable{
         this.unitTypeName = unitTypeName;
     }
 
-    public ArrestReport() {
+    public Date getCertificateDate() {
+        return certificateDate;
     }
 
-    public ArrestReport(ArrestDocument arrestDocument, Locale currectLocale, Locale systemLocale){
-        setOrder(1);
+    public void setCertificateDate(Date certificateDate) {
+        this.certificateDate = certificateDate;
+    }
+
+    public String getCertificateDetails() {
+        return certificateDetails;
+    }
+
+    public void setCertificateDetails(String certificateDetails) {
+        this.certificateDetails = certificateDetails;
+    }
+
+    public String getVehicleDetails() {
+        return vehicleDetails;
+    }
+
+    public void setVehicleDetails(String vehicleDetails) {
+        this.vehicleDetails = vehicleDetails;
+    }
+
+    public String getVehicleType() {
+        return vehicleType;
+    }
+
+    public void setVehicleType(String vehicleType) {
+        this.vehicleType = vehicleType;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public ArrestDocumentReport() {
+    }
+
+    public ArrestDocumentReport(ArrestDocument arrestDocument, Locale currectLocale, Locale systemLocale){
         setArrestDate(arrestDocument.getArrestDate());
         setArrestReason(arrestDocument.getArrestReason().getDisplayName(currectLocale, systemLocale));
         setArrestReasonDetails(arrestDocument.getArrestReasonDetails());
@@ -152,7 +188,11 @@ public class ArrestReport extends Ordered implements Serializable{
         setPassingBorderPointName(arrestDocument.getPassingBorderPoint().getName());
         setCount(arrestDocument.getCount());
         setUnitTypeName(BeanPropertyUtil.getLocalizablePropertyAsString(arrestDocument.getUnitType().getShortNames(), systemLocale, null));
-        setDocumentCargoCreated(arrestDocument.getDocumentCargoCreated());
+        setVehicleType(VehicleTypeChoicePanel.getDysplayName(arrestDocument.getVehicleType(), currectLocale));
+        setVehicleDetails(arrestDocument.getVehicleDetails());
+        setCertificateDate(arrestDocument.getCertificateDate());
+        setCertificateDetails(arrestDocument.getCertificateDetails());
+        setId(arrestDocument.getDisplayId());
     }
 
 }

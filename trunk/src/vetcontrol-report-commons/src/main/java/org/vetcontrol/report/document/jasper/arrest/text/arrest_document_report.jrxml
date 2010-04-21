@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="arrest_report" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="org/vetcontrol/report/document/jasper/arrest/arrest_document_report">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="org.vetcontrol.report.document.util.arrest.Formatter"/>
+	<import value="java.text.MessageFormat"/>
+	<style name="base" isDefault="true" hAlign="Left" vAlign="Middle" fontSize="7" pdfFontName="org/vetcontrol/report/commons/fonts/DejaVuSerif.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="Header1" isDefault="false" hAlign="Center" vAlign="Middle" fontSize="10" pdfFontName="org/vetcontrol/report/commons/fonts/DejaVuSerif-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="Header2" isDefault="false" hAlign="Center" vAlign="Middle" fontSize="7" pdfFontName="org/vetcontrol/report/commons/fonts/DejaVuSerif-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<field name="cargoTypeName" class="java.lang.String"/>
+	<field name="count" class="java.lang.Number"/>
+	<field name="unitTypeName" class="java.lang.String"/>
+	<field name="cargoSenderName" class="java.lang.String"/>
+	<field name="cargoSenderCountry" class="java.lang.String"/>
+	<field name="cargoReceiverName" class="java.lang.String"/>
+	<field name="cargoReceiverAddress" class="java.lang.String"/>
+	<field name="departmentName" class="java.lang.String"/>
+	<field name="passingBorderPointName" class="java.lang.String"/>
+	<field name="arrestDate" class="java.util.Date"/>
+	<field name="arrestReason" class="java.lang.String"/>
+	<field name="arrestReasonDetails" class="java.lang.String"/>
+	<field name="certificateDate" class="java.util.Date"/>
+	<field name="certificateDetails" class="java.lang.String"/>
+	<field name="vehicleType" class="java.lang.String"/>
+	<field name="vehicleDetails" class="java.lang.String"/>
+	<field name="id" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="353" splitType="Stretch">
+			<textField>
+				<reportElement style="Header1" x="14" y="14" width="528" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{title1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Header1" x="14" y="28" width="528" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{title2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Header1" x="14" y="42" width="528" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{title3}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header2" positionType="Float" x="14" y="56" width="528" height="31"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{department}, $F{departmentName})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header1" positionType="Float" x="14" y="98" width="528" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{header}, $F{id})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header2" positionType="Float" x="14" y="122" width="528" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{passingBorderPoint}, $F{passingBorderPointName})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header2" positionType="Float" x="14" y="136" width="96" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{arrestDate}, Formatter.formatArrestDate($F{arrestDate}, $P{REPORT_LOCALE}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="14" y="172" width="528" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{vehicleType}, $F{vehicleType}, $F{vehicleDetails})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="14" y="186" width="528" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{cargoType}, $F{cargoTypeName})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="14" y="200" width="528" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{count}, Formatter.formatCount($F{count}, $F{unitTypeName}, $P{REPORT_LOCALE}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="14" y="214" width="528" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{certificate}, Formatter.formatCertificate($F{certificateDate}, $F{certificateDetails}, $P{REPORT_LOCALE}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="14" y="228" width="528" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{sender}, Formatter.formatCargoSender($F{cargoSenderName}, $F{cargoSenderCountry}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="14" y="242" width="528" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{receiver}, Formatter.formatCargoReceiver($F{cargoReceiverName}, $F{cargoReceiverAddress}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="14" y="256" width="528" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{arrestReason}, Formatter.formatArrestReason($F{arrestReason}, $F{arrestReasonDetails}))]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement positionType="Float" x="14" y="281" width="528" height="65"/>
+				<textField>
+					<reportElement x="0" y="0" width="55" height="14"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$R{footer1}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="132" y="0" width="133" height="14"/>
+					<textElement/>
+					<text><![CDATA[_______________________________]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="287" y="0" width="108" height="14"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$R{sign1}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="132" y="14" width="133" height="14"/>
+					<textElement/>
+					<text><![CDATA[_______________________________]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="132" y="28" width="133" height="14"/>
+					<textElement/>
+					<text><![CDATA[_______________________________]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="132" y="42" width="133" height="14"/>
+					<textElement/>
+					<text><![CDATA[_______________________________]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="287" y="14" width="108" height="14"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$R{sign2}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="287" y="28" width="108" height="14"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$R{sign3}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="287" y="42" width="108" height="14"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$R{sign4}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<staticText>
+				<reportElement x="14" y="150" width="528" height="12"/>
+				<textElement/>
+				<text><![CDATA[__________________________________________________________________________________________________________________________________]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -66,9 +66,8 @@ public final class ArrestReportServlet extends HttpServlet {
     private UserProfileBean userProfileBean;
     @EJB
     private DepartmentDAO departmentDAO;
-    private static final String SIMPLE_REPORT_TEMPLATE_PATH = "org/vetcontrol/report/commons/jasper/arrest/";
+    private static final String REPORT_TEMPLATE_PATH = "org/vetcontrol/report/jasper/arrest/";
     private static final String SIMPLE_REPORT_NAME = "/arrest_report.jasper";
-    private static final String EXTENDED_REPORT_TEMPLATE_PATH = "org/vetcontrol/report/jasper/arrest/";
     private static final String EXTENDED_REPORT_NAME = "/extended_arrest_report.jasper";
 
     @Override
@@ -79,17 +78,14 @@ public final class ArrestReportServlet extends HttpServlet {
             Date start = getStart(request);
             Date end = getEnd(request);
             ArrestReportType reportType = getReportType(request);
-            String reportTemplatePath = null;
             String reportName = null;
 
             switch (reportType) {
                 case EXTENDED:
-                    reportTemplatePath = EXTENDED_REPORT_TEMPLATE_PATH;
                     reportName = EXTENDED_REPORT_NAME;
                     break;
                 case SIMPLE:
                 default:
-                    reportTemplatePath = SIMPLE_REPORT_TEMPLATE_PATH;
                     reportName = SIMPLE_REPORT_NAME;
                     break;
             }
@@ -117,13 +113,13 @@ public final class ArrestReportServlet extends HttpServlet {
             switch (exportType) {
                 case PDF:
                     reportStream = Thread.currentThread().getContextClassLoader().
-                            getResourceAsStream(reportTemplatePath + "pdf" + reportName);
+                            getResourceAsStream(REPORT_TEMPLATE_PATH + "pdf" + reportName);
                     response.setContentType("application/pdf");
                     JasperRunManager.runReportToPdfStream(reportStream, servletOutputStream, params, dataSource);
                     break;
                 case TEXT:
                     reportStream = Thread.currentThread().getContextClassLoader().
-                            getResourceAsStream(reportTemplatePath + "text" + reportName);
+                            getResourceAsStream(REPORT_TEMPLATE_PATH + "text" + reportName);
                     JasperPrint jasperPrint = JasperFillManager.fillReport(reportStream, params, dataSource);
 
                     JRTextExporter textExporter = new JRTextExporter();

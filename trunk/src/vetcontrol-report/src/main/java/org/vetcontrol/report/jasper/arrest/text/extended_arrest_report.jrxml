@@ -5,7 +5,6 @@
 	<property name="ireport.y" value="0"/>
 	<import value="org.vetcontrol.util.DateUtil"/>
 	<import value="java.text.MessageFormat"/>
-	<import value="org.vetcontrol.report.commons.util.arrest.Formatter"/>
 	<import value="org.vetcontrol.report.util.arrest.ExtendedFormatter"/>
 	<style name="base" isDefault="true" hAlign="Left" vAlign="Top" fontSize="7" isStrikeThrough="false" pdfFontName="org/vetcontrol/report/fonts/DejaVuSerif.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true">
 		<box topPadding="1" leftPadding="2">
@@ -53,7 +52,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format(str(
                                             DateUtil.isTheSameDay($P{startDate}, $P{endDate}) ? "report.name1" : "report.name2"
                                         ),
-                                        new Object[]{$P{department}, Formatter.formatReportTitleDate($P{startDate}, $P{REPORT_LOCALE}), Formatter.formatReportTitleDate($P{endDate}, $P{REPORT_LOCALE})})]]></textFieldExpression>
+                                        new Object[]{$P{department}, ExtendedFormatter.formatReportTitleDate($P{startDate}, $P{REPORT_LOCALE}), ExtendedFormatter.formatReportTitleDate($P{endDate}, $P{REPORT_LOCALE})})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement positionType="Float" x="16" y="28" width="525" height="11"/>
@@ -149,32 +148,32 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="123" y="0" width="38" height="20"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatArrestDate($F{arrestDate}, $P{REPORT_LOCALE})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[ExtendedFormatter.formatArrestDate($F{arrestDate}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="161" y="0" width="50" height="20"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatCargoInfo($F{cargoTypeName}, $F{count}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[ExtendedFormatter.formatCargoInfo($F{cargoTypeName}, $F{count}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="210" y="0" width="59" height="20"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatCargoSender($F{cargoSenderName}, $F{cargoSenderCountry})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[ExtendedFormatter.formatCargoSender($F{cargoSenderName}, $F{cargoSenderCountry})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="269" y="0" width="53" height="20"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatCargoReceiver($F{cargoReceiverName}, $F{cargoReceiverAddress})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[ExtendedFormatter.formatCargoReceiver($F{cargoReceiverName}, $F{cargoReceiverAddress})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="322" y="0" width="78" height="20"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatArrestReason($F{arrestReason}, $F{arrestReasonDetails})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[ExtendedFormatter.formatArrestReason($F{arrestReason}, $F{arrestReasonDetails})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="400" y="0" width="59" height="20"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatDocumentCargoCreatedDate($F{documentCargoCreated}, $P{REPORT_LOCALE})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[ExtendedFormatter.formatDocumentCargoCreatedDate($F{documentCargoCreated}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="459" y="0" width="54" height="20"/>
