@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"  xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <wicket:head>
+        <title wicket:id="title"></title>
+        <style type="text/css">
+            div.wicket-aa-container {
+                border-width: 1px;
+                border-color: #cccccc;
+                border-style: solid;
+            }
+
+            div.wicket-aa {
+                background-color: white;
+                padding: 2px;
+                text-align:left;
+            }
+
+            div.wicket-aa ul {
+                list-style:none;
+                padding: 2px;
+                margin:0;
+            }
+
+            div.wicket-aa ul li.selected {
+                background-color:#ECEFF1;
+                margin:0;
+            }
+        </style>
+    </wicket:head>
+</head>
+
+<body>
+<wicket:extend>
+    <h2><span wicket:id="header" ></span> </h2>
+
+    <div id="messages" wicket:id="messages"></div>
+
+    <form action="" wicket:id="arrest_document_edit_form">
+        <table  border="0" cellspacing="0" cellpadding="0" class="tbForm">
+            <tbody>
+            <tr>
+                <th><label for="arrest_date"><wicket:message key="arrest.document.arrest_date"/><b class="blue">*</b>:</label></th>
+                <td><input type="text" id="arrest_date" wicket:id="arrest.document.arrest_date"/></td>
+            </tr>
+            <tr>
+                <th><label for="arrest_reason"><wicket:message key="arrest.document.arrest_reason"/><b class="blue">*</b>:</label></th>
+                <td><select id="arrest_reason" wicket:id="arrest.document.arrest_reason"></select></td>
+            </tr>
+            <tr>
+                <th><label for="arrest_reason_details"><wicket:message key="arrest.document.arrest_reason_details"/>:</label></th>
+                <td><textarea id="arrest_reason_details" wicket:id="arrest.document.arrest_reason_details" cols="50" rows="5"></textarea></td>
+            </tr>
+            <tr>
+                <th><wicket:message key="arrest.document.cargo_mode"/>:</th>
+                <td><span wicket:id="arrest.document.cargo_mode"></span></td>
+            </tr>
+            <tr>
+                <th><wicket:message key="arrest.document.cargo_type"/>:</th>
+                <td><span wicket:id="arrest.document.cargo_type"></span></td>
+            </tr>
+            <tr>
+                <th><label for="unit_type"><wicket:message key="arrest.document.unit_type"/><b class="blue">*</b>:</label></th>
+                <td><select id="unit_type" wicket:id="arrest.document.unit_type"></select></td>
+            </tr>
+            <tr>
+                <th><label for="count"><wicket:message key="arrest.document.count"/><b class="blue">*</b>:</label></th>
+                <td><input type="text" id="count" wicket:id="arrest.document.count"/></td>
+            </tr>
+
+            <tr>
+                <th><label for="vehicle_type"><wicket:message key="arrest.document.vehicle_type"/><b class="blue">*</b>:</label></th>
+                <td><select id="vehicle_type" wicket:id="arrest.document.vehicle_type"></select></td>
+            </tr>
+            <tr>
+                <th><label for="vehicle_details"><wicket:message key="arrest.document.vehicle_details"/><b class="blue">*</b>:</label></th>
+                <td><input type="text" id="vehicle_details" wicket:id="arrest.document.vehicle_details"/></td>
+            </tr>
+            <tr>
+                <th><label for="cargo_sender_country"><wicket:message key="arrest.document.cargo_sender_country"/><b class="blue">*</b>:</label></th>
+                <td><select id="cargo_sender_country" wicket:id="arrest.document.cargo_sender_country"></select></td>
+            </tr>
+            <tr>
+                <th><label for="cargo_sender_name"><wicket:message key="arrest.document.cargo_sender_name"/><b class="blue">*</b>:</label></th>
+                <td><input type="text" id="cargo_sender_name" wicket:id="arrest.document.cargo_sender_name"/></td>
+            </tr>
+            <tr>
+                <th><label for="cargo_receiver_name"><wicket:message key="arrest.document.cargo_receiver_name"/><b class="blue">*</b>:</label></th>
+                <td><input type="text" id="cargo_receiver_name" wicket:id="arrest.document.cargo_receiver_name"/></td>
+            </tr>
+            <tr>
+                <th><label for="cargo_receiver_address"><wicket:message key="arrest.document.cargo_receiver_address"/><b class="blue">*</b>:</label></th>
+                <td><input type="text" id="cargo_receiver_address" wicket:id="arrest.document.cargo_receiver_address"/></td>
+            </tr>
+            <tr>
+                <th><label for="document_cargo_created"><wicket:message key="arrest.document.document_cargo_created"/><b class="blue">*</b>:</label></th>
+                <td><input type="text" id="document_cargo_created" wicket:id="arrest.document.document_cargo_created"/></td>
+            </tr>
+            <tr>
+                <th><label for="certificate_detail"><wicket:message key="arrest.document.certificate_detail"/><b class="blue">*</b>:</label></th>
+                <td><input type="text" id="certificate_detail" wicket:id="arrest.document.certificate_detail"/></td>
+            </tr>
+            <tr>
+                <th><label for="certificate_date"><wicket:message key="arrest.document.certificate_date"/><b class="blue">*</b>:</label></th>
+                <td><input type="text" id="certificate_date" wicket:id="arrest.document.certificate_date"/></td>
+            </tr>
+            <tr>
+                <th><label for="department"><wicket:message key="arrest.document.department"/></label></th>
+                <td>
+                    <select id="department" wicket:id="arrest.document.department"></select>
+                    <span wicket:id="arrest.document.department.label"></span>
+                </td>
+            </tr>
+            <tr>
+                <th><label for="passingBorderPoint"><wicket:message key="arrest.document.passingBorderPoint"/>:</label></th>
+                <td>
+                    <select id="passingBorderPoint" wicket:id="arrest.document.passingBorderPoint"></select>
+                    <span wicket:id="arrest.document.passingBorderPoint.label"></span>
+                </td>
+            </tr>
+            <tr>
+                <th wicket:id="l_creator"></th>
+                <td wicket:id="creator"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!--<div wicket:id="spacer"></div>-->
+        <div style="margin-bottom:30px"></div>
+        <input type="submit" class="btnBig" wicket:message="value:arrest.document.save" value="Save"/>
+        <input type="submit"  wicket:id="cancel" class="btnMiddle" wicket:message="value:arrest.document.cancel" value="Cancel"/>
+    </form>
+</wicket:extend>
+</body>
+</html>

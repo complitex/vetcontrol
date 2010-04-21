@@ -45,7 +45,27 @@ public class DocumentTemplateMenu extends ResourceTemplateMenu {
             public String getTagId() {
                 return "DocumentCargoList";
             }
+        });
 
+        links.add(new ITemplateLink(){
+            @Override
+            public String getLabel(Locale locale) {
+                return getString(DocumentTemplateMenu.class, locale, "document.template.menu.arrest.list");
+            }
+            @Override
+            public Class<? extends Page> getPage() {
+                return ArrestDocumentList.class;
+            }
+
+            @Override
+            public PageParameters getParameters() {
+                return PageParameters.NULL;
+            }
+
+            @Override
+            public String getTagId() {
+                return "DocumentCargoList_0";
+            }
         });
 
         return links;

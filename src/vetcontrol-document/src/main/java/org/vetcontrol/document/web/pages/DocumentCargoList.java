@@ -17,6 +17,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.*;
+import org.vetcontrol.document.service.DocumentBean;
 import org.vetcontrol.document.service.DocumentCargoBean;
 import org.vetcontrol.document.service.DocumentCargoFilter;
 import org.vetcontrol.document.web.component.BookNamedChoiceRenderer;
@@ -54,8 +55,10 @@ public class DocumentCargoList extends ListTemplatePage {
     private static final String FILTER_KEY = DocumentCargoList.class.getSimpleName() + "_FILTER";
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
-    @EJB(name = "DocumentBean")
+    @EJB(name = "DocumentCargoBean")
     DocumentCargoBean documentCargoBean;
+    @EJB(name = "DocumentBean")
+    DocumentBean documentBean;
     @EJB(name = "UserProfileBean")
     UserProfileBean userProfileBean;
     @EJB(name = "ClientBean")
@@ -96,7 +99,7 @@ public class DocumentCargoList extends ListTemplatePage {
 
         filterForm.add(new TextField<String>("id"));
 
-        filterForm.add(new DropDownChoice<MovementType>("movementType", documentCargoBean.getList(MovementType.class),
+        filterForm.add(new DropDownChoice<MovementType>("movementType", documentBean.getBookList(MovementType.class),
                 new BookNamedChoiceRenderer<MovementType>(systemLocale)));
 
         filterForm.add(new VehicleTypeChoicePanel("vehicleType", new PropertyModel<VehicleType>(filter, "vehicleType"), false));
@@ -104,7 +107,7 @@ public class DocumentCargoList extends ListTemplatePage {
         filterForm.add(new TextField<String>("receiverAddress"));
         filterForm.add(new TextField<String>("senderName"));
 
-        filterForm.add(new DropDownChoice<CountryBook>("senderCountry", documentCargoBean.getList(CountryBook.class),
+        filterForm.add(new DropDownChoice<CountryBook>("senderCountry", documentBean.getBookList(CountryBook.class),
                 new BookNamedChoiceRenderer<CountryBook>(systemLocale)));
         DatePicker<Date> created = new DatePicker<Date>("created");
         filterForm.add(created);
