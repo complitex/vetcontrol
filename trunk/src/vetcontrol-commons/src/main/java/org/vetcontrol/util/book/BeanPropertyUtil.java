@@ -122,8 +122,8 @@ public class BeanPropertyUtil {
                             property.setColumnName(joinColumn.name());
                         }
 
-                        if(annotation.annotationType().equals(ViewLength.class)){
-                            ViewLength viewLength = (ViewLength)annotation;
+                        if (annotation.annotationType().equals(ViewLength.class)) {
+                            ViewLength viewLength = (ViewLength) annotation;
                             property.setViewLength(viewLength.value());
                         }
                     }
@@ -324,6 +324,21 @@ public class BeanPropertyUtil {
         if (!finded) {
             if (!list.isEmpty()) {
                 asString = list.get(0).getValue();
+            }
+        }
+
+        return asString;
+    }
+
+    public static String getLocalizablePropertyAsStringInLocale(List<StringCulture> propertyValue, Locale locale) {
+        String asString = "";
+        List<StringCulture> list = (List<StringCulture>) propertyValue;
+        for (StringCulture culture : list) {
+            if (new Locale(culture.getId().getLocale()).getLanguage().equalsIgnoreCase(locale.getLanguage())) {
+                if (!Strings.isEmpty(culture.getValue())) {
+                    asString = culture.getValue();
+                    break;
+                }
             }
         }
 

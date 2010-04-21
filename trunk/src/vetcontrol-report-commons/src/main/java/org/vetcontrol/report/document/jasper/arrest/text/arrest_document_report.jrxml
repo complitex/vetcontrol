@@ -74,7 +74,7 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement positionType="Float" x="14" y="172" width="528" height="14"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{vehicleType}, $F{vehicleType}, $F{vehicleDetails})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{vehicleType}, Formatter.formatVehicleType($F{vehicleType}), $F{vehicleDetails})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement positionType="Float" x="14" y="186" width="528" height="14"/>

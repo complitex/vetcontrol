@@ -92,7 +92,7 @@ public class ArrestDocumentReportExportDemo {
         report.setPassingBorderPointName("Пункт пропуска");
         report.setUnitTypeName("кг.");
         report.setVehicleDetails("№ 1234567");
-        report.setVehicleType("контейнер");
+        report.setVehicleType("Контейнер");
         return report;
     }
 }
