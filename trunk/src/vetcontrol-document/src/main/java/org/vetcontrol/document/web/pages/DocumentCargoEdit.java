@@ -12,6 +12,7 @@ import org.apache.wicket.datetime.markup.html.basic.DateLabel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -35,7 +36,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.vetcontrol.entity.Log.EVENT.*;
+import static org.vetcontrol.entity.Log.EVENT.CREATE;
+import static org.vetcontrol.entity.Log.EVENT.EDIT;
 import static org.vetcontrol.entity.Log.MODULE.DOCUMENT;
 import static org.vetcontrol.web.security.SecurityRoles.*;
 
@@ -486,6 +488,12 @@ public class DocumentCargoEdit extends DocumentEditPage {
                 };
                 copyCargoLink.setDefaultFormProcessing(false);
                 item.add(copyCargoLink);
+
+                //Задержать груз
+                PageParameters pageParameters = new PageParameters("cargo_id=" + item.getModelObject().getId() + ","
+                        + "client_id=" + item.getModelObject().getClient().getId() + ","
+                        + "department_id=" + item.getModelObject().getDepartment().getId());
+                item.add(new BookmarkablePageLink<DocumentCargo>("document.cargo.arrest", ArrestDocumentEdit.class, pageParameters));
 
                 addRemoveSubmitLink("document.cargo.delete", form, item, addCargoLink, cargoContainer);
             }

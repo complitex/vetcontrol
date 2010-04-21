@@ -117,8 +117,8 @@ public class ArrestDocumentEdit extends DocumentEditPage{
             ad.setCargoType(cargo.getCargoType());
             ad.setUnitType(cargo.getUnitType());
             ad.setCount(cargo.getCount());
-            ad.setVehicleType(cargo.getVehicle().getVehicleType());
-            ad.setVehicleDetails(cargo.getVehicle().getVehicleDetails());
+            ad.setVehicleType(cargo.getDocumentCargo().getVehicleType());
+            ad.setVehicleDetails(cargo.getVehicle() != null ? cargo.getVehicle().getVehicleDetails() : null);
             ad.setSenderCountry(cargo.getDocumentCargo().getSenderCountry());
             ad.setSenderName(cargo.getDocumentCargo().getSenderName());
             ad.setReceiverAddress(cargo.getDocumentCargo().getReceiverAddress());
