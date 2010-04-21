@@ -79,7 +79,7 @@ public class ArrestDocument extends Synchronized implements IUpdated {
     @XmlIDREF
     private PassingBorderPoint passingBorderPoint;
     @ManyToOne
-    @JoinColumn(name = "cargo_mode_id", nullable = false)
+    @JoinColumn(name = "cargo_mode_id", nullable = true)
     @XmlIDREF
     private CargoMode cargoMode;
     @Temporal(TemporalType.TIMESTAMP)
@@ -272,5 +272,75 @@ public class ArrestDocument extends Synchronized implements IUpdated {
     public String getDisplayId() {
         return (department != null ? department.getId() : "0") + "."
                 + (client != null ? client.getId() : "0") + "." + id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ArrestDocument)) return false;
+        if (!super.equals(o)) return false;
+
+        ArrestDocument that = (ArrestDocument) o;
+
+        if (arrestDate != null ? !arrestDate.equals(that.arrestDate) : that.arrestDate != null) return false;
+        if (arrestReason != null ? !arrestReason.equals(that.arrestReason) : that.arrestReason != null) return false;
+        if (arrestReasonDetails != null ? !arrestReasonDetails.equals(that.arrestReasonDetails) : that.arrestReasonDetails != null)
+            return false;
+        if (cargoMode != null ? !cargoMode.equals(that.cargoMode) : that.cargoMode != null) return false;
+        if (cargoType != null ? !cargoType.equals(that.cargoType) : that.cargoType != null) return false;
+        if (certificateDate != null ? !certificateDate.equals(that.certificateDate) : that.certificateDate != null)
+            return false;
+        if (certificateDetails != null ? !certificateDetails.equals(that.certificateDetails) : that.certificateDetails != null)
+            return false;
+        if (client != null ? !client.equals(that.client) : that.client != null) return false;
+        if (count != null ? !count.equals(that.count) : that.count != null) return false;
+        if (creator != null ? !creator.equals(that.creator) : that.creator != null) return false;
+        if (department != null ? !department.equals(that.department) : that.department != null) return false;
+        if (documentCargoCreated != null ? !documentCargoCreated.equals(that.documentCargoCreated) : that.documentCargoCreated != null)
+            return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (passingBorderPoint != null ? !passingBorderPoint.equals(that.passingBorderPoint) : that.passingBorderPoint != null)
+            return false;
+        if (receiverAddress != null ? !receiverAddress.equals(that.receiverAddress) : that.receiverAddress != null)
+            return false;
+        if (receiverName != null ? !receiverName.equals(that.receiverName) : that.receiverName != null) return false;
+        if (senderCountry != null ? !senderCountry.equals(that.senderCountry) : that.senderCountry != null)
+            return false;
+        if (senderName != null ? !senderName.equals(that.senderName) : that.senderName != null) return false;
+        if (unitType != null ? !unitType.equals(that.unitType) : that.unitType != null) return false;
+        if (updated != null ? !updated.equals(that.updated) : that.updated != null) return false;
+        if (vehicleDetails != null ? !vehicleDetails.equals(that.vehicleDetails) : that.vehicleDetails != null)
+            return false;
+        if (vehicleType != that.vehicleType) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (id != null ? id.hashCode() : 0);
+        result = 31 * result + (client != null ? client.hashCode() : 0);
+        result = 31 * result + (department != null ? department.hashCode() : 0);
+        result = 31 * result + (creator != null ? creator.hashCode() : 0);
+        result = 31 * result + (arrestDate != null ? arrestDate.hashCode() : 0);
+        result = 31 * result + (arrestReason != null ? arrestReason.hashCode() : 0);
+        result = 31 * result + (arrestReasonDetails != null ? arrestReasonDetails.hashCode() : 0);
+        result = 31 * result + (cargoType != null ? cargoType.hashCode() : 0);
+        result = 31 * result + (unitType != null ? unitType.hashCode() : 0);
+        result = 31 * result + (count != null ? count.hashCode() : 0);
+        result = 31 * result + (updated != null ? updated.hashCode() : 0);
+        result = 31 * result + (vehicleType != null ? vehicleType.hashCode() : 0);
+        result = 31 * result + (vehicleDetails != null ? vehicleDetails.hashCode() : 0);
+        result = 31 * result + (senderCountry != null ? senderCountry.hashCode() : 0);
+        result = 31 * result + (senderName != null ? senderName.hashCode() : 0);
+        result = 31 * result + (receiverAddress != null ? receiverAddress.hashCode() : 0);
+        result = 31 * result + (receiverName != null ? receiverName.hashCode() : 0);
+        result = 31 * result + (passingBorderPoint != null ? passingBorderPoint.hashCode() : 0);
+        result = 31 * result + (cargoMode != null ? cargoMode.hashCode() : 0);
+        result = 31 * result + (documentCargoCreated != null ? documentCargoCreated.hashCode() : 0);
+        result = 31 * result + (certificateDetails != null ? certificateDetails.hashCode() : 0);
+        result = 31 * result + (certificateDate != null ? certificateDate.hashCode() : 0);
+        return result;
     }
 }

@@ -17,7 +17,7 @@ import java.util.List;
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 21.04.2010 7:16:14
  */
-@Stateless
+@Stateless(name = "DocumentBean")
 @RolesAllowed({SecurityRoles.DOCUMENT_CREATE, SecurityRoles.DOCUMENT_EDIT, SecurityRoles.DOCUMENT_DEP_VIEW})
 public class DocumentBean {
     @PersistenceContext

@@ -10,17 +10,19 @@ import org.apache.wicket.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.document.service.ArrestDocumentBean;
+import org.vetcontrol.document.service.DocumentBean;
 import org.vetcontrol.entity.*;
+import org.vetcontrol.service.CargoTypeBean;
 import org.vetcontrol.service.ClientBean;
+import org.vetcontrol.service.LogBean;
 import org.vetcontrol.service.UserProfileBean;
+import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.web.component.DatePicker;
 import org.vetcontrol.web.component.UKTZEDField;
 
 import javax.ejb.EJB;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.vetcontrol.entity.Log.EVENT.CREATE;
 import static org.vetcontrol.entity.Log.EVENT.EDIT;
@@ -34,6 +36,20 @@ import static org.vetcontrol.web.security.SecurityRoles.*;
 @AuthorizeInstantiation({DOCUMENT_CREATE, DOCUMENT_DEP_EDIT, DOCUMENT_DEP_CHILD_EDIT})
 public class ArrestDocumentEdit extends DocumentEditPage{
     private static final Logger log = LoggerFactory.getLogger(DocumentCargoEdit.class);
+
+    @EJB(name = "DocumentBean")
+    private DocumentBean documentBean;
+
+    @EJB(name = "LocaleDAO")
+    private ILocaleDAO localeDAO;
+
+    private java.util.Locale system = localeDAO.systemLocale();
+
+    @EJB(name = "LogBean")
+    private LogBean logBean;
+
+    @EJB(name = "CargoTypeBean")
+    private CargoTypeBean cargoTypeBean;
 
     @EJB(name = "ArrestDocumentBean")
     private ArrestDocumentBean arrestDocumentBean;
@@ -115,12 +131,14 @@ public class ArrestDocumentEdit extends DocumentEditPage{
         }
 
         //Текущий пользователь
-        User currentUser = userProfileBean.getCurrentUser();
+        final User currentUser = userProfileBean.getCurrentUser();
 
         //новый акт
         if (arrestDocumentId == null && cargoId == null){
             ad = new ArrestDocument();
             ad.setDepartment(currentUser.getDepartment());
+            ad.setClient(clientBean.getCurrentClient());
+            ad.setCreator(currentUser);
         }
 
         //Проверка доступа к данным
@@ -184,7 +202,30 @@ public class ArrestDocumentEdit extends DocumentEditPage{
 
             @Override
             protected void onSubmit() {
-                super.onSubmit();
+                try {                                       
+                    arrestDocumentBean.save(getModelObject());
+
+                    setResponsePage(ArrestDocumentList.class);
+
+                    if (arrestDocumentId == null) {
+                        getSession().info(new StringResourceModel("arrest.document.edit.message.added", this, null,
+                                new Object[]{getModelObject().getDisplayId()}).getString());
+                    } else {
+                        getSession().info(new StringResourceModel("arrest.document.edit.message.saved", this, null,
+                                new Object[]{arrestDocumentId}).getString());
+                    }
+
+                    logBean.info(DOCUMENT, arrestDocumentId == null ? CREATE : EDIT, ArrestDocumentEdit.class,
+                            ArrestDocument.class, "ID: " + getModelObject().getDisplayId());
+                } catch (Exception e) {
+                    getSession().error(new StringResourceModel("arrest.document.edit.message.save.error", this, null,
+                            new Object[]{arrestDocumentId}).getString());
+
+                    log.error("Ошибка сохранения карточки на груз № " + getModelObject().getDisplayId(), e);
+
+                    logBean.error(DOCUMENT, arrestDocumentId == null ? CREATE : EDIT, ArrestDocumentEdit.class,
+                            ArrestDocument.class, "Ошибка сохранения в базу данных");
+                }
             }
         };
         add(form);
@@ -228,14 +269,22 @@ public class ArrestDocumentEdit extends DocumentEditPage{
                 arrestDocumentModel, "unitType", unitTypeModel, false, true);
 
         //Вид груза
-        Label cargoMode = new Label("arrest.document.cargo_mode", arrestDocumentModel.getObject().getCargoMode() != null
-                ? arrestDocumentModel.getObject().getCargoMode().getDisplayName(getLocale(), system) : "");
+        Label cargoMode = new Label("arrest.document.cargo_mode", new LoadableDetachableModel<String>(){
+
+            @Override
+            protected String load() {
+                arrestDocumentModel.getObject().setCargoMode(cargoTypeBean.getCargoMode(arrestDocumentModel.getObject().getCargoType()));
+
+                return arrestDocumentModel.getObject().getCargoMode() != null
+                        ? arrestDocumentModel.getObject().getCargoMode().getDisplayName(getLocale(), system) : "";
+            }});
+
         cargoMode.setOutputMarkupId(true);
         form.add(cargoMode);
 
         //Тип груза
         form.add(new UKTZEDField("arrest.document.cargo_type", new PropertyModel<CargoType>(arrestDocumentModel, "cargoType"),
-                arrestDocumentModel.getObject().getCargoMode(), ddcUnitTypes, cargoMode));
+                null, ddcUnitTypes, cargoMode));
 
         //Количество
         TextField<Double> count = new TextField<Double>("arrest.document.count",

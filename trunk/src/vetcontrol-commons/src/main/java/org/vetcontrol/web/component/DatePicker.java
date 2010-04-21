@@ -39,5 +39,6 @@ public class DatePicker<T> extends org.odlabs.wiquery.ui.datepicker.DatePicker<T
         setButtonImage(IMAGE_SRC);
         setShowOn(ShowOnEnum.BOTH);
         setButtonImageOnly(true);
+        setDateFormat("dd.mm.yy");
     }
 }
