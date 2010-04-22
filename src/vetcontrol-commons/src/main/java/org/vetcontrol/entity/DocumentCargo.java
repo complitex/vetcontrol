@@ -22,71 +22,59 @@ public class DocumentCargo extends Synchronized implements IUpdated {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Id
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id")
     @XmlIDREF
     private Client client;
-
     @Id
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "department_id")
     @XmlIDREF
     private Department department;
-
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "creator_id")
     @XmlIDREF
     private User creator;
-
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
-
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
-
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "movement_type_id")
     @XmlIDREF
     private MovementType movementType;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "vehicle_type", nullable = false)
     private VehicleType vehicleType;
-
     @OneToMany(mappedBy = "documentCargo")
     @OrderBy("id")
     @XmlTransient
     private List<Cargo> cargos = new ArrayList<Cargo>();
-
     @OneToMany(mappedBy = "documentCargo")
     @XmlTransient
     private List<Vehicle> vehicles = new ArrayList<Vehicle>();
-
     @ManyToOne
     @JoinColumn(name = "cargo_sender_country_id")
     private CountryBook senderCountry;
-
     @Column(name = "cargo_sender_name")
     private String senderName;
-
     @Column(name = "cargo_receiver_address")
     private String receiverAddress;
-
     @Column(name = "cargo_receiver_name")
     private String receiverName;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "passing_border_point_id")
     @XmlIDREF
     private PassingBorderPoint passingBorderPoint;
-
     @Column(name = "detention_details", length = 255)
     private String detentionDetails;
-
     @Column(name = "details", length = 255)
     private String details;
+    //TODO: make non nullable later.
+    @ManyToOne
+    @JoinColumn(name = "cargo_mode_id")
+    private CargoMode cargoMode;
 
     public Long getId() {
         return id;
@@ -226,6 +214,14 @@ public class DocumentCargo extends Synchronized implements IUpdated {
         this.details = details;
     }
 
+    public CargoMode getCargoMode() {
+        return cargoMode;
+    }
+
+    public void setCargoMode(CargoMode cargoMode) {
+        this.cargoMode = cargoMode;
+    }
+
     public String getDisplayId() {
         return (department != null ? department.getId() : "0") + "."
                 + (client != null ? client.getId() : "0") + "." + id;
@@ -233,33 +229,72 @@ public class DocumentCargo extends Synchronized implements IUpdated {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DocumentCargo)) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DocumentCargo)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         DocumentCargo that = (DocumentCargo) o;
 
-        if (cargos != null ? !cargos.equals(that.cargos) : that.cargos != null) return false;
-        if (client != null ? !client.equals(that.client) : that.client != null) return false;
-        if (created != null ? !created.equals(that.created) : that.created != null) return false;
-        if (creator != null ? !creator.equals(that.creator) : that.creator != null) return false;
-        if (department != null ? !department.equals(that.department) : that.department != null) return false;
-        if (details != null ? !details.equals(that.details) : that.details != null) return false;
-        if (detentionDetails != null ? !detentionDetails.equals(that.detentionDetails) : that.detentionDetails != null)
+        if (cargos != null ? !cargos.equals(that.cargos) : that.cargos != null) {
             return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (movementType != null ? !movementType.equals(that.movementType) : that.movementType != null) return false;
-        if (passingBorderPoint != null ? !passingBorderPoint.equals(that.passingBorderPoint) : that.passingBorderPoint != null)
+        }
+        if (client != null ? !client.equals(that.client) : that.client != null) {
             return false;
-        if (receiverAddress != null ? !receiverAddress.equals(that.receiverAddress) : that.receiverAddress != null)
+        }
+        if (created != null ? !created.equals(that.created) : that.created != null) {
             return false;
-        if (receiverName != null ? !receiverName.equals(that.receiverName) : that.receiverName != null) return false;
-        if (senderCountry != null ? !senderCountry.equals(that.senderCountry) : that.senderCountry != null)
+        }
+        if (creator != null ? !creator.equals(that.creator) : that.creator != null) {
             return false;
-        if (senderName != null ? !senderName.equals(that.senderName) : that.senderName != null) return false;
-        if (updated != null ? !updated.equals(that.updated) : that.updated != null) return false;
-        if (vehicleType != that.vehicleType) return false;
-        if (vehicles != null ? !vehicles.equals(that.vehicles) : that.vehicles != null) return false;
+        }
+        if (department != null ? !department.equals(that.department) : that.department != null) {
+            return false;
+        }
+        if (details != null ? !details.equals(that.details) : that.details != null) {
+            return false;
+        }
+        if (detentionDetails != null ? !detentionDetails.equals(that.detentionDetails) : that.detentionDetails != null) {
+            return false;
+        }
+        if (id != null ? !id.equals(that.id) : that.id != null) {
+            return false;
+        }
+        if (movementType != null ? !movementType.equals(that.movementType) : that.movementType != null) {
+            return false;
+        }
+        if (passingBorderPoint != null ? !passingBorderPoint.equals(that.passingBorderPoint) : that.passingBorderPoint != null) {
+            return false;
+        }
+        if (receiverAddress != null ? !receiverAddress.equals(that.receiverAddress) : that.receiverAddress != null) {
+            return false;
+        }
+        if (receiverName != null ? !receiverName.equals(that.receiverName) : that.receiverName != null) {
+            return false;
+        }
+        if (senderCountry != null ? !senderCountry.equals(that.senderCountry) : that.senderCountry != null) {
+            return false;
+        }
+        if (senderName != null ? !senderName.equals(that.senderName) : that.senderName != null) {
+            return false;
+        }
+        if (updated != null ? !updated.equals(that.updated) : that.updated != null) {
+            return false;
+        }
+        if (vehicleType != that.vehicleType) {
+            return false;
+        }
+        if (vehicles != null ? !vehicles.equals(that.vehicles) : that.vehicles != null) {
+            return false;
+        }
+        if (cargoMode != null ? !cargoMode.equals(that.cargoMode) : that.cargoMode != null) {
+            return false;
+        }
 
         return true;
     }
@@ -284,6 +319,7 @@ public class DocumentCargo extends Synchronized implements IUpdated {
         result = 31 * result + (passingBorderPoint != null ? passingBorderPoint.hashCode() : 0);
         result = 31 * result + (detentionDetails != null ? detentionDetails.hashCode() : 0);
         result = 31 * result + (details != null ? details.hashCode() : 0);
+        result = 31 * result + (cargoMode != null ? cargoMode.hashCode() : 0);
         return result;
     }
 }
