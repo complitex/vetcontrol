@@ -5,9 +5,9 @@
 	<property name="ireport.y" value="0"/>
 	<import value="org.vetcontrol.report.document.util.arrest.Formatter"/>
 	<import value="java.text.MessageFormat"/>
-	<style name="base" isDefault="true" hAlign="Left" vAlign="Middle" fontSize="7" pdfFontName="org/vetcontrol/report/commons/fonts/DejaVuSerif.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
-	<style name="Header1" isDefault="false" hAlign="Center" vAlign="Middle" fontSize="10" pdfFontName="org/vetcontrol/report/commons/fonts/DejaVuSerif-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
-	<style name="Header2" isDefault="false" hAlign="Center" vAlign="Middle" fontSize="7" pdfFontName="org/vetcontrol/report/commons/fonts/DejaVuSerif-Bold.ttf" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<style name="base" isDefault="true" hAlign="Left" vAlign="Middle" fontSize="7" fontName="DejaVuSerif"/>
+	<style name="Header1" isDefault="false" hAlign="Center" vAlign="Middle" fontSize="10" fontName="DejaVuSerif" isBold="true"/>
+	<style name="Header2" isDefault="false" hAlign="Center" vAlign="Middle" fontSize="7" fontName="DejaVuSerif" isBold="true"/>
 	<field name="cargoTypeName" class="java.lang.String"/>
 	<field name="count" class="java.lang.Number"/>
 	<field name="unitTypeName" class="java.lang.String"/>
