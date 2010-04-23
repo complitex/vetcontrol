@@ -17,7 +17,7 @@ import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
 import org.vetcontrol.report.commons.entity.Ordered;
 import org.vetcontrol.report.commons.entity.ReportParameter;
-import org.vetcontrol.report.commons.util.QueryLoader;
+import org.vetcontrol.report.commons.util.SqlQueryLoader;
 import org.vetcontrol.util.book.service.HibernateSessionTransformer;
 
 /**
@@ -43,7 +43,7 @@ public abstract class AbstractReportDAO<T extends Serializable> {
     public List<T> getAll(Map<String, Object> daoParameters, Locale reportLocale, int first, int count, String sortProperty, boolean isAscending) {
         try {
             Session session = HibernateSessionTransformer.getSession(getEntityManager());
-            String pattern = QueryLoader.getQuery(reportEntityType, getKeyForAll());
+            String pattern = SqlQueryLoader.getQuery(reportEntityType, getKeyForAll());
             String sql = prepareAllSQL(pattern, daoParameters, reportLocale, sortProperty, isAscending);
             Query query = session.createSQLQuery(sql);
             query.setParameter(ReportParameter.REPORT_LOCALE, reportLocale.getLanguage());
@@ -75,7 +75,7 @@ public abstract class AbstractReportDAO<T extends Serializable> {
     public int size(Map<String, Object> parameters) {
         try {
             Session session = HibernateSessionTransformer.getSession(getEntityManager());
-            String pattern = QueryLoader.getQuery(reportEntityType, getKeyForSize());
+            String pattern = SqlQueryLoader.getQuery(reportEntityType, getKeyForSize());
             String sql = prepareSizeSQL(pattern, parameters);
             Query query = session.createSQLQuery(sql);
             for (Map.Entry<String, Object> entry : parameters.entrySet()) {
