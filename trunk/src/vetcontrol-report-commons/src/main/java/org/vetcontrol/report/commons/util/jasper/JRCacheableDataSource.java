@@ -56,24 +56,18 @@ public class JRCacheableDataSource<T extends Serializable> extends JRAbstractBea
             iterator = reportDAO.getAll(reportDAOParameters, reportLocale, 0, CACHE_SIZE, sortProperty, isAscending).iterator();
         }
 
-        boolean hasNext = false;
-
-        if (iterator != null) {
+        boolean hasNext = iterator.hasNext();
+        if (!hasNext) {
+//                cache = reportDAO.getAll(reportDAOParameters, reportLocale, index, CACHE_SIZE, sortProperty, isAscending);
+            iterator = reportDAO.getAll(reportDAOParameters, reportLocale, index, CACHE_SIZE, sortProperty, isAscending).iterator();
             hasNext = iterator.hasNext();
-
-            if (!hasNext) {
-//                cache = reportDAO.getAll(reportDAOParameters, reportLocale, index + 1, CACHE_SIZE, sortProperty, isAscending);
-                iterator = reportDAO.getAll(reportDAOParameters, reportLocale, index + 1, CACHE_SIZE, sortProperty, isAscending).iterator();
-                hasNext = iterator.hasNext();
-            }
-            if (hasNext) {
-                current = iterator.next();
-                index++;
-            }
         }
 
+        if (hasNext) {
+            current = iterator.next();
+            index++;
+        }
         return hasNext;
-
     }
 
     @Override
