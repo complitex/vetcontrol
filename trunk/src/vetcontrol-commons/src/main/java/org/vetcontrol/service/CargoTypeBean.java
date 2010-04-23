@@ -9,8 +9,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -82,6 +81,7 @@ public class CargoTypeBean {
         }
     }
 
+    @Deprecated
     public List<UnitType> getUnitTypes(CargoType cargoType) {
         CargoMode cargoMode;
         try {
@@ -100,12 +100,25 @@ public class CargoTypeBean {
                 getResultList();
     }
 
-    public CargoMode getCargoMode(CargoType cargoType){
+    public Map<CargoMode, List<CargoMode>> getCargoMode(CargoType cargoType){
         List<CargoMode> list  = entityManager.createQuery("select c.cargoMode from CargoModeCargoType c " +
                 "where c.cargoType = :cargoType", CargoMode.class)
                 .setParameter("cargoType", cargoType)
                 .getResultList();
 
-        return !list.isEmpty() ? list.get(0) : null;
+        Map<CargoMode, List<CargoMode>> map = new HashMap<CargoMode, List<CargoMode>>();
+
+        for (CargoMode cm : list){
+            CargoMode parent = cm.getParent();
+
+            if (parent != null){
+                if (map.get(parent) == null){
+                    map.put(parent, new ArrayList<CargoMode>());
+                }
+                map.get(parent).add(cm);
+            }
+        }
+
+        return map;
     }
 }

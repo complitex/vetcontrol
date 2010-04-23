@@ -124,7 +124,7 @@ public class ArrestDocumentEdit extends DocumentEditPage{
             ad.setReceiverAddress(cargo.getDocumentCargo().getReceiverAddress());
             ad.setReceiverName(cargo.getDocumentCargo().getReceiverName());
             ad.setPassingBorderPoint(cargo.getDocumentCargo().getPassingBorderPoint());
-            ad.setCargoMode(cargoTypeBean.getCargoMode(cargo.getCargoType()));
+            ad.setCargoMode(cargo.getDocumentCargo().getCargoMode());
             ad.setDocumentCargoCreated(cargo.getDocumentCargo().getCreated());
             ad.setCertificateDetails(cargo.getCertificateDetails());
             ad.setCertificateDate(cargo.getCertificateDate());
@@ -273,7 +273,8 @@ public class ArrestDocumentEdit extends DocumentEditPage{
 
             @Override
             protected String load() {
-                arrestDocumentModel.getObject().setCargoMode(cargoTypeBean.getCargoMode(arrestDocumentModel.getObject().getCargoType()));
+                //TODO
+                arrestDocumentModel.getObject().setCargoMode(null);
 
                 return arrestDocumentModel.getObject().getCargoMode() != null
                         ? arrestDocumentModel.getObject().getCargoMode().getDisplayName(getLocale(), system) : "";

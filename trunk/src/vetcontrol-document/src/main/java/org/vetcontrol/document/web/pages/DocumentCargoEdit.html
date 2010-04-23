@@ -114,12 +114,28 @@
             <a class="addVehicle" href="#" wicket:id="document.cargo.vehicle.add"><wicket:message key="document.cargo.vehicle.add"/></a>
         </fieldset>
         <fieldset style="margin-bottom:10px">
-            <legend>Грузы</legend>
-            <div wicket:id="document.cargo.cargo_container">
-                <div style="margin-bottom:10px">
-                    <span wicket:id="document.cargo.cargo_mode"></span>
-                </div>
+            <legend>Виды грузов</legend>
+
+            <div wicket:id="document.cargo.cargo_mode_container">
+                <table  border="0" cellspacing="0" cellpadding="0" class="tbForm">
+                    <tr>
+                        <th><wicket:message key="document.cargo.code"/><b class="blue">*</b>:</th>
+                        <td><span wicket:id="document.cargo.cargo_mode_cargo_type"></span></td>
+                    </tr>
+                </table>                               
                 
+                <ul>
+                    <li wicket:id="document.cargo.cargo_mode_parent_list">
+                        <span wicket:id="document.cargo.cargo_mode_parent"></span>
+
+                        <div wicket:id="document.cargo.cargo_mode_child_list"></div>
+                    </li>
+                </ul>
+            </div>
+        </fieldset>
+        <fieldset style="margin-bottom:10px">
+            <legend>Грузы</legend>
+            <div wicket:id="document.cargo.cargo_container"> 
                 <table id="cargos" border="0" cellspacing="0" cellpadding="0" class="tbColor table_input">
                     <thead>
                     <tr>

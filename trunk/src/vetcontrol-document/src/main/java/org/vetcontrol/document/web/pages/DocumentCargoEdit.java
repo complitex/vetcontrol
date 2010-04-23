@@ -3,6 +3,7 @@ package org.vetcontrol.document.web.pages;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.authorization.UnauthorizedInstantiationException;
@@ -20,6 +21,7 @@ import org.apache.wicket.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.document.service.DocumentCargoBean;
+import org.vetcontrol.document.web.component.BookNamedChoiceRenderer;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.CargoTypeBean;
 import org.vetcontrol.service.ClientBean;
@@ -31,10 +33,7 @@ import org.vetcontrol.web.component.UKTZEDField;
 import org.vetcontrol.web.component.list.AjaxRemovableListView;
 
 import javax.ejb.EJB;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static org.vetcontrol.entity.Log.EVENT.CREATE;
 import static org.vetcontrol.entity.Log.EVENT.EDIT;
@@ -95,9 +94,10 @@ public class DocumentCargoEdit extends DocumentEditPage {
         //Проверка доступа к данным
         User currentUser = userProfileBean.getCurrentUser();
 
-        //Установка подразделения по умолчанию
+        //Установка подразделения и пункта пропуска по умолчанию
         if (dc.getId() == null) {
             dc.setDepartment(currentUser.getDepartment());
+            dc.setPassingBorderPoint(currentUser.getPassingBorderPoint());
         }
 
         if (id == null && !hasAnyRole(DOCUMENT_CREATE)) {
@@ -163,7 +163,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
                 }
 
                 //Вид груза уникален для всех грузов
-                CargoMode cargoMode = getCargoMode(dc);
+                CargoMode cargoMode = dc.getCargoMode();
 
                 if (cargoMode == null){
                     error(getString("document.cargo.edit.message.cargo_type.null_cargo_mode.error"));
@@ -174,7 +174,8 @@ public class DocumentCargoEdit extends DocumentEditPage {
                         error(getString("document.cargo.edit.message.cargo_type.not_found.error"));
                     }
 
-                    if (cargoMode != null && !cargoMode.equals(cargoTypeBean.getCargoMode(c.getCargoType()))){
+                    if (cargoMode != null && c.getCargoType() != null && c.getCargoType().getCargoModes() != null &&
+                            !c.getCargoType().getCargoModes().contains(cargoMode)){
                         error(getString("document.cargo.edit.message.cargo_type.unique_cargo_mode.error") + ": " +
                                 c.getCargoType().getCode() + " - " +
                                 cargoMode.getDisplayName(getLocale(), localeDAO.systemLocale()));
@@ -305,28 +306,10 @@ public class DocumentCargoEdit extends DocumentEditPage {
         cargoContainer.setOutputMarkupId(true);
         form.add(cargoContainer);
 
-        //Вид груза
-        final Label cargoModeLabel = new Label("document.cargo.cargo_mode", new LoadableDetachableModel<String>(){
-            @Override
-            protected String load() {
-                String s = "";
-
-                CargoMode cargoMode = getCargoMode(documentCargoModel.getObject());
-
-                if (cargoMode != null){
-                    s = getString("document.cargo.cargo_mode") + ": " +
-                            cargoMode.getDisplayName(getLocale(), localeDAO.systemLocale());
-                }else if(!documentCargoModel.getObject().getCargos().isEmpty()
-                        && documentCargoModel.getObject().getCargos().get(0).getCargoType() != null){
-                    s= getString("document.cargo.cargo_mode") + ": " +
-                            getString("document.cargo.edit.message.cargo_type.null_cargo_mode.error");
-                }
-
-                return s;
-            }
-        });
-        cargoModeLabel.setOutputMarkupId(true);
-        cargoContainer.add(cargoModeLabel);
+        //Блок вид груза
+        final WebMarkupContainer cargoModeContainer = new WebMarkupContainer("document.cargo.cargo_mode_container");
+        cargoModeContainer.setOutputMarkupId(true);
+        form.add(cargoModeContainer);
 
         //Добавить транспортное средство
         final AjaxSubmitLink addVehicleLink = new AjaxSubmitLink("document.cargo.vehicle.add", form) {
@@ -347,7 +330,6 @@ public class DocumentCargoEdit extends DocumentEditPage {
                 dc.getVehicles().add(vehicle);
 
                 target.addComponent(vehicleContainer);
-                target.addComponent(cargoModeLabel);
                 target.addComponent(cargoContainer);
 
                 String setFocusOnNewVehicle = "newVehicleFirstInputId = $('#vehicles tbody tr:last input[type=\"text\"]:first').attr('id');"
@@ -390,7 +372,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
                 item.add(name);
 
                 addRemoveSubmitLink("document.cargo.vehicle.delete", form, item, addVehicleLink,
-                        vehicleContainer, cargoContainer, feedbackPanel, cargoModeLabel);
+                        vehicleContainer, cargoContainer, feedbackPanel, cargoModeContainer);
             }
 
             @Override
@@ -409,6 +391,68 @@ public class DocumentCargoEdit extends DocumentEditPage {
             }
         };
         vehicleContainer.add(vehicleListView);
+
+        //Список видов груза
+        final IModel<CargoType> cargoTypeModel = new Model<CargoType>();
+        if (!documentCargoModel.getObject().getCargos().isEmpty()){
+            cargoTypeModel.setObject(documentCargoModel.getObject().getCargos().get(0).getCargoType());                                    
+        }
+
+        cargoModeContainer.add(new UKTZEDField("document.cargo.cargo_mode_cargo_type", cargoTypeModel, null, cargoModeContainer));
+
+        ListView cargoModeListView = new ListView<CargoMode>("document.cargo.cargo_mode_parent_list",
+                new LoadableDetachableModel<List<CargoMode>>(){
+                    @Override
+                    protected List<CargoMode> load() {
+                        List<CargoMode> list = new ArrayList<CargoMode>();
+
+                        if (cargoTypeModel.getObject() != null && cargoTypeModel.getObject().getCargoModes() != null){
+                            for (CargoMode cm : cargoTypeModel.getObject().getCargoModes()){
+                                if (cm.getParent() != null && !list.contains(cm.getParent())){
+                                    list.add(cm.getParent());
+                                }
+                            }
+                        }
+
+                        return list;
+                    }
+                }){
+            @Override
+            protected void populateItem(final ListItem<CargoMode> item) {
+                item.add(new Label("document.cargo.cargo_mode_parent",
+                        item.getModelObject().getDisplayName(getLocale(), localeDAO.systemLocale())));
+
+                //список дочерних видов
+                RadioChoice radioChoice = new RadioChoice<CargoMode>("document.cargo.cargo_mode_child_list",
+                        new PropertyModel<CargoMode>(documentCargoModel, "cargoMode"),
+                        new LoadableDetachableModel<List<CargoMode>>(){
+                            @Override
+                            protected List<CargoMode> load() {
+                                List<CargoMode> list = new ArrayList<CargoMode>();
+
+                                if (cargoTypeModel.getObject() != null && cargoTypeModel.getObject().getCargoModes() != null){
+                                    for (CargoMode cm : cargoTypeModel.getObject().getCargoModes()){
+                                        if (cm.getParent() != null && cm.getParent().equals(item.getModelObject())){
+                                            list.add(cm);
+                                        }
+                                    }
+                                }
+
+                                return list;
+                            }
+                        }, new BookNamedChoiceRenderer<CargoMode>(localeDAO.systemLocale()));
+                radioChoice.setOutputMarkupId(true);
+                radioChoice.add(new AjaxFormChoiceComponentUpdatingBehavior(){
+                    @Override
+                    protected void onUpdate(AjaxRequestTarget target) {
+                        target.addComponent(cargoContainer);
+                    }
+                });
+                item.add(radioChoice);  
+            }
+        };
+        cargoModeContainer.add(cargoModeListView);
+
 
         //Добавить груз
         final AjaxSubmitLink addCargoLink = new AjaxSubmitLink("document.cargo.cargo.add", form) {
@@ -442,7 +486,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
             @Override
             protected void populateItem(final ListItem<Cargo> item) {
-                addCargo(item, getCargoMode(documentCargoModel.getObject()));
+                addCargo(item);
 
                 //Копировать
                 final AjaxSubmitLink copyCargoLink = new AjaxSubmitLink("document.cargo.copy", form) {
@@ -532,7 +576,11 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
         @Override
         protected List<UnitType> load() {
-            return cargoTypeBean.getUnitTypes(cargo.getCargoType());
+            if (cargo.getDocumentCargo().getCargoMode() == null){
+                return Collections.emptyList();               
+            }
+
+            return new ArrayList<UnitType>(cargo.getDocumentCargo().getCargoMode().getUnitTypes());
         }
     }
 
@@ -554,7 +602,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
         }
     }
 
-    private void addCargo(ListItem<Cargo> item, CargoMode cargoMode) {
+    private void addCargo(ListItem<Cargo> item) {
         //Единицы измерения        
         UnitTypeModel unitTypeModel = new UnitTypeModel(item.getModelObject());
 
@@ -563,7 +611,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
         //УКТЗЕД и Тип груза
         item.add(new UKTZEDField("document.cargo.cargo_type", new PropertyModel<CargoType>(item.getModel(), "cargoType"),
-                cargoMode, ddcUnitTypes));
+                item.getModelObject().getDocumentCargo().getCargoMode(), ddcUnitTypes));
 
         //Количество
         TextField<Double> count = new TextField<Double>("document.cargo.count",

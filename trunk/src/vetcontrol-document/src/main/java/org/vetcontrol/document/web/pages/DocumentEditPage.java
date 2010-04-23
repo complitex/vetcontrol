@@ -49,18 +49,7 @@ public abstract class DocumentEditPage extends FormTemplatePage {
     private LogBean logBean;
 
     @EJB(name = "CargoTypeBean")
-    private CargoTypeBean cargoTypeBean;
-
-    protected CargoMode getCargoMode(DocumentCargo documentCargo){
-        if (!documentCargo.getCargos().isEmpty()){
-            Cargo cargo = documentCargo.getCargos().get(0);
-
-            if (cargo.getCargoType() != null){
-                return cargoTypeBean.getCargoMode(cargo.getCargoType());
-            }
-        }
-        return null;
-    }
+    private CargoTypeBean cargoTypeBean;         
 
     protected <T extends Localizable> DropDownChoice<T> addBookDropDownChoice(
             WebMarkupContainer container, String id, Class<T> bookClass, IModel model, String property) {
