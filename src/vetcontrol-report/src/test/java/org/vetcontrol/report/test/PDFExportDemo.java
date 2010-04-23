@@ -29,9 +29,9 @@ public class PDFExportDemo {
             parameterMap.put("startDate", new Date());
             parameterMap.put("endDate", new Date());
 
-            System.out.println("Filling report..." + System.getProperty("user.dir"));
+            System.out.println("Filling report...");
             JasperRunManager.runReportToPdfFile(
-                    "target/classes/org/vetcontrol/report/jasper/regionalcontrol/pdf/regional_control_report.jasper",
+                    "target/classes/org/vetcontrol/report/jasper/cargosinday/pdf/cargos_in_day_report.jasper",
                     "report.pdf",
                     parameterMap, new JREmptyDataSource());
             System.out.println("Done!");

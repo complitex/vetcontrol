@@ -35,9 +35,9 @@ public class TextExportDemo {
             parameterMap.put("startDate", new Date());
             parameterMap.put("endDate", new Date());
 
-            System.out.println("Filling report..." + System.getProperty("user.dir"));
+            System.out.println("Filling report...");
             JasperPrint jasperPrint = JasperFillManager.fillReport(
-                    "target/classes/org/vetcontrol/report/jasper/movementtypes/text/movement_types_report.jasper",
+                    "target/classes/org/vetcontrol/report/jasper/cargosinday/text/cargos_in_day_report.jasper",
                     parameterMap, new JREmptyDataSource());
 
             JRTextExporter textExporter = new JRTextExporter();

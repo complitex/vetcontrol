@@ -32,11 +32,10 @@ public class ArrestDocumentReportExportDemo {
         try {
             HashMap parameterMap = new HashMap();
             parameterMap.put(JRParameter.REPORT_LOCALE, Locale.getDefault());
-            System.out.println("Filling report..." + System.getProperty("user.dir"));
-            ArrestDocumentReport report = initReport();
+            System.out.println("Filling report...");
+            ArrestDocumentReport report = initReportEntity();
 
             JRRewindableDataSource dataSource = new JRBeanArrayDataSource(new ArrestDocumentReport[]{report});
-
             pdfExport(parameterMap, dataSource);
             dataSource.moveFirst();
             textExport(parameterMap, dataSource);
@@ -59,31 +58,26 @@ public class ArrestDocumentReportExportDemo {
         JasperPrint jasperPrint = JasperFillManager.fillReport(
                 "target/classes/org/vetcontrol/report/document/jasper/arrest/text/arrest_document_report.jasper",
                 parameters, dataSource);
-
         JRTextExporter textExporter = new JRTextExporter();
         textExporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
         textExporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, "report.txt");
         textExporter.setParameter(JRTextExporterParameter.PAGE_WIDTH, TextExporterConstants.PAGE_WIDTH);
         textExporter.setParameter(JRTextExporterParameter.PAGE_HEIGHT, TextExporterConstants.PAGE_HEIGHT);
-
         textExporter.exportReport();
     }
 
-    private static ArrestDocumentReport initReport() {
+    private static ArrestDocumentReport initReportEntity() {
         ArrestDocumentReport report = new ArrestDocumentReport();
         report.setArrestDate(new Date());
         report.setArrestReason("Причина задержания №1");
-        report.setArrestReasonDetails("Детали задержания.");
-        report.setCargoReceiverAddress("Адрес получателя");
-        report.setCargoReceiverName("Наименование получателя");
+        report.setArrestReasonDetails("Детали задержания. Детали задержания. Детали задержания. Детали задержания. Детали задержания. Детали задержания." +
+                " Детали задержания. Детали задержания. Детали задержания. Детали задержания. Детали задержания. Детали задержания. AAAAAAAAAAAAAAAAAAAA" +
+                "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB");
+        report.setCargoReceiverAddress("Адрес получателя 1");
+        report.setCargoReceiverName("Получатель 1");
         report.setCargoSenderCountry("Аргентина");
-        report.setCargoSenderName("Наименование отправителя, NNNNNNNNNNNNNNNNNNNNNNNNNNNN NNNNNNNNNNNNN NNNNNNNNNNNNN NNNNNNNNNNNNN NNNNNNNNNNNNN NNNNNNNNNNN" +
-                "MMMMMMMMMMM mmmmmmmmmmmm MMMMMMMMMMMMMM mmmmmmmmmmmmm MMMMMMMMMMMMMMMM");
-        report.setCargoTypeName("Категория груза, 111111111111111111111111111111111111111111111111111111111111 1111111111111111222222222222222222222223" +
-                "9999999999999999999999999999999 9999999999999999999999999999999999999991 888888888888888888888888888888888888888888888888888888888888888888888888 " +
-                "7777777777 77777777777777777 77777777777777777777777777777 77777777777 7777777777 AAAAAAAAAAAAAAAAAA BBBBBBBBBBBB CCCCCCCCCC DDDDDDDDDDDDDDDDDDDD " +
-                "EEEEEEEEEEEEEEEEE FFFFFFFFFFFFFFFF GGGGGGGGGGGGGGGG HHHHHHHHHHHHHHHHH1 " +
-                "IIIIIIIIIIIIIIIIIIIIIIIII JJJJJJJJJJJJJJJJJ KKKKKKKKKKKK LLLLLLLLLLLLLLLLLL MMMMMM");
+        report.setCargoSenderName("Отправитель 1");
+        report.setCargoTypeName("Категория груза 1");
         report.setCertificateDate(new Date());
         report.setCertificateDetails("№ 12345678");
         report.setCount(12.47);
