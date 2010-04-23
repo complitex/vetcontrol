@@ -6,16 +6,17 @@ package org.vetcontrol.entity;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.vetcontrol.util.book.entity.annotation.BookReference;
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
+import org.vetcontrol.util.book.entity.annotation.ViewLength;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlIDREF;
-import org.vetcontrol.util.book.entity.annotation.BookReference;
-import org.vetcontrol.util.book.entity.annotation.ViewLength;
+import java.util.Set;
 
 /**
  * 2.4.3.12 Справочник видов грузов
@@ -44,6 +45,7 @@ public class CargoMode extends Localizable {
         cargoModeCargoType.setCargoMode(this);
         cargoModeCargoTypes.add(cargoModeCargoType);
     }
+
     private List<CargoModeUnitType> cargoModeUnitTypes = new ArrayList<CargoModeUnitType>();
 
     @OneToMany(mappedBy = "cargoMode", fetch = FetchType.EAGER)
@@ -61,6 +63,22 @@ public class CargoMode extends Localizable {
         cargoModeUnitType.setCargoMode(this);
         cargoModeUnitTypes.add(cargoModeUnitType);
     }
+
+    private Set<UnitType> unitTypes;
+
+    @XmlTransient
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "cargo_mode_unit_type",
+            joinColumns = @JoinColumn(name = "cargo_mode_id", insertable = false, updatable = false),
+            inverseJoinColumns = @JoinColumn(name = "unit_type_id", insertable = false, updatable = false))
+    public Set<UnitType> getUnitTypes() {
+        return unitTypes;
+    }
+
+    public void setUnitTypes(Set<UnitType> unitTypes) {
+        this.unitTypes = unitTypes;
+    }
+
     private List<StringCulture> names = new ArrayList<StringCulture>();
 
     @Transient
