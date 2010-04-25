@@ -12,7 +12,6 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.*;
-import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -107,9 +106,6 @@ public class DocumentCargoBean {
 
                 if (v.getId() == null){
                     em.persist(v);
-                    em.flush();
-                    v.setId(getLastInsertId());
-                    em.clear();
                 }else{
                     em.merge(v);
                 }
@@ -125,7 +121,7 @@ public class DocumentCargoBean {
                     em.persist(c);
                 }else{
                     em.merge(c);
-                }                
+                }
             }
 
             documentCargo.setCargos(cargos);
@@ -135,32 +131,29 @@ public class DocumentCargoBean {
         else {
             //set
             documentCargo.setClient(clientBean.getCurrentClient());
-            documentCargo.setSyncStatus(Synchronized.SyncStatus.NOT_SYNCHRONIZED);
             documentCargo.setCreator(userProfileBean.getCurrentUser());
             documentCargo.setCreated(DateUtil.getCurrentDate());
+            documentCargo.setSyncStatus(Synchronized.SyncStatus.NOT_SYNCHRONIZED);
 
             //save document
-            em.persist(documentCargo);
-            em.flush();
-            documentCargo.setId(getLastInsertId());
-            em.clear();
+            DocumentCargo saved = em.merge(documentCargo);
+
+            //update object id for ui
+            documentCargo.setId(saved.getId());            
 
             //save vehicle
             for (Vehicle v : vehicles){
-                v.setDocumentCargo(documentCargo);
-                v.setVehicleType(documentCargo.getVehicleType());
+                v.setDocumentCargo(saved);
+                v.setVehicleType(saved.getVehicleType());
                 v.setSyncStatus(Synchronized.SyncStatus.NOT_SYNCHRONIZED);
                 v.setUpdated(DateUtil.getCurrentDate());
 
                 em.persist(v);
-                em.flush();
-                v.setId(getLastInsertId());
-                em.clear();
             }
 
             //save cargo
             for (Cargo c : cargos) {
-                c.setDocumentCargo(documentCargo);
+                c.setDocumentCargo(saved);
                 c.setSyncStatus(Synchronized.SyncStatus.NOT_SYNCHRONIZED);
                 c.setUpdated(DateUtil.getCurrentDate());
 
@@ -169,9 +162,9 @@ public class DocumentCargoBean {
         }
     }
 
-    private Long getLastInsertId() {
-        return ((BigInteger) em.createNativeQuery("select LAST_INSERT_ID()").getSingleResult()).longValue();
-    }
+//    private Long getLastInsertId() {
+//        return ((BigInteger) em.createNativeQuery("select LAST_INSERT_ID()").getSingleResult()).longValue();
+//    }
 
     public Long getDocumentCargosSize(DocumentCargoFilter filter) {
         Query query = em.createQuery("select count(dc) from DocumentCargo dc "

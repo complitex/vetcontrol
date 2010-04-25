@@ -23,7 +23,7 @@ public class Update implements ILongId{
     public static enum TYPE {CRITICAL, NOT_CRITICAL}
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @XmlID @XmlJavaTypeAdapter(LongAdapter.class)
     private Long id;
 

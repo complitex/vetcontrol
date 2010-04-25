@@ -48,12 +48,16 @@ import static org.vetcontrol.web.security.SecurityRoles.*;
 public class DocumentCargoEdit extends DocumentEditPage {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentCargoEdit.class);
+
     @EJB(name = "DocumentCargoBean")
     private DocumentCargoBean documentCargoBean;
+
     @EJB(name = "UserProfileBean")
     private UserProfileBean userProfileBean;
+
     @EJB(name = "CargoTypeBean")
     private CargoTypeBean cargoTypeBean;
+
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
 
@@ -61,6 +65,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
     @EJB(name = "LogBean")
     private LogBean logBean;
+
     @EJB(name = "ClientBean")
     ClientBean clientBean;
 
@@ -524,7 +529,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
             @Override
             protected void populateItem(final ListItem<Cargo> item) {
-                addCargo(item);
+                addCargo(item, new PropertyModel<CargoMode>(documentCargoModel, "cargoMode"));
 
                 //Копировать
                 final AjaxSubmitLink copyCargoLink = new AjaxSubmitLink("document.cargo.copy", form) {
@@ -640,7 +645,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
         }
     }
 
-    private void addCargo(ListItem<Cargo> item) {
+    private void addCargo(ListItem<Cargo> item, IModel<CargoMode> cargoModeModel) {
         //Единицы измерения        
         UnitTypeModel unitTypeModel = new UnitTypeModel(item.getModelObject());
 
@@ -649,7 +654,8 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
         //УКТЗЕД и Тип груза
         item.add(new UKTZEDField("document.cargo.cargo_type", new PropertyModel<CargoType>(item.getModel(), "cargoType"),
-                item.getModelObject().getDocumentCargo().getCargoMode(), ddcUnitTypes));
+                cargoModeModel,
+                ddcUnitTypes));
 
         //Количество
         TextField<Double> count = new TextField<Double>("document.cargo.count",

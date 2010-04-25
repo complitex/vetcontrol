@@ -19,7 +19,7 @@ import java.util.Date;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UserGroup implements IUpdated, IQuery, ILongId {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @XmlID @XmlJavaTypeAdapter(LongAdapter.class)
     private Long id;
 

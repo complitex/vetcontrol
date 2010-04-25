@@ -13,7 +13,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vetcontrol.document.service.DocumentBean;
+import org.vetcontrol.document.service.CommonDocumentBean;
 import org.vetcontrol.document.web.component.BookNamedChoiceRenderer;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.CargoTypeBean;
@@ -37,8 +37,8 @@ import static org.vetcontrol.web.security.SecurityRoles.DOCUMENT_DEP_CHILD_EDIT;
 public abstract class DocumentEditPage extends FormTemplatePage {
     private static final Logger log = LoggerFactory.getLogger(DocumentEditPage.class);
 
-    @EJB(name = "DocumentBean")
-    private transient DocumentBean documentBean;
+    @EJB(name = "CommonDocumentBean")
+    private CommonDocumentBean commonDocumentBean;
 
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
@@ -68,7 +68,7 @@ public abstract class DocumentEditPage extends FormTemplatePage {
         List<T> list = null;
 
         try {
-            list = documentBean.getBookList(bookClass);
+            list = commonDocumentBean.getBookList(bookClass);
         } catch (Exception e) {
             log.error("Ошибка загрузки списка справочников: " + bookClass, e);
             logBean.error(DOCUMENT, EDIT, this.getClass(), bookClass, "Ошибка загрузки данных из базы данных");
@@ -126,7 +126,7 @@ public abstract class DocumentEditPage extends FormTemplatePage {
 
             @Override
             protected Iterator<String> getChoices(String input) {
-                return documentBean.getSenderNames(ddcSenderCountry.getModelObject(), input).iterator();
+                return commonDocumentBean.getSenderNames(ddcSenderCountry.getModelObject(), input).iterator();
             }
         };
         senderName.setRequired(true);
@@ -146,7 +146,7 @@ public abstract class DocumentEditPage extends FormTemplatePage {
 
             @Override
             protected Iterator<String> getChoices(String input) {
-                return documentBean.getReceiverNames(input).iterator();
+                return commonDocumentBean.getReceiverNames(input).iterator();
             }
         };
         receiverName.setRequired(true);
@@ -160,7 +160,7 @@ public abstract class DocumentEditPage extends FormTemplatePage {
             @Override
             protected Iterator<String> getChoices(String input) {
 
-                return documentBean.getReceiverNames(input).iterator();
+                return commonDocumentBean.getReceiverNames(input).iterator();
             }
         };
         receiverAddress.setRequired(true);
@@ -176,7 +176,7 @@ public abstract class DocumentEditPage extends FormTemplatePage {
                 String name = receiverName.getModelObject();
 
                 if ((address == null || address.isEmpty()) && name != null && !name.isEmpty()) {
-                    address = documentBean.getReceiverAddress(name);
+                    address = commonDocumentBean.getReceiverAddress(name);
                     if (address != null) {
                         receiverAddress.setModelObject(address);
                         target.addComponent(receiverAddress);
@@ -196,7 +196,7 @@ public abstract class DocumentEditPage extends FormTemplatePage {
         List<Department> list;
 
         try {
-            list = documentBean.getChildDepartments(currentUser.getDepartment());
+            list = commonDocumentBean.getChildDepartments(currentUser.getDepartment());
             if (!list.contains(department)) {
                 list.add(department);
             }
@@ -221,7 +221,7 @@ public abstract class DocumentEditPage extends FormTemplatePage {
 
                     @Override
                     protected List<PassingBorderPoint> load() {
-                        return documentBean.getPassingBorderPoints(ddcDepartment.getModelObject());
+                        return commonDocumentBean.getPassingBorderPoints(ddcDepartment.getModelObject());
                     }
                 }, new IChoiceRenderer<PassingBorderPoint>() {
 

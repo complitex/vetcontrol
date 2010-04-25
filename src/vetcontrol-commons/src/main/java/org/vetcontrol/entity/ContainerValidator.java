@@ -4,21 +4,13 @@
  */
 package org.vetcontrol.entity;
 
-import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Query;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.vetcontrol.sync.LongAdapter;
 import org.vetcontrol.util.book.entity.annotation.ValidProperty;
+
+import javax.persistence.*;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.Date;
 
 /**
  *
@@ -32,7 +24,7 @@ public class ContainerValidator implements IBook, ILongId, IUpdated, IQuery, IDi
     private Long id;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @XmlID
     @XmlJavaTypeAdapter(LongAdapter.class)
     @Override

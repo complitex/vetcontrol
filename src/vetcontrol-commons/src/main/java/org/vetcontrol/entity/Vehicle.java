@@ -21,9 +21,10 @@ import java.util.Date;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Vehicle extends Synchronized implements IUpdated {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableGenerator(name = "vehicle", table = "generator", pkColumnName = "generatorName",
+            valueColumnName = "generatorValue", allocationSize = 1, initialValue = 100)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "vehicle")
     @Column(name = "id", nullable = false)
     @XmlID
     @XmlJavaTypeAdapter(LongAdapter.class)

@@ -17,9 +17,9 @@ import java.util.List;
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 21.04.2010 7:16:14
  */
-@Stateless(name = "DocumentBean")
+@Stateless(name = "CommonDocumentBean")
 @RolesAllowed({SecurityRoles.DOCUMENT_CREATE, SecurityRoles.DOCUMENT_EDIT, SecurityRoles.DOCUMENT_DEP_VIEW})
-public class DocumentBean {
+public class CommonDocumentBean {
     @PersistenceContext
     private EntityManager em;
 
