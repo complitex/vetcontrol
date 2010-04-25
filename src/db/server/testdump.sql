@@ -1,10 +1,10 @@
-INSERT INTO `user`(`id`, `login`, `_password`, `last_name`, `first_name`, `middle_name`, `department_id`) VALUES
-(2,'admin','21232f297a57a5a743894a0e4a801fc3','Иванов','Иван','Иванович',1),
-(17,'login_0','480335867a6c40d7bd4cf04e184910cc','Петров','Петр','Петрович',1),
-(18,'login_1','e81b90f3ee27f42bb010251021b1fc09','Сидоров','Сидор','Сидорович',2),
-(19,'login_2','3c681bd9a527167284e1f67a9da4f4dc','Александров','Александр','Александрович',3),
-(20,'login_3','3466c36ad772ab4e32e6ea6e7a59e142','Васильев','Василий','Васильевич',3),
-(21,'login_4','97b701a71f43ccd4dca24feb29df7437','Николаев','Николай','Николаевич',3);
+INSERT INTO `user`(`id`, `login`, `_password`, `last_name`, `first_name`, `middle_name`, `department_id`, `passing_border_point_id`) VALUES
+(2,'admin','21232f297a57a5a743894a0e4a801fc3','Иванов','Иван','Иванович',1, null),
+(17,'login_0','480335867a6c40d7bd4cf04e184910cc','Петров','Петр','Петрович',1, null),
+(18,'login_1','e81b90f3ee27f42bb010251021b1fc09','Сидоров','Сидор','Сидорович',2, null),
+(19,'login_2','3c681bd9a527167284e1f67a9da4f4dc','Александров','Александр','Александрович',3, 1),
+(20,'login_3','3466c36ad772ab4e32e6ea6e7a59e142','Васильев','Василий','Васильевич',3, 2),
+(21,'login_4','97b701a71f43ccd4dca24feb29df7437','Николаев','Николай','Николаевич',3, 3);
 
 INSERT INTO `usergroup` (`id`, `login`, `usergroup`) VALUES
 (2,'admin','ADMINISTRATORS'),(13,'login_0','DEPARTMENT_OFFICERS'),
@@ -85,3 +85,9 @@ VALUES
              (2,1,3,2,'2010-04-15 17:10:00',2,'Детали задержания.', 1, 50.77, 1, '2010-01-02', '№ 12345678', 'sender 2', 2, 'receiver 2', 'receiver 2 address', 2, 1, 'CAR', '7654321', '2010-04-15 16:00:00', '2010-04-15 17:10:00', 'NOT_SYNCHRONIZED'),
              (3,1,3,2,'2010-04-15 17:20:00',3,'Детали задержания.', 2, 100, 1, '2010-01-03', '№ 12345678', 'sender 3', 1, 'receiver 3', 'receiver 3 address', 2, 1, 'SHIP', 'abc1234', '2010-04-15 16:00:00', '2010-04-15 17:20:00', 'NOT_SYNCHRONIZED'),
              (4,1,3,2,'2010-04-15 17:30:00',1,'Детали задержания.', 2, 140, 1, '2010-01-04', '№ 12345678', 'sender 4', 2, 'receiver 4', 'receiver 4 address', 2, 1, 'AIRCRAFT', '', '2010-04-15 16:00:00', '2010-04-15 17:30:00', 'NOT_SYNCHRONIZED');
+
+
+UPDATE `generator` SET `generatorValue` = 100 WHERE `generatorName` = 'arrest_document';
+UPDATE `generator` SET `generatorValue` = 100 WHERE `generatorName` = 'cargo';
+UPDATE `generator` SET `generatorValue` = 100 WHERE `generatorName` = 'document_cargo';
+UPDATE `generator` SET `generatorValue` = 100 WHERE `generatorName` = 'vehicle';

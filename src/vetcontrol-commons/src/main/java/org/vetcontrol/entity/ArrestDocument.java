@@ -23,70 +23,93 @@ import java.util.Date;
 public class ArrestDocument extends Synchronized implements IUpdated {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableGenerator(name = "arrest_document", table = "generator", pkColumnName = "generatorName",
+            valueColumnName = "generatorValue", allocationSize = 1, initialValue = 100)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "arrest_document")
     private Long id;
+
     @Id
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
     @XmlIDREF
     private Client client;
+
     @Id
     @ManyToOne
     @JoinColumn(name = "department_id", nullable = false)
     @XmlIDREF
     private Department department;
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "creator_id")
     @XmlIDREF
     private User creator;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "arrest_date", nullable = false)
     private Date arrestDate;
+
     @ManyToOne
     @JoinColumn(name = "arrest_reason_id", nullable = false)
     @XmlIDREF
     private ArrestReason arrestReason;
+
     @Column(name = "arrest_reason_details", nullable = false)
     private String arrestReasonDetails;
+
     @ManyToOne
     @JoinColumn(name = "cargo_type_id", nullable = false)
     @XmlIDREF
     private CargoType cargoType;
+
     @ManyToOne
     @JoinColumn(name = "unit_type_id", nullable = true)
     @XmlIDREF
     private UnitType unitType;
+
     @Column(name = "count", nullable = false, precision = 2)
     private Double count;
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "vehicle_type", nullable = false)
     private VehicleType vehicleType;
+
     @Column(name = "vehicle_details", nullable = false)
     private String vehicleDetails;
+
     @ManyToOne
     @JoinColumn(name = "cargo_sender_country_id", nullable = false)
     private CountryBook senderCountry;
+
     @Column(name = "cargo_sender_name", nullable = false)
     private String senderName;
+
     @Column(name = "cargo_receiver_address", nullable = false)
     private String receiverAddress;
+
     @Column(name = "cargo_receiver_name", nullable = false)
     private String receiverName;
+
     @ManyToOne
-    @JoinColumn(name = "passing_border_point_id", nullable = false)
+    @JoinColumn(name = "passing_border_point_id", nullable = true)
     @XmlIDREF
     private PassingBorderPoint passingBorderPoint;
+
     @ManyToOne
-    @JoinColumn(name = "cargo_mode_id", nullable = true)
+    @JoinColumn(name = "cargo_mode_id", nullable = false)
     @XmlIDREF
     private CargoMode cargoMode;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "document_cargo_created", nullable = false)
     private Date documentCargoCreated;
+
     @Column(name = "certificate_details", length = 255, nullable = false)
     private String certificateDetails;
+
     @Temporal(TemporalType.DATE)
     @Column(name = "certificate_date", nullable = false)
     private Date certificateDate;

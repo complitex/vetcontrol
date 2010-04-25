@@ -15,7 +15,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -52,20 +51,10 @@ public class ArrestDocumentBean {
     }
 
     public void save(ArrestDocument arrestDocument){
-        if (arrestDocument.getId() == null){
-            em.persist(arrestDocument);
+        ArrestDocument saved = em.merge(arrestDocument);
 
-            em.flush();
-            em.clear();
-
-            arrestDocument.setId(getLastInsertId());
-        }else{
-            em.merge(arrestDocument);
-        }
-    }
-
-     private Long getLastInsertId() {
-        return ((BigInteger) em.createNativeQuery("select LAST_INSERT_ID()").getSingleResult()).longValue();
+        //set id for ui
+        arrestDocument.setId(saved.getId());
     }
 
     public List<ArrestDocument> getArrestDocuments(ArrestDocumentFilter filter, int first, int count, OrderBy orderBy, boolean asc){
