@@ -38,8 +38,14 @@ public class UKTZEDField extends Panel {
     @EJB(name = "CargoTypeBean")
     private CargoTypeBean cargoTypeBean;
 
+    final AutoCompleteTextField<String> uktzed, name;
+
+    private IModel<CargoType> model;
+
     public UKTZEDField(String id, final IModel<CargoType> model, final CargoMode cargoMode, final Component... ajaxUpdate) {
         super(id, model);
+
+        this.model = model;
 
         final Locale system = localeDAO.systemLocale();
 
@@ -68,7 +74,7 @@ public class UKTZEDField extends Panel {
             }
         };
 
-        final AutoCompleteTextField<String> uktzed = new AutoCompleteTextField<String>("uktzed",
+        uktzed = new AutoCompleteTextField<String>("uktzed",
                 new Model<String>(model.getObject() != null ? model.getObject().getCode() : ""),
                 String.class,
                 renderer,
@@ -89,7 +95,7 @@ public class UKTZEDField extends Panel {
         uktzed.setOutputMarkupId(true);
         add(uktzed);
 
-        final AutoCompleteTextField<String> name = new AutoCompleteTextField<String>("name",
+        name = new AutoCompleteTextField<String>("name",
                 new Model<String>(model.getObject() != null ? model.getObject().getDisplayName(getLocale(), system) : ""),
                 String.class,
                 renderer,
@@ -185,5 +191,14 @@ public class UKTZEDField extends Panel {
                 }
             }
         });
+    }
+
+    public void clear(){
+        name.setModelObject("");
+        uktzed.setModelObject("");
+    }
+
+    public IModel<CargoType> getModel() {
+        return model;
     }
 }

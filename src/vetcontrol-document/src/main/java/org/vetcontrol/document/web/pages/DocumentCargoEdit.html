@@ -119,16 +119,26 @@
             <div wicket:id="document.cargo.cargo_mode_container">
                 <table  border="0" cellspacing="0" cellpadding="0" class="tbForm">
                     <tr>
-                        <th><wicket:message key="document.cargo.code"/><b class="blue">*</b>:</th>
+                        <td><wicket:message key="document.cargo.cargo_mode_cargo_type_search"/></td>
                         <td><span wicket:id="document.cargo.cargo_mode_cargo_type"></span></td>
+                        <td>
+                            <a href="#" wicket:id="document.cargo.cargo_mode_cargo_type_search_link">
+                                <wicket:message key="document.cargo.cargo_mode_cargo_type_search_label"/>
+                            </a>
+                        </td>
                     </tr>
-                </table>                               
+                </table>
                 
-                <ul>
+                <ul wicket:id="document.cargo.cargo_mode_parent_radio_group" style="padding-bottom:0">
                     <li wicket:id="document.cargo.cargo_mode_parent_list">
                         <span wicket:id="document.cargo.cargo_mode_parent"></span>
 
-                        <div wicket:id="document.cargo.cargo_mode_child_list"></div>
+                        <ul style="padding-bottom:0">
+                            <li wicket:id="document.cargo.cargo_mode_child_list">
+                                <input type="radio" wicket:id="document.cargo.cargo_mode_child_radio"/>
+                                <span wicket:id="document.cargo.cargo_mode_child_label"></span>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </div>

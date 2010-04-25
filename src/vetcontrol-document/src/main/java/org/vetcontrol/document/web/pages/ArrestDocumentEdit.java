@@ -137,6 +137,7 @@ public class ArrestDocumentEdit extends DocumentEditPage{
         if (arrestDocumentId == null && cargoId == null){
             ad = new ArrestDocument();
             ad.setDepartment(currentUser.getDepartment());
+            ad.setPassingBorderPoint(currentUser.getPassingBorderPoint());
             ad.setClient(clientBean.getCurrentClient());
             ad.setCreator(currentUser);
         }

@@ -56,9 +56,9 @@ public class DocumentCargoList extends ListTemplatePage {
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
     @EJB(name = "DocumentCargoBean")
-    private DocumentCargoBean documentCargoBean;
+    private transient DocumentCargoBean documentCargoBean;
     @EJB(name = "DocumentBean")
-    private DocumentBean documentBean;
+    private transient DocumentBean documentBean;
     @EJB(name = "UserProfileBean")
     private UserProfileBean userProfileBean;
     @EJB(name = "ClientBean")
