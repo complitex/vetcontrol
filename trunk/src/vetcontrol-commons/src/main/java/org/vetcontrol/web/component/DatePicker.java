@@ -5,7 +5,9 @@
 package org.vetcontrol.web.component;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.datetime.PatternDateConverter;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.convert.IConverter;
 
 /**
  *
@@ -14,6 +16,8 @@ import org.apache.wicket.model.IModel;
 public class DatePicker<T> extends org.odlabs.wiquery.ui.datepicker.DatePicker<T> {
 
     private static final String IMAGE_SRC = "resources/" + Application.class.getName() + "/images/calendar.gif";
+
+    private IConverter converter;
 
     public DatePicker(String id) {
         super(id);
@@ -40,5 +44,13 @@ public class DatePicker<T> extends org.odlabs.wiquery.ui.datepicker.DatePicker<T
         setShowOn(ShowOnEnum.BOTH);
         setButtonImageOnly(true);
         setDateFormat("dd.mm.yy");
+
+        converter = new PatternDateConverter("dd.MM.yyy", true);
+    }
+
+    @Override
+    public IConverter getConverter(Class<?> type) {
+        
+        return converter;
     }
 }

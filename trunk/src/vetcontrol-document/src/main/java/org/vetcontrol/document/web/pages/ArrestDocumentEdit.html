@@ -54,12 +54,27 @@
                 <td><textarea id="arrest_reason_details" wicket:id="arrest.document.arrest_reason_details" cols="50" rows="5"></textarea></td>
             </tr>
             <tr>
-                <th><wicket:message key="arrest.document.cargo_mode"/>:</th>
-                <td><span wicket:id="arrest.document.cargo_mode"></span></td>
-            </tr>
-            <tr>
                 <th><wicket:message key="arrest.document.cargo_type"/>:</th>
                 <td><span wicket:id="arrest.document.cargo_type"></span></td>
+            </tr>
+            <tr>
+                <th><wicket:message key="arrest.document.cargo_mode"/>:</th>
+                <td>
+                    <div wicket:id="document.cargo.cargo_mode_container">
+                        <ul wicket:id="document.cargo.cargo_mode_parent_radio_group" style="padding-bottom:0">
+                            <li wicket:id="document.cargo.cargo_mode_parent_list">
+                                <span wicket:id="document.cargo.cargo_mode_parent"></span>
+
+                                <ul style="padding-bottom:0">
+                                    <li wicket:id="document.cargo.cargo_mode_child_list">
+                                        <input type="radio" wicket:id="document.cargo.cargo_mode_child_radio"/>
+                                        <span wicket:id="document.cargo.cargo_mode_child_label"></span>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </td>
             </tr>
             <tr>
                 <th><label for="unit_type"><wicket:message key="arrest.document.unit_type"/><b class="blue">*</b>:</label></th>

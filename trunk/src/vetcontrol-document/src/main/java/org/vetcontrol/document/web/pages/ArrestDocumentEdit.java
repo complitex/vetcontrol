@@ -1,10 +1,15 @@
 package org.vetcontrol.document.web.pages;
 
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;
 import org.apache.wicket.authorization.UnauthorizedInstantiationException;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.*;
 import org.slf4j.Logger;
@@ -203,7 +208,7 @@ public class ArrestDocumentEdit extends DocumentEditPage{
 
             @Override
             protected void onSubmit() {
-                try {                                       
+                try {
                     arrestDocumentBean.save(getModelObject());
 
                     setResponsePage(ArrestDocumentList.class);
@@ -262,31 +267,100 @@ public class ArrestDocumentEdit extends DocumentEditPage{
 
             @Override
             protected List<UnitType> load() {
-                return cargoTypeBean.getUnitTypes(arrestDocumentModel.getObject().getCargoType());
+                CargoMode cargoMode = arrestDocumentModel.getObject().getCargoMode();
+
+                if (cargoMode == null){
+                    return Collections.emptyList();
+                }
+
+                return new ArrayList<UnitType>(cargoMode.getUnitTypes());
             }
         };
 
-        DropDownChoice<UnitType> ddcUnitTypes =  addBookDropDownChoice(form, "arrest.document.unit_type",
+        final DropDownChoice<UnitType> ddcUnitTypes =  addBookDropDownChoice(form, "arrest.document.unit_type",
                 arrestDocumentModel, "unitType", unitTypeModel, false, true);
+        ddcUnitTypes.setOutputMarkupId(true);
+        form.add(ddcUnitTypes);
 
-        //Вид груза
-        Label cargoMode = new Label("arrest.document.cargo_mode", new LoadableDetachableModel<String>(){
-
-            @Override
-            protected String load() {
-                //TODO
-                arrestDocumentModel.getObject().setCargoMode(null);
-
-                return arrestDocumentModel.getObject().getCargoMode() != null
-                        ? arrestDocumentModel.getObject().getCargoMode().getDisplayName(getLocale(), system) : "";
-            }});
-
-        cargoMode.setOutputMarkupId(true);
-        form.add(cargoMode);
+        //Блок вид груза
+        final WebMarkupContainer cargoModeContainer = new WebMarkupContainer("document.cargo.cargo_mode_container");
+        cargoModeContainer.setOutputMarkupId(true);
+        form.add(cargoModeContainer);
 
         //Тип груза
-        form.add(new UKTZEDField("arrest.document.cargo_type", new PropertyModel<CargoType>(arrestDocumentModel, "cargoType"),
-                null, ddcUnitTypes, cargoMode));
+        final IModel<CargoType> cargoTypeModel = new PropertyModel<CargoType>(arrestDocumentModel, "cargoType");
+        form.add(new UKTZEDField("arrest.document.cargo_type", cargoTypeModel, new Model<CargoMode>(), cargoModeContainer));
+
+        final ListView cargoModeListView = new ListView<CargoMode>("document.cargo.cargo_mode_parent_list",
+                new LoadableDetachableModel<List<CargoMode>>(){
+                    @Override
+                    protected List<CargoMode> load() {
+                        List<CargoMode> list = new ArrayList<CargoMode>();
+                        CargoType ct = cargoTypeModel.getObject();
+
+                        if (ct != null && ct.getCargoModes() != null){
+                            for (CargoMode cm : ct.getCargoModes()){
+                                if (cm.getParent() != null && !list.contains(cm.getParent())){
+                                    list.add(cm.getParent());
+                                }
+                            }
+                        }
+
+                        return list;
+                    }
+                }){
+            @Override
+            protected void populateItem(final ListItem<CargoMode> item) {
+                item.add(new Label("document.cargo.cargo_mode_parent",
+                        item.getModelObject().getDisplayName(getLocale(), system)));
+
+                //список дочерних видов
+                ListView childList = new ListView<CargoMode>("document.cargo.cargo_mode_child_list",
+                        new LoadableDetachableModel<List<CargoMode>>(){
+                            @Override
+                            protected List<CargoMode> load() {
+                                List<CargoMode> list = new ArrayList<CargoMode>();
+                                CargoType ct = cargoTypeModel.getObject();
+
+                                if (ct != null && ct.getCargoModes() != null){
+                                    for (CargoMode cm : ct.getCargoModes()){
+                                        if (cm.getParent() != null && cm.getParent().equals(item.getModelObject())){
+                                            list.add(cm);
+                                        }
+                                    }
+                                }
+
+                                return list;
+                            }
+                        }){
+
+                    @Override
+                    protected void populateItem(final ListItem<CargoMode> childItem) {
+                        childItem.add(new Radio<CargoMode>("document.cargo.cargo_mode_child_radio", childItem.getModel()));
+                        childItem.add(new Label("document.cargo.cargo_mode_child_label",
+                                childItem.getModelObject().getDisplayName(getLocale(), system)));
+                    }
+                };
+
+                item.add(childList);
+            }
+        };
+        cargoModeListView.setOutputMarkupId(true);
+
+        RadioGroup radioGroup = new RadioGroup<CargoMode>("document.cargo.cargo_mode_parent_radio_group",
+                new PropertyModel<CargoMode>(arrestDocumentModel, "cargoMode"));
+        radioGroup.add(new AjaxFormChoiceComponentUpdatingBehavior(){
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                target.addComponent(cargoModeContainer);
+                target.addComponent(ddcUnitTypes);
+            }
+        });
+        radioGroup.setRequired(true);
+        radioGroup.setOutputMarkupId(true);
+        radioGroup.add(cargoModeListView);
+
+        cargoModeContainer.add(radioGroup);
 
         //Количество
         TextField<Double> count = new TextField<Double>("arrest.document.count",
@@ -322,7 +396,7 @@ public class ArrestDocumentEdit extends DocumentEditPage{
                 new PropertyModel<Date>(arrestDocumentModel, "documentCargoCreated"));
         documentCargoCreated.setRequired(true);
         form.add(documentCargoCreated);
-       
+
         //Реквизиты сертификата
         TextField<String> certificateDetails = new TextField<String>("arrest.document.certificate_detail",
                 new PropertyModel<String>(arrestDocumentModel, "certificateDetails"));
