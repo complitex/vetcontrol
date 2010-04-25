@@ -42,7 +42,7 @@ public class UKTZEDField extends Panel {
 
     private IModel<CargoType> model;
 
-    public UKTZEDField(String id, final IModel<CargoType> model, final CargoMode cargoMode, final Component... ajaxUpdate) {
+    public UKTZEDField(String id, final IModel<CargoType> model, final IModel<CargoMode> cargoModeModel, final Component... ajaxUpdate) {
         super(id, model);
 
         this.model = model;
@@ -82,7 +82,7 @@ public class UKTZEDField extends Panel {
 
             @Override
             protected Iterator<String> getChoices(String input) {
-                List<CargoType> cargoTypes = cargoTypeBean.getCargoTypesByCode(cargoMode, input, MAX_ITEM);
+                List<CargoType> cargoTypes = cargoTypeBean.getCargoTypesByCode(cargoModeModel != null ? cargoModeModel.getObject() : null, input, MAX_ITEM);
                 List<String> choices = new ArrayList<String>();
                 for (CargoType ct : cargoTypes){
                     choices.add(ct.getCode() + "\t" + ct.getDisplayName(getLocale(), system));
@@ -103,7 +103,7 @@ public class UKTZEDField extends Panel {
 
             @Override
             protected Iterator<String> getChoices(String input) {
-                List<CargoType> cargoTypes = cargoTypeBean.getCargoTypesByName(cargoMode, input, MAX_ITEM);
+                List<CargoType> cargoTypes = cargoTypeBean.getCargoTypesByName(cargoModeModel != null ? cargoModeModel.getObject() : null, input, MAX_ITEM);
                 List<String> choices = new ArrayList<String>();
                 for (CargoType ct : cargoTypes){
                     String s = ct.getDisplayName(getLocale(), system);

@@ -31,7 +31,7 @@ public class PassingBorderPoint implements ILongId, IBook, IUpdated, IDisabled, 
     private Long id;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @XmlID
     @XmlJavaTypeAdapter(LongAdapter.class)
     @Override

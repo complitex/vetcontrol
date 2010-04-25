@@ -16,7 +16,7 @@ public class UpdateItem implements ILongId{
     public static enum PACKAGING {WAR, JAR, SQL, SQL_ZIP}
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne

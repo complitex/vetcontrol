@@ -17,7 +17,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.*;
-import org.vetcontrol.document.service.DocumentBean;
+import org.vetcontrol.document.service.CommonDocumentBean;
 import org.vetcontrol.document.service.DocumentCargoBean;
 import org.vetcontrol.document.service.DocumentCargoFilter;
 import org.vetcontrol.document.web.component.BookNamedChoiceRenderer;
@@ -53,14 +53,19 @@ public class DocumentCargoList extends ListTemplatePage {
     private static final String SORT_PROPERTY_KEY = DocumentCargoList.class.getSimpleName() + "_SORT_PROPERTY";
     private static final String SORT_ORDER_KEY = DocumentCargoList.class.getSimpleName() + "_SORT_ORDER";
     private static final String FILTER_KEY = DocumentCargoList.class.getSimpleName() + "_FILTER";
+
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
+
+    @EJB(name = "CommonDocumentBean")
+    private CommonDocumentBean commonDocumentBean;
+
     @EJB(name = "DocumentCargoBean")
-    private transient DocumentCargoBean documentCargoBean;
-    @EJB(name = "DocumentBean")
-    private transient DocumentBean documentBean;
+    private DocumentCargoBean documentCargoBean;
+
     @EJB(name = "UserProfileBean")
     private UserProfileBean userProfileBean;
+
     @EJB(name = "ClientBean")
     private ClientBean clientBean;
 
@@ -99,7 +104,7 @@ public class DocumentCargoList extends ListTemplatePage {
 
         filterForm.add(new TextField<String>("id"));
 
-        filterForm.add(new DropDownChoice<MovementType>("movementType", documentBean.getBookList(MovementType.class),
+        filterForm.add(new DropDownChoice<MovementType>("movementType", commonDocumentBean.getBookList(MovementType.class),
                 new BookNamedChoiceRenderer<MovementType>(systemLocale)));
 
         filterForm.add(new VehicleTypeChoicePanel("vehicleType", new PropertyModel<VehicleType>(filter, "vehicleType"), false));
@@ -107,7 +112,7 @@ public class DocumentCargoList extends ListTemplatePage {
         filterForm.add(new TextField<String>("receiverAddress"));
         filterForm.add(new TextField<String>("senderName"));
 
-        filterForm.add(new DropDownChoice<CountryBook>("senderCountry", documentBean.getBookList(CountryBook.class),
+        filterForm.add(new DropDownChoice<CountryBook>("senderCountry", commonDocumentBean.getBookList(CountryBook.class),
                 new BookNamedChoiceRenderer<CountryBook>(systemLocale)));
         DatePicker<Date> created = new DatePicker<Date>("created");
         filterForm.add(created);

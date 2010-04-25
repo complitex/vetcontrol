@@ -20,7 +20,7 @@ public abstract class Localizable implements IBook, ILongId, IUpdated, IQuery, I
     protected Long id;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @XmlID @XmlJavaTypeAdapter(LongAdapter.class)
     @Override
     public  Long getId(){

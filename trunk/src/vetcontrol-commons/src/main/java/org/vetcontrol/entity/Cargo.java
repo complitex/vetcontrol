@@ -17,7 +17,9 @@ import java.util.Date;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Cargo extends Synchronized implements IUpdated{
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @TableGenerator(name = "cargo", table = "generator", pkColumnName = "generatorName",
+            valueColumnName = "generatorValue", allocationSize = 1, initialValue = 100)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "cargo")
     @Column(nullable = false)
     private Long id;
 

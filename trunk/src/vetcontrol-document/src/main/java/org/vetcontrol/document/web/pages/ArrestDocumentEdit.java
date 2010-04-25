@@ -10,7 +10,7 @@ import org.apache.wicket.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.document.service.ArrestDocumentBean;
-import org.vetcontrol.document.service.DocumentBean;
+import org.vetcontrol.document.service.CommonDocumentBean;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.CargoTypeBean;
 import org.vetcontrol.service.ClientBean;
@@ -38,7 +38,7 @@ public class ArrestDocumentEdit extends DocumentEditPage{
     private static final Logger log = LoggerFactory.getLogger(DocumentCargoEdit.class);
 
     @EJB(name = "DocumentBean")
-    private DocumentBean documentBean;
+    private CommonDocumentBean commonDocumentBean;
 
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;

@@ -22,7 +22,7 @@ import java.util.List;
 public class User implements ILongId, IUpdated, IQuery{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @XmlID @XmlJavaTypeAdapter(LongAdapter.class)
     private Long id;
 
