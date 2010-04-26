@@ -318,6 +318,7 @@ public class VetcontrolClient{
         Image image = Toolkit.getDefaultToolkit().getImage(VetcontrolClient.class.getResource("splash.gif"));
         JLabel label = new JLabel(new ImageIcon(image));
         splash.add(label, BorderLayout.CENTER);
+        splash.setAlwaysOnTop(true);
 
         progressBar.setBorder(BorderFactory.createEmptyBorder(16, 10, 16, 10));
         progressBar.setIndeterminate(true);
