@@ -82,6 +82,7 @@ public class ArrestDocument extends Synchronized implements IUpdated {
 
     @ManyToOne
     @JoinColumn(name = "cargo_sender_country_id", nullable = false)
+    @XmlIDREF
     private CountryBook senderCountry;
 
     @Column(name = "cargo_sender_name", nullable = false)
