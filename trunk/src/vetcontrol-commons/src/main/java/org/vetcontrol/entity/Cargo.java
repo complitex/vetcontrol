@@ -15,10 +15,11 @@ import java.util.Date;
 @IdClass(ClientEntityId.class)
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Cargo extends Synchronized implements IUpdated{
+public class Cargo extends Synchronized implements IUpdated, IQuery{
     @Id
     @TableGenerator(name = "cargo", table = "generator", pkColumnName = "generatorName",
-            valueColumnName = "generatorValue", allocationSize = 1, initialValue = 100)
+            valueColumnName = "generatorValue", allocationSize = 1, initialValue = 100,
+            uniqueConstraints = @UniqueConstraint(columnNames = {"id", "client_id", "department_id"}))
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "cargo")
     @Column(nullable = false)
     private Long id;
@@ -260,6 +261,33 @@ public class Cargo extends Synchronized implements IUpdated{
         result = 31 * result + (vehicle != null ? vehicle.hashCode() : 0);
         result = 31 * result + (vehicleId != null ? vehicleId.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public Query getInsertQuery(EntityManager em) {
+        return em.createNativeQuery("insert into cargo (id, client_id, department_id, document_cargo_id, cargo_type_id, " +
+                "unit_type_id, `count`, certificate_details, certificate_date, updated, cargo_producer_id, vehicle_id, " +
+                "sync_status) " +
+                "value (:id, :client_id, :department_id, :document_cargo_id, :cargo_type_id, :unit_type_id, :count, " +
+                ":certificate_details, :certificate_date, :updated, :cargo_producer_id, :vehicle_id, :sync_status)")
+                .setParameter("id", id)
+                .setParameter("client_id", client != null ? client.getId() : null)
+                .setParameter("department_id", department != null ? department.getId() : null)
+                .setParameter("document_cargo_id", documentCargoId)
+                .setParameter("cargo_type_id", cargoType != null ? cargoType.getId() : null)
+                .setParameter("unit_type_id", unitType != null ? unitType.getId() : null)
+                .setParameter("count", count)
+                .setParameter("certificate_details", certificateDetails)
+                .setParameter("certificate_date", certificateDate)
+                .setParameter("updated", updated)
+                .setParameter("cargo_producer_id", cargoProducer != null ? cargoProducer.getId() : null)
+                .setParameter("vehicle_id", vehicleId)
+                .setParameter("sync_status", syncStatus != null ? syncStatus.name() : null);
+    }
+
+    @Override
+    public Query getUpdateQuery(EntityManager em) {
+        return null;
     }
 }
 

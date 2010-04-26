@@ -20,10 +20,11 @@ import java.util.Date;
 @IdClass(ClientEntityId.class)
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Vehicle extends Synchronized implements IUpdated {
+public class Vehicle extends Synchronized implements IUpdated, IQuery {
     @Id
     @TableGenerator(name = "vehicle", table = "generator", pkColumnName = "generatorName",
-            valueColumnName = "generatorValue", allocationSize = 1, initialValue = 100)
+            valueColumnName = "generatorValue", allocationSize = 1, initialValue = 100,
+            uniqueConstraints = @UniqueConstraint(columnNames = {"id", "client_id", "department_id"}))
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "vehicle")
     @Column(name = "id", nullable = false)
     @XmlID
@@ -186,5 +187,26 @@ public class Vehicle extends Synchronized implements IUpdated {
         result = 31 * result + (vehicleType != null ? vehicleType.hashCode() : 0);
         result = 31 * result + (updated != null ? updated.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public Query getInsertQuery(EntityManager em) {
+        return em.createNativeQuery("insert into vehicle (id, client_id, department_id, document_cargo_id, " +
+                "vehicle_details, vehicle_type, updated, sync_status) " +
+                "value (:id, :client_id, :department_id, :document_cargo_id, " +
+                ":vehicle_details, :vehicle_type, :updated, :sync_status)")
+                .setParameter("id", id)
+                .setParameter("client_id", client != null ? client.getId() : null)
+                .setParameter("department_id", department != null ? department.getId() : null)
+                .setParameter("document_cargo_id", documentCargoId)
+                .setParameter("vehicle_details", vehicleDetails)
+                .setParameter("vehicle_type", vehicleType != null ? vehicleType.name() : null)
+                .setParameter("updated", updated)
+                .setParameter("sync_status", syncStatus != null ? syncStatus.name() : null);
+    }
+
+    @Override
+    public Query getUpdateQuery(EntityManager em) {
+        return null;
     }
 }

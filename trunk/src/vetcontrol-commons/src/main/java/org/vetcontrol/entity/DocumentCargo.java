@@ -17,10 +17,11 @@ import java.util.List;
 @IdClass(ClientEntityId.class)
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DocumentCargo extends Synchronized implements IUpdated {
+public class DocumentCargo extends Synchronized implements IUpdated, IQuery {
     @Id
     @TableGenerator(name = "document_cargo", table = "generator", pkColumnName = "generatorName", 
-            valueColumnName = "generatorValue", allocationSize = 1, initialValue = 100)
+            valueColumnName = "generatorValue", allocationSize = 1, initialValue = 100,
+            uniqueConstraints = @UniqueConstraint(columnNames = {"id", "client_id", "department_id"}))
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "document_cargo")
     private Long id;
 
@@ -298,5 +299,39 @@ public class DocumentCargo extends Synchronized implements IUpdated {
         result = 31 * result + (details != null ? details.hashCode() : 0);
         result = 31 * result + (cargoMode != null ? cargoMode.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public Query getInsertQuery(EntityManager em) {
+        return em.createNativeQuery("insert into document_cargo (id, client_id, department_id, creator_id, created, " +
+                "updated, movement_type_id, vehicle_type, cargo_sender_country_id, cargo_sender_name, " +
+                "cargo_receiver_address, cargo_receiver_name, passing_border_point_id, detention_details, " +
+                "details, cargo_mode_id, sync_status) " +
+                "value (:id, :client_id, :department_id, :creator_id, :created, " +
+                ":updated, :movement_type_id, :vehicle_type, :cargo_sender_country_id, :cargo_sender_name, " +
+                ":cargo_receiver_address, :cargo_receiver_name, :passing_border_point_id, :detention_details, " +
+                ":details, :cargo_mode_id, :sync_status)")
+                .setParameter("id", id)
+                .setParameter("client_id", client != null ? client.getId() : null)
+                .setParameter("department_id", department != null ? department.getId() : null)
+                .setParameter("creator_id", creator != null ? creator.getId() : null)
+                .setParameter("created", created)
+                .setParameter("updated", updated)
+                .setParameter("movement_type_id", movementType != null ? movementType.getId() : null)
+                .setParameter("vehicle_type", vehicleType != null ? vehicleType.name() : null)
+                .setParameter("cargo_sender_country_id", senderCountry != null ? senderCountry.getId() : null)
+                .setParameter("cargo_sender_name", senderName)
+                .setParameter("cargo_receiver_address", receiverAddress)
+                .setParameter("cargo_receiver_name", receiverName)
+                .setParameter("passing_border_point_id", passingBorderPoint != null ? passingBorderPoint.getId() : null)
+                .setParameter("detention_details", detentionDetails)
+                .setParameter("details", details)
+                .setParameter("cargo_mode_id", cargoMode != null ? cargoMode.getId() : null)
+                .setParameter("sync_status", syncStatus != null ? syncStatus.name() : null);
+    }
+
+    @Override
+    public Query getUpdateQuery(EntityManager em) {
+        return null;
     }
 }

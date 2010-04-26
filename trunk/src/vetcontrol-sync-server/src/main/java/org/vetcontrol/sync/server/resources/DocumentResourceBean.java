@@ -57,11 +57,10 @@ public class DocumentResourceBean {
                     }
                     securityCheck(client, DocumentCargo.class, documentCargo.getClient(), r);
 
-                    documentCargo.setClient(em.getReference(Client.class, documentCargo.getClient().getId()));
-                    documentCargo.setDepartment(em.getReference(Department.class, documentCargo.getDepartment().getId()));
-
-                    em.merge(documentCargo);
+                    documentCargo.getInsertQuery(em).executeUpdate();
                 }
+
+                em.flush();
 
                 logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, DocumentCargo.class,
                         rb.getString("info.sync.processed"), size, r.getRemoteHost(), client.getIp());
@@ -99,11 +98,13 @@ public class DocumentResourceBean {
                     }
                     securityCheck(client, Cargo.class, cargo.getClient(), r);
 
-                    cargo.setClient(em.getReference(Client.class, cargo.getClient().getId()));
-                    cargo.setDepartment(em.getReference(Department.class, cargo.getDepartment().getId()));
+                    cargo.setDocumentCargo(em.getReference(DocumentCargo.class,
+                            new ClientEntityId(cargo.getDocumentCargoId(), cargo.getClient(), cargo.getDepartment())));
 
-                    em.merge(cargo);
+                    cargo.getInsertQuery(em).executeUpdate();                    
                 }
+
+                em.flush();
 
                 logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Cargo.class,
                         rb.getString("info.sync.processed"), size,
@@ -140,11 +141,13 @@ public class DocumentResourceBean {
                     }
                     securityCheck(client, Vehicle.class, vehicle.getClient(), r);
 
-                    vehicle.setClient(em.getReference(Client.class, vehicle.getClient().getId()));
-                    vehicle.setDepartment(em.getReference(Department.class, vehicle.getDepartment().getId()));
+                    vehicle.setDocumentCargo(em.getReference(DocumentCargo.class,
+                            new ClientEntityId(vehicle.getDocumentCargoId(), vehicle.getClient(), vehicle.getDepartment())));
 
-                    em.merge(vehicle);
+                    vehicle.getInsertQuery(em).executeUpdate();
                 }
+
+                em.flush();
 
                 logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Vehicle.class,
                         rb.getString("info.sync.processed"), size,
@@ -184,11 +187,10 @@ public class DocumentResourceBean {
                     }
                     securityCheck(client, ArrestDocument.class, arrestDocument.getClient(), r);
 
-                    arrestDocument.setClient(em.getReference(Client.class, arrestDocument.getClient().getId()));
-                    arrestDocument.setDepartment(em.getReference(Department.class, arrestDocument.getDepartment().getId()));
-
-                    em.merge(arrestDocument);
+                    arrestDocument.getInsertQuery(em).executeUpdate();
                 }
+
+                em.flush();
 
                 logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, ArrestDocument.class,
                         rb.getString("info.sync.processed"), size,
