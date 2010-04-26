@@ -30,14 +30,22 @@ public class SyncBean {
 
     @EJB(beanName = "BookSyncBean")
     BookSyncBean bookSyncBean;
+
     @EJB(beanName = "UserSyncBean")
     UserSyncBean userSyncBean;
+
     @EJB(beanName = "DocumentCargoSyncBean")
     private DocumentCargoSyncBean documentCargoSyncBean;
+
+    @EJB(beanName = "ArrestDocumentSyncBean")
+    private ArrestDocumentSyncBean arrestDocumentSyncBean;
+
     @EJB(beanName = "LogBean")
     LogBean logBean;
+
     @EJB(beanName = "LogSyncBean")
     private LogSyncBean logSyncBean;
+
     @EJB(beanName = "UpdateSyncBean")
     private UpdateSyncBean updateSyncBean;
 
@@ -124,6 +132,7 @@ public class SyncBean {
         bookSyncBean.setSyncListener(syncListener);
         userSyncBean.setSyncListener(syncListener);
         documentCargoSyncBean.setSyncListener(syncListener);
+        arrestDocumentSyncBean.setSyncListener(syncListener);
         logSyncBean.setSyncListener(syncListener);
         updateSyncBean.setSyncListener(syncListener);
 
@@ -154,6 +163,9 @@ public class SyncBean {
 
             //Синхронизация документов
             documentCargoSyncBean.process();
+
+            //Синхронизация актов задержания грузов
+            arrestDocumentSyncBean.process();
 
             //Синхронизация лога документов
             logSyncBean.process();

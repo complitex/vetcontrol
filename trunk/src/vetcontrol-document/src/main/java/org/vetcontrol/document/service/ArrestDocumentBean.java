@@ -51,6 +51,8 @@ public class ArrestDocumentBean {
     }
 
     public void save(ArrestDocument arrestDocument){
+        arrestDocument.setUpdated(DateUtil.getCurrentDate());
+        
         ArrestDocument saved = em.merge(arrestDocument);
 
         //set id for ui

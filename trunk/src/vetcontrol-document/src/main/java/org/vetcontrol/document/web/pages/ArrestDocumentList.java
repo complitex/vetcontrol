@@ -204,8 +204,7 @@ public class ArrestDocumentList extends ListTemplatePage {
         };
 
         //Ссылки для сортировки
-        addOrderByBorder(filterForm, "order_id", ArrestDocumentBean.OrderBy.ID.name(), dataProvider, dataView);
-        addOrderByBorder(filterForm, "order_creator", ArrestDocumentBean.OrderBy.CREATOR.name(), dataProvider, dataView);
+        addOrderByBorder(filterForm, "order_id", ArrestDocumentBean.OrderBy.ID.name(), dataProvider, dataView);        
         addOrderByBorder(filterForm, "order_arrest_date", ArrestDocumentBean.OrderBy.ARREST_DATE.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_arrest_reason", ArrestDocumentBean.OrderBy.ARREST_REASON.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_cargo_type", ArrestDocumentBean.OrderBy.CARGO_TYPE.name(), dataProvider, dataView);

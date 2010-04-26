@@ -92,7 +92,7 @@ public class DocumentCargoSyncBean extends SyncInfo {
                     sync(new SyncEvent(count, i * NETWORK_BATCH, DocumentCargo.class));
                 } catch (Exception e) {
                     StringBuilder query = new StringBuilder("update DocumentCargo dc set dc.syncStatus = :newSyncStatus"
-                            + " where dc.id.id in (");
+                            + " where dc.id in (");
                     for (int j = 0; j < documents.size(); j++) {
                         query.append(documents.get(j).getId());
                         if (j < documents.size() - 1) {
