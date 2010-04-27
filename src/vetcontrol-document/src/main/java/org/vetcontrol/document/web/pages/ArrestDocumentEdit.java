@@ -21,7 +21,6 @@ import org.vetcontrol.service.CargoTypeBean;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.service.UserProfileBean;
-import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.web.component.DatePicker;
 import org.vetcontrol.web.component.UKTZEDField;
@@ -44,11 +43,6 @@ public class ArrestDocumentEdit extends DocumentEditPage{
 
     @EJB(name = "DocumentBean")
     private CommonDocumentBean commonDocumentBean;
-
-    @EJB(name = "LocaleDAO")
-    private ILocaleDAO localeDAO;
-
-    private java.util.Locale system = localeDAO.systemLocale();
 
     @EJB(name = "LogBean")
     private LogBean logBean;
@@ -312,7 +306,7 @@ public class ArrestDocumentEdit extends DocumentEditPage{
             @Override
             protected void populateItem(final ListItem<CargoMode> item) {
                 item.add(new Label("document.cargo.cargo_mode_parent",
-                        item.getModelObject().getDisplayName(getLocale(), system)));
+                        item.getModelObject().getDisplayName(getLocale(), getSystemLocale())));
 
                 //список дочерних видов
                 ListView childList = new ListView<CargoMode>("document.cargo.cargo_mode_child_list",
@@ -338,7 +332,7 @@ public class ArrestDocumentEdit extends DocumentEditPage{
                     protected void populateItem(final ListItem<CargoMode> childItem) {
                         childItem.add(new Radio<CargoMode>("document.cargo.cargo_mode_child_radio", childItem.getModel()));
                         childItem.add(new Label("document.cargo.cargo_mode_child_label",
-                                childItem.getModelObject().getDisplayName(getLocale(), system)));
+                                childItem.getModelObject().getDisplayName(getLocale(), getSystemLocale())));
                     }
                 };
 
@@ -420,10 +414,10 @@ public class ArrestDocumentEdit extends DocumentEditPage{
         if (visible) {
             fullCreator = ad.getCreator().getFullName();
             if (ad.getCreator().getJob() != null) {
-                fullCreator += ", " + ad.getCreator().getJob().getDisplayName(getLocale(), system);
+                fullCreator += ", " + ad.getCreator().getJob().getDisplayName(getLocale(), getSystemLocale());
             }
             if (ad.getDepartment() != null && !ad.getDepartment().getId().equals(ad.getCreator().getDepartment().getId())) {
-                fullCreator += ", " + ad.getCreator().getDepartment().getDisplayName(getLocale(), system);
+                fullCreator += ", " + ad.getCreator().getDepartment().getDisplayName(getLocale(), getSystemLocale());
             }
         }
 

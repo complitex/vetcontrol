@@ -26,14 +26,12 @@ import org.vetcontrol.service.CargoTypeBean;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.service.UserProfileBean;
-import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.web.component.DatePicker;
 import org.vetcontrol.web.component.UKTZEDField;
 import org.vetcontrol.web.component.list.AjaxRemovableListView;
 
 import javax.ejb.EJB;
 import java.util.*;
-import java.util.Locale;
 
 import static org.vetcontrol.entity.Log.EVENT.CREATE;
 import static org.vetcontrol.entity.Log.EVENT.EDIT;
@@ -57,11 +55,6 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
     @EJB(name = "CargoTypeBean")
     private CargoTypeBean cargoTypeBean;
-
-    @EJB(name = "LocaleDAO")
-    private ILocaleDAO localeDAO;
-
-    private final Locale system = localeDAO.systemLocale();
 
     @EJB(name = "LogBean")
     private LogBean logBean;
@@ -186,7 +179,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
                             !c.getCargoType().getCargoModes().contains(cargoMode)){
                         error(getString("document.cargo.edit.message.cargo_type.unique_cargo_mode.error") + ": " +
                                 c.getCargoType().getCode() + " - " +
-                                cargoMode.getDisplayName(getLocale(), system));
+                                cargoMode.getDisplayName(getLocale(), getSystemLocale()));
                     }
                 }
             }
@@ -277,10 +270,10 @@ public class DocumentCargoEdit extends DocumentEditPage {
         if (visible) {
             fullCreator = dc.getCreator().getFullName();
             if (dc.getCreator().getJob() != null) {
-                fullCreator += ", " + dc.getCreator().getJob().getDisplayName(getLocale(), system);
+                fullCreator += ", " + dc.getCreator().getJob().getDisplayName(getLocale(), getSystemLocale());
             }
             if (dc.getDepartment() != null && !dc.getDepartment().getId().equals(dc.getCreator().getDepartment().getId())) {
-                fullCreator += ", " + dc.getCreator().getDepartment().getDisplayName(getLocale(), system);
+                fullCreator += ", " + dc.getCreator().getDepartment().getDisplayName(getLocale(), getSystemLocale());
             }
         }
 
@@ -443,7 +436,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
             @Override
             protected void populateItem(final ListItem<CargoMode> item) {
                 item.add(new Label("document.cargo.cargo_mode_parent",
-                        item.getModelObject().getDisplayName(getLocale(), system)));
+                        item.getModelObject().getDisplayName(getLocale(), getSystemLocale())));
 
                 //список дочерних видов
                 ListView childList = new ListView<CargoMode>("document.cargo.cargo_mode_child_list",
@@ -471,7 +464,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
                     protected void populateItem(final ListItem<CargoMode> childItem) {
                         childItem.add(new Radio<CargoMode>("document.cargo.cargo_mode_child_radio", childItem.getModel()));
                         childItem.add(new Label("document.cargo.cargo_mode_child_label", 
-                                childItem.getModelObject().getDisplayName(getLocale(), system)));
+                                childItem.getModelObject().getDisplayName(getLocale(), getSystemLocale())));
                     }
                 };
 

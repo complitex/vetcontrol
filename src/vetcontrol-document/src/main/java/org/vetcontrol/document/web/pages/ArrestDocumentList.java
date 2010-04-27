@@ -24,7 +24,6 @@ import org.vetcontrol.entity.*;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UserProfileBean;
-import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.web.component.BookmarkablePageLinkPanel;
 import org.vetcontrol.web.component.DatePicker;
 import org.vetcontrol.web.component.VehicleTypeChoicePanel;
@@ -35,8 +34,10 @@ import org.vetcontrol.web.component.toolbar.ToolbarButton;
 import org.vetcontrol.web.template.ListTemplatePage;
 
 import javax.ejb.EJB;
-import java.util.*;
-import java.util.Locale;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import static org.vetcontrol.web.security.SecurityRoles.*;
 
@@ -53,9 +54,6 @@ public class ArrestDocumentList extends ListTemplatePage {
     private static final String SORT_ORDER_KEY = ArrestDocumentList.class.getSimpleName() + "_SORT_ORDER";
     private static final String FILTER_KEY = ArrestDocumentList.class.getSimpleName() + "_FILTER";
 
-    @EJB(name = "LocaleDAO")
-    private ILocaleDAO localeDAO;
-
     @EJB(name = "ArrestDocumentBean")
     private ArrestDocumentBean arrestDocumentBean;
 
@@ -65,7 +63,6 @@ public class ArrestDocumentList extends ListTemplatePage {
     @EJB(name = "ClientBean")
     private ClientBean clientBean;
 
-    private final Locale systemLocale = localeDAO.systemLocale();
     private final boolean server = clientBean.isServer();
 
     public ArrestDocumentList() {
@@ -104,16 +101,16 @@ public class ArrestDocumentList extends ListTemplatePage {
         filterForm.add(new TextField<String>("cargoMode"));
         filterForm.add(new TextField<String>("count"));
         filterForm.add(new DropDownChoice<UnitType>("unitType", arrestDocumentBean.getList(UnitType.class),
-                new BookNamedChoiceRenderer<UnitType>(systemLocale)));
+                new BookNamedChoiceRenderer<UnitType>(getSystemLocale())));
         filterForm.add(new VehicleTypeChoicePanel("vehicleType", new PropertyModel<VehicleType>(filter, "vehicleType"), false));
         filterForm.add(new DropDownChoice<CountryBook>("senderCountry", arrestDocumentBean.getList(CountryBook.class),
-                new BookNamedChoiceRenderer<CountryBook>(systemLocale)));
+                new BookNamedChoiceRenderer<CountryBook>(getSystemLocale())));
         filterForm.add(new TextField<String>("senderName"));
         filterForm.add(new TextField<String>("receiverAddress"));
         filterForm.add(new TextField<String>("receiverName"));
 
         filterForm.add(new DropDownChoice<ArrestReason>("arrestReason", arrestDocumentBean.getList(ArrestReason.class),
-                new BookNamedChoiceRenderer<ArrestReason>(systemLocale)));
+                new BookNamedChoiceRenderer<ArrestReason>(getSystemLocale())));
         filterForm.add(new DatePicker<Date>("arrestDate"));
 
         DropDownChoice<Synchronized.SyncStatus> ddcSyncStatus =
@@ -177,16 +174,16 @@ public class ArrestDocumentList extends ListTemplatePage {
                 item.add(new BookmarkablePageLinkPanel<DocumentCargo>("id", ad.getDisplayId(),
                         ArrestDocumentList.class, pageParameters));
 
-                item.add(new Label("cargoType", ad.getCargoType().getDisplayName(getLocale(), systemLocale)));
-                item.add(new Label("cargoMode", ad.getCargoMode() != null ? ad.getCargoMode().getDisplayName(getLocale(), systemLocale) : ""));
+                item.add(new Label("cargoType", ad.getCargoType().getDisplayName(getLocale(), getSystemLocale())));
+                item.add(new Label("cargoMode", ad.getCargoMode() != null ? ad.getCargoMode().getDisplayName(getLocale(), getSystemLocale()) : ""));
                 item.add(new Label("count", ad.getCount() + ""));
-                item.add(new Label("unitType", ad.getUnitType() != null ? ad.getUnitType().getDisplayName(getLocale(), systemLocale) : ""));
+                item.add(new Label("unitType", ad.getUnitType() != null ? ad.getUnitType().getDisplayName(getLocale(), getSystemLocale()) : ""));
                 item.add(new Label("vehicleType", VehicleTypeChoicePanel.getDysplayName(ad.getVehicleType(), getLocale())));
-                item.add(new Label("senderCountry", ad.getSenderCountry().getDisplayName(getLocale(), systemLocale)));
+                item.add(new Label("senderCountry", ad.getSenderCountry().getDisplayName(getLocale(), getSystemLocale())));
                 item.add(new Label("senderName", ad.getSenderName()));
                 item.add(new Label("receiverAddress", ad.getReceiverAddress()));
                 item.add(new Label("receiverName", ad.getReceiverName()));
-                item.add(new Label("arrestReason", ad.getArrestReason().getDisplayName(getLocale(), systemLocale)));
+                item.add(new Label("arrestReason", ad.getArrestReason().getDisplayName(getLocale(), getSystemLocale())));
                 item.add(new DateLabel("arrestDate", new Model<Date>(ad.getArrestDate()), new StyleDateConverter(true)));
 
                 Label syncStatus = new Label("syncStatus", getString(ad.getSyncStatus().name()));
@@ -239,7 +236,7 @@ public class ArrestDocumentList extends ListTemplatePage {
     }
 
     private ArrestDocumentFilter newArrestDocumentFilter(){
-        ArrestDocumentFilter filter = new ArrestDocumentFilter(getLocale(), localeDAO.systemLocale());
+        ArrestDocumentFilter filter = new ArrestDocumentFilter(getLocale(), getSystemLocale());
 
         if (hasAnyRole(DOCUMENT_DEP_VIEW)) {
             filter.setDepartment(userProfileBean.getCurrentUser().getDepartment());
