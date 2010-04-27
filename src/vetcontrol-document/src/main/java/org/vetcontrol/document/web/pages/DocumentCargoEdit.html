@@ -114,37 +114,33 @@
             <a class="addVehicle" href="#" wicket:id="document.cargo.vehicle.add"><wicket:message key="document.cargo.vehicle.add"/></a>
         </fieldset>
         <fieldset style="margin-bottom:10px">
-            <legend>Виды грузов</legend>
-
+            <legend>Грузы</legend>
             <div wicket:id="document.cargo.cargo_mode_container">
                 <table  border="0" cellspacing="0" cellpadding="0" class="tbForm">
                     <tr>
-                        <td><wicket:message key="document.cargo.cargo_mode_cargo_type_search"/></td>
-                        <td><span wicket:id="document.cargo.cargo_mode_cargo_type"></span></td>
+                        <th><span wicket:id="document.cargo.cargo_mode.label"></span></th>
+                        <td><span wicket:id="document.cargo.cargo_mode.value"></span></td>
+                    </tr>
+                    <tr>
+                        <th><span wicket:id="document.cargo.select_cargo_mode.label"></span></th>
                         <td>
-                            <a href="#" wicket:id="document.cargo.cargo_mode_cargo_type_search_link">
-                                <wicket:message key="document.cargo.cargo_mode_cargo_type_search_label"/>
-                            </a>
+                            <ul wicket:id="document.cargo.cargo_mode_parent_radio_group" style="padding-bottom:0">
+                                <li wicket:id="document.cargo.cargo_mode_parent_list">
+                                    <span wicket:id="document.cargo.cargo_mode_parent"></span>
+
+                                    <ul style="padding-bottom:0">
+                                        <li wicket:id="document.cargo.cargo_mode_child_list">
+                                            <input type="radio" wicket:id="document.cargo.cargo_mode_child_radio"/>
+                                            <span wicket:id="document.cargo.cargo_mode_child_label"></span>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
                         </td>
                     </tr>
                 </table>
-                
-                <ul wicket:id="document.cargo.cargo_mode_parent_radio_group" style="padding-bottom:0">
-                    <li wicket:id="document.cargo.cargo_mode_parent_list">
-                        <span wicket:id="document.cargo.cargo_mode_parent"></span>
-
-                        <ul style="padding-bottom:0">
-                            <li wicket:id="document.cargo.cargo_mode_child_list">
-                                <input type="radio" wicket:id="document.cargo.cargo_mode_child_radio"/>
-                                <span wicket:id="document.cargo.cargo_mode_child_label"></span>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
             </div>
-        </fieldset>
-        <fieldset style="margin-bottom:10px">
-            <legend>Грузы</legend>
+
             <div wicket:id="document.cargo.cargo_container"> 
                 <table id="cargos" border="0" cellspacing="0" cellpadding="0" class="tbColor table_input">
                     <thead>

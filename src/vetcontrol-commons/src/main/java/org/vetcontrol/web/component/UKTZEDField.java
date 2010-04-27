@@ -18,6 +18,7 @@ import org.vetcontrol.service.CargoTypeBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
 
 import javax.ejb.EJB;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -41,6 +42,12 @@ public class UKTZEDField extends Panel {
     final AutoCompleteTextField<String> uktzed, name;
 
     private IModel<CargoType> model;
+
+    public interface IUKTZEDFieldListener extends Serializable{
+        public void update(CargoType cargoType);
+    }
+
+    private IUKTZEDFieldListener listener;
 
     public UKTZEDField(String id, final IModel<CargoType> model, final IModel<CargoMode> cargoModeModel, final Component... ajaxUpdate) {
         super(id, model);
@@ -151,6 +158,9 @@ public class UKTZEDField extends Panel {
                     target.addComponent(component);
                 }
 
+                if (listener != null){
+                    listener.update(cargoType);
+                }
             }
         });
 
@@ -182,6 +192,10 @@ public class UKTZEDField extends Panel {
                     for (Component component : ajaxUpdate){
                         target.addComponent(component);
                     }
+
+                    if (listener != null){
+                        listener.update(cargoType);
+                    }
                 }else{
                     String code = uktzed.getModelObject();
                     if (code != null){
@@ -200,5 +214,13 @@ public class UKTZEDField extends Panel {
 
     public IModel<CargoType> getModel() {
         return model;
+    }
+
+    public IUKTZEDFieldListener getListener() {
+        return listener;
+    }
+
+    public void setListener(IUKTZEDFieldListener listener) {
+        this.listener = listener;
     }
 }
