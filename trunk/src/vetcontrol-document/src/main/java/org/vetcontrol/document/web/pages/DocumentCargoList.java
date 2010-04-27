@@ -25,7 +25,6 @@ import org.vetcontrol.entity.*;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UserProfileBean;
-import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.web.component.BookmarkablePageLinkPanel;
 import org.vetcontrol.web.component.DatePicker;
 import org.vetcontrol.web.component.VehicleTypeChoicePanel;
@@ -36,8 +35,10 @@ import org.vetcontrol.web.component.toolbar.ToolbarButton;
 import org.vetcontrol.web.template.ListTemplatePage;
 
 import javax.ejb.EJB;
-import java.util.*;
-import java.util.Locale;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import static org.vetcontrol.document.service.DocumentCargoBean.OrderBy;
 import static org.vetcontrol.web.security.SecurityRoles.*;
@@ -54,9 +55,6 @@ public class DocumentCargoList extends ListTemplatePage {
     private static final String SORT_ORDER_KEY = DocumentCargoList.class.getSimpleName() + "_SORT_ORDER";
     private static final String FILTER_KEY = DocumentCargoList.class.getSimpleName() + "_FILTER";
 
-    @EJB(name = "LocaleDAO")
-    private ILocaleDAO localeDAO;
-
     @EJB(name = "CommonDocumentBean")
     private CommonDocumentBean commonDocumentBean;
 
@@ -72,7 +70,6 @@ public class DocumentCargoList extends ListTemplatePage {
     public DocumentCargoList() {
         super();
 
-        final Locale systemLocale = localeDAO.systemLocale();
         final boolean server = clientBean.isServer();
 
         add(new Label("title", new ResourceModel("document.cargo.list.title")));
@@ -105,7 +102,7 @@ public class DocumentCargoList extends ListTemplatePage {
         filterForm.add(new TextField<String>("id"));
 
         filterForm.add(new DropDownChoice<MovementType>("movementType", commonDocumentBean.getBookList(MovementType.class),
-                new BookNamedChoiceRenderer<MovementType>(systemLocale)));
+                new BookNamedChoiceRenderer<MovementType>(getSystemLocale())));
 
         filterForm.add(new VehicleTypeChoicePanel("vehicleType", new PropertyModel<VehicleType>(filter, "vehicleType"), false));
         filterForm.add(new TextField<String>("receiverName"));
@@ -113,7 +110,7 @@ public class DocumentCargoList extends ListTemplatePage {
         filterForm.add(new TextField<String>("senderName"));
 
         filterForm.add(new DropDownChoice<CountryBook>("senderCountry", commonDocumentBean.getBookList(CountryBook.class),
-                new BookNamedChoiceRenderer<CountryBook>(systemLocale)));
+                new BookNamedChoiceRenderer<CountryBook>(getSystemLocale())));
         DatePicker<Date> created = new DatePicker<Date>("created");
         filterForm.add(created);
 
@@ -177,12 +174,12 @@ public class DocumentCargoList extends ListTemplatePage {
 
                 item.add(new BookmarkablePageLinkPanel<DocumentCargo>("id", dc.getDisplayId(),
                         DocumentCargoView.class, pageParameters));
-                item.add(new Label("movementType", dc.getMovementType().getDisplayName(getLocale(), systemLocale)));
+                item.add(new Label("movementType", dc.getMovementType().getDisplayName(getLocale(), getSystemLocale())));
                 item.add(new Label("vehicleType", VehicleTypeChoicePanel.getDysplayName(dc.getVehicleType(), getLocale())));
                 item.add(new Label("receiverName", dc.getReceiverName()));
                 item.add(new Label("receiverAddress", dc.getReceiverAddress()));
                 item.add(new Label("senderName", dc.getSenderName()));
-                item.add(new Label("senderCountry", dc.getSenderCountry().getDisplayName(getLocale(), systemLocale)));
+                item.add(new Label("senderCountry", dc.getSenderCountry().getDisplayName(getLocale(), getSystemLocale())));
                 item.add(new DateLabel("created", new Model<Date>(dc.getCreated()), new StyleDateConverter(true)));
 
                 Label syncStatus = new Label("syncStatus", getString(dc.getSyncStatus().name()));
@@ -236,7 +233,7 @@ public class DocumentCargoList extends ListTemplatePage {
     }
 
     private DocumentCargoFilter newDocumentCargoFilter() {
-        DocumentCargoFilter filter = new DocumentCargoFilter(getLocale(), localeDAO.systemLocale());
+        DocumentCargoFilter filter = new DocumentCargoFilter(getLocale(), getSystemLocale());
 
         if (hasAnyRole(DOCUMENT_DEP_VIEW)) {
             filter.setDepartment(userProfileBean.getCurrentUser().getDepartment());

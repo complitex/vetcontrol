@@ -18,13 +18,11 @@ import org.vetcontrol.document.web.component.BookNamedChoiceRenderer;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.CargoTypeBean;
 import org.vetcontrol.service.LogBean;
-import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.web.template.FormTemplatePage;
 
 import javax.ejb.EJB;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 import static org.vetcontrol.entity.Log.EVENT.EDIT;
 import static org.vetcontrol.entity.Log.MODULE.DOCUMENT;
@@ -39,11 +37,6 @@ public abstract class DocumentEditPage extends FormTemplatePage {
 
     @EJB(name = "CommonDocumentBean")
     private CommonDocumentBean commonDocumentBean;
-
-    @EJB(name = "LocaleDAO")
-    private ILocaleDAO localeDAO;
-
-    private Locale system = localeDAO.systemLocale();
 
     @EJB(name = "LogBean")
     private LogBean logBean;
@@ -74,7 +67,7 @@ public abstract class DocumentEditPage extends FormTemplatePage {
             logBean.error(DOCUMENT, EDIT, this.getClass(), bookClass, "Ошибка загрузки данных из базы данных");
         }
 
-        DropDownChoice<T> ddc = new DropDownChoice<T>(id, model, list, new BookNamedChoiceRenderer<T>(system));
+        DropDownChoice<T> ddc = new DropDownChoice<T>(id, model, list, new BookNamedChoiceRenderer<T>(getSystemLocale()));
 
         ddc.setRequired(required);
         ddc.setOutputMarkupId(outputMarkupId);
@@ -93,7 +86,7 @@ public abstract class DocumentEditPage extends FormTemplatePage {
     protected <T extends Localizable> DropDownChoice<T> addBookDropDownChoice(
             WebMarkupContainer container, String id, IModel<T> model, IModel<List<T>> listModel,
             boolean required, boolean outputMarkupId) {
-        DropDownChoice<T> ddc = new DropDownChoice<T>(id, model, listModel, new BookNamedChoiceRenderer<T>(system));
+        DropDownChoice<T> ddc = new DropDownChoice<T>(id, model, listModel, new BookNamedChoiceRenderer<T>(getSystemLocale()));
 
         ddc.setRequired(required);
         ddc.setOutputMarkupId(outputMarkupId);
@@ -210,7 +203,7 @@ public abstract class DocumentEditPage extends FormTemplatePage {
                 model, departmentProperty, true, true);
         ddcDepartment.setVisible(hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) && !visible);
 
-        Label departmentLabel = new Label(labelDepartmentId, department.getDisplayName(getLocale(), system));
+        Label departmentLabel = new Label(labelDepartmentId, department.getDisplayName(getLocale(), getSystemLocale()));
         departmentLabel.setVisible(!hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) || visible);
         container.add(departmentLabel);
 

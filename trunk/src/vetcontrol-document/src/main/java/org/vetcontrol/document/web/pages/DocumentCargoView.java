@@ -15,13 +15,11 @@ import org.slf4j.LoggerFactory;
 import org.vetcontrol.document.service.DocumentCargoBean;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.UserProfileBean;
-import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.template.TemplatePage;
 
 import javax.ejb.EJB;
 import java.util.Date;
-import java.util.Locale;
 
 import static org.vetcontrol.web.security.SecurityRoles.*;
 
@@ -37,8 +35,6 @@ public class DocumentCargoView extends TemplatePage {
     UserProfileBean userProfileBean;
     @EJB(name = "DocumentBean")
     DocumentCargoBean documentCargoBean;
-    @EJB(name = "LocaleDAO")
-    private ILocaleDAO localeDAO;
 
     public DocumentCargoView(final PageParameters parameters) {
         super();
@@ -98,24 +94,22 @@ public class DocumentCargoView extends TemplatePage {
         add(new Label("title", title));
         add(new Label("header", title));
 
-        final Locale system = localeDAO.systemLocale();
-
-        add(new Label("document.cargo.movement_type", dc.getMovementType().getDisplayName(getLocale(), system)));
+        add(new Label("document.cargo.movement_type", dc.getMovementType().getDisplayName(getLocale(), getSystemLocale())));
         add(new Label("document.cargo.vehicle_type", getString(dc.getVehicleType().name())));
-        add(new Label("document.cargo.cargo_sender_country", dc.getSenderCountry().getDisplayName(getLocale(), system)));
+        add(new Label("document.cargo.cargo_sender_country", dc.getSenderCountry().getDisplayName(getLocale(), getSystemLocale())));
         add(new Label("document.cargo.cargo_sender_name", dc.getSenderName()));
         add(new Label("document.cargo.cargo_receiver_name", dc.getReceiverName()));
         add(new Label("document.cargo.cargo_receiver_address", dc.getReceiverAddress()));
         add(new Label("document.cargo.details", dc.getDetails()));
-        add(new Label("document.cargo.department", dc.getDepartment().getDisplayName(getLocale(), system)));
+        add(new Label("document.cargo.department", dc.getDepartment().getDisplayName(getLocale(), getSystemLocale())));
         add(new Label("document.cargo.passingBorderPoint", dc.getPassingBorderPoint() != null ? dc.getPassingBorderPoint().getName() : ""));
 
         String fullCreator = dc.getCreator().getFullName();
         if (dc.getCreator().getJob() != null) {
-            fullCreator += ", " + dc.getCreator().getJob().getDisplayName(getLocale(), localeDAO.systemLocale());
+            fullCreator += ", " + dc.getCreator().getJob().getDisplayName(getLocale(), getSystemLocale());
         }
         if (dc.getDepartment() != null && !dc.getDepartment().getId().equals(dc.getCreator().getDepartment().getId())) {
-            fullCreator += ", " + dc.getCreator().getDepartment().getDisplayName(getLocale(), localeDAO.systemLocale());
+            fullCreator += ", " + dc.getCreator().getDepartment().getDisplayName(getLocale(), getSystemLocale());
         }
         add(new Label("document.cargo.creator_name", fullCreator));
         add(new DateLabel("document.cargo.created", new Model<Date>(dc.getCreated()), new StyleDateConverter(true)));
@@ -126,12 +120,12 @@ public class DocumentCargoView extends TemplatePage {
             protected void populateItem(ListItem<Cargo> item) {
                 Cargo c = item.getModelObject();
 
-                item.add(new Label("document.cargo.cargo_type", c.getCargoType() != null ?c.getCargoType().getDisplayName(getLocale(), system) : ""));
+                item.add(new Label("document.cargo.cargo_type", c.getCargoType() != null ?c.getCargoType().getDisplayName(getLocale(), getSystemLocale()) : ""));
                 item.add(new Label("document.cargo.count", c.getCount() != null ? c.getCount() + "" : ""));
-                item.add(new Label("document.cargo.unit_type", c.getUnitType() != null ? c.getUnitType().getDisplayName(getLocale(), system) : ""));
+                item.add(new Label("document.cargo.unit_type", c.getUnitType() != null ? c.getUnitType().getDisplayName(getLocale(), getSystemLocale()) : ""));
                 item.add(new Label("document.cargo.vehicle", c.getVehicle() != null ? c.getVehicle().getVehicleDetails() : ""));
-                item.add(new Label("document.cargo.producer_country", c.getCargoProducer().getCountry().getDisplayName(getLocale(), system)));
-                item.add(new Label("document.cargo.producer_name", c.getCargoProducer().getDisplayName(getLocale(), system)));
+                item.add(new Label("document.cargo.producer_country", c.getCargoProducer().getCountry().getDisplayName(getLocale(), getSystemLocale())));
+                item.add(new Label("document.cargo.producer_name", c.getCargoProducer().getDisplayName(getLocale(), getSystemLocale())));
                 item.add(new Label("document.cargo.certificate_detail", c.getCertificateDetails()));
                 item.add(new DateLabel("document.cargo.certificate_date", new Model<Date>(c.getCertificateDate()),
                         new StyleDateConverter(true)));

@@ -26,13 +26,13 @@ import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.web.component.LocalePicker;
 import org.vetcontrol.web.component.toolbar.HelpButton;
 import org.vetcontrol.web.component.toolbar.ToolbarButton;
+import org.vetcontrol.web.resource.WebCommonResourceInitializer;
 
 import javax.ejb.EJB;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import org.vetcontrol.web.resource.WebCommonResourceInitializer;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -49,16 +49,16 @@ public abstract class TemplatePage extends WebPage {
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
 
+    private final Locale systemLocale = localeDAO.systemLocale();
+
     public TemplatePage() {
         add(JavascriptPackageResource.getHeaderContribution(CoreJavaScriptResourceReference.get()));
         add(JavascriptPackageResource.getHeaderContribution(WebCommonResourceInitializer.COMMON_JS));
         add(JavascriptPackageResource.getHeaderContribution(TemplatePage.class, TemplatePage.class.getSimpleName() + ".js"));
         add(CSSPackageResource.getHeaderContribution(WebCommonResourceInitializer.STYLE_CSS));
 
-        Locale system = localeDAO.systemLocale();
-
         //locale picker
-        add(new LocalePicker("localePicker", localeDAO.all(), system, getPreferences()));
+        add(new LocalePicker("localePicker", localeDAO.all(), systemLocale, getPreferences()));
 
         //toolbar
         WebMarkupContainer toolbar = new WebMarkupContainer("toolbar");
@@ -98,8 +98,8 @@ public abstract class TemplatePage extends WebPage {
 
 
         add(new Label("current_user_fullname", user.getFullName()
-                + (user.getJob() != null ? ", " + user.getJob().getDisplayName(getLocale(), system) : "")));
-        add(new Label("current_user_department", user.getDepartment().getDisplayName(getLocale(), system)));
+                + (user.getJob() != null ? ", " + user.getJob().getDisplayName(getLocale(), systemLocale) : "")));
+        add(new Label("current_user_department", user.getDepartment().getDisplayName(getLocale(), systemLocale)));
 
         add(new Form("exit") {
 
@@ -212,5 +212,9 @@ public abstract class TemplatePage extends WebPage {
 
     protected String getStringOrKey(String key) {
         return key != null ? getString(key, null, key) : "";
+    }
+
+    public Locale getSystemLocale() {
+        return systemLocale;
     }
 }
