@@ -187,17 +187,6 @@ public class BookResourceBean {
     }
 
     @POST
-    @Path("/MovementType/list/{firstResult}/{maxResults}")
-    public GenericEntity<List<MovementType>> getMovementTypes(
-            SyncRequestEntity re,
-            @Context HttpServletRequest r,
-            @PathParam("maxResults") String maxResults,
-            @PathParam("firstResult") String firstResult) {
-        return new GenericEntity<List<MovementType>>(getList(MovementType.class, re, r, firstResult, maxResults)) {
-        };
-    }
-
-    @POST
     @Path("/PassingBorderPoint/list/{firstResult}/{maxResults}")
     public GenericEntity<List<PassingBorderPoint>> getPassingBorderPoints(
             SyncRequestEntity re,
