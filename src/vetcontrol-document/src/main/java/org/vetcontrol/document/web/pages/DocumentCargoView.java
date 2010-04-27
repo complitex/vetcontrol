@@ -20,6 +20,7 @@ import org.vetcontrol.web.template.TemplatePage;
 
 import javax.ejb.EJB;
 import java.util.Date;
+import org.vetcontrol.web.component.MovementTypeChoicePanel;
 
 import static org.vetcontrol.web.security.SecurityRoles.*;
 
@@ -32,9 +33,9 @@ public class DocumentCargoView extends TemplatePage {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentCargoView.class);
     @EJB(name = "UserProfileBean")
-    UserProfileBean userProfileBean;
-    @EJB(name = "DocumentBean")
-    DocumentCargoBean documentCargoBean;
+    private UserProfileBean userProfileBean;
+    @EJB(name = "DocumentCargoBean")
+    private DocumentCargoBean documentCargoBean;
 
     public DocumentCargoView(final PageParameters parameters) {
         super();
@@ -94,7 +95,7 @@ public class DocumentCargoView extends TemplatePage {
         add(new Label("title", title));
         add(new Label("header", title));
 
-        add(new Label("document.cargo.movement_type", dc.getMovementType().getDisplayName(getLocale(), getSystemLocale())));
+        add(new Label("document.cargo.movement_type", MovementTypeChoicePanel.getDysplayName(dc.getMovementType(), getLocale())));
         add(new Label("document.cargo.vehicle_type", getString(dc.getVehicleType().name())));
         add(new Label("document.cargo.cargo_sender_country", dc.getSenderCountry().getDisplayName(getLocale(), getSystemLocale())));
         add(new Label("document.cargo.cargo_sender_name", dc.getSenderName()));
@@ -120,7 +121,7 @@ public class DocumentCargoView extends TemplatePage {
             protected void populateItem(ListItem<Cargo> item) {
                 Cargo c = item.getModelObject();
 
-                item.add(new Label("document.cargo.cargo_type", c.getCargoType() != null ?c.getCargoType().getDisplayName(getLocale(), getSystemLocale()) : ""));
+                item.add(new Label("document.cargo.cargo_type", c.getCargoType() != null ? c.getCargoType().getDisplayName(getLocale(), getSystemLocale()) : ""));
                 item.add(new Label("document.cargo.count", c.getCount() != null ? c.getCount() + "" : ""));
                 item.add(new Label("document.cargo.unit_type", c.getUnitType() != null ? c.getUnitType().getDisplayName(getLocale(), getSystemLocale()) : ""));
                 item.add(new Label("document.cargo.vehicle", c.getVehicle() != null ? c.getVehicle().getVehicleDetails() : ""));

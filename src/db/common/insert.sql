@@ -74,17 +74,6 @@ INSERT INTO `department`(`name`, `parent_id`, `level`) VALUES (1, NULL, 1),
                                                             (31, 2, 3),
                                                             (32, 2, 3);
 
-INSERT INTO `stringculture`(`id`, `locale`, `value`) VALUES (33,'en','импорт'),(33,'ru','импорт'),
-(34,'en','экспорт'),(34,'ru','экспорт'),(35,'en','транзит'),(35,'ru','транзит'),(36,'en','импортный транзит'),(36,'ru','импортный транзит');
-/* Common movement types(for reports):
-    id  movement type
-    1   импорт
-    2   экспорт
-    3   транзит
-    4   импортный транзит
-*/
-INSERT INTO `movement_type`(`id`, `name`) VALUES (1,33),(2,34),(3,35),(4,36);
-
 INSERT INTO `passing_border_point`(`name`, `department_id`) VALUES
 
 ('Пункт 3.1', 3),('Пункт 3.2', 3),('Пункт 3.3', 3),

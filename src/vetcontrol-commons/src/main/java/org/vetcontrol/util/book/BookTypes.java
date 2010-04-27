@@ -20,7 +20,7 @@ public final class BookTypes {
             CountryBook.class,
             RegisteredProducts.class,
             CustomsPoint.class,
-            MovementType.class,
+//            MovementType.class,
             CargoProducer.class,
             UnitType.class,
             CargoType.class,

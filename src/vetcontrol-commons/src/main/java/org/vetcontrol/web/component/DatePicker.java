@@ -45,7 +45,7 @@ public class DatePicker<T> extends org.odlabs.wiquery.ui.datepicker.DatePicker<T
         setButtonImageOnly(true);
         setDateFormat("dd.mm.yy");
 
-        converter = new PatternDateConverter("dd.MM.yyy", true);
+        converter = new PatternDateConverter("dd.MM.yyyy", true);
     }
 
     @Override

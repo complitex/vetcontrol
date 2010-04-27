@@ -32,6 +32,8 @@ import org.vetcontrol.web.component.list.AjaxRemovableListView;
 
 import javax.ejb.EJB;
 import java.util.*;
+import org.vetcontrol.document.service.AvailableMovementTypes;
+import org.vetcontrol.web.component.MovementTypeChoicePanel;
 
 import static org.vetcontrol.entity.Log.EVENT.CREATE;
 import static org.vetcontrol.entity.Log.EVENT.EDIT;
@@ -46,19 +48,14 @@ import static org.vetcontrol.web.security.SecurityRoles.*;
 public class DocumentCargoEdit extends DocumentEditPage {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentCargoEdit.class);
-
     @EJB(name = "DocumentCargoBean")
     private DocumentCargoBean documentCargoBean;
-
     @EJB(name = "UserProfileBean")
     private UserProfileBean userProfileBean;
-
     @EJB(name = "CargoTypeBean")
     private CargoTypeBean cargoTypeBean;
-
     @EJB(name = "LogBean")
     private LogBean logBean;
-
     @EJB(name = "ClientBean")
     ClientBean clientBean;
 
@@ -166,9 +163,9 @@ public class DocumentCargoEdit extends DocumentEditPage {
                 //Вид груза уникален для всех грузов
                 CargoMode cargoMode = dc.getCargoMode();
 
-                if (cargoMode == null){
+                if (cargoMode == null) {
                     error(getString("document.cargo.edit.message.cargo_type.null_cargo_mode.error"));
-                }                     
+                }
 
                 for (Cargo c : dc.getCargos()) {
                     if (c.getCargoType() == null) {
@@ -223,7 +220,11 @@ public class DocumentCargoEdit extends DocumentEditPage {
         form.add(cancel);
 
         //Тип движения груза
-        addBookDropDownChoice(form, "document.cargo.movement_type", MovementType.class, documentCargoModel, "movementType");
+        MovementTypeChoicePanel movementType = new MovementTypeChoicePanel("document.cargo.movement_type",
+                new PropertyModel<MovementType>(documentCargoModel, "movementType"), AvailableMovementTypes.get(DocumentCargo.class), true,
+                "document.cargo.movement_type");
+        movementType.setOutputMarkupId(true);
+        form.add(movementType);
 
         //Тип транспортного средства
         final DropDownChoice<VehicleType> ddcVehicleType = new DropDownChoice<VehicleType>("document.cargo.vehicle_type",
@@ -399,7 +400,8 @@ public class DocumentCargoEdit extends DocumentEditPage {
         cargoModeContainer.add(cargoModeSearch);
 
         //ссылка найти
-        AjaxSubmitLink cargoModeSearchLink = new AjaxSubmitLink("document.cargo.cargo_mode_cargo_type_search_link"){
+        AjaxSubmitLink cargoModeSearchLink = new AjaxSubmitLink("document.cargo.cargo_mode_cargo_type_search_link") {
+
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 documentCargoModel.getObject().setCargoMode(null);
@@ -414,17 +416,18 @@ public class DocumentCargoEdit extends DocumentEditPage {
         cargoModeContainer.add(cargoModeSearchLink);
 
         final ListView cargoModeListView = new ListView<CargoMode>("document.cargo.cargo_mode_parent_list",
-                new LoadableDetachableModel<List<CargoMode>>(){
+                new LoadableDetachableModel<List<CargoMode>>() {
+
                     @Override
                     protected List<CargoMode> load() {
                         List<CargoMode> list = new ArrayList<CargoMode>();
                         CargoType ct = cargoTypeModel.getObject();
 
-                        if(documentCargoModel.getObject().getCargoMode() != null){
+                        if (documentCargoModel.getObject().getCargoMode() != null) {
                             list.add(documentCargoModel.getObject().getCargoMode().getParent());
-                        }else if (ct != null && ct.getCargoModes() != null){
-                            for (CargoMode cm : ct.getCargoModes()){
-                                if (cm.getParent() != null && !list.contains(cm.getParent())){
+                        } else if (ct != null && ct.getCargoModes() != null) {
+                            for (CargoMode cm : ct.getCargoModes()) {
+                                if (cm.getParent() != null && !list.contains(cm.getParent())) {
                                     list.add(cm.getParent());
                                 }
                             }
@@ -432,7 +435,8 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
                         return list;
                     }
-                }){
+                }) {
+
             @Override
             protected void populateItem(final ListItem<CargoMode> item) {
                 item.add(new Label("document.cargo.cargo_mode_parent",
@@ -440,17 +444,18 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
                 //список дочерних видов
                 ListView childList = new ListView<CargoMode>("document.cargo.cargo_mode_child_list",
-                        new LoadableDetachableModel<List<CargoMode>>(){
+                        new LoadableDetachableModel<List<CargoMode>>() {
+
                             @Override
                             protected List<CargoMode> load() {
                                 List<CargoMode> list = new ArrayList<CargoMode>();
                                 CargoType ct = cargoTypeModel.getObject();
 
-                                if(documentCargoModel.getObject().getCargoMode() != null){
+                                if (documentCargoModel.getObject().getCargoMode() != null) {
                                     list.add(documentCargoModel.getObject().getCargoMode());
-                                }else if (ct != null && ct.getCargoModes() != null){
-                                    for (CargoMode cm : ct.getCargoModes()){
-                                        if (cm.getParent() != null && cm.getParent().equals(item.getModelObject())){
+                                } else if (ct != null && ct.getCargoModes() != null) {
+                                    for (CargoMode cm : ct.getCargoModes()) {
+                                        if (cm.getParent() != null && cm.getParent().equals(item.getModelObject())) {
                                             list.add(cm);
                                         }
                                     }
@@ -458,12 +463,12 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
                                 return list;
                             }
-                        }){
+                        }) {
 
                     @Override
                     protected void populateItem(final ListItem<CargoMode> childItem) {
                         childItem.add(new Radio<CargoMode>("document.cargo.cargo_mode_child_radio", childItem.getModel()));
-                        childItem.add(new Label("document.cargo.cargo_mode_child_label", 
+                        childItem.add(new Label("document.cargo.cargo_mode_child_label",
                                 childItem.getModelObject().getDisplayName(getLocale(), getSystemLocale())));
                     }
                 };
@@ -475,7 +480,8 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
         RadioGroup radioGroup = new RadioGroup<CargoMode>("document.cargo.cargo_mode_parent_radio_group",
                 new PropertyModel<CargoMode>(documentCargoModel, "cargoMode"));
-        radioGroup.add(new AjaxFormChoiceComponentUpdatingBehavior(){
+        radioGroup.add(new AjaxFormChoiceComponentUpdatingBehavior() {
+
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
                 cargoModeListView.getModel().detach();
@@ -532,22 +538,22 @@ public class DocumentCargoEdit extends DocumentEditPage {
                         DocumentCargo dc = (DocumentCargo) form.getModelObject();
 
                         //update item model
-                        for (Iterator<? extends Component> it = item.iterator(); it.hasNext();){
+                        for (Iterator<? extends Component> it = item.iterator(); it.hasNext();) {
                             Component component = it.next();
 
-                            if (component instanceof FormComponent){
-                                FormComponent formComponent = (FormComponent)component;
+                            if (component instanceof FormComponent) {
+                                FormComponent formComponent = (FormComponent) component;
                                 try {
                                     formComponent.inputChanged();
                                     formComponent.validate();
 
-                                    if (formComponent.hasErrorMessage()){
+                                    if (formComponent.hasErrorMessage()) {
                                         formComponent.invalid();
-                                    }else {
+                                    } else {
                                         formComponent.valid();
                                         formComponent.updateModel();
                                     }
-                                } catch (RuntimeException e){
+                                } catch (RuntimeException e) {
                                     // nothing
                                 }
                             }
@@ -581,10 +587,10 @@ public class DocumentCargoEdit extends DocumentEditPage {
                 PageParameters pageParameters = null;
 
 
-                if (item.getModelObject().getId() != null){
+                if (item.getModelObject().getId() != null) {
                     pageParameters = new PageParameters("cargo_id=" + item.getModelObject().getId() + ","
-                        + "client_id=" + item.getModelObject().getClient().getId() + ","
-                        + "department_id=" + item.getModelObject().getDepartment().getId());
+                            + "client_id=" + item.getModelObject().getClient().getId() + ","
+                            + "department_id=" + item.getModelObject().getDepartment().getId());
                 }
 
                 BookmarkablePageLink arrestLink = new BookmarkablePageLink<DocumentCargo>("document.cargo.arrest", ArrestDocumentEdit.class, pageParameters);
@@ -600,8 +606,6 @@ public class DocumentCargoEdit extends DocumentEditPage {
 //        form.add(new Spacer("spacer"));
     }
 
-
-
     private class UnitTypeModel extends LoadableDetachableModel<List<UnitType>> {
 
         private Cargo cargo;
@@ -612,8 +616,8 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
         @Override
         protected List<UnitType> load() {
-            if (cargo.getDocumentCargo().getCargoMode() == null){
-                return Collections.emptyList();               
+            if (cargo.getDocumentCargo().getCargoMode() == null) {
+                return Collections.emptyList();
             }
 
             return new ArrayList<UnitType>(cargo.getDocumentCargo().getCargoMode().getUnitTypes());
@@ -642,7 +646,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
         //Единицы измерения        
         UnitTypeModel unitTypeModel = new UnitTypeModel(item.getModelObject());
 
-        DropDownChoice<UnitType> ddcUnitTypes =  addBookDropDownChoice(item, "document.cargo.unit_type",
+        DropDownChoice<UnitType> ddcUnitTypes = addBookDropDownChoice(item, "document.cargo.unit_type",
                 item.getModel(), "unitType", unitTypeModel, false, true);
 
         //УКТЗЕД и Тип груза
