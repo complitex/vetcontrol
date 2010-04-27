@@ -50,7 +50,7 @@ import org.vetcontrol.information.web.pages.BookPage;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.util.DateUtil;
-import org.vetcontrol.util.book.BeanPropertyUtil;
+import static org.vetcontrol.util.book.BeanPropertyUtil.*;
 import org.vetcontrol.util.book.BookHash;
 import org.vetcontrol.util.book.Property;
 import org.vetcontrol.web.component.Spacer;
@@ -91,11 +91,11 @@ public final class DepartmentEdit extends FormTemplatePage {
             throw new IllegalArgumentException("selected book entry may not be null");
         }
         bookDAO.addLocalizationSupport(department);
-        BeanPropertyUtil.addLocalization(department, localeDAO.all());
+        addLocalization(department, localeDAO.all());
         departmentDAO.loadPassingBorderPoints(department);
 
         //calculate initial hash code for book entry in order to increment version of the book entry if necessary later.
-        final BookHash initial = BeanPropertyUtil.hash(department);
+        final BookHash initial = hash(department);
 
         //title
         add(new Label("title", new DisplayBookClassModel(Department.class)));
@@ -114,7 +114,7 @@ public final class DepartmentEdit extends FormTemplatePage {
         //department name
         form.add(new LocalizableTextPanel("name",
                 new PropertyModel(department, "names"),
-                BeanPropertyUtil.getPropertyByName(Department.class, "names"),
+                getPropertyByName(Department.class, "names"),
                 systemLocale, CanEditUtil.canEdit(department)));
 
         //parent department
@@ -146,14 +146,14 @@ public final class DepartmentEdit extends FormTemplatePage {
             public void detach() {
             }
         };
-        BookChoiceRenderer parentRenderer = new BookChoiceRenderer(BeanPropertyUtil.getPropertyByName(Department.class, "parent"), systemLocale,
+        BookChoiceRenderer parentRenderer = new BookChoiceRenderer(getPropertyByName(Department.class, "parent"), systemLocale,
                 TruncateUtil.TRUNCATE_SELECT_VALUE_IN_EDIT_PAGE);
         final DropDownChoice<Department> parent = new DisableAwareDropDownChoice<Department>("parent",
                 parentModel,
                 parentDepartmentsModel,
                 parentRenderer);
         parent.setOutputMarkupId(true);
-        parent.setEnabled(BeanPropertyUtil.isNewBook(department) && CanEditUtil.canEdit(department));
+        parent.setEnabled(isNewBook(department) && CanEditUtil.canEdit(department));
         form.add(parent);
 
         //customs point
@@ -182,7 +182,7 @@ public final class DepartmentEdit extends FormTemplatePage {
                 return departmentDAO.getAvailableCustomsPoint();
             }
         };
-        BookChoiceRenderer customsPointRenderer = new BookChoiceRenderer(BeanPropertyUtil.getPropertyByName(Department.class, "customsPoint"),
+        BookChoiceRenderer customsPointRenderer = new BookChoiceRenderer(getPropertyByName(Department.class, "customsPoint"),
                 systemLocale, TruncateUtil.TRUNCATE_SELECT_VALUE_IN_EDIT_PAGE);
         final DropDownChoice<CustomsPoint> customsPoint = new DisableAwareDropDownChoice<CustomsPoint>("customsPoint",
                 new PropertyModel(department, "customsPoint"),
@@ -267,9 +267,9 @@ public final class DepartmentEdit extends FormTemplatePage {
                 disableDepartment();
 
                 //save new entry.
-                BeanPropertyUtil.clearBook(department);
+                clearBook(department);
                 for (PassingBorderPoint borderPoint : department.getPassingBorderPoints()) {
-                    BeanPropertyUtil.clearBook(borderPoint);
+                    clearBook(borderPoint);
                     borderPoint.setNeedToUpdate(true);
                 }
                 saveOrUpdate(initial);
@@ -285,7 +285,7 @@ public final class DepartmentEdit extends FormTemplatePage {
             @Override
             public void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 if (validate()) {
-                    if (BeanPropertyUtil.isNewBook(department)) {
+                    if (isNewBook(department)) {
                         //new entry
                         saveOrUpdate(initial);
                         goToListPage();
@@ -351,19 +351,18 @@ public final class DepartmentEdit extends FormTemplatePage {
     }
 
     private void saveOrUpdate(BookHash initial) {
-        Long id = department.getId();
-        Log.EVENT event = id == null ? Log.EVENT.CREATE : Log.EVENT.EDIT;
+        Log.EVENT event = isNewBook(department) ? Log.EVENT.CREATE : Log.EVENT.EDIT;
 
         //update version of book and its localizable strings if necessary.
-        BeanPropertyUtil.updateVersionIfNecessary(department, initial);
+        updateVersionIfNecessary(department, initial);
         updateDepartmentReferences(department);
 
         try {
             departmentDAO.saveOrUpdate(department);
-            logBean.info(Log.MODULE.INFORMATION, event, DepartmentEdit.class, Department.class, "ID: " + id);
+            logBean.info(Log.MODULE.INFORMATION, event, DepartmentEdit.class, Department.class, "ID: " + department.getId());
         } catch (Exception e) {
             log.error("Ошибка сохранения справочника", e);
-            logBean.error(Log.MODULE.INFORMATION, event, DepartmentEdit.class, Department.class, "ID: " + id);
+            logBean.error(Log.MODULE.INFORMATION, event, DepartmentEdit.class, Department.class, "ID: " + department.getId());
         }
     }
 
@@ -375,7 +374,7 @@ public final class DepartmentEdit extends FormTemplatePage {
 
     private void disableReferences() {
         for (PassingBorderPoint borderPoint : department.getPassingBorderPoints()) {
-            if (!BeanPropertyUtil.isNewBook(borderPoint)) {
+            if (!isNewBook(borderPoint)) {
                 bookDAO.disable(borderPoint);
             }
         }
@@ -389,7 +388,7 @@ public final class DepartmentEdit extends FormTemplatePage {
 
     private void enableReferences() {
         for (PassingBorderPoint borderPoint : department.getPassingBorderPoints()) {
-            if (!BeanPropertyUtil.isNewBook(borderPoint)) {
+            if (!isNewBook(borderPoint)) {
                 bookDAO.enable(borderPoint);
             }
         }
@@ -417,7 +416,7 @@ public final class DepartmentEdit extends FormTemplatePage {
 
             @Override
             protected void onBeforeRender() {
-                if (BeanPropertyUtil.isNewBook(department) || !CanEditUtil.canEdit(department)) {
+                if (isNewBook(department) || !CanEditUtil.canEdit(department)) {
                     setVisible(false);
                 }
                 super.onBeforeRender();
@@ -433,7 +432,7 @@ public final class DepartmentEdit extends FormTemplatePage {
 
             @Override
             protected void onBeforeRender() {
-                if (BeanPropertyUtil.isNewBook(department) || !CanEditUtil.canEditDisabled(department)) {
+                if (isNewBook(department) || !CanEditUtil.canEditDisabled(department)) {
                     setVisible(false);
                 }
                 super.onBeforeRender();
@@ -484,7 +483,7 @@ public final class DepartmentEdit extends FormTemplatePage {
                     return CanEditUtil.canEdit(department) && !PassingBorderPointListItem.this.getModelObject().isDisabled();
                 }
             };
-            Property nameProperty = BeanPropertyUtil.getPropertyByName(PassingBorderPoint.class, "name");
+            Property nameProperty = getPropertyByName(PassingBorderPoint.class, "name");
             passingBorderPoint.add(new SimpleAttributeModifier("size", String.valueOf(nameProperty.getLength())));
             passingBorderPoint.add(new SimpleAttributeModifier("maxlength", String.valueOf(nameProperty.getLength())));
             passingBorderPoint.add(new AjaxFormComponentUpdatingBehavior("onblur") {
