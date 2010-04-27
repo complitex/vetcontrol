@@ -57,7 +57,7 @@ import org.vetcontrol.information.web.model.DisplayBookClassModel;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.util.DateUtil;
-import org.vetcontrol.util.book.BeanPropertyUtil;
+import static org.vetcontrol.util.book.BeanPropertyUtil.*;
 import org.vetcontrol.util.book.BookHash;
 import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.component.book.IDisableAwareChoiceRenderer;
@@ -303,10 +303,10 @@ public final class CargoModeEdit extends FormTemplatePage {
             throw new IllegalArgumentException("selected book entry may not be null");
         }
         bookDAO.addLocalizationSupport(cargoMode);
-        BeanPropertyUtil.addLocalization(cargoMode, localeDAO.all());
+        addLocalization(cargoMode, localeDAO.all());
 
         //calculate initial hash code for book entry in order to increment version of the book entry if necessary later.
-        final BookHash initial = BeanPropertyUtil.hash(cargoMode);
+        final BookHash initial = hash(cargoMode);
 
         cargoModeModel = new Model<CargoMode>(cargoMode);
 
@@ -327,12 +327,12 @@ public final class CargoModeEdit extends FormTemplatePage {
         //cargo mode name
         form.add(new LocalizableTextPanel("name",
                 new PropertyModel(cargoModeModel, "names"),
-                BeanPropertyUtil.getPropertyByName(CargoMode.class, "names"),
+                getPropertyByName(CargoMode.class, "names"),
                 systemLocale, CanEditUtil.canEdit(cargoModeModel.getObject())));
 
 
         WebMarkupContainer parentZone = new WebMarkupContainer("parentZone");
-        parentZone.setVisible(BeanPropertyUtil.isNewBook(cargoModeModel.getObject()) || !isRootCargoMode(cargoModeModel.getObject()));
+        parentZone.setVisible(isNewBook(cargoModeModel.getObject()) || !isRootCargoMode(cargoModeModel.getObject()));
         form.add(parentZone);
 
         IModel<List<CargoMode>> rootCargoModeModel = new LoadableDetachableModel<List<CargoMode>>() {
@@ -342,7 +342,7 @@ public final class CargoModeEdit extends FormTemplatePage {
                 return cargoModeDAO.getRootCargoModes();
             }
         };
-        BookChoiceRenderer parentChoiceRenderer = new BookChoiceRenderer(BeanPropertyUtil.getPropertyByName(CargoMode.class, "parent"), systemLocale,
+        BookChoiceRenderer parentChoiceRenderer = new BookChoiceRenderer(getPropertyByName(CargoMode.class, "parent"), systemLocale,
                 TruncateUtil.TRUNCATE_SELECT_VALUE_IN_EDIT_PAGE);
         final DropDownChoice<CargoMode> parentChoice = new DisableAwareDropDownChoice<CargoMode>("parent",
                 new PropertyModel(cargoModeModel, "parent"),
@@ -455,7 +455,7 @@ public final class CargoModeEdit extends FormTemplatePage {
                 disableCargoMode(cargoModeModel.getObject());
 
                 //save new entry.
-                BeanPropertyUtil.clearBook(cargoModeModel.getObject());
+                clearBook(cargoModeModel.getObject());
                 for (CargoModeCargoType cmct : cargoModeModel.getObject().getCargoModeCargoTypes()) {
                     cmct.setNeedToUpdateVersion(true);
                 }
@@ -475,7 +475,7 @@ public final class CargoModeEdit extends FormTemplatePage {
             @Override
             public void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 if (validate()) {
-                    if (BeanPropertyUtil.isNewBook(cargoModeModel.getObject())) {
+                    if (isNewBook(cargoModeModel.getObject())) {
                         //new entry
                         saveOrUpdate(cargoModeModel, initial);
                         goToListPage();
@@ -547,19 +547,18 @@ public final class CargoModeEdit extends FormTemplatePage {
     }
 
     private void saveOrUpdate(IModel<CargoMode> cargoModeModel, BookHash initial) {
-        Long id = cargoModeModel.getObject().getId();
-        Log.EVENT event = id == null ? Log.EVENT.CREATE : Log.EVENT.EDIT;
+        Log.EVENT event = isNewBook(cargoModeModel.getObject()) ? Log.EVENT.CREATE : Log.EVENT.EDIT;
 
         //update version of book and its localizable strings if necessary.
-        BeanPropertyUtil.updateVersionIfNecessary(cargoModeModel.getObject(), initial);
+        updateVersionIfNecessary(cargoModeModel.getObject(), initial);
         updateCargoModeReferences(cargoModeModel);
 
         try {
             cargoModeDAO.saveOrUpdate(cargoModeModel.getObject());
-            logBean.info(Log.MODULE.INFORMATION, event, CargoModeEdit.class, CargoMode.class, "ID: " + id);
+            logBean.info(Log.MODULE.INFORMATION, event, CargoModeEdit.class, CargoMode.class, "ID: " + cargoModeModel.getObject().getId());
         } catch (Exception e) {
             log.error("Ошибка сохранения справочника", e);
-            logBean.error(Log.MODULE.INFORMATION, event, CargoModeEdit.class, CargoMode.class, "ID: " + id);
+            logBean.error(Log.MODULE.INFORMATION, event, CargoModeEdit.class, CargoMode.class, "ID: " + cargoModeModel.getObject().getId());
         }
     }
 
@@ -600,7 +599,7 @@ public final class CargoModeEdit extends FormTemplatePage {
 
             @Override
             protected void onBeforeRender() {
-                if (BeanPropertyUtil.isNewBook(cargoModeModel.getObject()) || !CanEditUtil.canEdit(cargoModeModel.getObject())) {
+                if (isNewBook(cargoModeModel.getObject()) || !CanEditUtil.canEdit(cargoModeModel.getObject())) {
                     setVisible(false);
                 }
                 super.onBeforeRender();
@@ -616,7 +615,7 @@ public final class CargoModeEdit extends FormTemplatePage {
 
             @Override
             protected void onBeforeRender() {
-                if (BeanPropertyUtil.isNewBook(cargoModeModel.getObject()) || !CanEditUtil.canEditDisabled(cargoModeModel.getObject())) {
+                if (isNewBook(cargoModeModel.getObject()) || !CanEditUtil.canEditDisabled(cargoModeModel.getObject())) {
                     setVisible(false);
                 }
                 super.onBeforeRender();

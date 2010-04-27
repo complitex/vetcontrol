@@ -27,7 +27,7 @@
         <field name="cargoReceiverAddress" class="java.lang.String"/>
 	<field name="cargoProducerName" class="java.lang.String"/>
 	<field name="count" class="java.lang.Number"/>
-	<field name="movementTypeName" class="java.lang.String"/>
+	<field name="movementType" class="java.lang.String"/>
 	<field name="cargoArrived" class="java.util.Date"/>
 	<field name="cargoTypeCode" class="java.lang.String"/>
 	
@@ -132,7 +132,7 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="484" y="0" width="58" height="20"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{movementTypeName}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatMovementType($F{movementType}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="306" y="0" width="121" height="20"/>

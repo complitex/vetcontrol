@@ -12,16 +12,16 @@
                 (SELECT sc.value FROM stringculture sc where sc.id =
                 (SELECT ut.short_name FROM unit_type ut WHERE ut.id = c.unit_type_id)
                 AND sc.locale = :locale) AS unitTypeName,
-                SUM(CASE WHEN (dc.movement_type_id = 1) THEN c.`count` ELSE 0 END) AS imprt,
-                SUM(CASE WHEN (dc.movement_type_id = 2) THEN c.`count` ELSE 0 END) AS export,
-                SUM(CASE WHEN (dc.movement_type_id = 3) THEN c.`count` ELSE 0 END) AS transit,
-                SUM(CASE WHEN (dc.movement_type_id = 4) THEN c.`count` ELSE 0 END) AS importTransit,
+                SUM(CASE WHEN (dc.movement_type = 'IMPORT') THEN c.`count` ELSE 0 END) AS imprt,
+                SUM(CASE WHEN (dc.movement_type = 'EXPORT') THEN c.`count` ELSE 0 END) AS export,
+                SUM(CASE WHEN (dc.movement_type = 'TRANSIT') THEN c.`count` ELSE 0 END) AS transit,
+                SUM(CASE WHEN (dc.movement_type = 'IMPORT_TRANSIT') THEN c.`count` ELSE 0 END) AS importTransit,
 
                 /* in current month */
-                SUM(CASE WHEN (dc.movement_type_id = 1 AND MONTH(dc.created) = MONTH(:endDate)) THEN c.`count` ELSE 0 END) AS imprtInCurrentMonth,
-                SUM(CASE WHEN (dc.movement_type_id = 2 AND MONTH(dc.created) = MONTH(:endDate)) THEN c.`count` ELSE 0 END) AS exportInCurrentMonth,
-                SUM(CASE WHEN (dc.movement_type_id = 3 AND MONTH(dc.created) = MONTH(:endDate)) THEN c.`count` ELSE 0 END) AS transitInCurrentMonth,
-                SUM(CASE WHEN (dc.movement_type_id = 4 AND MONTH(dc.created) = MONTH(:endDate)) THEN c.`count` ELSE 0 END) AS importTransitInCurrentMonth
+                SUM(CASE WHEN (dc.movement_type = 'IMPORT' AND MONTH(dc.created) = MONTH(:endDate)) THEN c.`count` ELSE 0 END) AS imprtInCurrentMonth,
+                SUM(CASE WHEN (dc.movement_type = 'EXPORT' AND MONTH(dc.created) = MONTH(:endDate)) THEN c.`count` ELSE 0 END) AS exportInCurrentMonth,
+                SUM(CASE WHEN (dc.movement_type = 'TRANSIT' AND MONTH(dc.created) = MONTH(:endDate)) THEN c.`count` ELSE 0 END) AS transitInCurrentMonth,
+                SUM(CASE WHEN (dc.movement_type = 'IMPORT_TRANSIT' AND MONTH(dc.created) = MONTH(:endDate)) THEN c.`count` ELSE 0 END) AS importTransitInCurrentMonth
 
         FROM cargo c
         JOIN document_cargo dc ON (c.document_cargo_id = dc.id AND c.client_id = dc.client_id AND c.department_id = dc.department_id)

@@ -18,9 +18,7 @@
                 (SELECT sc.value FROM stringculture sc WHERE sc.id =
                 (SELECT ut.short_name FROM unit_type ut WHERE ut.id = c.unit_type_id)
                 AND sc.locale= :locale) AS unitTypeName,
-                (SELECT sc.value FROM stringculture sc WHERE sc.id =
-                (SELECT mt.name FROM movement_type mt WHERE mt.id = dc.movement_type_id)
-                AND sc.locale = :locale) AS movementTypeName
+                (SELECT dc.movement_type) AS movementType
             FROM cargo c
             JOIN document_cargo dc ON (c.document_cargo_id = dc.id AND c.client_id = dc.client_id AND c.department_id = dc.department_id)
             WHERE

@@ -8,7 +8,9 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import org.vetcontrol.entity.MovementType;
 import org.vetcontrol.util.DateUtil;
+import org.vetcontrol.web.component.MovementTypeChoicePanel;
 
 /**
  *
@@ -41,5 +43,9 @@ public final class Formatter {
 
     public static String formatCargoReceiver(String cargoReceiverName, String cargoReceiverAddress) {
         return cargoReceiverAddress + ", " + cargoReceiverName;
+    }
+
+    public static String formatMovementType(String fromDb, Locale locale) {
+        return MovementTypeChoicePanel.getDysplayName(MovementType.valueOf(fromDb), locale);
     }
 }
