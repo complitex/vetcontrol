@@ -56,16 +56,16 @@ INSERT INTO `container_validator`(`id`, `prefix`, `carrier_abbr`, `carrier_name`
 
 INSERT INTO `arrest_reason`(`id`, `name`) VALUES (1,80), (2,81), (3,82);
 
-INSERT INTO `document_cargo`(`id`, `client_id`, `department_id`, `creator_id`, `cargo_mode_id`, `created`, `updated`, `movement_type_id`,
+INSERT INTO `document_cargo`(`id`, `client_id`, `department_id`, `creator_id`, `cargo_mode_id`, `created`, `updated`, `movement_type`,
                                 `vehicle_type`, `cargo_sender_name`, `cargo_sender_country_id`, `cargo_receiver_name`,
                                 `cargo_receiver_address`, `passing_border_point_id`, `details`, `detention_details`, `sync_status`)
                                 VALUES
-                  (1,1,3,20,1, '2010-01-15 17:59:09', '2010-01-15 17:59:09', 1,'CAR', 'sender 1',1, 'receiver 1', 'receiver 1 address', 1, 'примечание 3','задержан 2', 'NOT_SYNCHRONIZED'),
-                  (2,1,3,20,1, '2010-02-15 17:48:00', '2010-02-15 17:48:00', 1,'SHIP', 'sender 2',1,'receiver 2', 'receiver 2 address', 2, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
-                  (3,1,3,20,1, '2010-02-16 17:48:00', '2010-02-16 17:48:00', 3,'CONTAINER', 'sender 3',1,'receiver 3', 'receiver 3 address', 3, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
-                  (4,1,3,20,1, '2010-03-30 17:48:00', '2010-03-30 17:48:00', 1,'CARRIAGE', 'sender 1',2,'receiver 1', 'receiver 1 address', 1, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
-                  (5,1,3,20,1, '2010-03-31 17:48:00', '2010-03-31 17:48:00', 2,'AIRCRAFT', 'sender 2',2,'receiver 2', 'receiver 2 address', 2, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
-                  (6,1,3,20,1, '2010-02-16 17:25:00', '2010-02-16 17:25:00', 2,'CAR', 'sender 1',1,'receiver 1', 'receiver 1 address', 1, 'примечание','задержан', 'NOT_SYNCHRONIZED');
+                  (1,1,3,20,1, '2010-01-15 17:59:09', '2010-01-15 17:59:09', 'IMPORT','CAR', 'sender 1',1, 'receiver 1', 'receiver 1 address', 1, 'примечание 3','задержан 2', 'NOT_SYNCHRONIZED'),
+                  (2,1,3,20,1, '2010-02-15 17:48:00', '2010-02-15 17:48:00', 'IMPORT','SHIP', 'sender 2',1,'receiver 2', 'receiver 2 address', 2, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
+                  (3,1,3,20,1, '2010-02-16 17:48:00', '2010-02-16 17:48:00', 'IMPORT','CONTAINER', 'sender 3',1,'receiver 3', 'receiver 3 address', 3, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
+                  (4,1,3,20,1, '2010-03-30 17:48:00', '2010-03-30 17:48:00', 'IMPORT','CARRIAGE', 'sender 1',2,'receiver 1', 'receiver 1 address', 1, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
+                  (5,1,3,20,1, '2010-03-31 17:48:00', '2010-03-31 17:48:00', 'IMPORT','AIRCRAFT', 'sender 2',2,'receiver 2', 'receiver 2 address', 2, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
+                  (6,1,3,20,1, '2010-02-16 17:25:00', '2010-02-16 17:25:00', 'IMPORT','CAR', 'sender 1',1,'receiver 1', 'receiver 1 address', 1, 'примечание','задержан', 'NOT_SYNCHRONIZED');
 
 INSERT INTO `cargo`(`id`, `client_id`, `department_id`, `document_cargo_id`, `cargo_type_id`, `unit_type_id`, `cargo_producer_id`, `vehicle_id`,
  `count`, `certificate_date`, `certificate_details`, `sync_status`)

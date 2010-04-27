@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.vetcontrol.util.book.entity.annotation.ValidProperty;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -45,15 +46,17 @@ public class CargoType extends Localizable {
     public void setNames(List<StringCulture> names) {
         this.names = names;
     }
-
     //using Set as "cannot simultaneously fetch multiple bags" hibernate feature
     private Set<CargoMode> cargoModes;
 
     @XmlTransient
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "cargo_mode_cargo_type",
-            joinColumns = @JoinColumn(name = "cargo_type_id", insertable = false, updatable = false),
-            inverseJoinColumns = @JoinColumn(name = "cargo_mode_id", insertable = false, updatable = false))
+    joinColumns =
+    @JoinColumn(name = "cargo_type_id", insertable = false, updatable = false),
+    inverseJoinColumns =
+    @JoinColumn(name = "cargo_mode_id", insertable = false, updatable = false))
+    @ValidProperty(false)
     public Set<CargoMode> getCargoModes() {
         return cargoModes;
     }
@@ -63,36 +66,34 @@ public class CargoType extends Localizable {
     }
 
     @Override
-    public Query getInsertQuery(EntityManager em){
-        return em.createNativeQuery("insert into cargo_type (id, `name`, ukt_zed_code, updated, disabled) " +
-                "value (:id, :name, :ukt_zed_code, :updated, :disabled)")
-                .setParameter("id", id)
-                .setParameter("name", name)
-                .setParameter("updated", updated)
-                .setParameter("ukt_zed_code", code)
-                .setParameter("disabled", disabled);
+    public Query getInsertQuery(EntityManager em) {
+        return em.createNativeQuery("insert into cargo_type (id, `name`, ukt_zed_code, updated, disabled) "
+                + "value (:id, :name, :ukt_zed_code, :updated, :disabled)").setParameter("id", id).setParameter("name", name).setParameter("updated", updated).setParameter("ukt_zed_code", code).setParameter("disabled", disabled);
     }
 
     @Override
-    public Query getUpdateQuery(EntityManager em){
-        return em.createNativeQuery("update cargo_type set `name` = :name, ukt_zed_code = :ukt_zed_code, " +
-                "updated = :updated, disabled = :disabled where id = :id")
-                .setParameter("id", id)
-                .setParameter("name", name)
-                .setParameter("updated", updated)
-                .setParameter("ukt_zed_code", code)
-                .setParameter("disabled", disabled);
+    public Query getUpdateQuery(EntityManager em) {
+        return em.createNativeQuery("update cargo_type set `name` = :name, ukt_zed_code = :ukt_zed_code, "
+                + "updated = :updated, disabled = :disabled where id = :id").setParameter("id", id).setParameter("name", name).setParameter("updated", updated).setParameter("ukt_zed_code", code).setParameter("disabled", disabled);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CargoType)) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof CargoType)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         CargoType cargoType = (CargoType) o;
 
-        if (code != null ? !code.equals(cargoType.code) : cargoType.code != null) return false;
+        if (code != null ? !code.equals(cargoType.code) : cargoType.code != null) {
+            return false;
+        }
 
         return true;
     }

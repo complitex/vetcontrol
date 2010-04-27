@@ -188,21 +188,6 @@ CREATE TABLE  `customs_point` (
     KEY `customs_point_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `movement_type` */
-
-DROP TABLE IF EXISTS `movement_type`;
-CREATE TABLE  `movement_type` (
-    `id` bigint(20) NOT NULL auto_increment,
-    `name` bigint(20) NOT NULL,
-    `updated` timestamp NOT NULL DEFAULT NOW(),
- /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
-  `disabled` tinyint(1) NOT NULL default '0',
-    PRIMARY KEY (`id`),
-    KEY `FK_movement_type_name` (`name`),
-    CONSTRAINT `FK_movement_type_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
-    KEY `movement_type_updated_INDEX` (`updated`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 /*Table structure for table `cargo_producer` */
 
 DROP TABLE IF EXISTS `cargo_producer`;
@@ -391,7 +376,7 @@ CREATE TABLE `document_cargo` (
   `creator_id` bigint(20) NOT NULL,
   `created` timestamp NOT NULL,
   `updated` timestamp NOT NULL,
-  `movement_type_id` bigint(20) NOT NULL,
+  `movement_type` VARCHAR(15) NOT NULL,
   `vehicle_type` varchar(10) NOT NULL,
 
   `cargo_mode_id` bigint(20) DEFAULT NULL,
@@ -409,13 +394,11 @@ CREATE TABLE `document_cargo` (
   PRIMARY KEY (`id`,`department_id`,`client_id`),
   KEY `FK_department_0` (`department_id`),
   KEY `FK_client_0` (`client_id`),
-  KEY `FK_document_cargo_movement_type` (`movement_type_id`),
   KEY `FK_document_cargo_cargo_sender_country_id` (`cargo_sender_country_id`),
   KEY `FK_document_cargo_passing_border_point` (`passing_border_point_id`),
   KEY `FK_document_cargo_cargo_mode_id` (`cargo_mode_id`),
   CONSTRAINT `FK_department_0` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`),
   CONSTRAINT `FK_client_0` FOREIGN KEY (`client_id`) REFERENCES `client` (`id`),
-  CONSTRAINT `FK_document_cargo_movement_type` FOREIGN KEY (`movement_type_id`) REFERENCES `movement_type` (`id`),
   CONSTRAINT `FK_document_cargo_cargo_sender_country_id` FOREIGN KEY (`cargo_sender_country_id`) REFERENCES `countrybook` (`id`),
   CONSTRAINT `FK_document_cargo_passing_border_point` FOREIGN KEY (`passing_border_point_id`) REFERENCES `passing_border_point` (`id`),
   CONSTRAINT `FK_document_cargo_cargo_mode_id` FOREIGN KEY (`cargo_mode_id`) REFERENCES `cargo_mode` (`id`),

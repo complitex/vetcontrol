@@ -48,9 +48,8 @@ public class DocumentCargo extends Synchronized implements IUpdated, IQuery {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
 
-    @ManyToOne
-    @JoinColumn(name = "movement_type_id")
-    @XmlIDREF
+    @Enumerated(EnumType.STRING)
+    @Column(name = "movement_type", nullable=false)
     private MovementType movementType;
 
     @Enumerated(EnumType.STRING)
@@ -304,11 +303,11 @@ public class DocumentCargo extends Synchronized implements IUpdated, IQuery {
     @Override
     public Query getInsertQuery(EntityManager em) {
         return em.createNativeQuery("insert into document_cargo (id, client_id, department_id, creator_id, created, " +
-                "updated, movement_type_id, vehicle_type, cargo_sender_country_id, cargo_sender_name, " +
+                "updated, movement_type, vehicle_type, cargo_sender_country_id, cargo_sender_name, " +
                 "cargo_receiver_address, cargo_receiver_name, passing_border_point_id, detention_details, " +
                 "details, cargo_mode_id, sync_status) " +
                 "value (:id, :client_id, :department_id, :creator_id, :created, " +
-                ":updated, :movement_type_id, :vehicle_type, :cargo_sender_country_id, :cargo_sender_name, " +
+                ":updated, :movement_type, :vehicle_type, :cargo_sender_country_id, :cargo_sender_name, " +
                 ":cargo_receiver_address, :cargo_receiver_name, :passing_border_point_id, :detention_details, " +
                 ":details, :cargo_mode_id, :sync_status)")
                 .setParameter("id", id)
@@ -317,7 +316,7 @@ public class DocumentCargo extends Synchronized implements IUpdated, IQuery {
                 .setParameter("creator_id", creator != null ? creator.getId() : null)
                 .setParameter("created", created)
                 .setParameter("updated", updated)
-                .setParameter("movement_type_id", movementType != null ? movementType.getId() : null)
+                .setParameter("movement_type", movementType != null ? movementType : null)
                 .setParameter("vehicle_type", vehicleType != null ? vehicleType.name() : null)
                 .setParameter("cargo_sender_country_id", senderCountry != null ? senderCountry.getId() : null)
                 .setParameter("cargo_sender_name", senderName)

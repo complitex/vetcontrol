@@ -13,6 +13,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.*;
 import java.util.List;
+import org.vetcontrol.web.component.MovementTypeChoicePanel;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -24,7 +25,7 @@ public class DocumentCargoBean {
 
     public static enum OrderBy {
 
-        ID, MOVEMENT_TYPE, VECHICLE_TYPE, RECEIVER_NAME, RECEIVER_ADDRESS, SENDER_NAME, SENDER_COUNTRY, CREATED, SYNC_STATUS
+        ID, MOVEMENT_TYPE, VEHICLE_TYPE, RECEIVER_NAME, RECEIVER_ADDRESS, SENDER_NAME, SENDER_COUNTRY, CREATED, SYNC_STATUS
     }
     @PersistenceContext
     private EntityManager em;
@@ -45,16 +46,14 @@ public class DocumentCargoBean {
     public void save(DocumentCargo documentCargo) {
         List<Cargo> cargos = documentCargo.getCargos();
         List<Vehicle> vehicles = documentCargo.getVehicles();
-        
+
         documentCargo.setCargos(null);
         documentCargo.setVehicles(null);
 
         //edit
         if (documentCargo.getId() != null) {
             //remove cargo
-            List<Cargo> dbCargos = em.createQuery("from Cargo c where c.documentCargo = :documentCargo", Cargo.class)
-                    .setParameter("documentCargo", documentCargo)
-                    .getResultList();
+            List<Cargo> dbCargos = em.createQuery("from Cargo c where c.documentCargo = :documentCargo", Cargo.class).setParameter("documentCargo", documentCargo).getResultList();
 
             for (Cargo db : dbCargos) {
                 boolean remove = true;
@@ -72,9 +71,7 @@ public class DocumentCargoBean {
             }
 
             //remove vehicles
-            List<Vehicle> dbVehicles = em.createQuery("from Vehicle v where v.documentCargo = :documentCargo", Vehicle.class)
-                    .setParameter("documentCargo", documentCargo)
-                    .getResultList();
+            List<Vehicle> dbVehicles = em.createQuery("from Vehicle v where v.documentCargo = :documentCargo", Vehicle.class).setParameter("documentCargo", documentCargo).getResultList();
 
             for (Vehicle db : dbVehicles) {
                 boolean remove = true;
@@ -97,16 +94,16 @@ public class DocumentCargoBean {
 
             documentCargo = em.merge(documentCargo);
 
-             //save vehicle
+            //save vehicle
             for (Vehicle v : vehicles) {
                 v.setDocumentCargo(documentCargo);
                 v.setVehicleType(documentCargo.getVehicleType());
                 v.setSyncStatus(Synchronized.SyncStatus.NOT_SYNCHRONIZED);
                 v.setUpdated(DateUtil.getCurrentDate());
 
-                if (v.getId() == null){
+                if (v.getId() == null) {
                     em.persist(v);
-                }else{
+                } else {
                     em.merge(v);
                 }
             }
@@ -117,17 +114,16 @@ public class DocumentCargoBean {
                 c.setSyncStatus(Synchronized.SyncStatus.NOT_SYNCHRONIZED);
                 c.setUpdated(DateUtil.getCurrentDate());
 
-                if (c.getId() == null){
+                if (c.getId() == null) {
                     em.persist(c);
-                }else{
+                } else {
                     em.merge(c);
                 }
             }
 
             documentCargo.setCargos(cargos);
             documentCargo.setVehicles(vehicles);
-        }
-        // new
+        } // new
         else {
             //set
             documentCargo.setClient(clientBean.getCurrentClient());
@@ -139,10 +135,10 @@ public class DocumentCargoBean {
             DocumentCargo saved = em.merge(documentCargo);
 
             //update object id for ui
-            documentCargo.setId(saved.getId());            
+            documentCargo.setId(saved.getId());
 
             //save vehicle
-            for (Vehicle v : vehicles){
+            for (Vehicle v : vehicles) {
                 v.setDocumentCargo(saved);
                 v.setVehicleType(saved.getVehicleType());
                 v.setSyncStatus(Synchronized.SyncStatus.NOT_SYNCHRONIZED);
@@ -165,7 +161,6 @@ public class DocumentCargoBean {
 //    private Long getLastInsertId() {
 //        return ((BigInteger) em.createNativeQuery("select LAST_INSERT_ID()").getSingleResult()).longValue();
 //    }
-
     public Long getDocumentCargosSize(DocumentCargoFilter filter) {
         Query query = em.createQuery("select count(dc) from DocumentCargo dc "
                 + getJoin(filter, null)
@@ -185,9 +180,13 @@ public class DocumentCargoBean {
                 order += "dc.department, dc.client, dc.id ";
                 break;
             case MOVEMENT_TYPE:
-                order += getOrderLocaleFilter("movementType");
+                order += " (CASE dc.movementType ";
+                for (MovementType movementType : MovementType.values()) {
+                    order += "WHEN '" + movementType.name() + "' THEN '" + MovementTypeChoicePanel.getDysplayName(movementType, Session.get().getLocale()) + "' ";
+                }
+                order += "END)";
                 break;
-            case VECHICLE_TYPE:
+            case VEHICLE_TYPE:
                 order += " (CASE dc.vehicleType ";
                 for (VehicleType vehicleType : VehicleType.values()) {
                     order += "WHEN '" + vehicleType.name() + "' THEN '" + VehicleTypeChoicePanel.getDysplayName(vehicleType, Session.get().getLocale()) + "' ";
@@ -232,9 +231,7 @@ public class DocumentCargoBean {
     private String getJoin(DocumentCargoFilter filter, OrderBy orderBy) {
         String join = " ";
 
-        if (OrderBy.MOVEMENT_TYPE.equals(orderBy)) {
-            join += getSelectLocaleFilter("movementType");
-        } else if (OrderBy.SENDER_COUNTRY.equals(orderBy)) {
+        if (OrderBy.SENDER_COUNTRY.equals(orderBy)) {
             join += getSelectLocaleFilter("senderCountry");
         }
 
@@ -340,9 +337,7 @@ public class DocumentCargoBean {
         if (s != null) {
             query.setParameter(parameter, "%" + s.toUpperCase() + "%");
         }
-    }    
-
-   
+    }
 
     public ClientEntityId getDocumentCargoId(Long id, Long clientId, Long departmentId) {
         try {
@@ -352,27 +347,23 @@ public class DocumentCargoBean {
         }
     }
 
-
-
     public List<CargoProducer> getCargoProducer(CountryBook country) {
         return em.createQuery("select cp from CargoProducer cp where cp.country = :country and cp.disabled = false", CargoProducer.class).setParameter("country", country).getResultList();
     }
 
-    public boolean validate(Vehicle vehicle){
-        if (vehicle == null){
-            return false;            
+    public boolean validate(Vehicle vehicle) {
+        if (vehicle == null) {
+            return false;
         }
 
-        if (VehicleType.CONTAINER.equals(vehicle.getVehicleType())){
-            if (!vehicle.getVehicleDetails().matches("[a-zA-Z]{4}\\d{6}-\\d")){
+        if (VehicleType.CONTAINER.equals(vehicle.getVehicleType())) {
+            if (!vehicle.getVehicleDetails().matches("[a-zA-Z]{4}\\d{6}-\\d")) {
                 return false;
             }
 
             String name = null;
             try {
-                name = em.createQuery("select cv.carrierName from ContainerValidator cv where upper(cv.prefix) = :prefix", String.class)
-                        .setParameter("prefix", vehicle.getVehicleDetails().substring(0,4).toUpperCase())
-                        .getSingleResult();
+                name = em.createQuery("select cv.carrierName from ContainerValidator cv where upper(cv.prefix) = :prefix", String.class).setParameter("prefix", vehicle.getVehicleDetails().substring(0, 4).toUpperCase()).getSingleResult();
             } catch (NoResultException e) {
                 //nothing
             }
@@ -382,5 +373,4 @@ public class DocumentCargoBean {
 
         return true;
     }
-
 }

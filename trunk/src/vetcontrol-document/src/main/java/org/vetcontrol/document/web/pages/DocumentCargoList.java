@@ -39,6 +39,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import org.vetcontrol.document.service.AvailableMovementTypes;
+import org.vetcontrol.web.component.MovementTypeChoicePanel;
 
 import static org.vetcontrol.document.service.DocumentCargoBean.OrderBy;
 import static org.vetcontrol.web.security.SecurityRoles.*;
@@ -54,16 +56,12 @@ public class DocumentCargoList extends ListTemplatePage {
     private static final String SORT_PROPERTY_KEY = DocumentCargoList.class.getSimpleName() + "_SORT_PROPERTY";
     private static final String SORT_ORDER_KEY = DocumentCargoList.class.getSimpleName() + "_SORT_ORDER";
     private static final String FILTER_KEY = DocumentCargoList.class.getSimpleName() + "_FILTER";
-
     @EJB(name = "CommonDocumentBean")
     private CommonDocumentBean commonDocumentBean;
-
     @EJB(name = "DocumentCargoBean")
     private DocumentCargoBean documentCargoBean;
-
     @EJB(name = "UserProfileBean")
     private UserProfileBean userProfileBean;
-
     @EJB(name = "ClientBean")
     private ClientBean clientBean;
 
@@ -101,9 +99,8 @@ public class DocumentCargoList extends ListTemplatePage {
 
         filterForm.add(new TextField<String>("id"));
 
-        filterForm.add(new DropDownChoice<MovementType>("movementType", commonDocumentBean.getBookList(MovementType.class),
-                new BookNamedChoiceRenderer<MovementType>(getSystemLocale())));
-
+        filterForm.add(new MovementTypeChoicePanel("movementType", new PropertyModel<MovementType>(filter, "movementType"),
+                AvailableMovementTypes.get(DocumentCargo.class), false, null));
         filterForm.add(new VehicleTypeChoicePanel("vehicleType", new PropertyModel<VehicleType>(filter, "vehicleType"), false));
         filterForm.add(new TextField<String>("receiverName"));
         filterForm.add(new TextField<String>("receiverAddress"));
@@ -174,7 +171,7 @@ public class DocumentCargoList extends ListTemplatePage {
 
                 item.add(new BookmarkablePageLinkPanel<DocumentCargo>("id", dc.getDisplayId(),
                         DocumentCargoView.class, pageParameters));
-                item.add(new Label("movementType", dc.getMovementType().getDisplayName(getLocale(), getSystemLocale())));
+                item.add(new Label("movementType", MovementTypeChoicePanel.getDysplayName(dc.getMovementType(), getLocale())));
                 item.add(new Label("vehicleType", VehicleTypeChoicePanel.getDysplayName(dc.getVehicleType(), getLocale())));
                 item.add(new Label("receiverName", dc.getReceiverName()));
                 item.add(new Label("receiverAddress", dc.getReceiverAddress()));
@@ -198,7 +195,7 @@ public class DocumentCargoList extends ListTemplatePage {
         //Ссылки для сортировки
         addOrderByBorder(filterForm, "order_id", OrderBy.ID.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_movementType", OrderBy.MOVEMENT_TYPE.name(), dataProvider, dataView);
-        addOrderByBorder(filterForm, "order_vehicleType", OrderBy.VECHICLE_TYPE.name(), dataProvider, dataView);
+        addOrderByBorder(filterForm, "order_vehicleType", OrderBy.VEHICLE_TYPE.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_receiver_name", OrderBy.RECEIVER_NAME.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_receiver_address", OrderBy.RECEIVER_ADDRESS.name(), dataProvider, dataView);
         addOrderByBorder(filterForm, "order_sender_name", OrderBy.SENDER_NAME.name(), dataProvider, dataView);
