@@ -162,6 +162,10 @@ public class DocumentCargoEdit extends DocumentEditPage {
             protected void onValidate() {
                 DocumentCargo dc = getModelObject();
 
+                if (dc.getCargos().isEmpty()){
+                    error(getString("document.cargo.edit.message.empty_cargo_list.error"));                   
+                }
+
                 if (dc.getVehicleType() != null && !dc.getVehicleType().isCompound() && dc.getVehicles().size() > 1) {
                     error(getString("document.cargo.vehicle.add.error"));
                 }
