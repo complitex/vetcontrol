@@ -100,13 +100,11 @@ public final class MovementTypesReportServlet extends HttpServlet {
                 case TEXT:
                     reportStream = getClass().getResourceAsStream("text/movement_types_report.jasper");
                     JasperPrint jasperPrint = JasperFillManager.fillReport(reportStream, params, dataSource);
-
                     JRTextExporter textExporter = new JRTextExporter();
                     textExporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
                     textExporter.setParameter(JRExporterParameter.OUTPUT_STREAM, servletOutputStream);
                     textExporter.setParameter(JRTextExporterParameter.PAGE_WIDTH, TextExporterConstants.PAGE_WIDTH);
                     textExporter.setParameter(JRTextExporterParameter.PAGE_HEIGHT, TextExporterConstants.PAGE_HEIGHT);
-
                     response.setContentType("text/plain");
                     response.setCharacterEncoding("UTF-8");
                     textExporter.exportReport();
@@ -116,10 +114,14 @@ public final class MovementTypesReportServlet extends HttpServlet {
             String error = ServletUtil.error(e, log);
             response.setContentType("text/plain");
             response.setCharacterEncoding("UTF-8");
-            if (servletOutputStream == null) {
-                servletOutputStream = response.getOutputStream();
+            try {
+                if (servletOutputStream == null) {
+                    servletOutputStream = response.getOutputStream();
+                }
+                servletOutputStream.print(error);
+            } catch (Throwable t) {
+                log.error("", t);
             }
-            servletOutputStream.print(error);
         } finally {
             if (servletOutputStream != null) {
                 servletOutputStream.flush();
