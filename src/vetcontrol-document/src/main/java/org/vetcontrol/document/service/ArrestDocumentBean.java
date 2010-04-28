@@ -50,7 +50,13 @@ public class ArrestDocumentBean {
         return em.find(Cargo.class, id);                
     }
 
-    public void save(ArrestDocument arrestDocument){
+    public void save(ArrestDocument arrestDocument, ClientEntityId cargoId){
+        //remove cargo
+        if (cargoId != null){
+            em.remove(em.getReference(Cargo.class, cargoId));
+        }
+
+        //save arrest document
         arrestDocument.setUpdated(DateUtil.getCurrentDate());
         
         ArrestDocument saved = em.merge(arrestDocument);
