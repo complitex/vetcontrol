@@ -19,6 +19,7 @@ import org.apache.wicket.util.string.Strings;
 import org.odlabs.wiquery.core.commons.CoreJavaScriptResourceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vetcontrol.entity.Localizable;
 import org.vetcontrol.entity.User;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UserProfileBean;
@@ -216,5 +217,9 @@ public abstract class TemplatePage extends WebPage {
 
     public Locale getSystemLocale() {
         return systemLocale;
+    }
+
+    public String getString(Localizable localizable){
+        return localizable != null ? localizable.getDisplayName(getLocale(), getSystemLocale()) : "";       
     }
 }
