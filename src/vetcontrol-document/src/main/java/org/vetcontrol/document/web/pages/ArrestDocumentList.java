@@ -172,7 +172,7 @@ public class ArrestDocumentList extends ListTemplatePage {
                 PageParameters pageParameters = new PageParameters("arrest_document_id=" + ad.getId() + ","
                         + "client_id=" + ad.getClient().getId() + "," + "department_id=" + ad.getDepartment().getId());
                 item.add(new BookmarkablePageLinkPanel<DocumentCargo>("id", ad.getDisplayId(),
-                        ArrestDocumentList.class, pageParameters));
+                        ArrestDocumentView.class, pageParameters));
 
                 item.add(new Label("cargoType", ad.getCargoType().getDisplayName(getLocale(), getSystemLocale())));
                 item.add(new Label("cargoMode", ad.getCargoMode() != null ? ad.getCargoMode().getDisplayName(getLocale(), getSystemLocale()) : ""));

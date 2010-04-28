@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"  xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+    <head>
+        <wicket:head><title wicket:id="title"></title></wicket:head>
+    </head>
+
+    <body>
+        <wicket:extend>
+            <h2 wicket:id="header"></h2>
+
+            <table  border="0" cellspacing="0" cellpadding="0" class="tbForm">
+                <tbody>
+                    <tr>
+                        <th><wicket:message key="arrest.document.arrest_date"/>:</th>
+                        <td><span wicket:id="arrest.document.arrest_date"></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="arrest.document.arrest_reason"/>:</th>
+                        <td><span wicket:id="arrest.document.arrest_reason"></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="arrest.document.arrest_reason_details"/>:</th>
+                        <td><span wicket:id="arrest.document.arrest_reason_details"></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="arrest.document.cargo_type"/>:</th>
+                        <td><span wicket:id="arrest.document.cargo_type"></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="arrest.document.cargo_mode"/>:</th>
+                        <td><span wicket:id="arrest.document.cargo_mode"></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="arrest.document.count"/>:</th>
+                        <td><span wicket:id="arrest.document.count"></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="arrest.document.unit_type"/>:</th>
+                        <td><span wicket:id="arrest.document.unit_type" ></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="arrest.document.vehicle_type"/>:</th>
+                        <td><span wicket:id="arrest.document.vehicle_type" ></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="arrest.document.vehicle_details"/>:</th>
+                        <td><span wicket:id="arrest.document.vehicle_details"></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="arrest.document.sender_name"/>:</th>
+                        <td><span wicket:id="arrest.document.sender_name" ></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="arrest.document.sender_country"/>:</th>
+                        <td><span wicket:id="arrest.document.sender_country" ></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="arrest.document.receiver_address"/>:</th>
+                        <td><span wicket:id="arrest.document.receiver_address" ></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="arrest.document.receiver_name"/>:</th>
+                        <td><span wicket:id="arrest.document.receiver_name" ></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="arrest.document.document_cargo_created"/>:</th>
+                        <td><span wicket:id="arrest.document.document_cargo_created" ></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="arrest.document.certificate_details"/>:</th>
+                        <td><span wicket:id="arrest.document.certificate_details" ></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="arrest.document.certificate_date"/>:</th>
+                        <td><span wicket:id="arrest.document.certificate_date" ></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="arrest.document.creator"/>:</th>
+                        <td><span wicket:id="arrest.document.creator" ></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="arrest.document.department"/>:</th>
+                        <td><span wicket:id="arrest.document.department" ></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="arrest.document.passing_border_point"/>:</th>
+                        <td><span wicket:id="arrest.document.passing_border_point" ></span></td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <div style="margin:10px"></div>
+            <input type="reset" class="btnMiddle" wicket:message="value:arrest.document.view.back" value="Back" onclick="history.back()"/>
+        </wicket:extend>
+    </body>
+</html>
