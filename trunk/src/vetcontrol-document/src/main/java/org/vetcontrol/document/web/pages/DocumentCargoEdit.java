@@ -13,7 +13,6 @@ import org.apache.wicket.datetime.markup.html.basic.DateLabel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
-import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -627,19 +626,21 @@ public class DocumentCargoEdit extends DocumentEditPage {
                 copyCargoLink.setDefaultFormProcessing(false);
                 item.add(copyCargoLink);
 
-                //Задержать груз
-                PageParameters pageParameters = null;
-
-
-                if (item.getModelObject().getId() != null) {
-                    pageParameters = new PageParameters("cargo_id=" + item.getModelObject().getId() + ","
-                            + "client_id=" + item.getModelObject().getClient().getId() + ","
-                            + "department_id=" + item.getModelObject().getDepartment().getId());
-                }
-
-                BookmarkablePageLink arrestLink = new BookmarkablePageLink<DocumentCargo>("document.cargo.arrest", ArrestDocumentEdit.class, pageParameters);
+                //Задержать груз                 
+                AjaxSubmitLink arrestLink = new AjaxSubmitLink("document.cargo.arrest"){
+                    @Override
+                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                        PageParameters pageParameters = null;
+                        if (item.getModelObject().getId() != null) {
+                            pageParameters = new PageParameters("cargo_id=" + item.getModelObject().getId() + ","
+                                    + "client_id=" + item.getModelObject().getClient().getId() + ","
+                                    + "department_id=" + item.getModelObject().getDepartment().getId());
+                        }
+                        setResponsePage(ArrestDocumentEdit.class, pageParameters);
+                    }
+                };
+                arrestLink.setDefaultFormProcessing(false);
                 arrestLink.setVisible(item.getModelObject().getId() != null);
-
                 item.add(arrestLink);
 
                 addRemoveSubmitLink("document.cargo.delete", form, item, addCargoLink, cargoContainer);

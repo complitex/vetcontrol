@@ -104,9 +104,13 @@ public class ArrestDocumentEdit extends DocumentEditPage{
             }
         }
 
+        final IModel<Cargo> cargoModel = new Model<Cargo>();
+
         //создание из карточки на груз
         if (cargoId != null){
             Cargo cargo = arrestDocumentBean.loadCargo(cargoId);
+            cargoModel.setObject(cargo);
+
             ad = new ArrestDocument();
 
             ad.setClient(cargo.getClient());
@@ -203,9 +207,18 @@ public class ArrestDocumentEdit extends DocumentEditPage{
             @Override
             protected void onSubmit() {
                 try {
-                    arrestDocumentBean.save(getModelObject());
+                    arrestDocumentBean.save(getModelObject(), cargoId);
 
-                    setResponsePage(ArrestDocumentList.class);
+                    if (cargoId != null){
+                        DocumentCargo dc = cargoModel.getObject().getDocumentCargo();
+
+                        setResponsePage(DocumentCargoEdit.class,
+                                new PageParameters( "document_cargo_id=" + dc.getId() + ","
+                                        + "client_id=" + dc.getClient().getId() + ","
+                                        + "department_id=" + dc.getDepartment().getId()));
+                    }else{
+                        setResponsePage(ArrestDocumentList.class);
+                    }
 
                     if (arrestDocumentId == null) {
                         getSession().info(new StringResourceModel("arrest.document.edit.message.added", this, null,
@@ -235,7 +248,16 @@ public class ArrestDocumentEdit extends DocumentEditPage{
 
             @Override
             public void onSubmit() {
-                setResponsePage(ArrestDocumentList.class);
+                if (cargoId != null){
+                    DocumentCargo dc = cargoModel.getObject().getDocumentCargo();
+
+                    setResponsePage(DocumentCargoEdit.class,
+                            new PageParameters( "document_cargo_id=" + dc.getId() + ","
+                                    + "client_id=" + dc.getClient().getId() + ","
+                                    + "department_id=" + dc.getDepartment().getId()));
+                }else{
+                    setResponsePage(ArrestDocumentList.class);
+                }
             }
         };
         cancel.setDefaultFormProcessing(false);
