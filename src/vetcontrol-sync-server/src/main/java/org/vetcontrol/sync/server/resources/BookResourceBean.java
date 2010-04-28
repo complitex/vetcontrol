@@ -42,6 +42,17 @@ public class BookResourceBean {
     private LogBean logBean;
 
     @POST
+    @Path("/ContainerValidator/list/{firstResult}/{maxResults}")
+    public GenericEntity<List<ContainerValidator>> getContainerValidator(
+            SyncRequestEntity re,
+            @Context HttpServletRequest r,
+            @PathParam("maxResults") String maxResults,
+            @PathParam("firstResult") String firstResult) {
+        return new GenericEntity<List<ContainerValidator>>(getList(ContainerValidator.class, re, r, firstResult, maxResults)) {
+        };
+    }
+
+    @POST
     @Path("/ArrestReason/list/{firstResult}/{maxResults}")
     public GenericEntity<List<ArrestReason>> getArrestReasons(
             SyncRequestEntity re,
@@ -51,7 +62,6 @@ public class BookResourceBean {
         return new GenericEntity<List<ArrestReason>>(getList(ArrestReason.class, re, r, firstResult, maxResults)) {
         };
     }
-
 
     @POST
     @Path("/CargoMode/list/{firstResult}/{maxResults}")
@@ -271,8 +281,8 @@ public class BookResourceBean {
 
 
         String order = "";
-        if (CargoMode.class.equals(entity) || Department.class.equals(entity)){
-            order = ", e.parent.id";            
+        if (CargoMode.class.equals(entity) || Department.class.equals(entity)) {
+            order = ", e.parent.id";
         }
 
         TypedQuery<T> query = em.createQuery("select e from " + entity.getSimpleName()

@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -18,6 +19,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "container_validator")
+@XmlRootElement
 public class ContainerValidator implements IBook, ILongId, IUpdated, IQuery, IDisabled {
 
     public static final String CONTAINER_CODE_FORMAT = "XXXX999999-9";
@@ -96,7 +98,7 @@ public class ContainerValidator implements IBook, ILongId, IUpdated, IQuery, IDi
 
     @Override
     public Query getInsertQuery(EntityManager em) {
-        return em.createNativeQuery("insert into container_validator (id, carrier_abbr, carrier_name, `prefix` updated, disabled) "
+        return em.createNativeQuery("insert into container_validator (id, carrier_abbr, carrier_name, `prefix`, updated, disabled) "
                 + "value (:id, :carrier_abbr, :carrier_name, :prefix, :updated, :disabled)").
                 setParameter("id", id).
                 setParameter("carrier_name", carrierName).
@@ -117,4 +119,35 @@ public class ContainerValidator implements IBook, ILongId, IUpdated, IQuery, IDi
                 setParameter("updated", updated).
                 setParameter("disabled", disabled);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ContainerValidator other = (ContainerValidator) obj;
+        if ((this.carrierName == null) ? (other.carrierName != null) : !this.carrierName.equals(other.carrierName)) {
+            return false;
+        }
+        if ((this.carrierAbbr == null) ? (other.carrierAbbr != null) : !this.carrierAbbr.equals(other.carrierAbbr)) {
+            return false;
+        }
+        if ((this.prefix == null) ? (other.prefix != null) : !this.prefix.equals(other.prefix)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 31 * hash + (this.carrierName != null ? this.carrierName.hashCode() : 0);
+        hash = 31 * hash + (this.carrierAbbr != null ? this.carrierAbbr.hashCode() : 0);
+        hash = 31 * hash + (this.prefix != null ? this.prefix.hashCode() : 0);
+        return hash;
+    }
+
 }
