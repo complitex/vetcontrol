@@ -195,7 +195,7 @@ public class ArrestDocumentList extends ListTemplatePage {
                             ArrestDocumentEdit.class, pageParameters));
                 } else {
                     item.add(new BookmarkablePageLinkPanel<DocumentCargo>("action", getString("arrest.document.list.view"),
-                            ArrestDocumentList.class, pageParameters));
+                            ArrestDocumentView.class, pageParameters));
                 }
             }
         };
