@@ -193,8 +193,9 @@ public class User implements ILongId, IUpdated, IQuery{
     @Override
     public Query getInsertQuery(EntityManager em){
         return em.createNativeQuery("insert into user " +
-                "(id, login, _password, first_name, middle_name, last_name, job_id, department_id, updated) " +
-                " value (:id, :login, :_password, :first_name, :middle_name, :last_name, :job_id, :department_id, :updated)")
+                "(id, login, _password, first_name, middle_name, last_name, job_id, department_id, passing_border_point_id, updated) " +
+                " value (:id, :login, :_password, :first_name, :middle_name, :last_name, :job_id, :department_id, " +
+                ":passing_border_point_id,  :updated)")
                 .setParameter("id", id)
                 .setParameter("login", login)
                 .setParameter("_password", password)
@@ -203,6 +204,7 @@ public class User implements ILongId, IUpdated, IQuery{
                 .setParameter("last_name", lastName)
                 .setParameter("job_id", job != null ? job.getId() : null)
                 .setParameter("department_id", department.getId())
+                .setParameter("passing_border_point_id", passingBorderPoint)
                 .setParameter("updated", updated);
     }
 
