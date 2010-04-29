@@ -316,7 +316,7 @@ public class DocumentCargo extends Synchronized implements IUpdated, IQuery {
                 .setParameter("creator_id", creator != null ? creator.getId() : null)
                 .setParameter("created", created)
                 .setParameter("updated", updated)
-                .setParameter("movement_type", movementType != null ? movementType : null)
+                .setParameter("movement_type", movementType != null ? movementType.name() : null)
                 .setParameter("vehicle_type", vehicleType != null ? vehicleType.name() : null)
                 .setParameter("cargo_sender_country_id", senderCountry != null ? senderCountry.getId() : null)
                 .setParameter("cargo_sender_name", senderName)
