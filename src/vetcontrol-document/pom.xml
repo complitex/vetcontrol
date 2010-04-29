@@ -21,6 +21,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.vetcontrol</groupId>
+            <artifactId>vetcontrol-report-commons</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket</artifactId>
         </dependency>

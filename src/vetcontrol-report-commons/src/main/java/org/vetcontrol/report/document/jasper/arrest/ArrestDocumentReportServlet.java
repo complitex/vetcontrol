@@ -17,6 +17,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
@@ -26,8 +27,6 @@ import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanArrayDataSource;
 import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.export.JRTextExporterParameter;
-import org.apache.wicket.MetaDataKey;
-import org.apache.wicket.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.ArrestDocument;
@@ -48,8 +47,7 @@ import static org.vetcontrol.web.security.SecurityRoles.*;
 public final class ArrestDocumentReportServlet extends HttpServlet {
 
     private static final Logger log = LoggerFactory.getLogger(ArrestDocumentReportServlet.class);
-    public static final MetaDataKey<ArrestDocument> ARREST_DOCUMENT_KEY = new MetaDataKey<ArrestDocument>() {
-    };
+    public static final String ARREST_DOCUMENT_KEY = "ARREST_DOCUMENT_KEY";
     @EJB
     private LocaleService localeService;
 
@@ -65,7 +63,7 @@ public final class ArrestDocumentReportServlet extends HttpServlet {
             Map<String, Object> params = new HashMap<String, Object>();
             params.put(JRParameter.REPORT_LOCALE, reportLocale);
 
-            ArrestDocumentReport source = new ArrestDocumentReport(getArrestDocument(), reportLocale);
+            ArrestDocumentReport source = new ArrestDocumentReport(getArrestDocument(request), reportLocale);
 
             JRDataSource dataSource = new JRBeanArrayDataSource(new ArrestDocumentReport[]{source});
             switch (exportType) {
@@ -107,7 +105,11 @@ public final class ArrestDocumentReportServlet extends HttpServlet {
         }
     }
 
-    private ArrestDocument getArrestDocument() {
-        return Session.get().getMetaData(ARREST_DOCUMENT_KEY);
+    private ArrestDocument getArrestDocument(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            return (ArrestDocument) session.getAttribute(ARREST_DOCUMENT_KEY);
+        }
+        return null;
     }
 }
