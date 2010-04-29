@@ -1,7 +1,7 @@
 INSERT INTO `user`(`id`, `login`, `_password`, `last_name`, `first_name`, `middle_name`, `department_id`, `passing_border_point_id`) VALUES
-(2,'admin','21232f297a57a5a743894a0e4a801fc3','Иванов','Иван','Иванович',1, null),
-(17,'login_0','480335867a6c40d7bd4cf04e184910cc','Петров','Петр','Петрович',1, null),
-(18,'login_1','e81b90f3ee27f42bb010251021b1fc09','Сидоров','Сидор','Сидорович',2, null),
+(2,'admin','21232f297a57a5a743894a0e4a801fc3','Иванов','Иван','Иванович',1, NULL),
+(17,'login_0','480335867a6c40d7bd4cf04e184910cc','Петров','Петр','Петрович',1, NULL),
+(18,'login_1','e81b90f3ee27f42bb010251021b1fc09','Сидоров','Сидор','Сидорович',2, NULL),
 (19,'login_2','3c681bd9a527167284e1f67a9da4f4dc','Александров','Александр','Александрович',3, 1),
 (20,'login_3','3466c36ad772ab4e32e6ea6e7a59e142','Васильев','Василий','Васильевич',3, 2),
 (21,'login_4','97b701a71f43ccd4dca24feb29df7437','Николаев','Николай','Николаевич',3, 3);
@@ -28,9 +28,9 @@ INSERT INTO `stringculture`(`id`, `locale`, `value`) VALUES
 (73,'ru','Вид1'), (74,'ru','Вид2'), (75,'ru','Вид3'),
 (76, 'ru', 'Россия'), (76, 'en', 'Russia'), (77, 'ru', 'Англия'), (77, 'en', 'England'),
 (78, 'ru', 'Таможня 1'), (79, 'ru', 'Таможня 2'),
-(80, 'ru', 'Причина задержания 1'), (81, 'ru', 'Причина задержания 2'), (82, 'ru', 'Причина задержания 3');
+(80, 'ru', 'Відсутні ветдокументи'), (81, 'ru', 'Не виконані ветвимоги України'), (82, 'ru', 'Фальсифікація ветдокументів'), (83, 'ru', 'Заборона на ввезення');
 
-UPDATE `generator` SET `generatorValue` = 82 WHERE `generatorName` = 'books';
+UPDATE `generator` SET `generatorValue` = 83 WHERE `generatorName` = 'books';
 
 INSERT INTO `unit_type`(`id`, `name`, `short_name`) VALUES (1,54,60),(2,55,61),(3,56,62),(4,57,63),(5,58,64),(6,59,65);
 
@@ -54,7 +54,7 @@ INSERT INTO `container_validator`(`id`, `prefix`, `carrier_abbr`, `carrier_name`
     (2, 'ACLU', 'ACL', 'Atlantic Container Line'),
     (3, 'ACXU', 'Atlantic Cargo', 'Atlantic Cargo');
 
-INSERT INTO `arrest_reason`(`id`, `name`) VALUES (1,80), (2,81), (3,82);
+INSERT INTO `arrest_reason`(`id`, `name`) VALUES (1,80), (2,81), (3,82), (4,83);
 
 INSERT INTO `document_cargo`(`id`, `client_id`, `department_id`, `creator_id`, `cargo_mode_id`, `created`, `updated`, `movement_type`,
                                 `vehicle_type`, `cargo_sender_name`, `cargo_sender_country_id`, `cargo_receiver_name`,
