@@ -276,7 +276,7 @@ public class User implements ILongId, IUpdated, IQuery{
             return false;
         if (password != null ? !password.equals(user.password) : user.password != null) return false;
         if (updated != null ? !updated.equals(user.updated) : user.updated != null) return false;
-        if (userGroups != null ? !userGroups.equals(user.userGroups) : user.userGroups != null) return false;
+        if (userGroups != null ? !new ArrayList<UserGroup>(userGroups).equals(user.userGroups) : user.userGroups != null) return false;
 
         return true;
     }
@@ -291,7 +291,7 @@ public class User implements ILongId, IUpdated, IQuery{
         result = 31 * result + (middleName != null ? middleName.hashCode() : 0);
         result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
         result = 31 * result + (job != null ? job.hashCode() : 0);
-        result = 31 * result + (userGroups != null ? userGroups.hashCode() : 0);
+        result = 31 * result + (userGroups != null ? new ArrayList<UserGroup>(userGroups).hashCode() : 0);
         result = 31 * result + (department != null ? department.hashCode() : 0);
         result = 31 * result + (passingBorderPoint != null ? passingBorderPoint.hashCode() : 0);
         result = 31 * result + (updated != null ? updated.hashCode() : 0);
