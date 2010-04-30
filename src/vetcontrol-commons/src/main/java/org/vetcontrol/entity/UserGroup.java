@@ -90,26 +90,27 @@ public class UserGroup implements IUpdated, IQuery, ILongId {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final UserGroup other = (UserGroup) obj;
-        if (this.securityGroup != other.securityGroup && (this.securityGroup == null || !this.securityGroup.equals(other.securityGroup))) {
-            return false;
-        }
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserGroup)) return false;
+
+        UserGroup userGroup = (UserGroup) o;
+
+        if (id != null ? !id.equals(userGroup.id) : userGroup.id != null) return false;
+        if (login != null ? !login.equals(userGroup.login) : userGroup.login != null) return false;
+        if (securityGroup != userGroup.securityGroup) return false;
+        if (updated != null ? !updated.equals(userGroup.updated) : userGroup.updated != null) return false;
+
         return true;
     }
 
     @Override
     public int hashCode() {
-        int hash = (this.securityGroup != null ? this.securityGroup.hashCode() : 0);
-        hash += 2*(this.login != null ? this.login.hashCode() : 0);
-
-        return hash;
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (securityGroup != null ? securityGroup.hashCode() : 0);
+        result = 31 * result + (login != null ? login.hashCode() : 0);
+        result = 31 * result + (updated != null ? updated.hashCode() : 0);
+        return result;
     }
 
     @Override

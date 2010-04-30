@@ -103,18 +103,19 @@ public class UIPreferences implements Serializable {
     }
 
     private void saveToDBIfNecessary(PreferenceType type, Object value) {
-        //FIX VC-8
-        currentUser = getUserProfileBean().getCurrentUser();
+        User user = getUserProfileBean().getCurrentUser();
 
-        initCurrentUser();
         switch (type) {
             case LOCALE:
-                currentUser.setLocale((String) value);
+                user.setLocale((String) value);
                 break;
             case PAGE_SIZE:
-                currentUser.setPageSize((Integer) value);
+                user.setPageSize((Integer) value);
                 break;
         }
-        currentUser = getUserProfileBean().saveModifications(currentUser);
+        
+        if (!user.equals(currentUser)){
+            currentUser = getUserProfileBean().saveModifications(user);
+        }
     }
 }

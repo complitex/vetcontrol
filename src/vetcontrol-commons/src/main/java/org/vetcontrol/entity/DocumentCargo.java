@@ -251,7 +251,7 @@ public class DocumentCargo extends Synchronized implements IUpdated, IQuery {
         DocumentCargo that = (DocumentCargo) o;
 
         if (cargoMode != null ? !cargoMode.equals(that.cargoMode) : that.cargoMode != null) return false;
-        if (cargos != null ? !cargos.equals(that.cargos) : that.cargos != null) return false;
+        if (cargos != null ? !new ArrayList<Cargo>(cargos).equals(that.cargos) : that.cargos != null) return false;
         if (client != null ? !client.equals(that.client) : that.client != null) return false;
         if (created != null ? !created.equals(that.created) : that.created != null) return false;
         if (creator != null ? !creator.equals(that.creator) : that.creator != null) return false;
@@ -271,7 +271,7 @@ public class DocumentCargo extends Synchronized implements IUpdated, IQuery {
         if (senderName != null ? !senderName.equals(that.senderName) : that.senderName != null) return false;
         if (updated != null ? !updated.equals(that.updated) : that.updated != null) return false;
         if (vehicleType != that.vehicleType) return false;
-        if (vehicles != null ? !vehicles.equals(that.vehicles) : that.vehicles != null) return false;
+        if (vehicles != null ? !new ArrayList<Vehicle>(vehicles).equals(that.vehicles) : that.vehicles != null) return false;
 
         return true;
     }
@@ -287,8 +287,8 @@ public class DocumentCargo extends Synchronized implements IUpdated, IQuery {
         result = 31 * result + (updated != null ? updated.hashCode() : 0);
         result = 31 * result + (movementType != null ? movementType.hashCode() : 0);
         result = 31 * result + (vehicleType != null ? vehicleType.hashCode() : 0);
-        result = 31 * result + (cargos != null ? cargos.hashCode() : 0);
-        result = 31 * result + (vehicles != null ? vehicles.hashCode() : 0);
+        result = 31 * result + (cargos != null ? new ArrayList<Cargo>(cargos).hashCode() : 0);
+        result = 31 * result + (vehicles != null ? new ArrayList<Vehicle>(vehicles).hashCode() : 0);
         result = 31 * result + (senderCountry != null ? senderCountry.hashCode() : 0);
         result = 31 * result + (senderName != null ? senderName.hashCode() : 0);
         result = 31 * result + (receiverAddress != null ? receiverAddress.hashCode() : 0);
