@@ -27,10 +27,19 @@ import org.vetcontrol.web.component.UKTZEDField;
 
 import javax.ejb.EJB;
 import java.util.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import org.apache.wicket.RequestCycle;
+import org.apache.wicket.protocol.http.WebRequestCycle;
+import org.vetcontrol.report.commons.util.jasper.ExportType;
+import org.vetcontrol.report.commons.web.components.PrintButton;
+import org.vetcontrol.report.document.jasper.arrest.ArrestDocumentReportServlet;
+import org.vetcontrol.service.dao.IBookViewDAO;
 
 import static org.vetcontrol.entity.Log.EVENT.CREATE;
 import static org.vetcontrol.entity.Log.EVENT.EDIT;
 import static org.vetcontrol.entity.Log.MODULE.DOCUMENT;
+import org.vetcontrol.web.component.toolbar.ToolbarButton;
 import static org.vetcontrol.web.security.SecurityRoles.*;
 
 /**
@@ -38,26 +47,25 @@ import static org.vetcontrol.web.security.SecurityRoles.*;
  *         Date: 16.04.2010 19:46:33
  */
 @AuthorizeInstantiation({DOCUMENT_CREATE, DOCUMENT_DEP_EDIT, DOCUMENT_DEP_CHILD_EDIT})
-public class ArrestDocumentEdit extends DocumentEditPage{
-    private static final Logger log = LoggerFactory.getLogger(DocumentCargoEdit.class);
+public class ArrestDocumentEdit extends DocumentEditPage {
 
+    private static final Logger log = LoggerFactory.getLogger(DocumentCargoEdit.class);
     @EJB(name = "DocumentBean")
     private CommonDocumentBean commonDocumentBean;
-
     @EJB(name = "LogBean")
     private LogBean logBean;
-
     @EJB(name = "CargoTypeBean")
     private CargoTypeBean cargoTypeBean;
-
     @EJB(name = "ArrestDocumentBean")
     private ArrestDocumentBean arrestDocumentBean;
-
     @EJB(name = "UserProfileBean")
     private UserProfileBean userProfileBean;
-
     @EJB(name = "ClientBean")
     private ClientBean clientBean;
+    @EJB(name = "BookViewDAO")
+    private IBookViewDAO bookViewDAO;
+    //Объект данных
+    private ArrestDocument ad;
 
     public ArrestDocumentEdit() {
         super();
@@ -70,29 +78,30 @@ public class ArrestDocumentEdit extends DocumentEditPage{
         Long cargoId = parameters.getAsLong("cargo_id");
         Long arrestDocumentId = parameters.getAsLong("arrest_document_id");
 
-        if (cargoId != null){
+        if (cargoId != null) {
             init(null, arrestDocumentBean.getClientEntityId(
                     cargoId,
                     parameters.getAsLong("client_id"),
                     parameters.getAsLong("department_id")));
-        }else if (arrestDocumentId != null){
+        } else if (arrestDocumentId != null) {
             init(arrestDocumentBean.getClientEntityId(
                     arrestDocumentId,
                     parameters.getAsLong("client_id"),
                     parameters.getAsLong("department_id")), null);
-        }else{
+        } else {
             init(null, null);
         }
     }
 
-    private void init(final ClientEntityId arrestDocumentId, final ClientEntityId cargoId){
-        //Объект данных
-        ArrestDocument ad = null;
-
+    private void init(final ClientEntityId arrestDocumentId, final ClientEntityId cargoId) {
         //редактирование
-        if (arrestDocumentId != null){
+        if (arrestDocumentId != null) {
             try {
                 ad = arrestDocumentBean.loadArrestDocument(arrestDocumentId);
+
+                //report related stuffs
+                loadDependencies(ad);
+                storeArrestDocument(ad);
             } catch (Exception e) {
                 log.error("Акт задержания груза по id = " + arrestDocumentId + " не найден", e);
                 getSession().error("Акт задержания груза № " + arrestDocumentId + " не найден");
@@ -107,7 +116,7 @@ public class ArrestDocumentEdit extends DocumentEditPage{
         final IModel<Cargo> cargoModel = new Model<Cargo>();
 
         //создание из карточки на груз
-        if (cargoId != null){
+        if (cargoId != null) {
             Cargo cargo = arrestDocumentBean.loadCargo(cargoId);
             cargoModel.setObject(cargo);
 
@@ -137,7 +146,7 @@ public class ArrestDocumentEdit extends DocumentEditPage{
         final User currentUser = userProfileBean.getCurrentUser();
 
         //новый акт
-        if (arrestDocumentId == null && cargoId == null){
+        if (arrestDocumentId == null && cargoId == null) {
             ad = new ArrestDocument();
             ad.setDepartment(currentUser.getDepartment());
             ad.setPassingBorderPoint(currentUser.getPassingBorderPoint());
@@ -199,6 +208,7 @@ public class ArrestDocumentEdit extends DocumentEditPage{
 
         //Форма
         final Form form = new Form<ArrestDocument>("arrest_document_edit_form", arrestDocumentModel) {
+
             @Override
             protected void onValidate() {
                 super.onValidate();
@@ -209,14 +219,14 @@ public class ArrestDocumentEdit extends DocumentEditPage{
                 try {
                     arrestDocumentBean.save(getModelObject(), cargoId);
 
-                    if (cargoId != null){
+                    if (cargoId != null) {
                         DocumentCargo dc = cargoModel.getObject().getDocumentCargo();
 
                         setResponsePage(DocumentCargoEdit.class,
-                                new PageParameters( "document_cargo_id=" + dc.getId() + ","
-                                        + "client_id=" + dc.getClient().getId() + ","
-                                        + "department_id=" + dc.getDepartment().getId()));
-                    }else{
+                                new PageParameters("document_cargo_id=" + dc.getId() + ","
+                                + "client_id=" + dc.getClient().getId() + ","
+                                + "department_id=" + dc.getDepartment().getId()));
+                    } else {
                         setResponsePage(ArrestDocumentList.class);
                     }
 
@@ -248,14 +258,14 @@ public class ArrestDocumentEdit extends DocumentEditPage{
 
             @Override
             public void onSubmit() {
-                if (cargoId != null){
+                if (cargoId != null) {
                     DocumentCargo dc = cargoModel.getObject().getDocumentCargo();
 
                     setResponsePage(DocumentCargoEdit.class,
-                            new PageParameters( "document_cargo_id=" + dc.getId() + ","
-                                    + "client_id=" + dc.getClient().getId() + ","
-                                    + "department_id=" + dc.getDepartment().getId()));
-                }else{
+                            new PageParameters("document_cargo_id=" + dc.getId() + ","
+                            + "client_id=" + dc.getClient().getId() + ","
+                            + "department_id=" + dc.getDepartment().getId()));
+                } else {
                     setResponsePage(ArrestDocumentList.class);
                 }
             }
@@ -279,13 +289,13 @@ public class ArrestDocumentEdit extends DocumentEditPage{
         form.add(arrestReasonDetails);
 
         //Единицы измерения
-        IModel<List<UnitType>> unitTypeModel = new LoadableDetachableModel<List<UnitType>>(){
+        IModel<List<UnitType>> unitTypeModel = new LoadableDetachableModel<List<UnitType>>() {
 
             @Override
             protected List<UnitType> load() {
                 CargoMode cargoMode = arrestDocumentModel.getObject().getCargoMode();
 
-                if (cargoMode == null){
+                if (cargoMode == null) {
                     return Collections.emptyList();
                 }
 
@@ -293,7 +303,7 @@ public class ArrestDocumentEdit extends DocumentEditPage{
             }
         };
 
-        final DropDownChoice<UnitType> ddcUnitTypes =  addBookDropDownChoice(form, "arrest.document.unit_type",
+        final DropDownChoice<UnitType> ddcUnitTypes = addBookDropDownChoice(form, "arrest.document.unit_type",
                 arrestDocumentModel, "unitType", unitTypeModel, false, true);
         ddcUnitTypes.setOutputMarkupId(true);
         form.add(ddcUnitTypes);
@@ -308,15 +318,16 @@ public class ArrestDocumentEdit extends DocumentEditPage{
         form.add(new UKTZEDField("arrest.document.cargo_type", cargoTypeModel, new Model<CargoMode>(), cargoModeContainer));
 
         final ListView cargoModeListView = new ListView<CargoMode>("document.cargo.cargo_mode_parent_list",
-                new LoadableDetachableModel<List<CargoMode>>(){
+                new LoadableDetachableModel<List<CargoMode>>() {
+
                     @Override
                     protected List<CargoMode> load() {
                         List<CargoMode> list = new ArrayList<CargoMode>();
                         CargoType ct = cargoTypeModel.getObject();
 
-                        if (ct != null && ct.getCargoModes() != null){
-                            for (CargoMode cm : ct.getCargoModes()){
-                                if (cm.getParent() != null && !list.contains(cm.getParent())){
+                        if (ct != null && ct.getCargoModes() != null) {
+                            for (CargoMode cm : ct.getCargoModes()) {
+                                if (cm.getParent() != null && !list.contains(cm.getParent())) {
                                     list.add(cm.getParent());
                                 }
                             }
@@ -324,7 +335,8 @@ public class ArrestDocumentEdit extends DocumentEditPage{
 
                         return list;
                     }
-                }){
+                }) {
+
             @Override
             protected void populateItem(final ListItem<CargoMode> item) {
                 item.add(new Label("document.cargo.cargo_mode_parent",
@@ -332,15 +344,16 @@ public class ArrestDocumentEdit extends DocumentEditPage{
 
                 //список дочерних видов
                 ListView childList = new ListView<CargoMode>("document.cargo.cargo_mode_child_list",
-                        new LoadableDetachableModel<List<CargoMode>>(){
+                        new LoadableDetachableModel<List<CargoMode>>() {
+
                             @Override
                             protected List<CargoMode> load() {
                                 List<CargoMode> list = new ArrayList<CargoMode>();
                                 CargoType ct = cargoTypeModel.getObject();
 
-                                if (ct != null && ct.getCargoModes() != null){
-                                    for (CargoMode cm : ct.getCargoModes()){
-                                        if (cm.getParent() != null && cm.getParent().equals(item.getModelObject())){
+                                if (ct != null && ct.getCargoModes() != null) {
+                                    for (CargoMode cm : ct.getCargoModes()) {
+                                        if (cm.getParent() != null && cm.getParent().equals(item.getModelObject())) {
                                             list.add(cm);
                                         }
                                     }
@@ -348,7 +361,7 @@ public class ArrestDocumentEdit extends DocumentEditPage{
 
                                 return list;
                             }
-                        }){
+                        }) {
 
                     @Override
                     protected void populateItem(final ListItem<CargoMode> childItem) {
@@ -365,7 +378,8 @@ public class ArrestDocumentEdit extends DocumentEditPage{
 
         RadioGroup radioGroup = new RadioGroup<CargoMode>("document.cargo.cargo_mode_parent_radio_group",
                 new PropertyModel<CargoMode>(arrestDocumentModel, "cargoMode"));
-        radioGroup.add(new AjaxFormChoiceComponentUpdatingBehavior(){
+        radioGroup.add(new AjaxFormChoiceComponentUpdatingBehavior() {
+
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
                 target.addComponent(cargoModeContainer);
@@ -452,5 +466,45 @@ public class ArrestDocumentEdit extends DocumentEditPage{
                 "arrest.document.passingBorderPoint", "passingBorderPoint", "arrest.document.passingBorderPoint.label",
                 arrestDocumentModel, currentUser, visible);
 
+    }
+
+    private void storeArrestDocument(ArrestDocument ad) {
+        WebRequestCycle webRequestCycle = (WebRequestCycle) RequestCycle.get();
+        HttpServletRequest servletRequest = webRequestCycle.getWebRequest().getHttpServletRequest();
+        HttpSession session = servletRequest.getSession(false);
+        if (session != null) {
+            session.setAttribute(ArrestDocumentReportServlet.ARREST_DOCUMENT_KEY, ad);
+        }
+    }
+
+    private void loadDependencies(ArrestDocument ad) {
+        bookViewDAO.addLocalizationSupport(ad);
+    }
+
+    @Override
+    protected List<ToolbarButton> getToolbarButtons(String id) {
+        //report related stuffs
+        List<ToolbarButton> toolbarButtons = new ArrayList<ToolbarButton>();
+        toolbarButtons.add(new PrintButton(id, ExportType.PDF, "pdfForm") {
+
+            @Override
+            protected void onBeforeRender() {
+                if (ad.getId() == null) {
+                    setVisible(false);
+                }
+                super.onBeforeRender();
+            }
+        });
+        toolbarButtons.add(new PrintButton(id, ExportType.TEXT, "textForm") {
+
+            @Override
+            protected void onBeforeRender() {
+                if (ad.getId() == null) {
+                    setVisible(false);
+                }
+                super.onBeforeRender();
+            }
+        });
+        return toolbarButtons;
     }
 }

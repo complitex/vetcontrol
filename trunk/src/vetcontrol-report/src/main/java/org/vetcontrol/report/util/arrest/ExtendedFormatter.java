@@ -9,6 +9,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import org.apache.wicket.util.string.Strings;
 import org.vetcontrol.entity.VehicleType;
 import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.web.component.VehicleTypeChoicePanel;
@@ -37,13 +38,16 @@ public final class ExtendedFormatter {
 
     public static String formatCargoInfo(String cargoTypeName, Number count, String unitTypeName, Locale locale) {
         String countAndUnitType = null;
-        double value = count.doubleValue();
-        if (value == 0) {
+        if (count == null || count.doubleValue() <= 0) {
             countAndUnitType = "";
         } else {
             countAndUnitType = NumberFormat.getInstance(locale).format(count) + " " + unitTypeName;
         }
-        return cargoTypeName + ", " + countAndUnitType;
+        String result = cargoTypeName;
+        if (!Strings.isEmpty(countAndUnitType)) {
+            result += ", " + countAndUnitType;
+        }
+        return result;
     }
 
     public static String formatCargoSender(String cargoSenderName, String cargoSenderCountry) {

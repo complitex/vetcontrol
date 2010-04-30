@@ -16,12 +16,11 @@ public final class Formatter {
     private Formatter() {
     }
 
-    public static String format(Number data, String unitTypeName, Locale locale) {
-        double value = data.doubleValue();
-        if (value == 0) {
+    public static String formatCount(Number count, String unitTypeName, Locale locale) {
+        if (count == null || count.doubleValue() <= 0) {
             return "";
         }
-        return NumberFormat.getInstance(locale).format(data) + " " + unitTypeName;
+        return NumberFormat.getInstance(locale).format(count) + " " + unitTypeName;
     }
 
     public static String cargoModeName(String cargoModeName, String parentCargoModeName) {

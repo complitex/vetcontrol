@@ -153,42 +153,42 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="139" y="0" width="51" height="18"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.format($F{export}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatCount($F{export}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="190" y="0" width="40" height="18"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.format($F{imprt}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatCount($F{imprt}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="230" y="0" width="45" height="18"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.format($F{transit}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatCount($F{transit}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="275" y="0" width="70" height="18"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.format($F{importTransit}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatCount($F{importTransit}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="345" y="0" width="42" height="18"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.format($F{exportInCurrentMonth}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatCount($F{exportInCurrentMonth}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="387" y="0" width="40" height="18"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.format($F{imprtInCurrentMonth}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatCount($F{imprtInCurrentMonth}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="427" y="0" width="45" height="18"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.format($F{transitInCurrentMonth}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatCount($F{transitInCurrentMonth}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="472" y="0" width="68" height="18"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.format($F{importTransitInCurrentMonth}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatCount($F{importTransitInCurrentMonth}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="14" y="0" width="24" height="18"/>

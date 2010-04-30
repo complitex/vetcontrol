@@ -95,12 +95,12 @@
             <div style="margin:10px"></div>
             <input type="reset" class="btnMiddle" wicket:message="value:arrest.document.view.back" value="Back" onclick="history.back()"/>
 
-            <div class="referenceToExport">
+            <div>
                 <form id="pdfForm" target="_blank" method="post" action="ArrestDocumentReportServlet">
                     <input type="hidden" value="pdf" name="ExportType"/>
                 </form>
             </div>
-            <div class="referenceToExport">
+            <div>
                 <form id="textForm" target="_blank" method="post" action="ArrestDocumentReportServlet">
                     <input type="hidden" value="text" name="ExportType"/>
                 </form>

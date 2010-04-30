@@ -27,9 +27,8 @@ public final class Formatter {
         return vehicleType.name().equals(fromDb) ? "X" : "";
     }
 
-    public static String formatCountData(Number count, String unitTypeName, Locale locale) {
-        double value = count.doubleValue();
-        if (value == 0) {
+    public static String formatCount(Number count, String unitTypeName, Locale locale) {
+        if (count == null || count.doubleValue() <= 0) {
             return "";
         }
         return NumberFormat.getInstance(locale).format(count) + " " + unitTypeName;
