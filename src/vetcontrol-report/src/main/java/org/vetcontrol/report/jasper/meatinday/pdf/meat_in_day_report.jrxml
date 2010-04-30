@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="meat_in_day" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="org/vetcontrol/report/web/pages/MeatInDayReportPage">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="java.text.MessageFormat"/>
+	<import value="org.vetcontrol.report.util.meatinday.Formatter"/>
+	<style name="base" isDefault="true" hAlign="Center" vAlign="Top" fontName="DejaVuSerif" fontSize="7">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[($F{rootCargoMode} || $F{totalEntry})]]></conditionExpression>
+			<style isDefault="false" style="base" isBold="true"/>
+		</conditionalStyle>
+	</style>
+	<style name="Header" isDefault="false" hAlign="Center" vAlign="Top" fontName="DejaVuSerif" fontSize="7" isBold="true">
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="Title" isDefault="false" hAlign="Center" vAlign="Top" fontName="DejaVuSerif" fontSize="7" isBold="true"/>
+	<parameter name="currentDate" class="java.util.Date"/>
+	<parameter name="department" class="java.lang.String"/>
+	<field name="cargoModeName" class="java.lang.String"/>
+	<field name="unitTypeName" class="java.lang.String"/>
+	<field name="inPreviousMonth" class="java.lang.Number"/>
+	<field name="inCurrentMonth" class="java.lang.Number"/>
+	<field name="inCurrentDate" class="java.lang.Number"/>
+	<field name="total" class="java.lang.Number"/>
+	<field name="rootCargoMode" class="java.lang.Boolean"/>
+	<field name="totalEntry" class="java.lang.Boolean"/>
+	<field name="firstSubCargoMode" class="java.lang.Boolean"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="25" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Title" x="11" y="0" width="532" height="23"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{report.name}, $P{department}, Formatter.formatReportTitleDate($P{currentDate}, $P{REPORT_LOCALE}))]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="56" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header" x="0" y="0" width="223" height="56"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.header.cargoMode}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header" x="223" y="0" width="263" height="19"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.header.months}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header" x="223" y="19" width="91" height="17"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{report.header.previousMonth}, Formatter.formatPreviousMonth($P{currentDate}, $P{REPORT_LOCALE}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header" x="314" y="19" width="172" height="17"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{report.header.allCurrentMonth}, Formatter.formatMonth($P{currentDate}, $P{REPORT_LOCALE}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header" x="223" y="36" width="91" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header" x="314" y="36" width="90" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.header.currentMonth}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header" x="404" y="36" width="82" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{report.header.currentDate}, Formatter.formatCurrentDate($P{currentDate}, $P{REPORT_LOCALE}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header" x="486" y="0" width="69" height="56"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.header.total}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="223" height="18"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[/*MessageFormat.format(str(($F{rootCargoMode} ||$F{totalEntry}) ? "report.body.rootCargoModeOrTotal" : "report.body.subCargoMode"),
+                    Formatter.formatCargoMode($F{cargoModeName}, $F{totalEntry}, $F{rootCargoMode}, $F{firstSubCargoMode}))*/
+                    Formatter.formatCargoMode($F{cargoModeName}, $F{totalEntry}, $F{rootCargoMode}, $F{firstSubCargoMode})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="223" y="0" width="91" height="18"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatCount($F{inPreviousMonth}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="314" y="0" width="90" height="18"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatCount($F{inCurrentMonth}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="404" y="0" width="82" height="18"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatCount($F{inCurrentDate}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="486" y="0" width="69" height="18"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatCount($F{total}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

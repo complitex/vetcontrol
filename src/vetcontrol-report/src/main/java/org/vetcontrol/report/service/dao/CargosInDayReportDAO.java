@@ -43,7 +43,7 @@ public class CargosInDayReportDAO extends AbstractReportDAO<CargosInDayReport> {
     }
 
     @Override
-    protected String prepareAllSQL(String sqlPattern, Map<String, Object> parameters, Locale reportLocale, String sortProperty, boolean isAscending) {
+    protected String prepareAllSQL(String sqlPattern, Map<String, Object> parameters, Locale reportLocale, String sortProperty, Boolean isAscending) {
         return MessageFormat.format(sqlPattern, sortProperty, isAscending ? "ASC" : "DESC");
     }
 }
