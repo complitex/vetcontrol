@@ -110,7 +110,6 @@
             <div>
                 <br/>
                 <br/>
-                <br/>
                 <div>
                     <wicket:link>
                         <a href="CargosInDayReportForm.html">
@@ -118,14 +117,14 @@
                         </a>
                     </wicket:link>
                 </div>
-                <div class="referenceToExport">
+                <div>
                     <form id="pdfForm" target="_blank" method="post" action="CargosInDayReportServlet">
                         <input type="hidden" value="pdf" name="ExportType"/>
                         <input wicket:id="pdfDay" type="hidden"/>
                         <input wicket:id="pdfDepartment" type="hidden"/>
                     </form>
                 </div>
-                <div class="referenceToExport">
+                <div>
                     <form id="textForm" target="_blank" method="post" action="CargosInDayReportServlet">
                         <input type="hidden" value="text" name="ExportType"/>
                         <input wicket:id="textDay" type="hidden"/>
