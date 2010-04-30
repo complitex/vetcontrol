@@ -4,6 +4,7 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.*;
+import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.sync.NotRegisteredException;
 import org.vetcontrol.sync.client.service.exception.DBOperationException;
@@ -48,6 +49,9 @@ public class SyncBean {
 
     @EJB(beanName = "UpdateSyncBean")
     private UpdateSyncBean updateSyncBean;
+
+    @EJB(beanName = "ClientBean")
+    private ClientBean clientBean;
 
     private ResourceBundle rb;
     private boolean processing = false;
@@ -173,6 +177,9 @@ public class SyncBean {
             //Синхронизация доступных обновлений
             updateSyncBean.process();
 
+            //Установка даты последней синхронизации с сервером
+            clientBean.saveCurrentLastSync(DateUtil.getCurrentDate());
+
             message = new SyncMessage();
             message.setName(rb.getString("sync.client.sync.client"));
             message.setMessage(rb.getString("sync.client.sync.after_complete"));
@@ -244,6 +251,6 @@ public class SyncBean {
     }
 
     public Date getLastSync() {
-        return logBean.getLastDate(Log.MODULE.SYNC_CLIENT, Log.EVENT.SYNC, Log.STATUS.OK);
+        return clientBean.getCurrentClient().getLastSync();
     }
 }

@@ -5,7 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.Client;
 import org.vetcontrol.sync.NotRegisteredException;
 
-import javax.ejb.*;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -13,6 +14,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Date;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -100,5 +102,12 @@ public class ClientBean {
 
     public Client getClient(String secureKey) {
         return em.createQuery("select c from Client c where c.secureKey = :secureKey", Client.class).setParameter("secureKey", secureKey).getSingleResult();
+    }
+
+    public void saveCurrentLastSync(Date date){
+        Client client = getCurrentClient();
+        client.setLastSync(date);
+
+        currentClient = em.merge(client);
     }
 }
