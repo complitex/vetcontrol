@@ -138,16 +138,16 @@ public final class MovementTypesReportPage extends TemplatePage {
 
                 item.add(new Label("cargoModeName", Formatter.cargoModeName(report.getCargoModeName(), report.getParentCargoModeName())));
 
-                item.add(new Label("export", Formatter.format(report.getExport(), report.getUnitTypeName(), localeService.getReportLocale())));
-                item.add(new Label("import", Formatter.format(report.getImprt(), report.getUnitTypeName(), localeService.getReportLocale())));
-                item.add(new Label("transit", Formatter.format(report.getTransit(), report.getUnitTypeName(), localeService.getReportLocale())));
-                item.add(new Label("importTransit", Formatter.format(report.getImportTransit(), report.getUnitTypeName(), localeService.getReportLocale())));
+                item.add(new Label("export", Formatter.formatCount(report.getExport(), report.getUnitTypeName(), localeService.getReportLocale())));
+                item.add(new Label("import", Formatter.formatCount(report.getImprt(), report.getUnitTypeName(), localeService.getReportLocale())));
+                item.add(new Label("transit", Formatter.formatCount(report.getTransit(), report.getUnitTypeName(), localeService.getReportLocale())));
+                item.add(new Label("importTransit", Formatter.formatCount(report.getImportTransit(), report.getUnitTypeName(), localeService.getReportLocale())));
 
-                item.add(new Label("exportInCurrentMonth", Formatter.format(report.getExportInCurrentMonth(), report.getUnitTypeName(), localeService.getReportLocale())));
-                item.add(new Label("importInCurrentMonth", Formatter.format(report.getImprtInCurrentMonth(), report.getUnitTypeName(), localeService.getReportLocale())));
-                item.add(new Label("transitInCurrentMonth", Formatter.format(report.getTransitInCurrentMonth(), report.getUnitTypeName(), localeService.getReportLocale())));
+                item.add(new Label("exportInCurrentMonth", Formatter.formatCount(report.getExportInCurrentMonth(), report.getUnitTypeName(), localeService.getReportLocale())));
+                item.add(new Label("importInCurrentMonth", Formatter.formatCount(report.getImprtInCurrentMonth(), report.getUnitTypeName(), localeService.getReportLocale())));
+                item.add(new Label("transitInCurrentMonth", Formatter.formatCount(report.getTransitInCurrentMonth(), report.getUnitTypeName(), localeService.getReportLocale())));
                 item.add(new Label("importTransitInCurrentMonth",
-                        Formatter.format(report.getImportTransitInCurrentMonth(), report.getUnitTypeName(), localeService.getReportLocale())));
+                        Formatter.formatCount(report.getImportTransitInCurrentMonth(), report.getUnitTypeName(), localeService.getReportLocale())));
             }
         };
 

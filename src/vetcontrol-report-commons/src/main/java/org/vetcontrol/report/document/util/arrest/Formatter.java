@@ -25,14 +25,10 @@ public final class Formatter {
     }
 
     public static String formatCount(Number count, String unitTypeName, Locale locale) {
-        String countAndUnitType = null;
-        double value = count.doubleValue();
-        if (value == 0) {
-            countAndUnitType = "";
-        } else {
-            countAndUnitType = NumberFormat.getInstance(locale).format(count) + " " + unitTypeName;
+        if (count == null || count.doubleValue() <= 0) {
+            return "";
         }
-        return countAndUnitType;
+        return NumberFormat.getInstance(locale).format(count) + " " + unitTypeName;
     }
 
     public static String formatCargoSender(String cargoSenderName, String cargoSenderCountry) {

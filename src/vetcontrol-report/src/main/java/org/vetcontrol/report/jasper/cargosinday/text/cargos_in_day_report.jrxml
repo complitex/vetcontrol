@@ -183,7 +183,7 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="473" y="0" width="75" height="21"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatCountData($F{count}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatCount($F{count}, $F{unitTypeName}, $P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="13" y="0" width="26" height="21"/>

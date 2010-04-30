@@ -34,8 +34,7 @@ public final class Formatter {
     }
 
     public static String formatCount(Number count, String unitTypeName, Locale locale) {
-        double value = count.doubleValue();
-        if (value == 0) {
+        if (count == null || count.doubleValue() <= 0) {
             return "";
         }
         return NumberFormat.getInstance(locale).format(count) + " " + unitTypeName;
