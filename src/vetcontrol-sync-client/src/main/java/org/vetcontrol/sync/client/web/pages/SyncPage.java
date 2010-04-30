@@ -116,9 +116,9 @@ public class SyncPage extends TemplatePage{
             protected void onPostProcessTarget(AjaxRequestTarget target) {
                 listView.setModelObject(syncBean.getSyncMessages());
 
-                if (!syncBean.isProcessing()){
-                    submit.setVisible(true);
-                    target.addComponent(form);
+                if (!syncBean.isProcessing()){                    
+                    setRedirect(true);
+                    setResponsePage(SyncPage.class);
 
                     this.stop();
                 }

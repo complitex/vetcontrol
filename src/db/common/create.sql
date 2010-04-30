@@ -492,6 +492,7 @@ CREATE TABLE `client` (
   `secure_key` varchar(64) NOT NULL,
   `created` timestamp NOT NULL,
   `updated` timestamp NOT NULL,
+  `last_sync` DATETIME DEFAULT NULL,
   `department_id` bigint(20) NOT NULL,
   `sync_status` varchar(64) DEFAULT NULL,
   `version` varchar(64) DEFAULT NULL,

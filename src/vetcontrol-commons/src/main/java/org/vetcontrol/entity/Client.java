@@ -44,6 +44,10 @@ public class Client extends Synchronized implements ILongId{
     @Column(name = "updated", nullable = false)
     private Date updated;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "last_sync")
+    private Date lastSync;
+
     @Column(name = "version")
     private String version;
 
@@ -101,6 +105,14 @@ public class Client extends Synchronized implements ILongId{
 
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    public Date getLastSync() {
+        return lastSync;
+    }
+
+    public void setLastSync(Date lastSync) {
+        this.lastSync = lastSync;
     }
 
     public String getVersion() {

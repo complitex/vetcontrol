@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.Localizable;
 import org.vetcontrol.entity.User;
+import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
@@ -43,12 +44,18 @@ import java.util.Locale;
  * Для инициализации шаблона наследники должны вызывать метод super().
  */
 public abstract class TemplatePage extends WebPage {
-
     private static final Logger log = LoggerFactory.getLogger(TemplatePage.class);
+
+    private final static String SYNC_TEMPLATE_MENU_CLASS_NAME = "org.vetcontrol.sync.client.web.pages.SyncTemplateMenu";
+
     @EJB(name = "UserProfileBean")
     private UserProfileBean userProfileBean;
+
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
+
+    @EJB(name = "ClientBean")
+    private ClientBean clientBean;
 
     private final Locale systemLocale = localeDAO.systemLocale();
 
@@ -157,9 +164,9 @@ public abstract class TemplatePage extends WebPage {
     private List<ITemplateMenu> newTemplateMenus() {
         List<ITemplateMenu> templateMenus = new ArrayList<ITemplateMenu>();
         for (Class<ITemplateMenu> menuClass : getVetControlTemplateApplication().getMenuClasses()) {
-            if (isTemplateMenuAuthorized(menuClass)) {
+            if (isTemplateMenuAuthorized(menuClass) && isTemplateMenuShowBeforeSync(menuClass)) {
                 try {
-                    ITemplateMenu templateMenu = (ITemplateMenu) menuClass.newInstance();
+                    ITemplateMenu templateMenu = menuClass.newInstance();
                     templateMenus.add(templateMenu);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -184,6 +191,11 @@ public abstract class TemplatePage extends WebPage {
         }
 
         return authorized;
+    }
+
+    private boolean isTemplateMenuShowBeforeSync(Class<?> menuClass){
+        return clientBean.getCurrentClient().getLastSync() != null
+                || menuClass.getCanonicalName().equals(SYNC_TEMPLATE_MENU_CLASS_NAME);
     }
 
     protected VetControlSession getVetControlSession() {
