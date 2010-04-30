@@ -74,13 +74,13 @@
                         </a>
                     </wicket:link>
                 </div>
-                <div class="referenceToExport">
+                <div>
                     <form id="pdfForm" target="_blank" method="post" action="MeatInDayReportServlet">
                         <input type="hidden" value="pdf" name="ExportType"/>
                         <input wicket:id="pdfCurrentDate" type="hidden"/>
                     </form>
                 </div>
-                <div class="referenceToExport">
+                <div>
                     <form id="textForm" target="_blank" method="post" action="MeatInDayReportServlet">
                         <input type="hidden" value="text" name="ExportType"/>
                         <input wicket:id="textCurrentDate" type="hidden"/>

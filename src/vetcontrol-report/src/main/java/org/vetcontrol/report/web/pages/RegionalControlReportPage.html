@@ -82,7 +82,6 @@
             <div>
                 <br/>
                 <br/>
-                <br/>
                 <div>
                     <wicket:link>
                         <a href="RegionalControlReportForm.html">
@@ -90,14 +89,14 @@
                         </a>
                     </wicket:link>
                 </div>
-                <div class="referenceToExport">
+                <div>
                     <form id="pdfForm" target="_blank" method="post" action="RegionalControlReportServlet">
                         <input type="hidden" value="pdf" name="ExportType"/>
                         <input wicket:id="pdfStartDate" type="hidden"/>
                         <input wicket:id="pdfEndDate" type="hidden"/>
                     </form>
                 </div>
-                <div class="referenceToExport">
+                <div>
                     <form id="textForm" target="_blank" method="post" action="RegionalControlReportServlet">
                         <input type="hidden" value="text" name="ExportType"/>
                         <input wicket:id="textStartDate" type="hidden"/>
