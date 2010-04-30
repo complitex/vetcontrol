@@ -14,7 +14,7 @@
                 (SELECT ct.name FROM cargo_type ct WHERE ct.id = c.cargo_type_id)
                 AND sc.locale= :locale) AS cargoTypeName,
                 (SELECT ct.ukt_zed_code FROM cargo_type ct WHERE ct.id = c.cargo_type_id) AS cargoTypeCode,
-                (SELECT c.`count`) AS `count`,
+                (SELECT IFNULL(c.count, 0)) AS `count`,
                 (SELECT sc.value FROM stringculture sc WHERE sc.id =
                 (SELECT ut.short_name FROM unit_type ut WHERE ut.id = c.unit_type_id)
                 AND sc.locale= :locale) AS unitTypeName,

@@ -17,7 +17,7 @@
                             (SELECT cp.name FROM cargo_producer cp WHERE cp.id = c.cargo_producer_id)
                             AND sc.locale= :locale) AS cargoProducerName,
                     (SELECT d.vehicle_type) AS vehicleType,
-                    (SELECT c.`count`) AS `count`,
+                    (SELECT IFNULL(c.`count`, 0)) AS `count`,
                     (SELECT sc.value FROM stringculture sc WHERE sc.id =
                             (SELECT ut.short_name FROM unit_type ut WHERE ut.id = c.unit_type_id)
                             AND sc.locale= :locale) AS unitTypeName

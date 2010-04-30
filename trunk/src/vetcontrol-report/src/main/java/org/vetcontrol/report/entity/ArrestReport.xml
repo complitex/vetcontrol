@@ -12,7 +12,7 @@
                     (SELECT sc.value FROM stringculture sc WHERE sc.id=
                         (SELECT ct.name FROM cargo_type ct WHERE ct.id = a.cargo_type_id)
                         AND sc.locale = :locale) AS cargoTypeName,
-                    (SELECT a.`count`) AS `count`,
+                    IFNULL((SELECT a.`count`), 0) AS `count`,
                     (SELECT sc.value FROM stringculture sc WHERE sc.id=
                         (SELECT ut.short_name FROM unit_type ut WHERE ut.id = a.unit_type_id)
                         AND sc.locale = :locale) AS unitTypeName,
