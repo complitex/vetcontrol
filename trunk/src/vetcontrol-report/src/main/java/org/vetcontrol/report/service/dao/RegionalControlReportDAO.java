@@ -13,7 +13,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import org.vetcontrol.report.entity.RegionalControlReport;
-import org.vetcontrol.report.util.regionalcontrol.Formatter;
 import org.vetcontrol.web.security.SecurityRoles;
 
 /**
@@ -47,7 +46,7 @@ public class RegionalControlReportDAO extends AbstractReportDAO<RegionalControlR
     }
 
     @Override
-    protected String prepareAllSQL(String sqlPattern, Map<String, Object> parameters, Locale reportLocale, String sortProperty, boolean isAscending) {
+    protected String prepareAllSQL(String sqlPattern, Map<String, Object> parameters, Locale reportLocale, String sortProperty, Boolean isAscending) {
         return MessageFormat.format(sqlPattern, sortProperty, isAscending ? "ASC" : "DESC");
     }
 }

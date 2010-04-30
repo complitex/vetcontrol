@@ -49,7 +49,7 @@ public class ArrestReportDAO extends AbstractReportDAO<ExtendedArrestReport> {
     }
 
     @Override
-    protected String prepareAllSQL(String sqlPattern, Map<String, Object> parameters, Locale reportLocale, String sortProperty, boolean isAscending) {
+    protected String prepareAllSQL(String sqlPattern, Map<String, Object> parameters, Locale reportLocale, String sortProperty, Boolean isAscending) {
         String realSortProperty = sortProperty;
         if ("vehicleType".equals(sortProperty)) {
             realSortProperty = orderByVehicleType(reportLocale);

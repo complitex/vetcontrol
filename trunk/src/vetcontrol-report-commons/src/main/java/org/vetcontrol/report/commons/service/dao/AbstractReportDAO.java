@@ -58,7 +58,7 @@ public abstract class AbstractReportDAO<T extends Serializable> {
                     setMaxResults(count).
                     setResultTransformer(Transformers.aliasToBean(reportEntityType)).
                     list();
-            
+
             if (Ordered.class.isAssignableFrom(reportEntityType)) {
                 int order = first + 1;
                 for (T result : results) {
@@ -96,7 +96,7 @@ public abstract class AbstractReportDAO<T extends Serializable> {
     }
 
     protected String prepareAllSQL(String sqlPattern, Map<String, Object> parameters, Locale reportLocale,
-            String sortProperty, boolean isAscending) {
+            String sortProperty, Boolean isAscending) {
         return sqlPattern;
     }
 
@@ -106,5 +106,9 @@ public abstract class AbstractReportDAO<T extends Serializable> {
 
     protected String getKeyForSize() {
         return SIZE_KEY;
+    }
+
+    protected Class<T> getReportEntityClass() {
+        return reportEntityType;
     }
 }

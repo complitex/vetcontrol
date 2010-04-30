@@ -122,6 +122,28 @@ public class ReportMenu extends ResourceTemplateMenu {
                     return "arrest_report";
                 }
             });
+            links.add(new ITemplateLink() {
+
+                @Override
+                public String getLabel(Locale locale) {
+                    return getString(ReportMenu.class, locale, "meat_in_day_report");
+                }
+
+                @Override
+                public Class<? extends Page> getPage() {
+                    return MeatInDayReportForm.class;
+                }
+
+                @Override
+                public PageParameters getParameters() {
+                    return PageParameters.NULL;
+                }
+
+                @Override
+                public String getTagId() {
+                    return "meat_in_day_report";
+                }
+            });
         }
 
         return links;

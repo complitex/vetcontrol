@@ -29,7 +29,7 @@ public class MovementTypesReportDAO extends AbstractReportDAO<MovementTypesRepor
 
 
     @Override
-    protected String prepareAllSQL(String sqlPattern, Map<String, Object> parameters, Locale reportLocale, String sortProperty, boolean isAscending) {
+    protected String prepareAllSQL(String sqlPattern, Map<String, Object> parameters, Locale reportLocale, String sortProperty, Boolean isAscending) {
         return sqlPattern + (isAscending ? " ASC" : " DESC");
     }
 }

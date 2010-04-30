@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:wicket="http://wicket.apache.org">
+    <head>
+        <wicket:head><title wicket:id="title"></title></wicket:head>
+    </head>
+    <body>
+        <wicket:extend>
+            <center>
+                <h1>
+                    <span wicket:id="report.name"></span>
+                </h1>
+            </center>
+
+            <table class="tbColor" border="0" cellpadding="0" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th rowspan="3" valign="top" class="center">
+                            <wicket:message key="report.header.cargoMode"/>
+                        </th>
+                        <th colspan="3" valign="top" class="center">
+                            <wicket:message key="report.header.months"/>
+                        </th>
+                        <th rowspan="3" valign="top" class="center">
+                            <wicket:message key="report.header.total"/>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th valign="top" class="center">
+                            <span wicket:id="report.header.previousMonth"></span>
+                        </th>
+                        <th colspan="2" valign="top" class="center">
+                            <span wicket:id="report.header.allCurrentMonth"></span>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                        </th>
+                        <th valign="top" class="center">
+                            <wicket:message key="report.header.currentMonth"/>
+                        </th>
+                        <th valign="top" class="center">
+                            <span wicket:id="report.header.currentDate"></span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr wicket:id="list">
+                        <td class="center">
+                            <span wicket:id="cargoMode"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="inPreviousMonth"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="inCurrentMonth"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="inCurrentDate"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="total"></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div>
+                <br/>
+                <div>
+                    <wicket:link>
+                        <a href="MeatInDayReportForm.html">
+                            <wicket:message key="report.backToSetParams"/>
+                        </a>
+                    </wicket:link>
+                </div>
+                <div class="referenceToExport">
+                    <form id="pdfForm" target="_blank" method="post" action="MeatInDayReportServlet">
+                        <input type="hidden" value="pdf" name="ExportType"/>
+                        <input wicket:id="pdfCurrentDate" type="hidden"/>
+                    </form>
+                </div>
+                <div class="referenceToExport">
+                    <form id="textForm" target="_blank" method="post" action="MeatInDayReportServlet">
+                        <input type="hidden" value="text" name="ExportType"/>
+                        <input wicket:id="textCurrentDate" type="hidden"/>
+                    </form>
+                </div>
+            </div>
+        </wicket:extend>
+    </body>
+</html>
