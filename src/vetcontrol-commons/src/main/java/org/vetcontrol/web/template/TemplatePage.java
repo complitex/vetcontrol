@@ -44,19 +44,15 @@ import java.util.Locale;
  * Для инициализации шаблона наследники должны вызывать метод super().
  */
 public abstract class TemplatePage extends WebPage {
+
     private static final Logger log = LoggerFactory.getLogger(TemplatePage.class);
-
     private final static String SYNC_TEMPLATE_MENU_CLASS_NAME = "org.vetcontrol.sync.client.web.pages.SyncTemplateMenu";
-
     @EJB(name = "UserProfileBean")
     private UserProfileBean userProfileBean;
-
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
-
     @EJB(name = "ClientBean")
     private ClientBean clientBean;
-
     private final Locale systemLocale = localeDAO.systemLocale();
 
     public TemplatePage() {
@@ -193,8 +189,8 @@ public abstract class TemplatePage extends WebPage {
         return authorized;
     }
 
-    private boolean isTemplateMenuShowBeforeSync(Class<?> menuClass){
-        return clientBean.getCurrentClient().getLastSync() != null
+    private boolean isTemplateMenuShowBeforeSync(Class<?> menuClass) {
+        return clientBean.isServer() || clientBean.getCurrentClient().getLastSync() != null
                 || menuClass.getCanonicalName().equals(SYNC_TEMPLATE_MENU_CLASS_NAME);
     }
 
@@ -231,7 +227,7 @@ public abstract class TemplatePage extends WebPage {
         return systemLocale;
     }
 
-    public String getString(Localizable localizable){
-        return localizable != null ? localizable.getDisplayName(getLocale(), getSystemLocale()) : "";       
+    public String getString(Localizable localizable) {
+        return localizable != null ? localizable.getDisplayName(getLocale(), getSystemLocale()) : "";
     }
 }

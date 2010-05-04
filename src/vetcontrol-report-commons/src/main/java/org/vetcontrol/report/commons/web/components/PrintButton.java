@@ -6,7 +6,7 @@ package org.vetcontrol.report.commons.web.components;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.link.Link;
-import org.vetcontrol.report.commons.util.jasper.ExportType;
+import org.vetcontrol.report.commons.jasper.ExportType;
 import org.vetcontrol.web.component.toolbar.ToolbarButton;
 
 /**

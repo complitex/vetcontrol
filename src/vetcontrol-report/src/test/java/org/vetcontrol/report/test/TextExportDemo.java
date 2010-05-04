@@ -14,7 +14,7 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.export.JRTextExporterParameter;
-import org.vetcontrol.report.commons.util.jasper.TextExporterConstants;
+import org.vetcontrol.report.commons.jasper.TextExporterConstants;
 
 /**
  *

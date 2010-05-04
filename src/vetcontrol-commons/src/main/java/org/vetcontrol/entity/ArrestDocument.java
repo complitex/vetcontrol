@@ -68,7 +68,7 @@ public class ArrestDocument extends Synchronized implements IUpdated, IQuery {
     @XmlIDREF
     private UnitType unitType;
 
-    @Column(name = "count", nullable = false, precision = 2)
+    @Column(name = "count", nullable = true, precision = 2)
     private Double count;
 
     @Temporal(TemporalType.TIMESTAMP)

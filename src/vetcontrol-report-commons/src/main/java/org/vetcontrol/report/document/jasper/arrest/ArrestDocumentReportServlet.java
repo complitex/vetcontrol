@@ -4,38 +4,17 @@
  */
 package org.vetcontrol.report.document.jasper.arrest;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JRParameter;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanArrayDataSource;
-import net.sf.jasperreports.engine.export.JRTextExporter;
-import net.sf.jasperreports.engine.export.JRTextExporterParameter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.ArrestDocument;
-import org.vetcontrol.report.commons.service.LocaleService;
 import org.vetcontrol.report.document.entity.ArrestDocumentReport;
-import org.vetcontrol.report.commons.util.jasper.ExportType;
-import org.vetcontrol.report.commons.util.jasper.ExportTypeUtil;
-import org.vetcontrol.report.commons.util.jasper.TextExporterConstants;
-import org.vetcontrol.report.commons.util.servlet.ServletUtil;
+import org.vetcontrol.report.commons.web.servlet.AbstractReportServlet;
 import static org.vetcontrol.web.security.SecurityRoles.*;
 
 /**
@@ -44,72 +23,33 @@ import static org.vetcontrol.web.security.SecurityRoles.*;
  */
 @WebServlet(name = "ArrestDocumentReportServlet", urlPatterns = {"/ArrestDocumentReportServlet"})
 @RolesAllowed({DOCUMENT_CREATE, DOCUMENT_DEP_EDIT, DOCUMENT_DEP_CHILD_EDIT})
-public final class ArrestDocumentReportServlet extends HttpServlet {
+public final class ArrestDocumentReportServlet extends AbstractReportServlet {
 
-    private static final Logger log = LoggerFactory.getLogger(ArrestDocumentReportServlet.class);
     public static final String ARREST_DOCUMENT_KEY = "ARREST_DOCUMENT_KEY";
-    @EJB
-    private LocaleService localeService;
+    private static final String ARREST_REPORT_KEY = "ARREST_REPORT_KEY";
 
-    @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ServletOutputStream servletOutputStream = null;
-        try {
-            ExportType exportType = ExportTypeUtil.getExportType(request);
-            Locale reportLocale = localeService.getReportLocale();
-
-            servletOutputStream = response.getOutputStream();
-            InputStream reportStream = null;
-            Map<String, Object> params = new HashMap<String, Object>();
-            params.put(JRParameter.REPORT_LOCALE, reportLocale);
-
-            ArrestDocumentReport source = new ArrestDocumentReport(getArrestDocument(request), reportLocale);
-
-            JRDataSource dataSource = new JRBeanArrayDataSource(new ArrestDocumentReport[]{source});
-            switch (exportType) {
-                case PDF:
-                    reportStream = getClass().getResourceAsStream("pdf/arrest_document_report.jasper");
-                    response.setContentType("application/pdf");
-                    JasperRunManager.runReportToPdfStream(reportStream, servletOutputStream, params, dataSource);
-                    break;
-                case TEXT:
-                    reportStream = getClass().getResourceAsStream("text/arrest_document_report.jasper");
-                    JasperPrint jasperPrint = JasperFillManager.fillReport(reportStream, params, dataSource);
-                    JRTextExporter textExporter = new JRTextExporter();
-                    textExporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
-                    textExporter.setParameter(JRExporterParameter.OUTPUT_STREAM, servletOutputStream);
-                    textExporter.setParameter(JRTextExporterParameter.PAGE_WIDTH, TextExporterConstants.PAGE_WIDTH);
-                    textExporter.setParameter(JRTextExporterParameter.PAGE_HEIGHT, TextExporterConstants.PAGE_HEIGHT);
-                    response.setContentType("text/plain");
-                    response.setCharacterEncoding("UTF-8");
-                    textExporter.exportReport();
-                    break;
-            }
-        } catch (Throwable e) {
-            String error = ServletUtil.error(e, log);
-            response.setContentType("text/plain");
-            response.setCharacterEncoding("UTF-8");
-            try {
-                if (servletOutputStream == null) {
-                    servletOutputStream = response.getOutputStream();
-                }
-                servletOutputStream.print(error);
-            } catch (Throwable t) {
-                log.error("", t);
-            }
-        } finally {
-            if (servletOutputStream != null) {
-                servletOutputStream.flush();
-                servletOutputStream.close();
-            }
-        }
-    }
-
-    private ArrestDocument getArrestDocument(HttpServletRequest request) {
+    private ArrestDocument getArrestDocument(HttpServletRequest request) throws ServletException {
         HttpSession session = request.getSession(false);
         if (session != null) {
             return (ArrestDocument) session.getAttribute(ARREST_DOCUMENT_KEY);
         }
-        return null;
+        throw new ServletException("Session is fresh but it must contain arrest document.");
+    }
+
+    @Override
+    protected String getReportName(HttpServletRequest request) {
+        return "arrest_document_report.jasper";
+    }
+
+    @Override
+    protected void configureParameters(HttpServletRequest request, Map<String, Object> daoParams, Map<String, Object> reportParams)
+            throws ServletException {
+        daoParams.put(ARREST_REPORT_KEY, new ArrestDocumentReport(getArrestDocument(request), getReportLocale()));
+    }
+
+    @Override
+    protected JRDataSource configureJRDataSource(Map<String, Object> daoParams) {
+        ArrestDocumentReport source = (ArrestDocumentReport) daoParams.get(ARREST_REPORT_KEY);
+        return new JRBeanArrayDataSource(new ArrestDocumentReport[]{source});
     }
 }

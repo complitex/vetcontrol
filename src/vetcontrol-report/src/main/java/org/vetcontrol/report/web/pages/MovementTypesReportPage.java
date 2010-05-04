@@ -32,9 +32,10 @@ import org.vetcontrol.report.jasper.movementtypes.MovementTypesReportServlet;
 import org.vetcontrol.report.commons.service.LocaleService;
 import org.vetcontrol.report.commons.service.dao.DepartmentDAO;
 import org.vetcontrol.report.service.dao.MovementTypesReportDAO;
-import org.vetcontrol.report.commons.util.jasper.ExportType;
+import org.vetcontrol.report.commons.jasper.ExportType;
 import org.vetcontrol.report.util.movementtypes.Formatter;
 import org.vetcontrol.report.commons.web.components.PrintButton;
+import org.vetcontrol.report.service.dao.configuration.MovementTypesReportDAOConfig;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UIPreferences.PreferenceType;
 import org.vetcontrol.util.DateUtil;
@@ -90,13 +91,7 @@ public final class MovementTypesReportPage extends TemplatePage {
 
         SortableDataProvider<MovementTypesReport> dataProvider = new SortableDataProvider<MovementTypesReport>() {
 
-            private Map<String, Object> daoParams = new HashMap<String, Object>();
-
-            {
-                daoParams.put(MovementTypesReportParameter.START_DATE, startDate);
-                daoParams.put(MovementTypesReportParameter.END_DATE, endDate);
-                daoParams.put(MovementTypesReportParameter.DEPARTMENT, departmentId);
-            }
+            private Map<String, Object> daoParams = MovementTypesReportDAOConfig.configure(startDate, endDate, departmentId);
             private IModel<Integer> sizeModel = new LoadableDetachableModel<Integer>() {
 
                 @Override
@@ -110,7 +105,7 @@ public final class MovementTypesReportPage extends TemplatePage {
                 SortParam sortParam = getSort();
                 preferences.putPreference(PreferenceType.SORT_ORDER, SORT_ORDER_KEY, sortParam.isAscending());
 
-                return reportDAO.getAll(daoParams, reportLocale, first, count, null, sortParam.isAscending()).iterator();
+                return reportDAO.getAll(daoParams, first, count, null, sortParam.isAscending()).iterator();
             }
 
             @Override

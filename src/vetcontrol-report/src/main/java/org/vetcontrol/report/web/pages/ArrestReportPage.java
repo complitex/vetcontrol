@@ -34,11 +34,12 @@ import org.vetcontrol.report.entity.ArrestReportParameter;
 import org.vetcontrol.report.commons.service.LocaleService;
 import org.vetcontrol.report.commons.service.dao.DepartmentDAO;
 import org.vetcontrol.report.commons.util.DateConverter;
-import org.vetcontrol.report.commons.util.jasper.ExportType;
+import org.vetcontrol.report.commons.jasper.ExportType;
 import org.vetcontrol.report.commons.web.components.PrintButton;
 import org.vetcontrol.report.entity.ExtendedArrestReport;
 import org.vetcontrol.report.jasper.arrest.ArrestReportServlet;
 import org.vetcontrol.report.service.dao.ArrestReportDAO;
+import org.vetcontrol.report.service.dao.configuration.ArrestReportDAOConfig;
 import org.vetcontrol.report.util.arrest.ArrestReportType;
 import org.vetcontrol.report.util.arrest.ExtendedFormatter;
 import org.vetcontrol.service.UIPreferences;
@@ -104,13 +105,7 @@ public final class ArrestReportPage extends TemplatePage {
 
         SortableDataProvider<ExtendedArrestReport> dataProvider = new SortableDataProvider<ExtendedArrestReport>() {
 
-            private Map<String, Object> daoParams = new HashMap<String, Object>();
-
-            {
-                daoParams.put(ArrestReportParameter.START_DATE, startDate);
-                daoParams.put(ArrestReportParameter.END_DATE, endDate);
-                daoParams.put(ArrestReportParameter.DEPARTMENT, departmentId);
-            }
+            private Map<String, Object> daoParams = ArrestReportDAOConfig.configure(startDate, endDate, departmentId);
             private IModel<Integer> sizeModel = new LoadableDetachableModel<Integer>() {
 
                 @Override
@@ -125,7 +120,7 @@ public final class ArrestReportPage extends TemplatePage {
                 preferences.putPreference(UIPreferences.PreferenceType.SORT_ORDER, SORT_ORDER_KEY, sortParam.isAscending());
                 preferences.putPreference(UIPreferences.PreferenceType.SORT_PROPERTY, SORT_PROPERTY_KEY, sortParam.getProperty());
 
-                return reportDAO.getAll(daoParams, reportLocale, first, count, sortParam.getProperty(), sortParam.isAscending()).iterator();
+                return reportDAO.getAll(daoParams, first, count, sortParam.getProperty(), sortParam.isAscending()).iterator();
             }
 
             @Override
