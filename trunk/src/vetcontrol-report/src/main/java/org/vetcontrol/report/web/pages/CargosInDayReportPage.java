@@ -38,8 +38,9 @@ import org.vetcontrol.report.service.dao.CargosInDayReportDAO;
 import org.vetcontrol.report.commons.service.dao.DepartmentDAO;
 import org.vetcontrol.report.util.cargosinday.Formatter;
 import org.vetcontrol.report.commons.util.DateConverter;
-import org.vetcontrol.report.commons.util.jasper.ExportType;
+import org.vetcontrol.report.commons.jasper.ExportType;
 import org.vetcontrol.report.commons.web.components.PrintButton;
+import org.vetcontrol.report.service.dao.configuration.CargosInDayReportDAOConfig;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
@@ -92,13 +93,7 @@ public final class CargosInDayReportPage extends TemplatePage {
 
         SortableDataProvider<CargosInDayReport> dataProvider = new SortableDataProvider<CargosInDayReport>() {
 
-            private Map<String, Object> daoParams = new HashMap<String, Object>();
-
-            {
-                daoParams.put(CargosInDayReportParameter.START_DATE, startDate);
-                daoParams.put(CargosInDayReportParameter.END_DATE, endDate);
-                daoParams.put(CargosInDayReportParameter.DEPARTMENT, departmentId);
-            }
+            private Map<String, Object> daoParams = CargosInDayReportDAOConfig.configure(startDate, endDate, departmentId);
             private IModel<Integer> sizeModel = new LoadableDetachableModel<Integer>() {
 
                 @Override
@@ -113,7 +108,7 @@ public final class CargosInDayReportPage extends TemplatePage {
                 preferences.putPreference(UIPreferences.PreferenceType.SORT_ORDER, SORT_ORDER_KEY, sortParam.isAscending());
                 preferences.putPreference(UIPreferences.PreferenceType.SORT_PROPERTY, SORT_PROPERTY_KEY, sortParam.getProperty());
 
-                return reportDAO.getAll(daoParams, reportLocale, first, count, sortParam.getProperty(),
+                return reportDAO.getAll(daoParams, first, count, sortParam.getProperty(),
                         sortParam.isAscending()).iterator();
             }
 

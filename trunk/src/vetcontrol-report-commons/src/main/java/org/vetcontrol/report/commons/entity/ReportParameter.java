@@ -12,8 +12,6 @@ package org.vetcontrol.report.commons.entity;
 public interface ReportParameter {
 
     String REPORT_LOCALE = "locale";
-    String START_DATE = "startDate";
-    String END_DATE = "endDate";
     String DEPARTMENT = "department";
 
 }

@@ -4,12 +4,13 @@
  */
 package org.vetcontrol.report.entity;
 
+import org.vetcontrol.report.commons.entity.ReportParameter;
+
 /**
  *
  * @author Artem
  */
-public interface MeatInDayReportParameter {
+public interface MeatInDayReportParameter extends ReportParameter {
 
-    String DEPARTMENT = "department";
     String CURRENT_DATE = "currentDate";
 }

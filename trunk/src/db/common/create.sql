@@ -570,7 +570,7 @@ CREATE TABLE `arrest_document` (
     `arrest_reason_details` VARCHAR(500) DEFAULT NULL,
 
     `passing_border_point_id` bigint(20) DEFAULT NULL,
-    `count` DOUBLE (11,2) NOT NULL,
+    `count` DOUBLE (11,2) DEFAULT NULL,
     `cargo_mode_id` bigint(20) NOT NULL,
     `certificate_date` DATE NOT NULL,
     `certificate_details` VARCHAR(255) NOT NULL,
@@ -582,7 +582,7 @@ CREATE TABLE `arrest_document` (
     `cargo_receiver_address` VARCHAR(100) NOT NULL,
 
     `cargo_type_id` bigint(20) NOT NULL,
-    `unit_type_id` bigint(20) NOT NULL,
+    `unit_type_id` bigint(20) DEFAULT NULL,
 
     `vehicle_type` VARCHAR(10) NOT NULL,
     `vehicle_details` VARCHAR(255) NOT NULL,

@@ -24,11 +24,12 @@ import org.apache.wicket.model.StringResourceModel;
 import org.vetcontrol.report.commons.service.LocaleService;
 import org.vetcontrol.report.commons.service.dao.DepartmentDAO;
 import org.vetcontrol.report.commons.util.DateConverter;
-import org.vetcontrol.report.commons.util.jasper.ExportType;
+import org.vetcontrol.report.commons.jasper.ExportType;
 import org.vetcontrol.report.commons.web.components.PrintButton;
 import org.vetcontrol.report.entity.MeatInDayReport;
 import org.vetcontrol.report.entity.MeatInDayReportParameter;
 import org.vetcontrol.report.service.dao.MeatInDayReportDAO;
+import org.vetcontrol.report.service.dao.configuration.MeatInDayReportDAOConfig;
 import org.vetcontrol.report.util.meatinday.Formatter;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.web.component.toolbar.ToolbarButton;
@@ -76,10 +77,8 @@ public final class MeatInDayReportPage extends TemplatePage {
         add(new Label("report.header.currentDate", new StringResourceModel("report.header.currentDate", null,
                 new Object[]{Formatter.formatCurrentDate(day, reportLocale)})));
 
-        Map<String, Object> daoParams = new HashMap<String, Object>();
-        daoParams.put(MeatInDayReportParameter.CURRENT_DATE, day);
-        daoParams.put(MeatInDayReportParameter.DEPARTMENT, departmentId);
-        ListView<MeatInDayReport> list = new ListView<MeatInDayReport>("list", reportDAO.getAll(daoParams, reportLocale)) {
+        Map<String, Object> daoParams = MeatInDayReportDAOConfig.configure(day, departmentId);
+        ListView<MeatInDayReport> list = new ListView<MeatInDayReport>("list", reportDAO.getAll(daoParams)) {
 
             @Override
             protected void populateItem(ListItem<MeatInDayReport> item) {

@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.protocol.http.WebRequestCycle;
-import org.vetcontrol.report.commons.util.jasper.ExportType;
+import org.vetcontrol.report.commons.jasper.ExportType;
 import org.vetcontrol.report.commons.web.components.PrintButton;
 import org.vetcontrol.report.document.jasper.arrest.ArrestDocumentReportServlet;
 import org.vetcontrol.service.dao.IBookViewDAO;
