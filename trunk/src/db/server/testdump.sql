@@ -49,11 +49,6 @@ INSERT INTO `customs_point`(`id`, `name`) VALUES(6, 10078), (7, 10079);
 
 UPDATE `department` d SET d.`custom_point_id` = 6 WHERE d.`id` = 2;
 
-INSERT INTO `container_validator`(`id`, `prefix`, `carrier_abbr`, `carrier_name`) VALUES
-    (1, 'AAAU', NULL, 'Asia Container Leasing'),
-    (2, 'ACLU', 'ACL', 'Atlantic Container Line'),
-    (3, 'ACXU', 'Atlantic Cargo', 'Atlantic Cargo');
-
 INSERT INTO `arrest_reason`(`id`, `name`) VALUES (1,10080), (2,10081), (3,10082), (4,10083);
 
 INSERT INTO `document_cargo`(`id`, `client_id`, `department_id`, `creator_id`, `cargo_mode_id`, `created`, `updated`, `movement_type`,
