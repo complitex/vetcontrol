@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.vetcontrol.report.commons.service.LocaleService;
 import org.vetcontrol.report.commons.jasper.ExportType;
 import org.vetcontrol.report.commons.jasper.TextExporterConstants;
+import org.vetcontrol.report.commons.service.dao.DepartmentDAO;
 
 /**
  *
@@ -39,13 +40,15 @@ public abstract class AbstractReportServlet extends HttpServlet {
 
     @EJB
     private LocaleService localeService;
+    @EJB
+    private DepartmentDAO departmentDAO;
     private Locale reportLocale;
     protected static final String PDF_DIRECTORY = "pdf";
     protected static final String TEXT_DIRECTORY = "text";
+    protected static final String JASPER_FILE_EXTENSION = ".jasper";
     protected static final String SEPARATOR = "/";
     private static final Logger log = LoggerFactory.getLogger(AbstractReportServlet.class);
-    private static final String ERROR_RESOURCE_BUNDLE_NAME = AbstractReportServlet.class.getPackage().getName() + ".servlet_errors";
-    private static final ResourceBundle ERROR_RESOURCE_BUNDLE = ResourceBundle.getBundle(ERROR_RESOURCE_BUNDLE_NAME);
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(AbstractReportServlet.class.getName());
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -117,7 +120,7 @@ public abstract class AbstractReportServlet extends HttpServlet {
     }
 
     protected InputStream getReportStream(HttpServletRequest request, String formatDirectory) throws ServletException {
-        String resourceName = getReportTemplatePath() + formatDirectory + SEPARATOR + getReportName(request);
+        String resourceName = getReportTemplatePath() + formatDirectory + SEPARATOR + getReportName(request) + JASPER_FILE_EXTENSION;
         return Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceName);
     }
 
@@ -152,10 +155,18 @@ public abstract class AbstractReportServlet extends HttpServlet {
     }
 
     protected String getString(String key) {
-        return ERROR_RESOURCE_BUNDLE.getString(key);
+        return RESOURCE_BUNDLE.getString(key);
     }
 
     protected String error(Throwable e) {
         return getString("error");
+    }
+
+    protected DepartmentDAO getDepartmentDAO() {
+        return departmentDAO;
+    }
+
+    protected String getDepartmentName(Long departmentId, Locale locale) {
+        return departmentDAO.getDepartmentName(departmentId, locale);
     }
 }

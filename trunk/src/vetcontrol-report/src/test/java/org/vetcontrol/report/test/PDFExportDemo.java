@@ -32,7 +32,7 @@ public class PDFExportDemo {
 
             System.out.println("Filling report...");
             JasperRunManager.runReportToPdfFile(
-                    "target/classes/org/vetcontrol/report/jasper/meatinday/pdf/meat_in_day_report.jasper",
+                    "target/classes/org/vetcontrol/report/jasper/meatinyear/pdf/meat_in_year_report.jasper",
                     "report.pdf",
                     parameterMap, new JREmptyDataSource());
             System.out.println("Done!");

@@ -37,7 +37,7 @@ public class TextExportDemo {
 
             System.out.println("Filling report...");
             JasperPrint jasperPrint = JasperFillManager.fillReport(
-                    "target/classes/org/vetcontrol/report/jasper/meatinday/text/meat_in_day_report.jasper",
+                    "target/classes/org/vetcontrol/report/jasper/meatinyear/text/meat_in_year_report.jasper",
                     parameterMap, new JREmptyDataSource());
 
             JRTextExporter textExporter = new JRTextExporter();

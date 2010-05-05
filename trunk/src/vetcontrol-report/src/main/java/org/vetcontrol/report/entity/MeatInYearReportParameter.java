@@ -10,11 +10,8 @@ import org.vetcontrol.report.commons.entity.ReportParameter;
  *
  * @author Artem
  */
-public interface MovementTypesReportParameter extends ReportParameter {
+public interface MeatInYearReportParameter extends ReportParameter {
 
     String START_DATE = "startDate";
     String END_DATE = "endDate";
-    
-    String MONTH = "month";
-    String YEAR = "year";
 }

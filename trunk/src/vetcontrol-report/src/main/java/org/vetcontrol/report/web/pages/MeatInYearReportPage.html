@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:wicket="http://wicket.apache.org">
+    <head>
+       <wicket:head><title wicket:id="title"></title></wicket:head>
+    </head>
+    <body>
+        <wicket:extend>
+            <center>
+                <h1>
+                    <span wicket:id="report.name"></span>
+                </h1>
+            </center>
+            <table class="tbColor" border="0" cellpadding="0" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th rowspan="2" valign="top" class="center">
+                            <wicket:message key="report.header.cargoMode"/>
+                        </th>
+                        <th colspan="12" valign="top" class="center">
+                            <wicket:message key="report.header.months"/>
+                        </th>
+                        <th rowspan="2" valign="top" class="center">
+                            <span wicket:id="report.header.currentDate"></span>
+                        </th>
+                       <th rowspan="2" valign="top" class="center">
+                            <wicket:message key="report.header.total"/>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th valign="top" class="center">
+                            <wicket:message key="report.header.january"/>
+                        </th>
+                        <th valign="top" class="center">
+                            <wicket:message key="report.header.february"/>
+                        </th>
+                        <th valign="top" class="center">
+                            <wicket:message key="report.header.march"/>
+                        </th>
+                        <th valign="top" class="center">
+                            <wicket:message key="report.header.april"/>
+                        </th>
+                        <th valign="top" class="center">
+                           <wicket:message key="report.header.may"/>
+                        </th>
+                        <th valign="top" class="center">
+                           <wicket:message key="report.header.june"/>
+                        </th>
+                        <th valign="top" class="center">
+                            <wicket:message key="report.header.july"/>
+                        </th>
+                        <th valign="top" class="center">
+                            <wicket:message key="report.header.august"/>
+                        </th>
+                        <th valign="top" class="center">
+                            <wicket:message key="report.header.september"/>
+                        </th>
+                        <th valign="top" class="center">
+                            <wicket:message key="report.header.october"/>
+                        </th>
+                        <th valign="top" class="center">
+                            <wicket:message key="report.header.november"/>
+                        </th>
+                        <th valign="top" class="center">
+                            <wicket:message key="report.header.december"/>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr wicket:id="list">
+                        <td class="center">
+                            <span wicket:id="cargoMode"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="january"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="february"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="march"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="april"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="may"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="june"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="july"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="august"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="september"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="october"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="november"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="december"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="currentDate"></span>
+                        </td>
+                        <td class="center">
+                            <span wicket:id="total"></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div>
+                <br/>
+                <div>
+                    <wicket:link>
+                        <a href="MeatInYearReportForm.html">
+                            <wicket:message key="report.backToSetParams"/>
+                        </a>
+                    </wicket:link>
+                </div>
+                <div>
+                    <form id="pdfForm" target="_blank" method="post" action="MeatInYearReportServlet">
+                        <input type="hidden" value="pdf" name="ExportType"/>
+                        <input wicket:id="pdfStartDate" type="hidden"/>
+                        <input wicket:id="pdfEndDate" type="hidden"/>
+                    </form>
+                </div>
+                <div>
+                    <form id="textForm" target="_blank" method="post" action="MeatInYearReportServlet">
+                        <input type="hidden" value="text" name="ExportType"/>
+                        <input wicket:id="textStartDate" type="hidden"/>
+                        <input wicket:id="textEndDate" type="hidden"/>
+                    </form>
+                </div>
+            </div>
+        </wicket:extend>
+    </body>
+</html>
