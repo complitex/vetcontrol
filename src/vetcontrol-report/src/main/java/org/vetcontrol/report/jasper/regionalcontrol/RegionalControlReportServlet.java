@@ -10,11 +10,10 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
-import org.vetcontrol.report.commons.service.dao.AbstractReportDAO;
-import org.vetcontrol.report.commons.service.dao.DepartmentDAO;
 import org.vetcontrol.report.service.dao.RegionalControlReportDAO;
 import org.vetcontrol.report.commons.util.DateConverter;
 import org.vetcontrol.report.commons.web.servlet.DefaultReportServlet;
+import org.vetcontrol.report.entity.RegionalControlReportParameter;
 import org.vetcontrol.report.service.dao.configuration.RegionalControlReportDAOConfig;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.util.DateUtil;
@@ -28,21 +27,14 @@ import org.vetcontrol.web.security.SecurityRoles;
 @RolesAllowed({SecurityRoles.REGIONAL_REPORT})
 public final class RegionalControlReportServlet extends DefaultReportServlet {
 
-    public static final String START_DATE_KEY = "startDate";
-    public static final String END_DATE_KEY = "endDate";
-    private static final String DEPARTMENT_KEY = "department";
-    @EJB
-    private RegionalControlReportDAO reportDAO;
     @EJB
     private DateConverter dateConverter;
     @EJB
     private UserProfileBean userProfileBean;
-    @EJB
-    private DepartmentDAO departmentDAO;
 
     @Override
-    protected AbstractReportDAO<?> getReportDAO() {
-        return reportDAO;
+    protected String getReportDAOName() {
+        return "RegionalControlReportDAO";
     }
 
     @Override
@@ -57,7 +49,7 @@ public final class RegionalControlReportServlet extends DefaultReportServlet {
 
     @Override
     protected String getReportName(HttpServletRequest request) {
-        return "regional_control_report.jasper";
+        return "regional_control_report";
     }
 
     @Override
@@ -67,20 +59,20 @@ public final class RegionalControlReportServlet extends DefaultReportServlet {
         Date startDate = DateUtil.getBeginOfDay(start);
         Date endDate = DateUtil.getEndOfDay(end);
         Long departmentId = userProfileBean.getCurrentUser().getDepartment().getId();
-        String departmentName = departmentDAO.getDepartmentName(departmentId, getReportLocale());
+        String departmentName = getDepartmentName(departmentId, getReportLocale());
 
-        reportParams.put(START_DATE_KEY, startDate);
-        reportParams.put(END_DATE_KEY, endDate);
-        reportParams.put(DEPARTMENT_KEY, departmentName);
+        reportParams.put(RegionalControlReportParameter.START_DATE, startDate);
+        reportParams.put(RegionalControlReportParameter.END_DATE, endDate);
+        reportParams.put(RegionalControlReportParameter.DEPARTMENT, departmentName);
 
         daoParams.putAll(RegionalControlReportDAOConfig.configure(startDate, endDate, departmentId));
     }
 
     private Date getStart(HttpServletRequest request) {
-        return dateConverter.toDate(request.getParameter(START_DATE_KEY).trim());
+        return dateConverter.toDate(request.getParameter(RegionalControlReportParameter.START_DATE).trim());
     }
 
     private Date getEnd(HttpServletRequest request) {
-        return dateConverter.toDate(request.getParameter(END_DATE_KEY).trim());
+        return dateConverter.toDate(request.getParameter(RegionalControlReportParameter.END_DATE).trim());
     }
 }

@@ -6,7 +6,6 @@ package org.vetcontrol.report.web.pages;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -31,7 +30,6 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.vetcontrol.report.entity.RegionalControlReport;
 import org.vetcontrol.report.entity.RegionalControlReportParameter;
-import org.vetcontrol.report.jasper.regionalcontrol.RegionalControlReportServlet;
 import org.vetcontrol.report.commons.service.LocaleService;
 import org.vetcontrol.report.commons.service.dao.DepartmentDAO;
 import org.vetcontrol.report.service.dao.RegionalControlReportDAO;
@@ -160,8 +158,8 @@ public final class RegionalControlReportPage extends TemplatePage {
         add(list);
         add(new PagingNavigator("navigator", list, "itemsPerPage", preferences, PAGE_NUMBER_KEY));
 
-        IBehavior startDateAttribute = new SimpleAttributeModifier("name", RegionalControlReportServlet.START_DATE_KEY);
-        IBehavior endDateAttribute = new SimpleAttributeModifier("name", RegionalControlReportServlet.END_DATE_KEY);
+        IBehavior startDateAttribute = new SimpleAttributeModifier("name", RegionalControlReportParameter.START_DATE);
+        IBehavior endDateAttribute = new SimpleAttributeModifier("name", RegionalControlReportParameter.END_DATE);
 
         //pdf parameters
         HiddenField<String> pdfStartDate = new HiddenField<String>("pdfStartDate", new Model<String>(dateConverter.toString(start)));

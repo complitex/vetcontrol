@@ -144,6 +144,28 @@ public class ReportMenu extends ResourceTemplateMenu {
                     return "meat_in_day_report";
                 }
             });
+            links.add(new ITemplateLink() {
+
+                @Override
+                public String getLabel(Locale locale) {
+                    return getString(ReportMenu.class, locale, "meat_in_year_report");
+                }
+
+                @Override
+                public Class<? extends Page> getPage() {
+                    return MeatInYearReportForm.class;
+                }
+
+                @Override
+                public PageParameters getParameters() {
+                    return PageParameters.NULL;
+                }
+
+                @Override
+                public String getTagId() {
+                    return "meat_in_year_report";
+                }
+            });
         }
 
         return links;

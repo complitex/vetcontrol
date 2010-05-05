@@ -38,7 +38,7 @@ public final class ArrestDocumentReportServlet extends AbstractReportServlet {
 
     @Override
     protected String getReportName(HttpServletRequest request) {
-        return "arrest_document_report.jasper";
+        return "arrest_document_report";
     }
 
     @Override

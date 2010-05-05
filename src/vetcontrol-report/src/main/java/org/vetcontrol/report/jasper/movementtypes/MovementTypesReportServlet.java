@@ -7,13 +7,10 @@ package org.vetcontrol.report.jasper.movementtypes;
 import java.util.Date;
 import java.util.Map;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
-import org.vetcontrol.report.commons.service.dao.AbstractReportDAO;
-import org.vetcontrol.report.commons.service.dao.DepartmentDAO;
-import org.vetcontrol.report.service.dao.MovementTypesReportDAO;
 import org.vetcontrol.report.commons.web.servlet.DefaultReportServlet;
+import org.vetcontrol.report.entity.MovementTypesReportParameter;
 import org.vetcontrol.report.service.dao.configuration.MovementTypesReportDAOConfig;
 import org.vetcontrol.util.DateUtil;
 import org.vetcontrol.web.security.SecurityRoles;
@@ -26,18 +23,9 @@ import org.vetcontrol.web.security.SecurityRoles;
 @RolesAllowed({SecurityRoles.LOCAL_AND_REGIONAL_REPORT})
 public final class MovementTypesReportServlet extends DefaultReportServlet {
 
-    public static final String MONTH_KEY = "month";
-    public static final String DEPARTMENT_KEY = "department";
-    private static final String END_DATE_KEY = "endDate";
-    private static final String YEAR_KEY = "year";
-    @EJB
-    private MovementTypesReportDAO reportDAO;
-    @EJB
-    private DepartmentDAO departmentDAO;
-
     @Override
-    protected AbstractReportDAO<?> getReportDAO() {
-        return reportDAO;
+    protected String getReportDAOName() {
+        return "MovementTypesReportDAO";
     }
 
     @Override
@@ -52,7 +40,7 @@ public final class MovementTypesReportServlet extends DefaultReportServlet {
 
     @Override
     protected String getReportName(HttpServletRequest request) {
-        return "movement_types_report.jasper";
+        return "movement_types_report";
     }
 
     @Override
@@ -63,21 +51,21 @@ public final class MovementTypesReportServlet extends DefaultReportServlet {
         Date endDate = DateUtil.getLastDateOfMonth(month);
         String monthAsString = DateUtil.getDisplayMonth(month, getReportLocale()).toLowerCase();
         String year = String.valueOf(DateUtil.getCurrentYear());
-        String departmentName = departmentDAO.getDepartmentName(departmentId, getReportLocale());
+        String departmentName = getDepartmentName(departmentId, getReportLocale());
 
-        reportParams.put(END_DATE_KEY, endDate);
-        reportParams.put(MONTH_KEY, monthAsString);
-        reportParams.put(YEAR_KEY, year);
-        reportParams.put(DEPARTMENT_KEY, departmentName);
+        reportParams.put(MovementTypesReportParameter.END_DATE, endDate);
+        reportParams.put(MovementTypesReportParameter.MONTH, monthAsString);
+        reportParams.put(MovementTypesReportParameter.YEAR, year);
+        reportParams.put(MovementTypesReportParameter.DEPARTMENT, departmentName);
 
         daoParams.putAll(MovementTypesReportDAOConfig.configure(startDate, endDate, departmentId));
     }
 
     private int getMonth(HttpServletRequest request) {
-        return Integer.valueOf(request.getParameter(MONTH_KEY).trim());
+        return Integer.valueOf(request.getParameter(MovementTypesReportParameter.MONTH).trim());
     }
 
     private Long getDepartment(HttpServletRequest request) {
-        return Long.valueOf(request.getParameter(DEPARTMENT_KEY).trim());
+        return Long.valueOf(request.getParameter(MovementTypesReportParameter.DEPARTMENT).trim());
     }
 }

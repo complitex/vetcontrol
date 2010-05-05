@@ -13,7 +13,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import org.vetcontrol.report.commons.service.dao.DepartmentDAO;
 import org.vetcontrol.report.commons.util.DateConverter;
 import org.vetcontrol.report.commons.web.servlet.AbstractReportServlet;
 import org.vetcontrol.report.entity.MeatInDayReport;
@@ -37,19 +36,17 @@ public final class MeatInDayReportServlet extends AbstractReportServlet {
     private DateConverter dateConverter;
     @EJB
     private UserProfileBean userProfileBean;
-    @EJB
-    private DepartmentDAO departmentDAO;
 
     @Override
     protected String getReportName(HttpServletRequest request) {
-        return "meat_in_day_report.jasper";
+        return "meat_in_day_report";
     }
 
     @Override
     protected void configureParameters(HttpServletRequest request, Map<String, Object> daoParams, Map<String, Object> reportParams) {
         Date currentDate = getCurrentDate(request);
         Long departmentId = userProfileBean.getCurrentUser().getDepartment().getId();
-        String departmentName = departmentDAO.getDepartmentName(departmentId, getReportLocale());
+        String departmentName = getDepartmentName(departmentId, getReportLocale());
 
         reportParams.put(MeatInDayReportParameter.CURRENT_DATE, currentDate);
         reportParams.put(MeatInDayReportParameter.DEPARTMENT, departmentName);

@@ -10,10 +10,9 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
-import org.vetcontrol.report.commons.service.dao.AbstractReportDAO;
-import org.vetcontrol.report.commons.service.dao.DepartmentDAO;
 import org.vetcontrol.report.commons.util.DateConverter;
 import org.vetcontrol.report.commons.web.servlet.DefaultReportServlet;
+import org.vetcontrol.report.entity.ArrestReportParameter;
 import org.vetcontrol.report.service.dao.ArrestReportDAO;
 import org.vetcontrol.report.service.dao.configuration.ArrestReportDAOConfig;
 import org.vetcontrol.report.util.arrest.ArrestReportType;
@@ -29,24 +28,16 @@ import org.vetcontrol.web.security.SecurityRoles;
 @RolesAllowed({SecurityRoles.REGIONAL_REPORT})
 public final class ArrestReportServlet extends DefaultReportServlet {
 
-    public static final String START_DATE_KEY = "startDate";
-    public static final String END_DATE_KEY = "endDate";
-    public static final String REPORT_TYPE = "reportType";
-    private static final String DEPARTMENT_KEY = "department";
-    @EJB
-    private ArrestReportDAO reportDAO;
     @EJB
     private DateConverter dateConverter;
     @EJB
     private UserProfileBean userProfileBean;
-    @EJB
-    private DepartmentDAO departmentDAO;
-    private static final String SIMPLE_REPORT_NAME = "arrest_report.jasper";
-    private static final String EXTENDED_REPORT_NAME = "extended_arrest_report.jasper";
+    private static final String SIMPLE_REPORT_NAME = "arrest_report";
+    private static final String EXTENDED_REPORT_NAME = "extended_arrest_report";
 
     @Override
-    protected AbstractReportDAO<?> getReportDAO() {
-        return reportDAO;
+    protected String getReportDAOName() {
+        return "ArrestReportDAO";
     }
 
     @Override
@@ -77,24 +68,24 @@ public final class ArrestReportServlet extends DefaultReportServlet {
         Date startDate = DateUtil.getBeginOfDay(start);
         Date endDate = DateUtil.getEndOfDay(end);
         Long departmentId = userProfileBean.getCurrentUser().getDepartment().getId();
-        String departmentName = departmentDAO.getDepartmentName(departmentId, getReportLocale());
+        String departmentName = getDepartmentName(departmentId, getReportLocale());
 
-        reportParams.put(START_DATE_KEY, startDate);
-        reportParams.put(END_DATE_KEY, endDate);
-        reportParams.put(DEPARTMENT_KEY, departmentName);
+        reportParams.put(ArrestReportParameter.START_DATE, startDate);
+        reportParams.put(ArrestReportParameter.END_DATE, endDate);
+        reportParams.put(ArrestReportParameter.DEPARTMENT, departmentName);
 
         daoParams.putAll(ArrestReportDAOConfig.configure(startDate, endDate, departmentId));
     }
 
     private Date getStart(HttpServletRequest request) {
-        return dateConverter.toDate(request.getParameter(START_DATE_KEY).trim());
+        return dateConverter.toDate(request.getParameter(ArrestReportParameter.START_DATE).trim());
     }
 
     private Date getEnd(HttpServletRequest request) {
-        return dateConverter.toDate(request.getParameter(END_DATE_KEY).trim());
+        return dateConverter.toDate(request.getParameter(ArrestReportParameter.END_DATE).trim());
     }
 
     private ArrestReportType getReportType(HttpServletRequest request) {
-        return ArrestReportType.valueOf(request.getParameter(REPORT_TYPE).trim());
+        return ArrestReportType.valueOf(request.getParameter(ArrestReportParameter.REPORT_TYPE).trim());
     }
 }

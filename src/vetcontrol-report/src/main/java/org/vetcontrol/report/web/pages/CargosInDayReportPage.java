@@ -6,7 +6,6 @@ package org.vetcontrol.report.web.pages;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -32,7 +31,6 @@ import org.apache.wicket.model.StringResourceModel;
 import org.vetcontrol.entity.VehicleType;
 import org.vetcontrol.report.entity.CargosInDayReport;
 import org.vetcontrol.report.entity.CargosInDayReportParameter;
-import org.vetcontrol.report.jasper.cargosinday.CargosInDayReportServlet;
 import org.vetcontrol.report.commons.service.LocaleService;
 import org.vetcontrol.report.service.dao.CargosInDayReportDAO;
 import org.vetcontrol.report.commons.service.dao.DepartmentDAO;
@@ -159,8 +157,8 @@ public final class CargosInDayReportPage extends TemplatePage {
         add(list);
         add(new PagingNavigator("navigator", list, "itemsPerPage", preferences, PAGE_NUMBER_KEY));
 
-        IBehavior dayAttribute = new SimpleAttributeModifier("name", CargosInDayReportServlet.DAY_KEY);
-        IBehavior departmentAttribute = new SimpleAttributeModifier("name", CargosInDayReportServlet.DEPARTMENT_KEY);
+        IBehavior dayAttribute = new SimpleAttributeModifier("name", CargosInDayReportParameter.DAY);
+        IBehavior departmentAttribute = new SimpleAttributeModifier("name", CargosInDayReportParameter.DEPARTMENT);
 
         //pdf parameters
         HiddenField<String> pdfDay = new HiddenField<String>("pdfDay", new Model<String>(dateConverter.toString(day)));

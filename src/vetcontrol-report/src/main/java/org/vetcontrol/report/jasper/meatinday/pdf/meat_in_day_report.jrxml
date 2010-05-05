@@ -4,7 +4,7 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="java.text.MessageFormat"/>
-	<import value="org.vetcontrol.report.util.meatinday.Formatter"/>
+	<import value="org.vetcontrol.report.util.meat.Formatter"/>
 	<style name="base" isDefault="true" hAlign="Center" vAlign="Top" fontName="DejaVuSerif" fontSize="7">
 		<box>
 			<pen lineWidth="0.5" lineStyle="Solid"/>
@@ -95,8 +95,7 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="223" height="18"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[/*MessageFormat.format(str(($F{rootCargoMode} ||$F{totalEntry}) ? "report.body.rootCargoModeOrTotal" : "report.body.subCargoMode"),
-                    Formatter.formatCargoMode($F{cargoModeName}, $F{totalEntry}, $F{rootCargoMode}, $F{firstSubCargoMode}))*/
+				<textFieldExpression class="java.lang.String"><![CDATA[
                     Formatter.formatCargoMode($F{cargoModeName}, $F{totalEntry}, $F{rootCargoMode}, $F{firstSubCargoMode})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">

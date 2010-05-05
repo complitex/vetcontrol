@@ -30,7 +30,7 @@ import org.vetcontrol.report.entity.MeatInDayReport;
 import org.vetcontrol.report.entity.MeatInDayReportParameter;
 import org.vetcontrol.report.service.dao.MeatInDayReportDAO;
 import org.vetcontrol.report.service.dao.configuration.MeatInDayReportDAOConfig;
-import org.vetcontrol.report.util.meatinday.Formatter;
+import org.vetcontrol.report.util.meat.Formatter;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.web.component.toolbar.ToolbarButton;
 import org.vetcontrol.web.security.SecurityRoles;
@@ -85,7 +85,7 @@ public final class MeatInDayReportPage extends TemplatePage {
                 MeatInDayReport report = item.getModelObject();
 
                 if (report.isRootCargoMode() || report.isTotalEntry()) {
-                    item.add(new SimpleAttributeModifier("class", "meatInDayBold"));
+                    item.add(new SimpleAttributeModifier("class", "meatBold"));
                 }
 
                 item.add(new Label("cargoMode", Formatter.formatCargoMode(report.getCargoModeName(), report.isTotalEntry(),

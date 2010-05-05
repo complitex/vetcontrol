@@ -6,7 +6,6 @@ package org.vetcontrol.report.web.pages;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -37,7 +36,6 @@ import org.vetcontrol.report.commons.util.DateConverter;
 import org.vetcontrol.report.commons.jasper.ExportType;
 import org.vetcontrol.report.commons.web.components.PrintButton;
 import org.vetcontrol.report.entity.ExtendedArrestReport;
-import org.vetcontrol.report.jasper.arrest.ArrestReportServlet;
 import org.vetcontrol.report.service.dao.ArrestReportDAO;
 import org.vetcontrol.report.service.dao.configuration.ArrestReportDAOConfig;
 import org.vetcontrol.report.util.arrest.ArrestReportType;
@@ -188,9 +186,9 @@ public final class ArrestReportPage extends TemplatePage {
         add(list);
         add(new PagingNavigator("navigator", list, "itemsPerPage", preferences, PAGE_NUMBER_KEY));
 
-        IBehavior startDateAttribute = new SimpleAttributeModifier("name", ArrestReportServlet.START_DATE_KEY);
-        IBehavior endDateAttribute = new SimpleAttributeModifier("name", ArrestReportServlet.END_DATE_KEY);
-        IBehavior arrestReportTypeAttribute = new SimpleAttributeModifier("name", ArrestReportServlet.REPORT_TYPE);
+        IBehavior startDateAttribute = new SimpleAttributeModifier("name", ArrestReportParameter.START_DATE);
+        IBehavior endDateAttribute = new SimpleAttributeModifier("name", ArrestReportParameter.END_DATE);
+        IBehavior arrestReportTypeAttribute = new SimpleAttributeModifier("name", ArrestReportParameter.REPORT_TYPE);
 
         //pdf parameters
         HiddenField<String> pdfStartDate = new HiddenField<String>("pdfStartDate", new Model<String>(dateConverter.toString(start)));

@@ -14,4 +14,6 @@ public interface CargosInDayReportParameter extends ReportParameter {
 
     String START_DATE = "startDate";
     String END_DATE = "endDate";
+
+    String DAY = "day";
 }

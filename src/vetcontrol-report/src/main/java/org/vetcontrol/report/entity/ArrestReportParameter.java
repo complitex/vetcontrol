@@ -14,4 +14,6 @@ public interface ArrestReportParameter extends ReportParameter {
 
     String START_DATE = "startDate";
     String END_DATE = "endDate";
+    
+    String REPORT_TYPE = "reportType";
 }
