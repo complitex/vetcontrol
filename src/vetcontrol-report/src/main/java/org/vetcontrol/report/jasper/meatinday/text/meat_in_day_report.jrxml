@@ -31,11 +31,16 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="25" splitType="Stretch">
+		<band height="29" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Title" x="11" y="0" width="532" height="23"/>
+				<reportElement style="Title" x="11" y="0" width="532" height="19"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{report.name}, $P{department}, Formatter.formatReportTitleDate($P{currentDate}, $P{REPORT_LOCALE}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header" x="0" y="19" width="555" height="1"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA["______________________________________________________________________________________________________________________________________"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -111,8 +116,7 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="223" height="18"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[
-                    Formatter.formatCargoMode($F{cargoModeName}, $F{totalEntry}, $F{rootCargoMode}, $F{firstSubCargoMode})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.formatCargoMode($F{cargoModeName}, $F{totalEntry}, $F{rootCargoMode}, $F{firstSubCargoMode})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="223" y="0" width="91" height="18"/>
