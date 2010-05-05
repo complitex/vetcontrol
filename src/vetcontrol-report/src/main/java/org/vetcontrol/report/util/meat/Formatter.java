@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.vetcontrol.report.util.meatinday;
+package org.vetcontrol.report.util.meat;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
