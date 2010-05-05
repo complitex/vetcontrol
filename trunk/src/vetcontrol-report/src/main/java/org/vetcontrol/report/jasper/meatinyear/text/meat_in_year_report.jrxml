@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="meat_in_year" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="org/vetcontrol/report/web/pages/MeatInYearReportPage">
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="1.9487171000000019"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="java.text.MessageFormat"/>
@@ -46,11 +46,16 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="25" splitType="Stretch">
+		<band height="23" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Title" x="11" y="0" width="532" height="23"/>
+				<reportElement style="Title" x="11" y="0" width="532" height="19"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[MessageFormat.format($R{report.name}, $P{department}, Formatter.formatReportTitleDate($P{startDate}, $P{REPORT_LOCALE}), Formatter.formatReportTitleDate($P{endDate}, $P{REPORT_LOCALE}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Header" x="0" y="18" width="555" height="1"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA["_______________________________________________________________________________________________________________________________________"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
