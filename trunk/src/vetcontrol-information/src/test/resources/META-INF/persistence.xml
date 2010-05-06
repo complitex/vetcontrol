@@ -19,6 +19,10 @@
         <class>org.vetcontrol.entity.CustomsPoint</class>
         <class>org.vetcontrol.entity.UserGroup</class>
         <class>org.vetcontrol.entity.Job</class>
+        <class>org.vetcontrol.entity.DocumentCargo</class>
+        <class>org.vetcontrol.entity.Cargo</class>
+        <class>org.vetcontrol.entity.Vehicle</class>
+        <class>org.vetcontrol.entity.Client</class>
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
