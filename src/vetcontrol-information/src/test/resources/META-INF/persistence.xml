@@ -9,6 +9,9 @@
         <class>org.vetcontrol.entity.CargoProducer</class>
         <class>org.vetcontrol.entity.StringCulture</class>
         <class>org.vetcontrol.entity.CargoType</class>
+        <class>org.vetcontrol.entity.CargoMode</class>
+        <class>org.vetcontrol.entity.CargoModeCargoType</class>
+        <class>org.vetcontrol.entity.CargoModeUnitType</class>
         <class>org.vetcontrol.entity.UnitType</class>
         <class>org.vetcontrol.entity.User</class>
         <class>org.vetcontrol.entity.Department</class>

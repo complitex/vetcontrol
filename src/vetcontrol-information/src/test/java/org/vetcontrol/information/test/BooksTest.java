@@ -8,6 +8,7 @@ import com.mysql.jdbc.ConnectionImpl;
 import com.mysql.jdbc.Driver;
 import com.mysql.jdbc.JDBC4Connection;
 import com.mysql.jdbc.JDBC4PreparedStatement;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,7 +30,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import org.hibernate.EntityMode;
+import org.hibernate.engine.SessionImplementor;
+import org.hibernate.impl.SessionImpl;
 import org.hibernate.jdbc.Work;
+import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.persister.entity.AbstractEntityPersister;
+import org.hibernate.persister.entity.EntityPersister;
 import org.junit.Test;
 import org.vetcontrol.util.book.entity.ShowBooksMode;
 
@@ -301,7 +308,7 @@ public class BooksTest {
                 + "ORDER BY (SELECT sc.value FROM stringculture sc WHERE sc.locale='ru' AND sc.id = c.name) ASC";
         CountryBook c = (CountryBook) session.createSQLQuery(query).addEntity("c", CountryBook.class).setMaxResults(1).uniqueResult();
         System.out.println("c.id = " + c.getId());
-        Long count = (Long)session.createSQLQuery(countQ).addEntity("e", UnitType.class).uniqueResult();
+        Long count = (Long) session.createSQLQuery(countQ).addEntity("e", UnitType.class).uniqueResult();
         System.out.println("count = " + count);
 
         transaction.commit();
@@ -407,6 +414,91 @@ public class BooksTest {
         entityManager.close();
 
     }
+
+//    @Test
+    public void generateInsertTest() {
+        EntityManager entityManager = managerFactory.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+
+        CountryBook book = new CountryBook("AA");
+        book.setId(100L);
+        book.setName(1L);
+
+        Session session = HibernateSessionTransformer.getSession(entityManager);
+        SessionImplementor sessionImplementor = (SessionImplementor) session;
+        String entityName = session.getSessionFactory().getClassMetadata(CountryBook.class).getEntityName();
+        EntityPersister persister = (EntityPersister) sessionImplementor.getEntityPersister(entityName, book);
+        persister.insert(persister.getIdentifier(book, EntityMode.POJO), persister.getPropertyValues(book, EntityMode.POJO), book, sessionImplementor);
+        sessionImplementor.getBatcher().executeBatch();
+
+        transaction.commit();
+        entityManager.close();
+
+    }
+
+//    @Test
+    public void updateTest() {
+        EntityManager entityManager = managerFactory.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+
+        CountryBook book = new CountryBook("AA");
+        book.setId(100L);
+        book.setName(2L);
+
+        Session session = HibernateSessionTransformer.getSession(entityManager);
+        SessionImplementor sessionImplementor = (SessionImplementor) session;
+        String entityName = session.getSessionFactory().getClassMetadata(CountryBook.class).getEntityName();
+        EntityPersister persister = (EntityPersister) sessionImplementor.getEntityPersister(entityName, book);
+        persister.update(persister.getIdentifier(book, EntityMode.POJO), persister.getPropertyValues(book, EntityMode.POJO), null,
+                false, null, null, book, null, sessionImplementor);
+        sessionImplementor.getBatcher().executeBatch();
+
+        transaction.commit();
+        entityManager.close();
+    }
+
+    @Test
+    public void insertUpdateTest2() {
+        //insert
+        EntityManager entityManager = managerFactory.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+
+        StringCultureId id = new StringCultureId();
+        id.setId(1000000L);
+        id.setLocale("ru");
+        StringCulture sc = new StringCulture(id, "123");
+
+        Session session = HibernateSessionTransformer.getSession(entityManager);
+        SessionImplementor sessionImplementor = (SessionImplementor) session;
+        String entityName = session.getSessionFactory().getClassMetadata(StringCulture.class).getEntityName();
+        EntityPersister persister = (EntityPersister) sessionImplementor.getEntityPersister(entityName, sc);
+        persister.insert(persister.getIdentifier(sc, EntityMode.POJO), persister.getPropertyValues(sc, EntityMode.POJO), sc, sessionImplementor);
+        sessionImplementor.getBatcher().executeBatch();
+
+        transaction.commit();
+        entityManager.close();
+
+        //update
+        entityManager = managerFactory.createEntityManager();
+        transaction = entityManager.getTransaction();
+        transaction.begin();
+
+        sc.setValue("1234");
+
+        session = HibernateSessionTransformer.getSession(entityManager);
+        sessionImplementor = (SessionImplementor) session;
+        persister = (EntityPersister) sessionImplementor.getEntityPersister(entityName, sc);
+        persister.update(persister.getIdentifier(sc, EntityMode.POJO), persister.getPropertyValues(sc, EntityMode.POJO), null,
+                false, null, null, sc, null, sessionImplementor);
+        sessionImplementor.getBatcher().executeBatch();
+
+        transaction.commit();
+        entityManager.close();
+    }
+
 //    @Test
 //    public void cloneTest() {
 //        EntityManager entityManager = managerFactory.createEntityManager();
