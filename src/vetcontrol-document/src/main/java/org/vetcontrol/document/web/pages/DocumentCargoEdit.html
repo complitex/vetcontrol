@@ -28,6 +28,10 @@
                 background-color:#ECEFF1;
                 margin:0;
             }
+
+            input.error{
+                background-color:#ffb6c1;
+            }
         </style>
     </wicket:head>
 </head>
@@ -116,6 +120,7 @@
         <fieldset style="margin-bottom:10px">
             <legend>Грузы</legend>
             <div wicket:id="document.cargo.cargo_mode_container">
+                
                 <table  border="0" cellspacing="0" cellpadding="0" class="tbForm">
                     <tr>
                         <th><span wicket:id="document.cargo.cargo_mode.label"></span></th>
@@ -139,6 +144,9 @@
                         </td>
                     </tr>
                 </table>
+                <div>
+                    <span wicket:id="document.cargo.cargo_mode.feedback"></span>
+                </div>
             </div>
 
             <div wicket:id="document.cargo.cargo_container"> 
@@ -149,17 +157,17 @@
                         <th  class="center"><wicket:message key="document.cargo.count"/></th>
                         <th  class="center"><wicket:message key="document.cargo.unit_type"/></th>
                         <th  class="center"><wicket:message key="document.cargo.vehicle"/></th>
-                        <th  class="center"><wicket:message key="document.cargo.producer_country"/></th>
-                        <th  class="center"><wicket:message key="document.cargo.producer_name"/></th>
-                        <th  class="center"><wicket:message key="document.cargo.certificate_detail"/></th>
-                        <th  class="center"><wicket:message key="document.cargo.certificate_date"/></th>
+                        <th  class="center" colspan="2"><wicket:message key="document.cargo.producer"/></th>
+                        <!--<th  class="center"><wicket:message key="document.cargo.producer_name"/></th>-->
+                        <th  class="center" colspan="2"><wicket:message key="document.cargo.certificate_detail"/></th>
+                        <!--<th  class="center"><wicket:message key="document.cargo.certificate_date"/></th>-->
                         <th></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr wicket:id="document.cargo.cargo_list">
                         <td><span wicket:id="document.cargo.cargo_type"></span></td>
-                        <td width="80px"><input wicket:id="document.cargo.count" type="text"/></td>
+                        <td><input wicket:id="document.cargo.count" type="text" size="5"/></td>
                         <td><select wicket:id="document.cargo.unit_type"></select></td>
                         <td><select wicket:id="document.cargo.vehicle"></select></td>
                         <td><select wicket:id="document.cargo.producer_country"></select></td>

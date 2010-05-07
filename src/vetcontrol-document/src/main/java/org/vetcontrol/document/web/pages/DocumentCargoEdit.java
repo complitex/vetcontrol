@@ -10,6 +10,8 @@ import org.apache.wicket.authorization.UnauthorizedInstantiationException;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.datetime.StyleDateConverter;
 import org.apache.wicket.datetime.markup.html.basic.DateLabel;
+import org.apache.wicket.feedback.FeedbackMessage;
+import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
@@ -193,8 +195,10 @@ public class DocumentCargoEdit extends DocumentEditPage {
             @Override
             protected void onSubmit() {
                 try {
-                    documentCargoBean.save(getModelObject());
                     setResponsePage(DocumentCargoList.class);
+                    
+                    documentCargoBean.save(getModelObject());
+
                     if (id == null) {
                         getSession().info(new StringResourceModel("document.cargo.edit.message.added", this, null,
                                 new Object[]{getModelObject().getDisplayId()}).getString());
@@ -421,7 +425,18 @@ public class DocumentCargoEdit extends DocumentEditPage {
                     }
                 });
         cargoModeValue.setVisible(cm != null);
-        cargoModeContainer.add(cargoModeValue);        
+        cargoModeContainer.add(cargoModeValue);
+
+        //Информация о ошибках типов груза
+        FeedbackPanel cargoModeFeedbackPanel = new FeedbackPanel("document.cargo.cargo_mode.feedback",
+                new IFeedbackMessageFilter(){
+                    @Override
+                    public boolean accept(FeedbackMessage message) {
+                        return cargoModeContainer.equals(message.getReporter());
+                    }
+                });
+        cargoModeFeedbackPanel.setOutputMarkupId(true);
+        cargoModeContainer.add(cargoModeFeedbackPanel);
 
         //Список видов груза
         final Label cargoModeSelectLabel = new Label("document.cargo.select_cargo_mode.label", getString("document.cargo.select_cargo_mode"));
@@ -514,27 +529,33 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
             @Override
             public void update(CargoType cargoType) {
-                if (cargoType != null && !cargoType.getCargoModes().isEmpty()){
-                    if (cargoType.getCargoModes().size() == 1){
-                        CargoMode cm = cargoType.getCargoModes().iterator().next();
-                        documentCargoModel.getObject().setCargoMode(cm);
+                if (cargoType != null){
+                    if (!cargoType.getCargoModes().isEmpty()) {
+                        if (cargoType.getCargoModes().size() == 1){
+                            CargoMode cm = cargoType.getCargoModes().iterator().next();
+                            documentCargoModel.getObject().setCargoMode(cm);
 
-                        cargoModeLabel.setVisible(true);
-                        cargoModeValue.setVisible(true);
+                            cargoModeLabel.setVisible(true);
+                            cargoModeValue.setVisible(true);
 
-                        cargoModeSelectLabel.setVisible(false);
-                        cargoModeListView.setVisible(false);
-                        cargoModeRadioGroup.setVisible(false);
+                            cargoModeSelectLabel.setVisible(false);
+                            cargoModeListView.setVisible(false);
+                            cargoModeRadioGroup.setVisible(false);
+                        }else{
+                            cargoTypeModel.setObject(cargoType);
+
+                            cargoModeLabel.setVisible(false);
+                            cargoModeValue.setVisible(false);
+
+                            cargoModeSelectLabel.setVisible(true);
+                            cargoModeListView.setVisible(true);
+                            cargoModeRadioGroup.setVisible(true);
+                        }
                     }else{
-                        cargoTypeModel.setObject(cargoType);
-
-                        cargoModeLabel.setVisible(false);
-                        cargoModeValue.setVisible(false);
-
-                        cargoModeSelectLabel.setVisible(true);
-                        cargoModeListView.setVisible(true);
-                        cargoModeRadioGroup.setVisible(true);
+                        cargoModeContainer.error(getString("document.cargo.edit.message.cargo_type.empty_cargo_modes.error"));
                     }
+                }else{
+                    cargoModeContainer.error(getString("document.cargo.edit.message.cargo_type.null.error"));                                     
                 }
             }
         };

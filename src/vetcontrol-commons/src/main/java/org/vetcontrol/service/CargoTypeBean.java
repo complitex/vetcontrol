@@ -81,6 +81,13 @@ public class CargoTypeBean {
         }
     }
 
+    public boolean hasCargoType(String code){
+        return entityManager.createQuery("select count(ct) from CargoType ct where ct.code = :code and ct."
+                    + BeanPropertyUtil.getDisabledPropertyName() + " = FALSE", Long.class).
+                    setParameter("code", code).
+                    getSingleResult() == 1;       
+    }
+
     @Deprecated
     public List<UnitType> getUnitTypes(CargoType cargoType) {
         CargoMode cargoMode;

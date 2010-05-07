@@ -97,6 +97,17 @@ public class UKTZEDField extends Panel {
 
                 return choices.iterator();
             }
+
+            @Override
+            protected void onComponentTag(ComponentTag tag) {
+                super.onComponentTag(tag);
+
+                String s = getModelValue();
+
+                if (s !=null && !s.isEmpty() && !cargoTypeBean.hasCargoType(s)){
+                    tag.getAttributes().put("class", "error");
+                }
+            }
         };
 
         uktzed.setOutputMarkupId(true);
@@ -147,12 +158,13 @@ public class UKTZEDField extends Panel {
                 model.setObject(cargoType);
 
                 name.setModelObject(cargoType != null ? cargoType.getDisplayName(getLocale(), system) : "");
-                target.addComponent(name);
 
                 if (cargoType != null){
                     uktzed.setModelObject(code);
-                    target.addComponent(uktzed);
                 }
+
+                target.addComponent(name);
+                target.addComponent(uktzed);                
 
                 for (Component component : ajaxUpdate){
                     target.addComponent(component);
