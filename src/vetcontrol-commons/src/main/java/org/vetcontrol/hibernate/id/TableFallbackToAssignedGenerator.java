@@ -27,11 +27,16 @@ import org.slf4j.LoggerFactory;
 public class TableFallbackToAssignedGenerator extends TableGenerator {
 
     public static final String PROPERTY_NAME = "property";
+
     private String propertyName;
+
     private static final Logger log = LoggerFactory.getLogger(TableFallbackToAssignedGenerator.class);
+
+    private String entityName;
 
     @Override
     public void configure(Type type, Properties params, Dialect dialect) throws MappingException {
+        entityName = params.getProperty(ENTITY_NAME);
         propertyName = determineProperty(params);
         if (StringHelper.isEmpty(propertyName)) {
             throw new MappingException("Property parameter was not specified.");
@@ -40,9 +45,8 @@ public class TableFallbackToAssignedGenerator extends TableGenerator {
     }
 
     @Override
-    public synchronized Serializable generate(SessionImplementor sessionImplementor, Object object) {
+    public Serializable generate(SessionImplementor sessionImplementor, Object object) {
         Class entityClass = object.getClass();
-        String entityName = sessionImplementor.bestGuessEntityName(object);
         Serializable identifier = sessionImplementor.getEntityPersister(entityName, object).getIdentifier(object, sessionImplementor);
         log.debug("Class = {}, entity name = {}, identifier object = {}", new Object[]{object.getClass(), entityName, identifier});
 
