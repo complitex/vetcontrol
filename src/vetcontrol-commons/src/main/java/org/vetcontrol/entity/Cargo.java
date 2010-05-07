@@ -1,8 +1,24 @@
 package org.vetcontrol.entity;
 
-import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Query;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -17,10 +33,20 @@ import java.util.Date;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Cargo extends Synchronized implements IUpdated, IQuery{
     @Id
-    @TableGenerator(name = "cargo", table = "generator", pkColumnName = "generatorName",
-            valueColumnName = "generatorValue", allocationSize = 1, initialValue = 100,
-            uniqueConstraints = @UniqueConstraint(columnNames = {"id", "client_id", "department_id"}))
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "cargo")
+//    @TableGenerator(name = "cargo", table = "generator", pkColumnName = "generatorName",
+//            valueColumnName = "generatorValue", allocationSize = 1, initialValue = 100,
+//            uniqueConstraints = @UniqueConstraint(columnNames = {"id", "client_id", "department_id"}))
+//    @GeneratedValue(strategy = GenerationType.TABLE, generator = "cargo")
+    @GeneratedValue(generator = "EnhancedTableGenerator")
+    @GenericGenerator(name = "EnhancedTableGenerator", strategy = "org.vetcontrol.hibernate.id.TableFallbackToAssignedGenerator",
+    parameters = {
+        @Parameter(name = "segment_value", value = "cargo"),
+        @Parameter(name = "table_name", value = "generator"),
+        @Parameter(name = "segment_column_name", value = "generatorName"),
+        @Parameter(name = "value_column_name", value = "generatorValue"),
+        @Parameter(name = "initial_value", value = "100"),
+        @Parameter(name = "increment_size", value = "1"),
+        @Parameter(name = "property", value = "id")})
     @Column(nullable = false)
     private Long id;
 

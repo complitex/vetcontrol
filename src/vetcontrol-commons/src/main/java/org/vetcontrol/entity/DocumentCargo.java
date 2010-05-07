@@ -1,10 +1,28 @@
 package org.vetcontrol.entity;
 
-import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Query;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.id.enhanced.TableGenerator;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -18,77 +36,71 @@ import java.util.List;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DocumentCargo extends Synchronized implements IUpdated, IQuery {
-    @Id
-    @TableGenerator(name = "document_cargo", table = "generator", pkColumnName = "generatorName", 
-            valueColumnName = "generatorValue", allocationSize = 1, initialValue = 100,
-            uniqueConstraints = @UniqueConstraint(columnNames = {"id", "client_id", "department_id"}))
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "document_cargo")
-    private Long id;
 
+    @Id
+//    @TableGenerator(name = "document_cargo", table = "generator", pkColumnName = "generatorName",
+//            valueColumnName = "generatorValue", allocationSize = 1, initialValue = 100,
+//            uniqueConstraints = @UniqueConstraint(columnNames = {"id", "client_id", "department_id"}))
+//    @GeneratedValue(strategy = GenerationType.TABLE, generator = "document_cargo")
+    @GeneratedValue(generator = "EnhancedTableGenerator")
+    @GenericGenerator(name = "EnhancedTableGenerator", strategy = "org.vetcontrol.hibernate.id.TableFallbackToAssignedGenerator",
+    parameters = {
+        @Parameter(name = "segment_value", value = "document_cargo"),
+        @Parameter(name = "table_name", value = "generator"),
+        @Parameter(name = "segment_column_name", value = "generatorName"),
+        @Parameter(name = "value_column_name", value = "generatorValue"),
+        @Parameter(name = "initial_value", value = "100"),
+        @Parameter(name = "increment_size", value = "1"),
+        @Parameter(name = "property", value = "id")})
+    private Long id;
     @Id
     @ManyToOne
     @JoinColumn(name = "client_id")
     @XmlIDREF
     private Client client;
-
     @Id
     @ManyToOne
     @JoinColumn(name = "department_id")
     @XmlIDREF
     private Department department;
-
     @ManyToOne
     @JoinColumn(name = "creator_id")
     @XmlIDREF
     private User creator;
-
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
-
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "movement_type", nullable=false)
+    @Column(name = "movement_type", nullable = false)
     private MovementType movementType;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "vehicle_type", nullable = false)
     private VehicleType vehicleType;
-
     @OneToMany(mappedBy = "documentCargo")
     @OrderBy("id")
     @XmlTransient
     private List<Cargo> cargos = new ArrayList<Cargo>();
-
     @OneToMany(mappedBy = "documentCargo")
     @XmlTransient
     private List<Vehicle> vehicles = new ArrayList<Vehicle>();
-
     @ManyToOne
     @JoinColumn(name = "cargo_sender_country_id")
     private CountryBook senderCountry;
-
     @Column(name = "cargo_sender_name")
     private String senderName;
-
     @Column(name = "cargo_receiver_address")
     private String receiverAddress;
-
     @Column(name = "cargo_receiver_name")
     private String receiverName;
-
     @ManyToOne
     @JoinColumn(name = "passing_border_point_id")
     @XmlIDREF
     private PassingBorderPoint passingBorderPoint;
-
     @Column(name = "detention_details", length = 255)
     private String detentionDetails;
-
     @Column(name = "details", length = 255)
     private String details;
-
     @ManyToOne
     @JoinColumn(name = "cargo_mode_id", nullable = false)
     private CargoMode cargoMode;
@@ -244,34 +256,72 @@ public class DocumentCargo extends Synchronized implements IUpdated, IQuery {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DocumentCargo)) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DocumentCargo)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         DocumentCargo that = (DocumentCargo) o;
 
-        if (cargoMode != null ? !cargoMode.equals(that.cargoMode) : that.cargoMode != null) return false;
-        if (cargos != null ? !new ArrayList<Cargo>(cargos).equals(that.cargos) : that.cargos != null) return false;
-        if (client != null ? !client.equals(that.client) : that.client != null) return false;
-        if (created != null ? !created.equals(that.created) : that.created != null) return false;
-        if (creator != null ? !creator.equals(that.creator) : that.creator != null) return false;
-        if (department != null ? !department.equals(that.department) : that.department != null) return false;
-        if (details != null ? !details.equals(that.details) : that.details != null) return false;
-        if (detentionDetails != null ? !detentionDetails.equals(that.detentionDetails) : that.detentionDetails != null)
+        if (cargoMode != null ? !cargoMode.equals(that.cargoMode) : that.cargoMode != null) {
             return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (movementType != null ? !movementType.equals(that.movementType) : that.movementType != null) return false;
-        if (passingBorderPoint != null ? !passingBorderPoint.equals(that.passingBorderPoint) : that.passingBorderPoint != null)
+        }
+        if (cargos != null ? !new ArrayList<Cargo>(cargos).equals(that.cargos) : that.cargos != null) {
             return false;
-        if (receiverAddress != null ? !receiverAddress.equals(that.receiverAddress) : that.receiverAddress != null)
+        }
+        if (client != null ? !client.equals(that.client) : that.client != null) {
             return false;
-        if (receiverName != null ? !receiverName.equals(that.receiverName) : that.receiverName != null) return false;
-        if (senderCountry != null ? !senderCountry.equals(that.senderCountry) : that.senderCountry != null)
+        }
+        if (created != null ? !created.equals(that.created) : that.created != null) {
             return false;
-        if (senderName != null ? !senderName.equals(that.senderName) : that.senderName != null) return false;
-        if (updated != null ? !updated.equals(that.updated) : that.updated != null) return false;
-        if (vehicleType != that.vehicleType) return false;
-        if (vehicles != null ? !new ArrayList<Vehicle>(vehicles).equals(that.vehicles) : that.vehicles != null) return false;
+        }
+        if (creator != null ? !creator.equals(that.creator) : that.creator != null) {
+            return false;
+        }
+        if (department != null ? !department.equals(that.department) : that.department != null) {
+            return false;
+        }
+        if (details != null ? !details.equals(that.details) : that.details != null) {
+            return false;
+        }
+        if (detentionDetails != null ? !detentionDetails.equals(that.detentionDetails) : that.detentionDetails != null) {
+            return false;
+        }
+        if (id != null ? !id.equals(that.id) : that.id != null) {
+            return false;
+        }
+        if (movementType != null ? !movementType.equals(that.movementType) : that.movementType != null) {
+            return false;
+        }
+        if (passingBorderPoint != null ? !passingBorderPoint.equals(that.passingBorderPoint) : that.passingBorderPoint != null) {
+            return false;
+        }
+        if (receiverAddress != null ? !receiverAddress.equals(that.receiverAddress) : that.receiverAddress != null) {
+            return false;
+        }
+        if (receiverName != null ? !receiverName.equals(that.receiverName) : that.receiverName != null) {
+            return false;
+        }
+        if (senderCountry != null ? !senderCountry.equals(that.senderCountry) : that.senderCountry != null) {
+            return false;
+        }
+        if (senderName != null ? !senderName.equals(that.senderName) : that.senderName != null) {
+            return false;
+        }
+        if (updated != null ? !updated.equals(that.updated) : that.updated != null) {
+            return false;
+        }
+        if (vehicleType != that.vehicleType) {
+            return false;
+        }
+        if (vehicles != null ? !new ArrayList<Vehicle>(vehicles).equals(that.vehicles) : that.vehicles != null) {
+            return false;
+        }
 
         return true;
     }
@@ -302,31 +352,14 @@ public class DocumentCargo extends Synchronized implements IUpdated, IQuery {
 
     @Override
     public Query getInsertQuery(EntityManager em) {
-        return em.createNativeQuery("insert into document_cargo (id, client_id, department_id, creator_id, created, " +
-                "updated, movement_type, vehicle_type, cargo_sender_country_id, cargo_sender_name, " +
-                "cargo_receiver_address, cargo_receiver_name, passing_border_point_id, detention_details, " +
-                "details, cargo_mode_id, sync_status) " +
-                "value (:id, :client_id, :department_id, :creator_id, :created, " +
-                ":updated, :movement_type, :vehicle_type, :cargo_sender_country_id, :cargo_sender_name, " +
-                ":cargo_receiver_address, :cargo_receiver_name, :passing_border_point_id, :detention_details, " +
-                ":details, :cargo_mode_id, :sync_status)")
-                .setParameter("id", id)
-                .setParameter("client_id", client != null ? client.getId() : null)
-                .setParameter("department_id", department != null ? department.getId() : null)
-                .setParameter("creator_id", creator != null ? creator.getId() : null)
-                .setParameter("created", created)
-                .setParameter("updated", updated)
-                .setParameter("movement_type", movementType != null ? movementType.name() : null)
-                .setParameter("vehicle_type", vehicleType != null ? vehicleType.name() : null)
-                .setParameter("cargo_sender_country_id", senderCountry != null ? senderCountry.getId() : null)
-                .setParameter("cargo_sender_name", senderName)
-                .setParameter("cargo_receiver_address", receiverAddress)
-                .setParameter("cargo_receiver_name", receiverName)
-                .setParameter("passing_border_point_id", passingBorderPoint != null ? passingBorderPoint.getId() : null)
-                .setParameter("detention_details", detentionDetails)
-                .setParameter("details", details)
-                .setParameter("cargo_mode_id", cargoMode != null ? cargoMode.getId() : null)
-                .setParameter("sync_status", syncStatus != null ? syncStatus.name() : null);
+        return em.createNativeQuery("insert into document_cargo (id, client_id, department_id, creator_id, created, "
+                + "updated, movement_type, vehicle_type, cargo_sender_country_id, cargo_sender_name, "
+                + "cargo_receiver_address, cargo_receiver_name, passing_border_point_id, detention_details, "
+                + "details, cargo_mode_id, sync_status) "
+                + "value (:id, :client_id, :department_id, :creator_id, :created, "
+                + ":updated, :movement_type, :vehicle_type, :cargo_sender_country_id, :cargo_sender_name, "
+                + ":cargo_receiver_address, :cargo_receiver_name, :passing_border_point_id, :detention_details, "
+                + ":details, :cargo_mode_id, :sync_status)").setParameter("id", id).setParameter("client_id", client != null ? client.getId() : null).setParameter("department_id", department != null ? department.getId() : null).setParameter("creator_id", creator != null ? creator.getId() : null).setParameter("created", created).setParameter("updated", updated).setParameter("movement_type", movementType != null ? movementType.name() : null).setParameter("vehicle_type", vehicleType != null ? vehicleType.name() : null).setParameter("cargo_sender_country_id", senderCountry != null ? senderCountry.getId() : null).setParameter("cargo_sender_name", senderName).setParameter("cargo_receiver_address", receiverAddress).setParameter("cargo_receiver_name", receiverName).setParameter("passing_border_point_id", passingBorderPoint != null ? passingBorderPoint.getId() : null).setParameter("detention_details", detentionDetails).setParameter("details", details).setParameter("cargo_mode_id", cargoMode != null ? cargoMode.getId() : null).setParameter("sync_status", syncStatus != null ? syncStatus.name() : null);
     }
 
     @Override

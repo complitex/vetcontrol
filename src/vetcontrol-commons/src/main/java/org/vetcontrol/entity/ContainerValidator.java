@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  *
@@ -26,7 +27,9 @@ public class ContainerValidator implements IBook, ILongId, IUpdated, IQuery, IDi
     private Long id;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "EnhancedIdentityGenerator")
+    @GenericGenerator(name = "EnhancedIdentityGenerator", strategy = "org.vetcontrol.hibernate.id.IdentityFallbackToAssignedGenerator")
     @XmlID
     @XmlJavaTypeAdapter(LongAdapter.class)
     @Override

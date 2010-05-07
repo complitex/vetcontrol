@@ -370,7 +370,7 @@ CREATE TABLE  `container_validator` (
 /*documents*/
 DROP TABLE IF EXISTS `document_cargo`;
 CREATE TABLE `document_cargo` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL,
   `client_id` bigint(20) NOT NULL,
   `department_id` bigint(20) NOT NULL,
   `creator_id` bigint(20) NOT NULL,
@@ -407,7 +407,7 @@ CREATE TABLE `document_cargo` (
 
 DROP TABLE IF EXISTS `cargo`;
 CREATE TABLE  `cargo` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL,
   `client_id` bigint(20) NOT NULL,
   `department_id` bigint(20) NOT NULL,
   `document_cargo_id` bigint(20) NOT NULL,  
@@ -440,7 +440,7 @@ CREATE TABLE  `cargo` (
 
 DROP TABLE IF EXISTS `vehicle`;
 CREATE TABLE  `vehicle` (
-    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `id` bigint(20) NOT NULL,
     `client_id` bigint(20) NOT NULL,
     `department_id` bigint(20) NOT NULL,
     `document_cargo_id` bigint(20) NOT NULL,
@@ -560,7 +560,7 @@ CREATE TABLE  `client_update_item` (
 
 DROP TABLE IF EXISTS `arrest_document`;
 CREATE TABLE `arrest_document` (
-    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `id` bigint(20) NOT NULL,
     `client_id` bigint(20) NOT NULL,
     `department_id` bigint(20) NOT NULL,
     `creator_id` bigint(20) NOT NULL,
