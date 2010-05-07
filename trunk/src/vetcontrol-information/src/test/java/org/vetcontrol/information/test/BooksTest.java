@@ -8,6 +8,7 @@ import com.mysql.jdbc.ConnectionImpl;
 import com.mysql.jdbc.Driver;
 import com.mysql.jdbc.JDBC4Connection;
 import com.mysql.jdbc.JDBC4PreparedStatement;
+import java.lang.Long;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -496,38 +497,13 @@ public class BooksTest {
         entityManager.close();
     }
 
-    @Test
+//    @Test
     public void insertUpdateDocumentCargoTest() {
         //insert
         EntityManager entityManager = managerFactory.createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
-
-        DocumentCargo dc = new DocumentCargo();
-        dc.setId(1000L);
-        CargoMode cm = new CargoMode();
-        cm.setId(1L);
-        dc.setCargoMode(cm);
-        Client c = new Client();
-        c.setId(1L);
-        dc.setClient(c);
-        Department d = new Department();
-        d.setId(1L);
-        dc.setDepartment(d);
-        User u = new User();
-        u.setId(2L);
-        dc.setCreator(u);
-        dc.setCreated(new Date());
-        dc.setUpdated(new Date());
-        dc.setMovementType(MovementType.IMPORT);
-        dc.setVehicleType(VehicleType.CAR);
-        dc.setSenderName("sender");
-        CountryBook cb = new CountryBook();
-        cb.setId(1L);
-        dc.setSenderCountry(cb);
-        dc.setReceiverName("receiver");
-        dc.setReceiverAddress("receiver address");
-        dc.setDetails("details 1");
+        DocumentCargo dc = newDocumentCargo(1L);
 
         Session session = HibernateSessionTransformer.getSession(entityManager);
         SessionImplementor sessionImplementor = (SessionImplementor) session;
@@ -552,6 +528,75 @@ public class BooksTest {
         persister.update(persister.getIdentifier(dc, EntityMode.POJO), persister.getPropertyValues(dc, EntityMode.POJO), null,
                 false, null, null, dc, null, sessionImplementor);
         sessionImplementor.getBatcher().executeBatch();
+
+        transaction.commit();
+        entityManager.close();
+    }
+
+    private DocumentCargo newDocumentCargo(Long id) {
+        DocumentCargo dc = new DocumentCargo();
+        dc.setId(id);
+        CargoMode cm = new CargoMode();
+        cm.setId(1L);
+        dc.setCargoMode(cm);
+        Client c = new Client();
+        c.setId(1L);
+        dc.setClient(c);
+        Department d = new Department();
+        d.setId(1L);
+        dc.setDepartment(d);
+        User u = new User();
+        u.setId(2L);
+        dc.setCreator(u);
+        dc.setCreated(new Date());
+        dc.setUpdated(new Date());
+        dc.setMovementType(MovementType.IMPORT);
+        dc.setVehicleType(VehicleType.CAR);
+        dc.setSenderName("sender");
+        CountryBook cb = new CountryBook();
+        cb.setId(1L);
+        dc.setSenderCountry(cb);
+        dc.setReceiverName("receiver");
+        dc.setReceiverAddress("receiver address");
+        dc.setDetails("details 1");
+        return dc;
+    }
+
+//    @Test
+    public void customIdentityGeneratorTest() {
+        EntityManager entityManager = managerFactory.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+
+//        CargoReceiver receiver = new CargoReceiver();
+//        receiver.setId(1000L);
+//        receiver.setName("receiver 1000 new");
+//        receiver.setAddress("receiver address 1000 new");
+//
+//        entityManager.merge(receiver);
+
+        CargoSender sender = new CargoSender();
+        sender.setName("sender 100 new");
+        CountryBook c = new CountryBook();
+        c.setId(1L);
+        sender.setCountry(c);
+//        sender.setId(100L);
+
+        entityManager.merge(sender);
+
+        transaction.commit();
+        entityManager.close();
+
+    }
+
+    @Test
+    public void customTableGeneratorTest() {
+        EntityManager entityManager = managerFactory.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+
+        DocumentCargo dc = newDocumentCargo(null);
+        entityManager.merge(dc);
 
         transaction.commit();
         entityManager.close();

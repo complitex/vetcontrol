@@ -4,12 +4,28 @@
  */
 package org.vetcontrol.entity;
 
-import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Query;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 /**
  *
@@ -23,10 +39,21 @@ import java.util.Date;
 public class ArrestDocument extends Synchronized implements IUpdated, IQuery {
 
     @Id
-    @TableGenerator(name = "arrest_document", table = "generator", pkColumnName = "generatorName",
-            valueColumnName = "generatorValue", allocationSize = 1, initialValue = 100,
-            uniqueConstraints = @UniqueConstraint(columnNames = {"id", "client_id", "department_id"}))
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "arrest_document")
+//    @TableGenerator(name = "arrest_document", table = "generator", pkColumnName = "generatorName",
+//            valueColumnName = "generatorValue", allocationSize = 1, initialValue = 100,
+//            uniqueConstraints = @UniqueConstraint(columnNames = {"id", "client_id", "department_id"}))
+//    @GeneratedValue(strategy = GenerationType.TABLE, generator = "arrest_document")
+    @GeneratedValue(generator = "EnhancedTableGenerator")
+    @GenericGenerator(name = "EnhancedTableGenerator", strategy = "org.vetcontrol.hibernate.id.TableFallbackToAssignedGenerator",
+    parameters = {
+        @Parameter(name = "segment_value", value = "arrest_document"),
+        @Parameter(name = "table_name", value = "generator"),
+        @Parameter(name = "segment_column_name", value = "generatorName"),
+        @Parameter(name = "value_column_name", value = "generatorValue"),
+        @Parameter(name = "initial_value", value = "100"),
+        @Parameter(name = "increment_size", value = "1"),
+        @Parameter(name = "property", value = "id")})
+    @Column(nullable = false)
     private Long id;
 
     @Id

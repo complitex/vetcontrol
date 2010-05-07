@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  * @author Artem
@@ -31,7 +32,9 @@ public class PassingBorderPoint implements ILongId, IBook, IUpdated, IDisabled, 
     private Long id;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "EnhancedIdentityGenerator")
+    @GenericGenerator(name = "EnhancedIdentityGenerator", strategy = "org.vetcontrol.hibernate.id.IdentityFallbackToAssignedGenerator")
     @XmlID
     @XmlJavaTypeAdapter(LongAdapter.class)
     @Override

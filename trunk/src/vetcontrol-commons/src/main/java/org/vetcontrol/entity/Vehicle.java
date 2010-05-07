@@ -6,10 +6,29 @@ package org.vetcontrol.entity;
 
 import org.vetcontrol.sync.LongAdapter;
 
-import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Query;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 /**
  *
@@ -22,10 +41,20 @@ import java.util.Date;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Vehicle extends Synchronized implements IUpdated, IQuery {
     @Id
-    @TableGenerator(name = "vehicle", table = "generator", pkColumnName = "generatorName",
-            valueColumnName = "generatorValue", allocationSize = 1, initialValue = 100,
-            uniqueConstraints = @UniqueConstraint(columnNames = {"id", "client_id", "department_id"}))
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "vehicle")
+//    @TableGenerator(name = "vehicle", table = "generator", pkColumnName = "generatorName",
+//            valueColumnName = "generatorValue", allocationSize = 1, initialValue = 100,
+//            uniqueConstraints = @UniqueConstraint(columnNames = {"id", "client_id", "department_id"}))
+//    @GeneratedValue(strategy = GenerationType.TABLE, generator = "vehicle")
+    @GeneratedValue(generator = "EnhancedTableGenerator")
+    @GenericGenerator(name = "EnhancedTableGenerator", strategy = "org.vetcontrol.hibernate.id.TableFallbackToAssignedGenerator",
+    parameters = {
+        @Parameter(name = "segment_value", value = "vehicle"),
+        @Parameter(name = "table_name", value = "generator"),
+        @Parameter(name = "segment_column_name", value = "generatorName"),
+        @Parameter(name = "value_column_name", value = "generatorValue"),
+        @Parameter(name = "initial_value", value = "100"),
+        @Parameter(name = "increment_size", value = "1"),
+        @Parameter(name = "property", value = "id")})
     @Column(name = "id", nullable = false)
     @XmlID
     @XmlJavaTypeAdapter(LongAdapter.class)

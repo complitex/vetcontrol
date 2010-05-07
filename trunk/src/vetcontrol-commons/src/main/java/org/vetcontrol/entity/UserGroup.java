@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  * User: Anatoly A. Ivanov java@inheaven.ru
@@ -19,7 +20,9 @@ import java.util.Date;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UserGroup implements IUpdated, IQuery, ILongId {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "EnhancedIdentityGenerator")
+    @GenericGenerator(name = "EnhancedIdentityGenerator", strategy = "org.vetcontrol.hibernate.id.IdentityFallbackToAssignedGenerator")
     @XmlID @XmlJavaTypeAdapter(LongAdapter.class)
     private Long id;
 
