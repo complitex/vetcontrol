@@ -26,6 +26,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -45,6 +46,7 @@ import org.vetcontrol.util.book.entity.ShowBooksMode;
 public class BooksTest {
 
     private static final String PERSISTENCE_UNIT_NAME = "applicationPersistenceUnitTest";
+
     private EntityManagerFactory managerFactory;
 
     public BooksTest() {
@@ -568,21 +570,15 @@ public class BooksTest {
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
 
-//        CargoReceiver receiver = new CargoReceiver();
-//        receiver.setId(1000L);
-//        receiver.setName("receiver 1000 new");
-//        receiver.setAddress("receiver address 1000 new");
-//
-//        entityManager.merge(receiver);
 
-        CargoSender sender = new CargoSender();
-        sender.setName("sender 100 new");
-        CountryBook c = new CountryBook();
-        c.setId(1L);
-        sender.setCountry(c);
-//        sender.setId(100L);
+        CountryBook b = new CountryBook();
+        b.setCode("11");
+        b.setName(1L);
+        b.setUpdated(new Date());
+        b.setId(100L);
 
-        entityManager.merge(sender);
+        CountryBook bb = entityManager.merge(b);
+        System.out.println("id = " + bb.getId());
 
         transaction.commit();
         entityManager.close();
@@ -590,17 +586,56 @@ public class BooksTest {
     }
 
     @Test
-    public void customTableGeneratorTest() {
+    public void customIdentityGeneratorForCompositeKeysTest() {
         EntityManager entityManager = managerFactory.createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
 
-        DocumentCargo dc = newDocumentCargo(null);
-        entityManager.merge(dc);
+        DocumentCargo dc = newDocumentCargo(20L);
+        DocumentCargo dc2 = entityManager.merge(dc);
+        System.out.println("id = " + dc2.getId());
 
         transaction.commit();
         entityManager.close();
     }
+
+//    @Test
+    public void generatedKeysTest() {
+        EntityManager entityManager = managerFactory.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+
+        Session s = HibernateSessionTransformer.getSession(entityManager);
+        s.doWork(new Work() {
+
+            @Override
+            public void execute(Connection conn) throws SQLException {
+                Statement stmt = conn.createStatement();
+                stmt.executeUpdate(
+                        "INSERT INTO cargo_receiver (`name`, `address`) "
+                        + "values ('1', '2')");
+
+                int autoIncKeyFromApi = -1;
+                ResultSet rs = stmt.getGeneratedKeys();
+                if (rs.next()) {
+                    autoIncKeyFromApi = rs.getInt(1);
+                } else {
+//                    throw new RuntimeException("Generated keys doesn't work.");
+                }
+                rs.close();
+                rs = null;
+                stmt.close();
+                stmt = null;
+
+                System.out.println("Key returned from getGeneratedKeys():"
+                        + autoIncKeyFromApi);
+            }
+        });
+
+        transaction.commit();
+        entityManager.close();
+    }
+
 //    @Test
 //    public void cloneTest() {
 //        EntityManager entityManager = managerFactory.createEntityManager();

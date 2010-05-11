@@ -89,3 +89,5 @@ UPDATE `generator` SET `generatorValue` = 100 WHERE `generatorName` = 'arrest_do
 UPDATE `generator` SET `generatorValue` = 100 WHERE `generatorName` = 'cargo';
 UPDATE `generator` SET `generatorValue` = 100 WHERE `generatorName` = 'document_cargo';
 UPDATE `generator` SET `generatorValue` = 100 WHERE `generatorName` = 'vehicle';
+
+INSERT INTO `cargo_mode_report`(`cargo_mode_id`, `report_id`) VALUES (1, 'MEAT_REPORTS');

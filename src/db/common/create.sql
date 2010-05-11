@@ -367,6 +367,25 @@ CREATE TABLE  `container_validator` (
     KEY `container_validator_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/* Auxiliary table for link between cargo modes and reports. */
+DROP TABLE IF EXISTS `cargo_mode_report`;
+CREATE TABLE `cargo_mode_report` (
+    `cargo_mode_id` bigint(20) NOT NULL,
+    `report_id` VARCHAR(50) NOT NULL,
+    PRIMARY KEY (`cargo_mode_id`, `report_id`),
+    KEY `FK_cargo_mode_report_cargo_mode` (`cargo_mode_id`),
+    CONSTRAINT `FK_cargo_mode_report_cargo_mode` FOREIGN KEY (`cargo_mode_id`) REFERENCES `cargo_mode` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+        -- Reports --
+
+/* Auxiliary constant table that used for example for association with cargo modes. */
+DROP TABLE IF EXISTS `reports`;
+CREATE TABLE `reports` (
+    `id` VARCHAR(50) NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*documents*/
 DROP TABLE IF EXISTS `document_cargo`;
 CREATE TABLE `document_cargo` (
