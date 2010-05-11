@@ -398,7 +398,7 @@ CREATE TABLE `document_cargo` (
   `movement_type` VARCHAR(15) NOT NULL,
   `vehicle_type` varchar(10) NOT NULL,
 
-  `cargo_mode_id` bigint(20) DEFAULT NULL,
+  `cargo_mode_id` bigint(20) NOT NULL,
 
   `cargo_sender_name` varchar(100) NOT NULL,
   `cargo_sender_country_id` bigint(20) NOT NULL,
