@@ -53,54 +53,71 @@ public class DocumentCargo extends Synchronized implements IUpdated, IQuery {
         @Parameter(name = "increment_size", value = "1"),
         @Parameter(name = "property", value = "id")})
     private Long id;
+
     @Id
     @ManyToOne
     @JoinColumn(name = "client_id")
     @XmlIDREF
     private Client client;
+
     @Id
     @ManyToOne
     @JoinColumn(name = "department_id")
     @XmlIDREF
     private Department department;
+
     @ManyToOne
     @JoinColumn(name = "creator_id")
     @XmlIDREF
     private User creator;
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "movement_type", nullable = false)
     private MovementType movementType;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "vehicle_type", nullable = false)
     private VehicleType vehicleType;
+
     @OneToMany(mappedBy = "documentCargo")
     @OrderBy("id")
     @XmlTransient
     private List<Cargo> cargos = new ArrayList<Cargo>();
+
     @OneToMany(mappedBy = "documentCargo")
     @XmlTransient
     private List<Vehicle> vehicles = new ArrayList<Vehicle>();
+
     @ManyToOne
     @JoinColumn(name = "cargo_sender_country_id")
     private CountryBook senderCountry;
+
     @Column(name = "cargo_sender_name")
     private String senderName;
+
     @Column(name = "cargo_receiver_address")
     private String receiverAddress;
+
     @Column(name = "cargo_receiver_name")
     private String receiverName;
+
     @ManyToOne
     @JoinColumn(name = "passing_border_point_id")
     @XmlIDREF
     private PassingBorderPoint passingBorderPoint;
+
     @Column(name = "detention_details", length = 255)
     private String detentionDetails;
+
     @Column(name = "details", length = 255)
     private String details;
+
     @ManyToOne
     @JoinColumn(name = "cargo_mode_id", nullable = false)
     private CargoMode cargoMode;
