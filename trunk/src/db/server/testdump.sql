@@ -90,4 +90,4 @@ UPDATE `generator` SET `generatorValue` = 100 WHERE `generatorName` = 'cargo';
 UPDATE `generator` SET `generatorValue` = 100 WHERE `generatorName` = 'document_cargo';
 UPDATE `generator` SET `generatorValue` = 100 WHERE `generatorName` = 'vehicle';
 
-INSERT INTO `cargo_mode_report`(`cargo_mode_id`, `report_id`) VALUES (1, 'MEAT_REPORTS');
+INSERT INTO `cargo_mode_report`(`cargo_mode_id`, `report_id`) VALUES (1, 'MEAT_IN_DAY_REPORT'), (1, 'MEAT_IN_YEAR_REPORT');

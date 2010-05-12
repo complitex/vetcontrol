@@ -20,7 +20,7 @@
                     SUM(CASE WHEN (LAST_DAY(dc.created)=LAST_DAY(:currentDate) OR LAST_DAY(dc.created)=LAST_DAY(DATE_ADD(:currentDate, INTERVAL '-1' MONTH))) THEN IFNULL(c.count, 0) ELSE 0 END) AS total
 
             FROM cargo c JOIN document_cargo dc ON (c.document_cargo_id = dc.id AND c.client_id = dc.client_id AND c.department_id = dc.department_id)
-            JOIN cargo_mode_report cmr ON (cmr.cargo_mode_id = dc.cargo_mode_id AND cmr.report_id = 'MEAT_REPORTS')
+            JOIN cargo_mode_report cmr ON (cmr.cargo_mode_id = dc.cargo_mode_id AND cmr.report_id = 'MEAT_IN_DAY_REPORT')
             WHERE dc.created>LAST_DAY(DATE_ADD(:currentDate, INTERVAL '-2' MONTH)) AND dc.created <= LAST_DAY(:currentDate)
             AND
             (
@@ -48,7 +48,7 @@
 
             FROM cargo c JOIN document_cargo dc ON (c.document_cargo_id = dc.id AND c.client_id = dc.client_id AND c.department_id = dc.department_id)
             JOIN cargo_mode parent ON (parent.id = (SELECT cm.parent_id FROM cargo_mode cm WHERE dc.cargo_mode_id = cm.id))
-            JOIN cargo_mode_report cmr ON (cmr.cargo_mode_id = dc.cargo_mode_id AND cmr.report_id = 'MEAT_REPORTS')
+            JOIN cargo_mode_report cmr ON (cmr.cargo_mode_id = dc.cargo_mode_id AND cmr.report_id = 'MEAT_IN_DAY_REPORT')
             WHERE dc.created>LAST_DAY(DATE_ADD(:currentDate, INTERVAL '-2' MONTH)) AND dc.created <= LAST_DAY(:currentDate)
             AND
             (
@@ -75,7 +75,7 @@
                     SUM(CASE WHEN (LAST_DAY(dc.created)=LAST_DAY(:currentDate) OR LAST_DAY(dc.created)=LAST_DAY(DATE_ADD(:currentDate, INTERVAL '-1' MONTH))) THEN IFNULL(c.count, 0) ELSE 0 END) AS total
 
             FROM cargo c JOIN document_cargo dc ON (c.document_cargo_id = dc.id AND c.client_id = dc.client_id AND c.department_id = dc.department_id)
-            JOIN cargo_mode_report cmr ON (cmr.cargo_mode_id = dc.cargo_mode_id AND cmr.report_id = 'MEAT_REPORTS')
+            JOIN cargo_mode_report cmr ON (cmr.cargo_mode_id = dc.cargo_mode_id AND cmr.report_id = 'MEAT_IN_DAY_REPORT')
             WHERE dc.created>LAST_DAY(DATE_ADD(:currentDate, INTERVAL '-2' MONTH)) AND dc.created <= LAST_DAY(:currentDate)
             AND
             (
