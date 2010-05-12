@@ -792,5 +792,6 @@ INSERT INTO `container_validator` (`id`, `prefix`, `carrier_abbr`, `carrier_name
 UPDATE `generator` SET `generatorValue` = 166 WHERE `generatorName` = 'books';
 
 /* reports */
-INSERT INTO `reports`(`id`) VALUES ('MOVEMENT_TYPE_REPORT'), ('CARGOS_IN_DAY_REPORT'), ('REGIONAL_CONTROL_REPORT'), ('ARREST_REPORTS'), ('MEAT_REPORTS');
+INSERT INTO `reports`(`id`) VALUES ('MOVEMENT_TYPES_REPORT'), ('CARGOS_IN_DAY_REPORT'), ('REGIONAL_CONTROL_REPORT'), ('ARREST_REPORT'),
+('EXTENDED_ARREST_REPORT'), ('MEAT_IN_DAY_REPORT'), ('MEAT_IN_YEAR_REPORT');
 
