@@ -4,31 +4,14 @@
  */
 package org.vetcontrol.entity;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.vetcontrol.sync.LongAdapter;
 
+import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Query;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 /**
  *
@@ -39,14 +22,10 @@ import org.hibernate.annotations.Parameter;
 @IdClass(ClientEntityId.class)
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Vehicle extends Synchronized implements IUpdated, IQuery {
+public class Vehicle extends Synchronized implements IUpdated {
     @Id
-//    @TableGenerator(name = "vehicle", table = "generator", pkColumnName = "generatorName",
-//            valueColumnName = "generatorValue", allocationSize = 1, initialValue = 100,
-//            uniqueConstraints = @UniqueConstraint(columnNames = {"id", "client_id", "department_id"}))
-//    @GeneratedValue(strategy = GenerationType.TABLE, generator = "vehicle")
     @GeneratedValue(generator = "EnhancedTableGenerator")
-    @GenericGenerator(name = "EnhancedTableGenerator", strategy = "org.vetcontrol.hibernate.id.TableFallbackToAssignedGenerator",
+    @GenericGenerator(name = "EnhancedTableGenerator", strategy = "org.vetcontrol.hibernate.id.TableGenerator",
     parameters = {
         @Parameter(name = "segment_value", value = "vehicle"),
         @Parameter(name = "table_name", value = "generator"),
@@ -54,8 +33,7 @@ public class Vehicle extends Synchronized implements IUpdated, IQuery {
         @Parameter(name = "value_column_name", value = "generatorValue"),
         @Parameter(name = "initial_value", value = "100"),
         @Parameter(name = "increment_size", value = "1"),
-        @Parameter(name = "property", value = "id")})
-    @Column(name = "id", nullable = false)
+        @Parameter(name = "property", value = "id")})    
     @XmlID
     @XmlJavaTypeAdapter(LongAdapter.class)
     private Long id;
@@ -216,26 +194,5 @@ public class Vehicle extends Synchronized implements IUpdated, IQuery {
         result = 31 * result + (vehicleType != null ? vehicleType.hashCode() : 0);
         result = 31 * result + (updated != null ? updated.hashCode() : 0);
         return result;
-    }
-
-    @Override
-    public Query getInsertQuery(EntityManager em) {
-        return em.createNativeQuery("insert into vehicle (id, client_id, department_id, document_cargo_id, " +
-                "vehicle_details, vehicle_type, updated, sync_status) " +
-                "value (:id, :client_id, :department_id, :document_cargo_id, " +
-                ":vehicle_details, :vehicle_type, :updated, :sync_status)")
-                .setParameter("id", id)
-                .setParameter("client_id", client != null ? client.getId() : null)
-                .setParameter("department_id", department != null ? department.getId() : null)
-                .setParameter("document_cargo_id", documentCargoId)
-                .setParameter("vehicle_details", vehicleDetails)
-                .setParameter("vehicle_type", vehicleType != null ? vehicleType.name() : null)
-                .setParameter("updated", updated)
-                .setParameter("sync_status", syncStatus != null ? syncStatus.name() : null);
-    }
-
-    @Override
-    public Query getUpdateQuery(EntityManager em) {
-        return null;
     }
 }

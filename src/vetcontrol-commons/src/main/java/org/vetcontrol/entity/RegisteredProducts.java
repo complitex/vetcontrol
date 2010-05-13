@@ -134,38 +134,6 @@ public class RegisteredProducts extends Localizable{
     }
 
     @Override
-    public Query getInsertQuery(EntityManager em){
-        return em.createNativeQuery("insert into registered_products (id, `date`, `classificator`, cargo_producer_id, " +
-                "regnumber, `name`, country_id, updated, disabled) " +
-                "value (:id, :date, :classificator, :cargo_producer_id, :regnumber, :name, :country_id, :updated, :disabled)")
-                .setParameter("id", id)
-                .setParameter("date", date)
-                .setParameter("classificator", classificator)
-                .setParameter("cargo_producer_id", cargoProducer.getId())
-                .setParameter("regnumber", regnumber)
-                .setParameter("name", name)
-                .setParameter("country_id", country.getId())
-                .setParameter("updated", updated)
-                .setParameter("disabled", disabled);
-    }
-
-     @Override
-    public Query getUpdateQuery(EntityManager em){
-        return em.createNativeQuery("update registered_products set `date` = :date, classificator = :classificator, " +
-                "cargo_producer_id = :cargo_producer_id, regnumber = :regnumber, `name` = :name, country_id = :country_id, " +
-                "updated = :updated, disabled = :disabled where id = :id")
-                .setParameter("id", id)
-                .setParameter("date", date)
-                .setParameter("classificator", classificator)
-                .setParameter("cargo_producer_id", cargoProducer.getId())
-                .setParameter("regnumber", regnumber)
-                .setParameter("name", name)
-                .setParameter("country_id", country.getId())
-                .setParameter("updated", updated)
-                .setParameter("disabled", disabled);
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof RegisteredProducts)) return false;

@@ -4,10 +4,10 @@ import com.sun.jersey.api.client.GenericType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.*;
+import org.vetcontrol.hibernate.util.EntityPersisterUtil;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.sync.Count;
 import org.vetcontrol.sync.SyncRequestEntity;
-import org.vetcontrol.util.DateUtil;
 
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -26,10 +26,13 @@ import static org.vetcontrol.sync.client.service.ClientFactory.createJSONClient;
  */
 @Singleton(name = "UserSyncBean")
 public class UserSyncBean extends SyncInfo {
-
     private static final Logger log = LoggerFactory.getLogger(UserSyncBean.class);
+
+    private static final int DB_BATCH_SIZE = 50;
+
     @EJB(beanName = "ClientBean")
     private ClientBean clientBean;
+
     @PersistenceContext
     private EntityManager em;
 
@@ -47,7 +50,6 @@ public class UserSyncBean extends SyncInfo {
 
     private void processUser() {
         String secureKey = clientBean.getCurrentSecureKey();
-//        Date syncUpdated = DateUtil.getCurrentDate();
 
         log.debug("\n==================== Synchronizing: User ============================");
 
@@ -73,14 +75,18 @@ public class UserSyncBean extends SyncInfo {
                 log.debug("Synchronizing: {}", user.toString());
                 sync(new SyncEvent(count, index++, user));
 
-//                user.setUpdated(syncUpdated);
-
                 if (isPersisted(user)) {
-                    user.getUpdateQuery(em).executeUpdate();
+                    EntityPersisterUtil.update(em, user);
                 } else {
-                    user.getInsertQuery(em).executeUpdate();
+                    EntityPersisterUtil.insert(em, user);
+                }
+
+                if (index % DB_BATCH_SIZE == 0){
+                    EntityPersisterUtil.executeBatch(em);
                 }
             }
+
+            EntityPersisterUtil.executeBatch(em);
         }
 
         complete(new SyncEvent(index, User.class));
@@ -89,7 +95,6 @@ public class UserSyncBean extends SyncInfo {
 
     private void processUserGroups() {
         String secureKey = clientBean.getCurrentSecureKey();
-//        Date syncUpdated = DateUtil.getCurrentDate();
 
         log.debug("\n==================== Synchronizing: User Group ============================");
 
@@ -134,8 +139,7 @@ public class UserSyncBean extends SyncInfo {
         if (count_updated > 0) {
             //Загрузка с сервера списка групп пользователей
             List<UserGroup> userGroups = createJSONClient("/usergroup/list").post(new GenericType<List<UserGroup>>() {
-            },
-                    new SyncRequestEntity(secureKey, getUpdated(UserGroup.class)));
+            }, new SyncRequestEntity(secureKey, getUpdated(UserGroup.class)));
 
             //Сохранение в базу данных списка групп пользователей
             index = 0;
@@ -148,30 +152,25 @@ public class UserSyncBean extends SyncInfo {
                 log.debug("Synchronizing: {}", userGroup.toString());
                 sync(new SyncEvent(count_deleted + count_updated, index++, userGroup));
 
-//                userGroup.setUpdated(syncUpdated);
-
                 if (isPersisted(userGroup)) {
-                    userGroup.getUpdateQuery(em).executeUpdate();
+                    EntityPersisterUtil.update(em, userGroup);
                 } else {
                     try {
-                        userGroup.getInsertQuery(em).executeUpdate();
+                        EntityPersisterUtil.insert(em, userGroup);
                     } catch (Exception e) {
                         //remove duplicates
-                        //TODO: find out what it is mean and why it necessary.
                         em.createQuery("delete from UserGroup where login = :login and securityGroup = :securityGroup").setParameter("login", userGroup.getLogin()).setParameter("securityGroup", userGroup.getSecurityGroup()).executeUpdate();
-                        userGroup.getUpdateQuery(em).executeUpdate();
+                        EntityPersisterUtil.update(em, userGroup);
                     }
                 }
+
+                if (index % DB_BATCH_SIZE == 0){
+                    EntityPersisterUtil.executeBatch(em);
+                }
             }
+
+            EntityPersisterUtil.executeBatch(em);
         }
-
-//        if (count_deleted > 0 && count_updated == 0){
-//            em.createQuery("update UserGroup set updated = :updated where updated = :max")
-//                    .setParameter("updated", syncUpdated)
-//                    .setParameter("max", getUpdated(UserGroup.class))
-//                    .executeUpdate();
-//        }
-
 
         complete(new SyncEvent(index, UserGroup.class));
         log.debug("++++++++++++++++++++ Synchronizing Complete: User Group +++++++++++++++++++\n");

@@ -4,24 +4,24 @@
  */
 package org.vetcontrol.hibernate.id;
 
-import java.io.Serializable;
-import java.util.Properties;
 import org.hibernate.MappingException;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.SessionImplementor;
 import org.hibernate.id.Configurable;
-import org.hibernate.id.IdentityGenerator;
 import org.hibernate.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
+import java.util.Properties;
 
 /**
  *
  * @author Artem
  */
-public class IdentityFallbackToAssignedGenerator extends IdentityGenerator implements Configurable {
+public class IdentityGenerator extends org.hibernate.id.IdentityGenerator implements Configurable {
 
-    private static final Logger log = LoggerFactory.getLogger(IdentityFallbackToAssignedGenerator.class);
+    private static final Logger log = LoggerFactory.getLogger(IdentityGenerator.class);
 
     private String entityName;
 

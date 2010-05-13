@@ -1,5 +1,6 @@
 package org.vetcontrol.entity;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.vetcontrol.sync.LongAdapter;
 
 import javax.persistence.*;
@@ -8,7 +9,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.hibernate.annotations.GenericGenerator;
 
 /**
  * User: Anatoly A. Ivanov java@inheaven.ru
@@ -20,12 +20,11 @@ import org.hibernate.annotations.GenericGenerator;
 @Table(name = "user")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class User implements ILongId, IUpdated, IQuery{
+public class User implements ILongId, IUpdated {
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(generator = "EnhancedIdentityGenerator")
-    @GenericGenerator(name = "EnhancedIdentityGenerator", strategy = "org.vetcontrol.hibernate.id.IdentityFallbackToAssignedGenerator")
+    @GenericGenerator(name = "EnhancedIdentityGenerator", strategy = "org.vetcontrol.hibernate.id.IdentityGenerator")
     @XmlID @XmlJavaTypeAdapter(LongAdapter.class)
     private Long id;
 
@@ -191,41 +190,6 @@ public class User implements ILongId, IUpdated, IQuery{
     @Override
     public void setUpdated(Date updated) {
         this.updated = updated;
-    }
-
-    @Override
-    public Query getInsertQuery(EntityManager em){
-        return em.createNativeQuery("insert into user " +
-                "(id, login, _password, first_name, middle_name, last_name, job_id, department_id, passing_border_point_id, updated) " +
-                " value (:id, :login, :_password, :first_name, :middle_name, :last_name, :job_id, :department_id, " +
-                ":passing_border_point_id,  :updated)")
-                .setParameter("id", id)
-                .setParameter("login", login)
-                .setParameter("_password", password)
-                .setParameter("first_name", firstName)
-                .setParameter("middle_name", middleName)
-                .setParameter("last_name", lastName)
-                .setParameter("job_id", job != null ? job.getId() : null)
-                .setParameter("department_id", department.getId())
-                .setParameter("passing_border_point_id", passingBorderPoint)
-                .setParameter("updated", updated);
-    }
-
-    @Override
-    public Query getUpdateQuery(EntityManager em){
-        return em.createNativeQuery("update user set login = :login, _password = :_password, first_name = :first_name, " +
-                "middle_name = :middle_name, last_name = :last_name, job_id = :job_id, department_id = :department_id, " +
-                "passing_border_point_id = :passing_border_point_id, updated = :updated where id = :id")
-                .setParameter("id", id)
-                .setParameter("login", login)
-                .setParameter("_password", password)
-                .setParameter("first_name", firstName)
-                .setParameter("middle_name", middleName)
-                .setParameter("last_name", lastName)
-                .setParameter("job_id", job != null ? job.getId() : null)
-                .setParameter("department_id", department.getId())
-                .setParameter("passing_border_point_id", passingBorderPoint)
-                .setParameter("updated", updated);
     }
 
     @Override

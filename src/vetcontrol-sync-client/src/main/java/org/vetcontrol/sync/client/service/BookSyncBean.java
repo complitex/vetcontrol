@@ -4,6 +4,7 @@ import com.sun.jersey.api.client.GenericType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.*;
+import org.vetcontrol.hibernate.util.EntityPersisterUtil;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.sync.Count;
@@ -34,59 +35,49 @@ import static org.vetcontrol.sync.client.service.ClientFactory.createJSONClient;
 @Singleton(name = "BookSyncBean")
 @TransactionManagement(TransactionManagementType.BEAN)
 public class BookSyncBean extends SyncInfo {
-
     private static final Logger log = LoggerFactory.getLogger(BookSyncBean.class);
+
     private static final int NETWORK_BATCH_SIZE = 100;
-    private static final int DB_BATCH_SIZE = 1;
+    private static final int DB_BATCH_SIZE = 50;
+
     @EJB(beanName = "ClientBean")
     private ClientBean clientBean;
+
     @EJB(beanName = "LogBean")
     private LogBean logBean;
+
     @Resource
     private UserTransaction userTransaction;
+
     @PersistenceContext
     private EntityManager em;
     private boolean initial = false;
+
     public final static Class[] syncBooks = new Class[]{
         StringCulture.class,
         ContainerValidator.class, ArrestReason.class, CargoMode.class, CountryBook.class, CargoProducer.class,
         CargoType.class, CountryWithBadEpizooticSituation.class, CustomsPoint.class, Department.class, PassingBorderPoint.class,
         Job.class, RegisteredProducts.class, UnitType.class, CargoModeCargoType.class, CargoModeUnitType.class};
+
     private final Map<Class, GenericType> genericTypeMap = new HashMap<Class, GenericType>();
 
     public BookSyncBean() {
-        genericTypeMap.put(ContainerValidator.class, new GenericType<List<ContainerValidator>>() {
-        });
-        genericTypeMap.put(ArrestReason.class, new GenericType<List<ArrestReason>>() {
-        });
-        genericTypeMap.put(CargoMode.class, new GenericType<List<CargoMode>>() {
-        });
-        genericTypeMap.put(CargoModeCargoType.class, new GenericType<List<CargoModeCargoType>>() {
-        });
-        genericTypeMap.put(CargoModeUnitType.class, new GenericType<List<CargoModeUnitType>>() {
-        });
-        genericTypeMap.put(CargoProducer.class, new GenericType<List<CargoProducer>>() {
-        });
-        genericTypeMap.put(CargoType.class, new GenericType<List<CargoType>>() {
-        });
-        genericTypeMap.put(CountryBook.class, new GenericType<List<CountryBook>>() {
-        });
-        genericTypeMap.put(CountryWithBadEpizooticSituation.class, new GenericType<List<CountryWithBadEpizooticSituation>>() {
-        });
-        genericTypeMap.put(CustomsPoint.class, new GenericType<List<CustomsPoint>>() {
-        });
-        genericTypeMap.put(Department.class, new GenericType<List<Department>>() {
-        });
-        genericTypeMap.put(Job.class, new GenericType<List<Job>>() {
-        });
-        genericTypeMap.put(PassingBorderPoint.class, new GenericType<List<PassingBorderPoint>>() {
-        });
-        genericTypeMap.put(RegisteredProducts.class, new GenericType<List<RegisteredProducts>>() {
-        });
-        genericTypeMap.put(StringCulture.class, new GenericType<List<StringCulture>>() {
-        });
-        genericTypeMap.put(UnitType.class, new GenericType<List<UnitType>>() {
-        });
+        genericTypeMap.put(ContainerValidator.class, new GenericType<List<ContainerValidator>>() {});
+        genericTypeMap.put(ArrestReason.class, new GenericType<List<ArrestReason>>() {});
+        genericTypeMap.put(CargoMode.class, new GenericType<List<CargoMode>>() {});
+        genericTypeMap.put(CargoModeCargoType.class, new GenericType<List<CargoModeCargoType>>() {});
+        genericTypeMap.put(CargoModeUnitType.class, new GenericType<List<CargoModeUnitType>>() {});
+        genericTypeMap.put(CargoProducer.class, new GenericType<List<CargoProducer>>() {});
+        genericTypeMap.put(CargoType.class, new GenericType<List<CargoType>>() {});
+        genericTypeMap.put(CountryBook.class, new GenericType<List<CountryBook>>() {});
+        genericTypeMap.put(CountryWithBadEpizooticSituation.class, new GenericType<List<CountryWithBadEpizooticSituation>>() {});
+        genericTypeMap.put(CustomsPoint.class, new GenericType<List<CustomsPoint>>() {});
+        genericTypeMap.put(Department.class, new GenericType<List<Department>>() {});
+        genericTypeMap.put(Job.class, new GenericType<List<Job>>() {});
+        genericTypeMap.put(PassingBorderPoint.class, new GenericType<List<PassingBorderPoint>>() {});
+        genericTypeMap.put(RegisteredProducts.class, new GenericType<List<RegisteredProducts>>() {});
+        genericTypeMap.put(StringCulture.class, new GenericType<List<StringCulture>>() {});
+        genericTypeMap.put(UnitType.class, new GenericType<List<UnitType>>() {});
     }
 
     public boolean isInitial() {
@@ -101,7 +92,6 @@ public class BookSyncBean extends SyncInfo {
         this.initial = initial;
     }
 
-    //TODO: unused. Remove?
     public void process() {
         for (Class book : syncBooks) {
             //noinspection unchecked
@@ -118,7 +108,6 @@ public class BookSyncBean extends SyncInfo {
         Log.EVENT event = Log.EVENT.SYNC_DELETED;
         Log.STATUS lastSyncStatus = logBean.getLastStatus(Log.MODULE.SYNC_CLIENT, event, bookClass);
 
-
         String secureKey = clientBean.getCurrentSecureKey();
 
         log.debug("\n==================== Synchronizing Deleted: {} ============================", bookClass.getSimpleName());
@@ -127,7 +116,7 @@ public class BookSyncBean extends SyncInfo {
         localMaxDeletedDate = getMaxDeleted(bookClass, localMaxDeletedDate);
 
         //Количество записей загрузки
-        int count = 0;
+        int count;
         try {
             count = createJSONClient("/book/" + bookClass.getSimpleName() + "/deleted/count").
                     post(Count.class, new SyncRequestEntity(secureKey, localMaxDeletedDate, lastSyncStatus)).getCount();
@@ -185,6 +174,8 @@ public class BookSyncBean extends SyncInfo {
                             }
 
                             if (j % DB_BATCH_SIZE == 0) {
+                                em.flush();
+                                em.clear();
                                 userTransaction.commit();
                                 serverMaxDeletedDate = maxDeletedDateInTX;
                             }
@@ -242,7 +233,7 @@ public class BookSyncBean extends SyncInfo {
         return localMaxDeletedDate;
     }
 
-    public <T extends IQuery & IUpdated> void processBook(Class<T> bookClass) {
+    public <T extends IUpdated> void processBook(Class<T> bookClass) {
         Log.EVENT event = Log.EVENT.SYNC_UPDATED;
         Log.STATUS lastSyncStatus = logBean.getLastStatus(Log.MODULE.SYNC_CLIENT, event, bookClass);
 
@@ -251,7 +242,6 @@ public class BookSyncBean extends SyncInfo {
         log.debug("\n==================== Synchronizing: {} ============================", bookClass.getSimpleName());
 
         Date maxUpdated = getMaxUpdated(bookClass);
-
 
         //Количество записей загрузки
         int count = 0;
@@ -294,16 +284,18 @@ public class BookSyncBean extends SyncInfo {
 
                         log.debug("Synchronizing: {}", book.toString());
                         if (isPersisted(book)) {
-                            book.getUpdateQuery(em).executeUpdate();
+                            EntityPersisterUtil.update(em, book);
                         } else {
-                            book.getInsertQuery(em).executeUpdate();
+                            EntityPersisterUtil.insert(em, book);
                         }
 
                         if (j % DB_BATCH_SIZE == 0) {
+                            EntityPersisterUtil.executeBatch(em);
                             userTransaction.commit();
                         }
                     }
                     if (userTransaction.getStatus() == Status.STATUS_ACTIVE) {
+                        EntityPersisterUtil.executeBatch(em);
                         userTransaction.commit();
                     }
                 } catch (Exception e) {

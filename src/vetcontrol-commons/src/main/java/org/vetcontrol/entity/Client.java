@@ -1,5 +1,6 @@
 package org.vetcontrol.entity;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.vetcontrol.sync.LongAdapter;
 
 import javax.persistence.*;
@@ -17,8 +18,8 @@ import java.util.Date;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Client extends Synchronized implements ILongId{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
+    @GeneratedValue(generator = "EnhancedIdentityGenerator")
+    @GenericGenerator(name = "EnhancedIdentityGenerator", strategy = "org.vetcontrol.hibernate.id.IdentityGenerator")
     @XmlID
     @XmlJavaTypeAdapter(LongAdapter.class)
     private Long id;

@@ -98,32 +98,6 @@ public class Department extends Localizable {
     }
 
     @Override
-    public Query getInsertQuery(EntityManager em) {
-        return em.createNativeQuery("insert into department (id, `name`, parent_id, custom_point_id, `level`, updated, disabled) "
-                + "value (:id, :name, :parent_id, :custom_point_id, :level, :updated, :disabled)").
-                setParameter("id", id).
-                setParameter("name", name).
-                setParameter("parent_id", parent != null ? parent.getId() : null).
-                setParameter("custom_point_id", customsPoint != null ? customsPoint.getId() : null).
-                setParameter("level", level).
-                setParameter("updated", updated).
-                setParameter("disabled", disabled);
-    }
-
-    @Override
-    public Query getUpdateQuery(EntityManager em) {
-        return em.createNativeQuery("update department set `name` = :name, parent_id = :parent_id, "
-                + "custom_point_id = :custom_point_id, `level` = :level, updated = :updated, disabled = :disabled where id = :id").
-                setParameter("id", id).
-                setParameter("name", name).
-                setParameter("parent_id", parent != null ? parent.getId() : null).
-                setParameter("custom_point_id", customsPoint != null ? customsPoint.getId() : null).
-                setParameter("level", level).
-                setParameter("updated", updated).
-                setParameter("disabled", disabled);
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Department)) return false;

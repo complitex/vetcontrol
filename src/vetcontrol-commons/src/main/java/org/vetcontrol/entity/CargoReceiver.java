@@ -1,5 +1,7 @@
 package org.vetcontrol.entity;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 
 /**
@@ -14,7 +16,8 @@ public class CargoReceiver implements ILocalBook, ILongId {
     private Long id;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "EnhancedIdentityGenerator")
+    @GenericGenerator(name = "EnhancedIdentityGenerator", strategy = "org.vetcontrol.hibernate.id.IdentityGenerator")
     @Column(name = "id", nullable = false, unique = true)
     @Override
     public Long getId() {

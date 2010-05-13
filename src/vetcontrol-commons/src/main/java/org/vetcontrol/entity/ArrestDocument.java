@@ -4,28 +4,15 @@
  */
 package org.vetcontrol.entity;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Query;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 /**
  *
@@ -36,15 +23,11 @@ import org.hibernate.annotations.Parameter;
 @IdClass(ClientEntityId.class)
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ArrestDocument extends Synchronized implements IUpdated, IQuery {
+public class ArrestDocument extends Synchronized implements IUpdated {
 
     @Id
-//    @TableGenerator(name = "arrest_document", table = "generator", pkColumnName = "generatorName",
-//            valueColumnName = "generatorValue", allocationSize = 1, initialValue = 100,
-//            uniqueConstraints = @UniqueConstraint(columnNames = {"id", "client_id", "department_id"}))
-//    @GeneratedValue(strategy = GenerationType.TABLE, generator = "arrest_document")
     @GeneratedValue(generator = "EnhancedTableGenerator")
-    @GenericGenerator(name = "EnhancedTableGenerator", strategy = "org.vetcontrol.hibernate.id.TableFallbackToAssignedGenerator",
+    @GenericGenerator(name = "EnhancedTableGenerator", strategy = "org.vetcontrol.hibernate.id.TableGenerator",
     parameters = {
         @Parameter(name = "segment_value", value = "arrest_document"),
         @Parameter(name = "table_name", value = "generator"),
@@ -394,46 +377,5 @@ public class ArrestDocument extends Synchronized implements IUpdated, IQuery {
         result = 31 * result + (certificateDetails != null ? certificateDetails.hashCode() : 0);
         result = 31 * result + (certificateDate != null ? certificateDate.hashCode() : 0);
         return result;
-    }
-
-    @Override
-    public Query getInsertQuery(EntityManager em) {
-        return em.createNativeQuery("insert into arrest_document " +
-                "(id, client_id, department_id, creator_id, arrest_date, arrest_reason_id, arrest_reason_details, " +
-                "cargo_type_id, unit_type_id, `count`, updated, vehicle_type, vehicle_details, cargo_sender_country_id, " +
-                "cargo_sender_name, cargo_receiver_address, cargo_receiver_name, passing_border_point_id, cargo_mode_id, " +
-                "document_cargo_created, certificate_details, certificate_date, sync_status) " +
-                "value (:id, :client_id, :department_id, :creator_id, :arrest_date, :arrest_reason_id, :arrest_reason_details, " +
-                ":cargo_type_id, :unit_type_id, :count, :updated, :vehicle_type, :vehicle_details, :cargo_sender_country_id, " +
-                ":cargo_sender_name, :cargo_receiver_address, :cargo_receiver_name, :passing_border_point_id, :cargo_mode_id, " +
-                ":document_cargo_created, :certificate_details, :certificate_date, :sync_status)")
-                .setParameter("id", id)
-                .setParameter("client_id", client != null ? client.getId() : null)
-                .setParameter("department_id", department != null ? department.getId() : null)
-                .setParameter("creator_id", creator != null ? creator.getId() : null)
-                .setParameter("arrest_date", arrestDate)
-                .setParameter("arrest_reason_id", arrestReason != null ? arrestReason.getId() : null)
-                .setParameter("arrest_reason_details", arrestReasonDetails)
-                .setParameter("cargo_type_id", cargoType != null ? cargoType.getId() : null)
-                .setParameter("unit_type_id", unitType != null ? unitType.getId() : null)
-                .setParameter("count", count)
-                .setParameter("updated", updated)
-                .setParameter("vehicle_type", vehicleType != null ? vehicleType.name() : null)
-                .setParameter("vehicle_details", vehicleDetails)
-                .setParameter("cargo_sender_country_id", senderCountry != null ? senderCountry.getId() : null)
-                .setParameter("cargo_sender_name", senderName)
-                .setParameter("cargo_receiver_address", receiverAddress)
-                .setParameter("cargo_receiver_name", receiverName)
-                .setParameter("passing_border_point_id", passingBorderPoint != null ? passingBorderPoint.getId() : null)
-                .setParameter("cargo_mode_id", cargoMode != null ? cargoMode.getId() : null)
-                .setParameter("document_cargo_created", documentCargoCreated)
-                .setParameter("certificate_details", certificateDetails)
-                .setParameter("certificate_date", certificateDate)
-                .setParameter("sync_status", syncStatus != null ? syncStatus.name() : null);
-    }
-
-    @Override
-    public Query getUpdateQuery(EntityManager em) {
-        return null;
     }
 }

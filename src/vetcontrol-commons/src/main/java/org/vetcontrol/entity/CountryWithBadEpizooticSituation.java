@@ -30,14 +30,4 @@ public class CountryWithBadEpizooticSituation extends Localizable{
     public void setNames(List<StringCulture> names) {
         this.names = names;
     }
-
-    @Override
-    public Query getInsertQuery(EntityManager em){
-        return getInsertQuery(em, "bad_epizootic_situation");
-    }
-
-    @Override
-    public Query getUpdateQuery(EntityManager em) {
-        return getUpdateQuery(em, "bad_epizootic_situation");
-    }
 }

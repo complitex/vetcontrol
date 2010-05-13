@@ -1,5 +1,6 @@
 package org.vetcontrol.entity;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.vetcontrol.sync.LongAdapter;
 import org.vetcontrol.util.book.entity.annotation.ValidProperty;
 
@@ -9,21 +10,19 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
 import java.util.Map;
-import org.hibernate.annotations.GenericGenerator;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
  *         Date: 18.01.2010 18:44:59
  */
 @MappedSuperclass
-public abstract class Localizable implements IBook, ILongId, IUpdated, IQuery, IDisabled {
+public abstract class Localizable implements IBook, ILongId, IUpdated, IDisabled {
 
     protected Long id;
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(generator = "EnhancedIdentityGenerator")
-    @GenericGenerator(name = "EnhancedIdentityGenerator", strategy = "org.vetcontrol.hibernate.id.IdentityFallbackToAssignedGenerator")
+    @GenericGenerator(name = "EnhancedIdentityGenerator", strategy = "org.vetcontrol.hibernate.id.IdentityGenerator")
     @XmlID
     @XmlJavaTypeAdapter(LongAdapter.class)
     @Override
@@ -35,6 +34,7 @@ public abstract class Localizable implements IBook, ILongId, IUpdated, IQuery, I
     public void setId(Long id) {
         this.id = id;
     }
+
     protected Long name;
 
     @Column(name = "name")
@@ -49,13 +49,11 @@ public abstract class Localizable implements IBook, ILongId, IUpdated, IQuery, I
 
     @ValidProperty(false)
     @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name = "locale")
+    @MapKeyColumn(name = "locale", insertable = false, updatable = false)
     @CollectionTable(name = "stringculture",
-    joinColumns =
-    @JoinColumn(name = "id", referencedColumnName = "name"),
-    uniqueConstraints =
-    @UniqueConstraint(columnNames = {"id", "locale"}))
-    @Column(name = "value")
+            joinColumns = @JoinColumn(name = "id", referencedColumnName = "name", insertable = false, updatable = false),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"id", "locale"}))
+    @Column(name = "value", insertable = false, updatable = false)
     @XmlTransient
     public Map<String, String> getNamesMap() {
         return namesMap;
@@ -74,6 +72,7 @@ public abstract class Localizable implements IBook, ILongId, IUpdated, IQuery, I
         }
         return "";
     }
+
     protected Date updated;
 
     @ValidProperty(false)
@@ -102,37 +101,17 @@ public abstract class Localizable implements IBook, ILongId, IUpdated, IQuery, I
         this.disabled = disabled;
     }
 
-    protected Query getInsertQuery(EntityManager em, String table) {
-        return em.createNativeQuery("insert into " + table + " (id, `name`, updated, disabled) value (:id, :name, :updated, :disabled)").setParameter("id", id).setParameter("name", name).setParameter("updated", updated).setParameter("disabled", disabled);
-    }
-
-    protected Query getUpdateQuery(EntityManager em, String table) {
-        return em.createNativeQuery("update " + table + " set `name` = :name, updated = :updated, disabled = :disabled where `id` = :id").setParameter("id", id).setParameter("name", name).setParameter("updated", updated).setParameter("disabled", disabled);
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Localizable)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (!(o instanceof Localizable)) return false;
 
         Localizable that = (Localizable) o;
 
-        if (disabled != that.disabled) {
-            return false;
-        }
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
-        }
-        if (name != null ? !name.equals(that.name) : that.name != null) {
-            return false;
-        }
-        if (updated != null ? !updated.equals(that.updated) : that.updated != null) {
-            return false;
-        }
+        if (disabled != that.disabled) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (updated != null ? !updated.equals(that.updated) : that.updated != null) return false;
 
         return true;
     }

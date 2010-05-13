@@ -6,6 +6,7 @@ package org.vetcontrol.entity;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.GenericGenerator;
 import org.vetcontrol.sync.LongAdapter;
 import org.vetcontrol.util.book.entity.annotation.BookReference;
 import org.vetcontrol.util.book.entity.annotation.ValidProperty;
@@ -17,7 +18,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
-import org.hibernate.annotations.GenericGenerator;
 
 /**
  * @author Artem
@@ -27,14 +27,13 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Table(name = "passing_border_point")
 @XmlRootElement
-public class PassingBorderPoint implements ILongId, IBook, IUpdated, IDisabled, IQuery {
+public class PassingBorderPoint implements ILongId, IBook, IUpdated, IDisabled {
 
     private Long id;
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(generator = "EnhancedIdentityGenerator")
-    @GenericGenerator(name = "EnhancedIdentityGenerator", strategy = "org.vetcontrol.hibernate.id.IdentityFallbackToAssignedGenerator")
+    @GenericGenerator(name = "EnhancedIdentityGenerator", strategy = "org.vetcontrol.hibernate.id.IdentityGenerator")
     @XmlID
     @XmlJavaTypeAdapter(LongAdapter.class)
     @Override
@@ -98,27 +97,6 @@ public class PassingBorderPoint implements ILongId, IBook, IUpdated, IDisabled, 
         this.disabled = disabled;
     }
 
-    @Override
-    public Query getInsertQuery(EntityManager em) {
-        return em.createNativeQuery("insert into passing_border_point (id, `name`, department_id, updated, disabled) "
-                + "value (:id, :name, :department_id, :updated, :disabled)").
-                setParameter("id", id).
-                setParameter("name", name).
-                setParameter("department_id", department.getId()).
-                setParameter("updated", updated).
-                setParameter("disabled", disabled);
-    }
-
-    @Override
-    public Query getUpdateQuery(EntityManager em) {
-        return em.createNativeQuery("update passing_border_point set `name` = :name, department_id = :department_id, "
-                + "updated = :updated, disabled = :disabled where id = :id").
-                setParameter("id", id).
-                setParameter("name", name).
-                setParameter("department_id", department.getId()).
-                setParameter("updated", updated).
-                setParameter("disabled", disabled);
-    }
     private boolean needToUpdate;
 
     @ValidProperty(false)
