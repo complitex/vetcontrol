@@ -1,6 +1,6 @@
 package org.vetcontrol.entity;
 
-import org.vetcontrol.util.book.entity.annotation.ValidProperty;
+import org.vetcontrol.book.annotation.ValidProperty;
 
 import javax.persistence.Column;
 import javax.persistence.EnumType;

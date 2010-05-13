@@ -9,8 +9,8 @@ import java.lang.reflect.ParameterizedType;
 import org.apache.wicket.model.IModel;
 import org.vetcontrol.entity.StringCulture;
 import org.vetcontrol.entity.StringCultureId;
-import org.vetcontrol.util.book.BeanPropertyUtil;
-import org.vetcontrol.util.book.Property;
+import org.vetcontrol.book.BeanPropertyUtil;
+import org.vetcontrol.book.Property;
 
 /**
  *

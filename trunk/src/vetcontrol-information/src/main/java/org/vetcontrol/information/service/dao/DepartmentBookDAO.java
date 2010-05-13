@@ -16,7 +16,7 @@ import javax.persistence.PersistenceContext;
 import org.vetcontrol.entity.CustomsPoint;
 import org.vetcontrol.entity.Department;
 import org.vetcontrol.entity.PassingBorderPoint;
-import org.vetcontrol.util.book.BeanPropertyUtil;
+import org.vetcontrol.book.BeanPropertyUtil;
 
 /**
  *

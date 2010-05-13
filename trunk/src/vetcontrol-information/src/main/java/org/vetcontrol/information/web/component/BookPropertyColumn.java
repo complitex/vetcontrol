@@ -21,17 +21,17 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.lang.PropertyResolver;
 import org.apache.wicket.util.string.Strings;
-import static org.vetcontrol.util.book.BeanPropertyUtil.*;
+import static org.vetcontrol.book.BeanPropertyUtil.*;
 import org.vetcontrol.information.util.web.ResourceUtil;
 import org.vetcontrol.information.util.web.TruncateUtil;
 import org.vetcontrol.information.web.component.list.DateFilter;
 import org.vetcontrol.information.web.component.list.BookTextFilter;
 import org.vetcontrol.information.web.model.AutoCompleteBookReferenceModel;
-import org.vetcontrol.util.book.Property;
+import org.vetcontrol.book.Property;
 import org.vetcontrol.information.web.model.StringCultureModel;
 import org.vetcontrol.service.dao.IBookViewDAO;
-import org.vetcontrol.util.book.entity.ShowBooksMode;
-import org.vetcontrol.util.book.entity.annotation.UIType;
+import org.vetcontrol.book.ShowBooksMode;
+import org.vetcontrol.book.annotation.UIType;
 
 /**
  *

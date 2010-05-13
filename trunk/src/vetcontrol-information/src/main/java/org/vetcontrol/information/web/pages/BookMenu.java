@@ -9,7 +9,7 @@ import org.apache.wicket.PageParameters;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.vetcontrol.information.util.web.ResourceUtil;
 import org.vetcontrol.information.web.model.DisplayBookClassModel;
-import org.vetcontrol.util.book.BookTypes;
+import org.vetcontrol.book.BookTypes;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.ITemplateLink;
 import org.vetcontrol.web.template.ITemplateMenu;

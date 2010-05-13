@@ -6,7 +6,7 @@ package org.vetcontrol.entity;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.vetcontrol.sync.LongAdapter;
-import org.vetcontrol.util.book.entity.annotation.ValidProperty;
+import org.vetcontrol.book.annotation.ValidProperty;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlID;

@@ -6,7 +6,7 @@ package org.vetcontrol.information.web.model;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.vetcontrol.util.book.Property;
+import org.vetcontrol.book.Property;
 import org.vetcontrol.information.util.web.ResourceUtil;
 
 /**

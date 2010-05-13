@@ -27,9 +27,9 @@ import org.vetcontrol.entity.DeletedEmbeddedId;
 import org.vetcontrol.entity.UnitType;
 import org.vetcontrol.information.util.web.cargomode.CargoModeFilterBean;
 import org.vetcontrol.util.DateUtil;
-import static org.vetcontrol.util.book.BeanPropertyUtil.*;
-import org.vetcontrol.util.book.entity.ShowBooksMode;
-import org.vetcontrol.util.book.service.HibernateSessionTransformer;
+import static org.vetcontrol.book.BeanPropertyUtil.*;
+import org.vetcontrol.book.ShowBooksMode;
+import org.vetcontrol.hibernate.util.HibernateSessionTransformer;
 
 /**
  *

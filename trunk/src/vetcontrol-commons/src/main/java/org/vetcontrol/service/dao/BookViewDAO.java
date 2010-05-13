@@ -12,9 +12,9 @@ import org.hibernate.Session;
 import org.hibernate.criterion.*;
 import org.hibernate.type.Type;
 import org.vetcontrol.entity.StringCulture;
-import org.vetcontrol.util.book.Property;
-import org.vetcontrol.util.book.entity.annotation.UIType;
-import org.vetcontrol.util.book.service.HibernateSessionTransformer;
+import org.vetcontrol.book.Property;
+import org.vetcontrol.book.annotation.UIType;
+import org.vetcontrol.hibernate.util.HibernateSessionTransformer;
 import org.vetcontrol.web.security.SecurityRoles;
 
 import javax.annotation.security.RolesAllowed;
@@ -27,9 +27,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import org.hibernate.SQLQuery;
-import org.vetcontrol.util.book.entity.ShowBooksMode;
+import org.vetcontrol.book.ShowBooksMode;
 
-import static org.vetcontrol.util.book.BeanPropertyUtil.*;
+import static org.vetcontrol.book.BeanPropertyUtil.*;
 
 /**
  *

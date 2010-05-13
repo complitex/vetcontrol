@@ -4,8 +4,8 @@
  */
 package org.vetcontrol.entity;
 
-import org.vetcontrol.util.book.entity.annotation.MappedProperty;
-import org.vetcontrol.util.book.entity.annotation.ViewLength;
+import org.vetcontrol.book.annotation.MappedProperty;
+import org.vetcontrol.book.annotation.ViewLength;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

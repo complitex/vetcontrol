@@ -1,8 +1,8 @@
 package org.vetcontrol.entity;
 
-import org.vetcontrol.util.book.entity.annotation.MappedProperty;
-import org.vetcontrol.util.book.entity.annotation.ValidProperty;
-import org.vetcontrol.util.book.entity.annotation.ViewLength;
+import org.vetcontrol.book.annotation.MappedProperty;
+import org.vetcontrol.book.annotation.ValidProperty;
+import org.vetcontrol.book.annotation.ViewLength;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;

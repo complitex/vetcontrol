@@ -5,15 +5,15 @@ import org.vetcontrol.entity.*;
 import org.vetcontrol.information.service.dao.BookDAO;
 import org.vetcontrol.information.service.dao.IBookDAO;
 import org.vetcontrol.information.service.generator.Sequence;
-import org.vetcontrol.util.book.Property;
-import static org.vetcontrol.util.book.BeanPropertyUtil.*;
+import org.vetcontrol.book.Property;
+import static org.vetcontrol.book.BeanPropertyUtil.*;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vetcontrol.util.book.BookTypes;
+import org.vetcontrol.book.BookTypes;
 
 public class ServerPopulator extends AbstractPopulator {
 

@@ -14,7 +14,7 @@ import org.vetcontrol.information.web.pages.BookPage;
 import org.vetcontrol.information.web.pages.custom.cargomode.CargoModeEdit;
 import org.vetcontrol.information.web.pages.custom.cargomode.CargoModeList;
 import org.vetcontrol.information.web.pages.custom.department.DepartmentEdit;
-import org.vetcontrol.util.book.BookTypes;
+import org.vetcontrol.book.BookTypes;
 
 /**
  *

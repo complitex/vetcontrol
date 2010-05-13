@@ -6,8 +6,8 @@ package org.vetcontrol.information.web.component;
 
 import java.util.Locale;
 import org.vetcontrol.information.util.web.ITruncate;
-import static org.vetcontrol.util.book.BeanPropertyUtil.*;
-import org.vetcontrol.util.book.Property;
+import static org.vetcontrol.book.BeanPropertyUtil.*;
+import org.vetcontrol.book.Property;
 import org.vetcontrol.web.component.book.SimpleDisableAwareChoiceRenderer;
 
 /**

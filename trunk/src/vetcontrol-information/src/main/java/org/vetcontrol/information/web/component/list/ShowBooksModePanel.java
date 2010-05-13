@@ -11,7 +11,7 @@ import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.RadioChoice;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.vetcontrol.util.book.entity.ShowBooksMode;
+import org.vetcontrol.book.ShowBooksMode;
 
 /**
  *

@@ -7,7 +7,7 @@ package org.vetcontrol.information.service.dao;
 import org.vetcontrol.entity.StringCulture;
 import org.vetcontrol.information.service.generator.Sequence;
 import org.vetcontrol.service.dao.BookViewDAO;
-import org.vetcontrol.util.book.BeanPropertyUtil;
+import org.vetcontrol.book.BeanPropertyUtil;
 import org.vetcontrol.web.security.SecurityRoles;
 
 import javax.annotation.security.RolesAllowed;
@@ -18,8 +18,8 @@ import java.util.List;
 import javax.persistence.TemporalType;
 import org.hibernate.Session;
 import org.vetcontrol.util.DateUtil;
-import org.vetcontrol.util.book.Property;
-import org.vetcontrol.util.book.service.HibernateSessionTransformer;
+import org.vetcontrol.book.Property;
+import org.vetcontrol.hibernate.util.HibernateSessionTransformer;
 
 /**
  *

@@ -20,7 +20,7 @@ import org.vetcontrol.report.commons.entity.Ordered;
 import org.vetcontrol.report.commons.entity.ReportParameter;
 import org.vetcontrol.report.commons.service.LocaleService;
 import org.vetcontrol.report.commons.util.SqlQueryLoader;
-import org.vetcontrol.util.book.service.HibernateSessionTransformer;
+import org.vetcontrol.hibernate.util.HibernateSessionTransformer;
 
 /**
  *

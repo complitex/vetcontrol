@@ -19,7 +19,7 @@ import org.vetcontrol.information.service.dao.BookDAO;
 import org.vetcontrol.information.service.generator.Sequence;
 import org.vetcontrol.service.dao.BookViewDAO;
 import org.vetcontrol.service.dao.IBookViewDAO;
-import org.vetcontrol.util.book.service.HibernateSessionTransformer;
+import org.vetcontrol.hibernate.util.HibernateSessionTransformer;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -38,7 +38,7 @@ import org.hibernate.jdbc.Work;
 import org.hibernate.persister.entity.EntityPersister;
 import org.junit.Test;
 import org.vetcontrol.hibernate.util.EntityPersisterUtil;
-import org.vetcontrol.util.book.entity.ShowBooksMode;
+import org.vetcontrol.book.ShowBooksMode;
 
 /**
  *

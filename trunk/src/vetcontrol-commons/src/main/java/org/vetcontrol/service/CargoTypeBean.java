@@ -3,7 +3,7 @@ package org.vetcontrol.service;
 import org.vetcontrol.entity.CargoMode;
 import org.vetcontrol.entity.CargoType;
 import org.vetcontrol.entity.UnitType;
-import org.vetcontrol.util.book.BeanPropertyUtil;
+import org.vetcontrol.book.BeanPropertyUtil;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
