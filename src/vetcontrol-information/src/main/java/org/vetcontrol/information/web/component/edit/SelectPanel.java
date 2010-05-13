@@ -12,7 +12,7 @@ import org.apache.wicket.model.IModel;
 import org.vetcontrol.information.util.web.TruncateUtil;
 import org.vetcontrol.information.web.component.BookChoiceRenderer;
 import org.vetcontrol.information.web.component.DisableAwareDropDownChoice;
-import org.vetcontrol.util.book.Property;
+import org.vetcontrol.book.Property;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 
 /**

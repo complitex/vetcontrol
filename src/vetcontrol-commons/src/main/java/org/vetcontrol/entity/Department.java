@@ -6,9 +6,9 @@ package org.vetcontrol.entity;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.vetcontrol.util.book.entity.annotation.BookReference;
-import org.vetcontrol.util.book.entity.annotation.MappedProperty;
-import org.vetcontrol.util.book.entity.annotation.ValidProperty;
+import org.vetcontrol.book.annotation.BookReference;
+import org.vetcontrol.book.annotation.MappedProperty;
+import org.vetcontrol.book.annotation.ValidProperty;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlIDREF;

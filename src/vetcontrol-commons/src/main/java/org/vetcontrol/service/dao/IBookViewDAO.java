@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import javax.ejb.Local;
 import javax.persistence.EntityManager;
-import org.vetcontrol.util.book.entity.ShowBooksMode;
+import org.vetcontrol.book.ShowBooksMode;
 
 /**
  *

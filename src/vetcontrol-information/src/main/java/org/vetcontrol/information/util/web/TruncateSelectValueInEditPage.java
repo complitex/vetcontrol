@@ -5,8 +5,8 @@
 package org.vetcontrol.information.util.web;
 
 import org.apache.wicket.util.string.Strings;
-import static org.vetcontrol.util.book.BeanPropertyUtil.*;
-import org.vetcontrol.util.book.Property;
+import static org.vetcontrol.book.BeanPropertyUtil.*;
+import org.vetcontrol.book.Property;
 
 /**
  *

@@ -8,7 +8,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.Filte
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.TextFilter;
 import org.apache.wicket.model.IModel;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
-import org.vetcontrol.util.book.Property;
+import org.vetcontrol.book.Property;
 
 /**
  *

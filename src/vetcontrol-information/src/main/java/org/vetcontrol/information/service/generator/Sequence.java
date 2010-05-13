@@ -12,7 +12,7 @@ import javax.persistence.PersistenceContext;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.vetcontrol.entity.Generator;
-import org.vetcontrol.util.book.service.HibernateSessionTransformer;
+import org.vetcontrol.hibernate.util.HibernateSessionTransformer;
 
 /**
  *

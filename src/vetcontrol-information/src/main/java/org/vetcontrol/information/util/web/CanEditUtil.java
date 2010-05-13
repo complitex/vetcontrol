@@ -6,7 +6,7 @@ package org.vetcontrol.information.util.web;
 
 import java.io.Serializable;
 import org.apache.wicket.Application;
-import org.vetcontrol.util.book.BeanPropertyUtil;
+import org.vetcontrol.book.BeanPropertyUtil;
 import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.TemplateWebApplication;
 

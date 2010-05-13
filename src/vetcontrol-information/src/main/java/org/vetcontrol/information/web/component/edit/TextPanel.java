@@ -11,7 +11,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.vetcontrol.information.util.web.Constants;
-import org.vetcontrol.util.book.Property;
+import org.vetcontrol.book.Property;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 
 /**

@@ -13,7 +13,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.vetcontrol.entity.StringCulture;
-import org.vetcontrol.util.book.Property;
+import org.vetcontrol.book.Property;
 
 /**
  *

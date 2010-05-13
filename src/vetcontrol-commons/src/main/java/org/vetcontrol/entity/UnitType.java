@@ -1,6 +1,6 @@
 package org.vetcontrol.entity;
 
-import org.vetcontrol.util.book.entity.annotation.MappedProperty;
+import org.vetcontrol.book.annotation.MappedProperty;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;

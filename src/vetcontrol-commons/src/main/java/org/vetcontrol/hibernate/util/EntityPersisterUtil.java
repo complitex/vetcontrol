@@ -10,7 +10,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.engine.SessionImplementor;
 import org.hibernate.persister.entity.EntityPersister;
-import org.vetcontrol.util.book.service.HibernateSessionTransformer;
 
 /**
  *

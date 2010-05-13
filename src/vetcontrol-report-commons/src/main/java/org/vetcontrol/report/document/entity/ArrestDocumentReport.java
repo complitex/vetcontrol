@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Locale;
 import org.vetcontrol.entity.ArrestDocument;
-import static org.vetcontrol.util.book.BeanPropertyUtil.*;
+import static org.vetcontrol.book.BeanPropertyUtil.*;
 import static org.vetcontrol.web.component.VehicleTypeChoicePanel.getDysplayName;
 
 /**

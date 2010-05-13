@@ -6,8 +6,8 @@ package org.vetcontrol.information.web.model;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
-import org.vetcontrol.util.book.BeanPropertyUtil;
-import org.vetcontrol.util.book.Property;
+import org.vetcontrol.book.BeanPropertyUtil;
+import org.vetcontrol.book.Property;
 
 /**
  *

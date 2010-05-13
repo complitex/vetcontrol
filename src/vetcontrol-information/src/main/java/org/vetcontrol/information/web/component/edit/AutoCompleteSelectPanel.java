@@ -30,9 +30,9 @@ import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 import org.vetcontrol.information.web.model.StringCultureModel;
 import org.vetcontrol.service.dao.IBookViewDAO;
 import org.vetcontrol.service.dao.ILocaleDAO;
-import org.vetcontrol.util.book.BeanPropertyUtil;
-import org.vetcontrol.util.book.Property;
-import org.vetcontrol.util.book.entity.ShowBooksMode;
+import org.vetcontrol.book.BeanPropertyUtil;
+import org.vetcontrol.book.Property;
+import org.vetcontrol.book.ShowBooksMode;
 
 /**
  *
