@@ -7,6 +7,7 @@ package org.vetcontrol.hibernate.util;
 import javax.persistence.EntityManager;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.engine.SessionImplementor;
 import org.hibernate.persister.entity.EntityPersister;
 import org.vetcontrol.util.book.service.HibernateSessionTransformer;
@@ -16,8 +17,6 @@ import org.vetcontrol.util.book.service.HibernateSessionTransformer;
  * @author Artem
  */
 public final class EntityPersisterUtil {
-
-    private static final String EXCEPTION_MESSAGE = "Internal hibernate session implementation doesn't implement SessionImplementor interface anymore.";
 
     private EntityPersisterUtil() {
     }
@@ -29,13 +28,10 @@ public final class EntityPersisterUtil {
      * @throws HibernateException
      */
     public static void insert(EntityManager entityManager, Object entity) throws HibernateException {
-        Session session = HibernateSessionTransformer.getSession(entityManager);
-        if (!(session instanceof SessionImplementor)) {
-            throw new RuntimeException(EXCEPTION_MESSAGE);
-        }
-        SessionImplementor sessionImplementor = (SessionImplementor) session;
-        String entityName = session.getSessionFactory().getClassMetadata(entity.getClass()).getEntityName();
-        EntityPersister persister = sessionImplementor.getEntityPersister(entityName, entity);
+        Session session = getSession(entityManager);
+        SessionImplementor sessionImplementor = getSessionImplementor(session);
+        String entityName = getEntityName(session.getSessionFactory(), entity.getClass());
+        EntityPersister persister = getEntityPersister(sessionImplementor, entityName, entity);
         persister.insert(persister.getIdentifier(entity, sessionImplementor), persister.getPropertyValues(entity, sessionImplementor.getEntityMode()),
                 entity, sessionImplementor);
     }
@@ -47,13 +43,10 @@ public final class EntityPersisterUtil {
      * @throws HibernateException
      */
     public static void update(EntityManager entityManager, Object entity) throws HibernateException {
-        Session session = HibernateSessionTransformer.getSession(entityManager);
-        if (!(session instanceof SessionImplementor)) {
-            throw new RuntimeException(EXCEPTION_MESSAGE);
-        }
-        SessionImplementor sessionImplementor = (SessionImplementor) session;
-        String entityName = session.getSessionFactory().getClassMetadata(entity.getClass()).getEntityName();
-        EntityPersister persister = sessionImplementor.getEntityPersister(entityName, entity);
+        Session session = getSession(entityManager);
+        SessionImplementor sessionImplementor = getSessionImplementor(session);
+        String entityName = getEntityName(session.getSessionFactory(), entity.getClass());
+        EntityPersister persister = getEntityPersister(sessionImplementor, entityName, entity);
         persister.update(persister.getIdentifier(entity, sessionImplementor), persister.getPropertyValues(entity, sessionImplementor.getEntityMode()),
                 null, false, null, null, entity, null, sessionImplementor);
     }
@@ -63,11 +56,28 @@ public final class EntityPersisterUtil {
      * @param entityManager
      */
     public static void executeBatch(EntityManager entityManager) throws HibernateException {
-        Session session = HibernateSessionTransformer.getSession(entityManager);
-        if (!(session instanceof SessionImplementor)) {
-            throw new RuntimeException(EXCEPTION_MESSAGE);
-        }
-        SessionImplementor sessionImplementor = (SessionImplementor) session;
+        Session session = getSession(entityManager);
+        SessionImplementor sessionImplementor = getSessionImplementor(session);
         sessionImplementor.getBatcher().executeBatch();
     }
+
+    private static Session getSession(EntityManager entityManager){
+        return HibernateSessionTransformer.getSession(entityManager);
+    }
+
+    private static SessionImplementor getSessionImplementor(Session session){
+        if (!(session instanceof SessionImplementor)) {
+            throw new RuntimeException("Internal hibernate session implementation doesn't implement SessionImplementor interface anymore.");
+        }
+        return (SessionImplementor) session;
+    }
+
+    private static String getEntityName(SessionFactory sessionFactory, Class entityClazz){
+        return sessionFactory.getClassMetadata(entityClazz).getEntityName();
+    }
+
+    private static EntityPersister getEntityPersister(SessionImplementor sessionImplementor, String entityName, Object entity) throws HibernateException{
+        return sessionImplementor.getEntityPersister(entityName, entity);
+    }
+
 }
