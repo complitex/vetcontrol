@@ -37,6 +37,7 @@ import org.hibernate.engine.SessionImplementor;
 import org.hibernate.jdbc.Work;
 import org.hibernate.persister.entity.EntityPersister;
 import org.junit.Test;
+import org.vetcontrol.hibernate.util.EntityPersisterUtil;
 import org.vetcontrol.util.book.entity.ShowBooksMode;
 
 /**
@@ -429,7 +430,8 @@ public class BooksTest {
         SessionImplementor sessionImplementor = (SessionImplementor) session;
         String entityName = session.getSessionFactory().getClassMetadata(CountryBook.class).getEntityName();
         EntityPersister persister = (EntityPersister) sessionImplementor.getEntityPersister(entityName, book);
-        persister.insert(persister.getIdentifier(book, EntityMode.POJO), persister.getPropertyValues(book, EntityMode.POJO), book, sessionImplementor);
+        persister.insert(persister.getIdentifier(book, sessionImplementor), persister.getPropertyValues(book, sessionImplementor.getEntityMode()),
+                book, sessionImplementor);
         sessionImplementor.getBatcher().executeBatch();
 
         transaction.commit();
@@ -451,8 +453,8 @@ public class BooksTest {
         SessionImplementor sessionImplementor = (SessionImplementor) session;
         String entityName = session.getSessionFactory().getClassMetadata(CountryBook.class).getEntityName();
         EntityPersister persister = (EntityPersister) sessionImplementor.getEntityPersister(entityName, book);
-        persister.update(persister.getIdentifier(book, EntityMode.POJO), persister.getPropertyValues(book, EntityMode.POJO), null,
-                false, null, null, book, null, sessionImplementor);
+        persister.update(persister.getIdentifier(book, sessionImplementor), persister.getPropertyValues(book, sessionImplementor.getEntityMode()),
+                null, false, null, null, book, null, sessionImplementor);
         sessionImplementor.getBatcher().executeBatch();
 
         transaction.commit();
@@ -475,7 +477,8 @@ public class BooksTest {
         SessionImplementor sessionImplementor = (SessionImplementor) session;
         String entityName = session.getSessionFactory().getClassMetadata(StringCulture.class).getEntityName();
         EntityPersister persister = (EntityPersister) sessionImplementor.getEntityPersister(entityName, sc);
-        persister.insert(persister.getIdentifier(sc, EntityMode.POJO), persister.getPropertyValues(sc, EntityMode.POJO), sc, sessionImplementor);
+        persister.insert(persister.getIdentifier(sc, sessionImplementor), persister.getPropertyValues(sc, sessionImplementor.getEntityMode()),
+                sc, sessionImplementor);
         sessionImplementor.getBatcher().executeBatch();
 
         transaction.commit();
@@ -491,7 +494,7 @@ public class BooksTest {
         session = HibernateSessionTransformer.getSession(entityManager);
         sessionImplementor = (SessionImplementor) session;
         persister = (EntityPersister) sessionImplementor.getEntityPersister(entityName, sc);
-        persister.update(persister.getIdentifier(sc, EntityMode.POJO), persister.getPropertyValues(sc, EntityMode.POJO), null,
+        persister.update(persister.getIdentifier(sc, sessionImplementor), persister.getPropertyValues(sc, sessionImplementor.getEntityMode()), null,
                 false, null, null, sc, null, sessionImplementor);
         sessionImplementor.getBatcher().executeBatch();
 
@@ -505,13 +508,14 @@ public class BooksTest {
         EntityManager entityManager = managerFactory.createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
-        DocumentCargo dc = newDocumentCargo(1L);
+        DocumentCargo dc = newDocumentCargo(50L);
 
         Session session = HibernateSessionTransformer.getSession(entityManager);
         SessionImplementor sessionImplementor = (SessionImplementor) session;
         String entityName = session.getSessionFactory().getClassMetadata(DocumentCargo.class).getEntityName();
         EntityPersister persister = (EntityPersister) sessionImplementor.getEntityPersister(entityName, dc);
-        persister.insert(persister.getIdentifier(dc, EntityMode.POJO), persister.getPropertyValues(dc, EntityMode.POJO), dc, sessionImplementor);
+        persister.insert(persister.getIdentifier(dc, sessionImplementor), persister.getPropertyValues(dc, sessionImplementor.getEntityMode()),
+                dc, sessionImplementor);
         sessionImplementor.getBatcher().executeBatch();
 
         transaction.commit();
@@ -523,11 +527,14 @@ public class BooksTest {
         transaction.begin();
 
         dc.setDetails("details 2");
+        CountryBook c = new CountryBook();
+        c.setId(2L);
+        dc.setSenderCountry(c);
 
         session = HibernateSessionTransformer.getSession(entityManager);
         sessionImplementor = (SessionImplementor) session;
         persister = (EntityPersister) sessionImplementor.getEntityPersister(entityName, dc);
-        persister.update(persister.getIdentifier(dc, EntityMode.POJO), persister.getPropertyValues(dc, EntityMode.POJO), null,
+        persister.update(persister.getIdentifier(dc, sessionImplementor), persister.getPropertyValues(dc, sessionImplementor.getEntityMode()), null,
                 false, null, null, dc, null, sessionImplementor);
         sessionImplementor.getBatcher().executeBatch();
 
@@ -570,7 +577,6 @@ public class BooksTest {
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
 
-
         CountryBook b = new CountryBook();
         b.setCode("11");
         b.setName(1L);
@@ -585,13 +591,13 @@ public class BooksTest {
 
     }
 
-    @Test
+//    @Test
     public void customIdentityGeneratorForCompositeKeysTest() {
         EntityManager entityManager = managerFactory.createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
 
-        DocumentCargo dc = newDocumentCargo(20L);
+        DocumentCargo dc = newDocumentCargo(50L);
         DocumentCargo dc2 = entityManager.merge(dc);
         System.out.println("id = " + dc2.getId());
 
@@ -636,6 +642,57 @@ public class BooksTest {
         entityManager.close();
     }
 
+    @Test
+    public void testEntityPersisterUtil() {
+        //document cargo
+        EntityManager entityManager = managerFactory.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+
+        DocumentCargo dc = newDocumentCargo(50L);
+        EntityPersisterUtil.insert(entityManager, dc);
+
+        EntityPersisterUtil.executeBatch(entityManager);
+        transaction.commit();
+        entityManager.close();
+
+        entityManager = managerFactory.createEntityManager();
+        transaction = entityManager.getTransaction();
+        transaction.begin();
+
+        dc.setDetails("details 2");
+        EntityPersisterUtil.update(entityManager, dc);
+
+        EntityPersisterUtil.executeBatch(entityManager);
+        transaction.commit();
+        entityManager.close();
+
+        //country book
+        entityManager = managerFactory.createEntityManager();
+        transaction = entityManager.getTransaction();
+        transaction.begin();
+
+        CountryBook book = new CountryBook("AA");
+        book.setId(100L);
+        book.setName(1L);
+        EntityPersisterUtil.insert(entityManager, book);
+
+        EntityPersisterUtil.executeBatch(entityManager);
+        transaction.commit();
+        entityManager.close();
+
+        entityManager = managerFactory.createEntityManager();
+        transaction = entityManager.getTransaction();
+        transaction.begin();
+
+        book.setCode("AB");
+        EntityPersisterUtil.update(entityManager, book);
+
+        EntityPersisterUtil.executeBatch(entityManager);
+        transaction.commit();
+        entityManager.close();
+
+    }
 //    @Test
 //    public void cloneTest() {
 //        EntityManager entityManager = managerFactory.createEntityManager();
