@@ -62,7 +62,7 @@ public final class EntityPersisterUtil {
      * Executes sql statements batch. MUST be invoked right before transaction commit.
      * @param entityManager
      */
-    public static void executeBatch(EntityManager entityManager) {
+    public static void executeBatch(EntityManager entityManager) throws HibernateException {
         Session session = HibernateSessionTransformer.getSession(entityManager);
         if (!(session instanceof SessionImplementor)) {
             throw new RuntimeException(EXCEPTION_MESSAGE);
