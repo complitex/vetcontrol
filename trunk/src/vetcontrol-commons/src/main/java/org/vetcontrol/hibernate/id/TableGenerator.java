@@ -4,13 +4,10 @@
  */
 package org.vetcontrol.hibernate.id;
 
-import java.io.Serializable;
-import java.util.Properties;
 import org.hibernate.MappingException;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.SessionImplementor;
 import org.hibernate.id.IdentifierGenerationException;
-import org.hibernate.id.enhanced.TableGenerator;
 import org.hibernate.property.ChainedPropertyAccessor;
 import org.hibernate.property.Getter;
 import org.hibernate.property.PropertyAccessor;
@@ -20,17 +17,20 @@ import org.hibernate.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
+import java.util.Properties;
+
 /**
  *
  * @author Artem
  */
-public class TableFallbackToAssignedGenerator extends TableGenerator {
+public class TableGenerator extends org.hibernate.id.enhanced.TableGenerator {
 
     public static final String PROPERTY_NAME = "property";
 
     private String propertyName;
 
-    private static final Logger log = LoggerFactory.getLogger(TableFallbackToAssignedGenerator.class);
+    private static final Logger log = LoggerFactory.getLogger(TableGenerator.class);
 
     private String entityName;
 

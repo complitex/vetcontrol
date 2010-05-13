@@ -17,7 +17,7 @@ import java.util.Date;
 @Table(name = "cargo_mode_unit_type")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CargoModeUnitType implements IQuery, IUpdated, IEmbeddedId<CargoModeUnitType.Id> {
+public class CargoModeUnitType implements IUpdated, IEmbeddedId<CargoModeUnitType.Id> {
 
     @Embeddable
     @XmlType
@@ -140,18 +140,6 @@ public class CargoModeUnitType implements IQuery, IUpdated, IEmbeddedId<CargoMod
 
     public void setUpdated(Date updated) {
         this.updated = updated;
-    }
-
-    @Override
-    public Query getInsertQuery(EntityManager em) {
-        return em.createNativeQuery("insert into cargo_mode_unit_type (cargo_mode_id, unit_type_id, updated) "
-                + "value (:cargo_mode_id, :unit_type_id, :updated)").setParameter("cargo_mode_id", id.cargoModeId).setParameter("unit_type_id", id.unitTypeId).setParameter("updated", updated);
-    }
-
-    @Override
-    public Query getUpdateQuery(EntityManager em) {
-        return em.createNativeQuery("update cargo_mode_unit_type set updated = :updated "
-                + "where cargo_mode_id = :cargo_mode_id and unit_type_id = :unit_type_id").setParameter("cargo_mode_id", id.cargoModeId).setParameter("unit_type_id", id.unitTypeId).setParameter("updated", updated);
     }
 
     @Override

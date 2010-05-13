@@ -53,28 +53,6 @@ public class CargoProducer extends Localizable{
     }
 
     @Override
-    public Query getInsertQuery(EntityManager em){
-        return em.createNativeQuery("insert into cargo_producer (id, `name`, country_id, updated, disabled) "
-                + "value (:id, :name, :country_id, :updated, :disabled)").
-                setParameter("id", id).
-                setParameter("name", name).
-                setParameter("country_id", country.getId()).
-                setParameter("updated", updated).
-                setParameter("disabled", disabled);
-    }
-
-    @Override
-    public Query getUpdateQuery(EntityManager em) {
-        return em.createNativeQuery("update cargo_producer set `name` = :name, country_id = :country_id, "
-                + "updated = :updated, disabled = :disabled where id = :id").
-                setParameter("id", id).
-                setParameter("name", name).
-                setParameter("country_id", country.getId()).
-                setParameter("updated", updated).
-                setParameter("disabled", disabled);
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof CargoProducer)) return false;

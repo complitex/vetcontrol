@@ -3,6 +3,7 @@ package org.vetcontrol.sync.server.resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.*;
+import org.vetcontrol.hibernate.util.EntityPersisterUtil;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.sync.*;
@@ -31,13 +32,17 @@ import java.util.ResourceBundle;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class DocumentResourceBean {
-
     private static final Logger log = LoggerFactory.getLogger(DocumentResourceBean.class);
     private static final ResourceBundle rb = ResourceBundle.getBundle("org.vetcontrol.sync.server.resources.ResourceBeans");
+
+    private static final int DB_BATCH_SIZE = 50;
+
     @PersistenceContext
     private EntityManager em;
+
     @EJB(beanName = "LogBean")
     private LogBean logBean;
+
     @EJB(beanName = "ClientBean")
     private ClientBean clientBean;
 
@@ -51,16 +56,22 @@ public class DocumentResourceBean {
             int size = documents.size();
 
             try {
+                int index = 0;
+
                 for (DocumentCargo documentCargo : syncDocumentCargo.getDocumentCargos()) {
                     if (documentCargo.getId() == null) {
                         continue;
                     }
                     securityCheck(client, DocumentCargo.class, documentCargo.getClient(), r);
 
-                    documentCargo.getInsertQuery(em).executeUpdate();
+                    EntityPersisterUtil.insert(em, documentCargo);
+
+                    if (index++ % DB_BATCH_SIZE == 0){
+                        EntityPersisterUtil.executeBatch(em);
+                    }
                 }
 
-                em.flush();
+                EntityPersisterUtil.executeBatch(em);
 
                 logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, DocumentCargo.class,
                         rb.getString("info.sync.processed"), size, r.getRemoteHost(), client.getIp());
@@ -92,6 +103,8 @@ public class DocumentResourceBean {
             int size = cargos.size();
 
             try {
+                int index = 0;
+
                 for (Cargo cargo : cargos) {
                     if (cargo.getId() == null) {
                         continue;
@@ -101,10 +114,14 @@ public class DocumentResourceBean {
                     cargo.setDocumentCargo(em.getReference(DocumentCargo.class,
                             new ClientEntityId(cargo.getDocumentCargoId(), cargo.getClient(), cargo.getDepartment())));
 
-                    cargo.getInsertQuery(em).executeUpdate();                    
+                    EntityPersisterUtil.insert(em, cargo);
+
+                    if (index++ % DB_BATCH_SIZE == 0){
+                        EntityPersisterUtil.executeBatch(em);
+                    }
                 }
 
-                em.flush();
+                EntityPersisterUtil.executeBatch(em);
 
                 logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Cargo.class,
                         rb.getString("info.sync.processed"), size,
@@ -135,6 +152,8 @@ public class DocumentResourceBean {
             int size = vehicles.size();
 
             try {
+                int index = 0;
+
                 for (Vehicle vehicle : vehicles) {
                     if (vehicle.getId() == null) {
                         continue;
@@ -144,10 +163,14 @@ public class DocumentResourceBean {
                     vehicle.setDocumentCargo(em.getReference(DocumentCargo.class,
                             new ClientEntityId(vehicle.getDocumentCargoId(), vehicle.getClient(), vehicle.getDepartment())));
 
-                    vehicle.getInsertQuery(em).executeUpdate();
+                    EntityPersisterUtil.insert(em, vehicle);
+
+                    if (index++ % DB_BATCH_SIZE == 0){
+                        EntityPersisterUtil.executeBatch(em);
+                    }
                 }
 
-                em.flush();
+                EntityPersisterUtil.executeBatch(em);  
 
                 logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Vehicle.class,
                         rb.getString("info.sync.processed"), size,
@@ -181,16 +204,22 @@ public class DocumentResourceBean {
             int size = arrestDocuments.size();
 
             try {
+                int index = 0;
+
                 for (ArrestDocument arrestDocument : arrestDocuments) {
                     if (arrestDocument.getId() == null) {
                         continue;
                     }
                     securityCheck(client, ArrestDocument.class, arrestDocument.getClient(), r);
 
-                    arrestDocument.getInsertQuery(em).executeUpdate();
+                    EntityPersisterUtil.insert(em, arrestDocument);                  
+
+                    if (index++ % DB_BATCH_SIZE == 0){
+                        EntityPersisterUtil.executeBatch(em);
+                    }
                 }
 
-                em.flush();
+                EntityPersisterUtil.executeBatch(em);
 
                 logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, ArrestDocument.class,
                         rb.getString("info.sync.processed"), size,

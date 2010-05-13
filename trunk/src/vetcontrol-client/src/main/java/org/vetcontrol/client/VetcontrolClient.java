@@ -159,8 +159,11 @@ public class VetcontrolClient{
             {
                 String command = "create-jdbc-connection-pool";
                 ParameterMap params = new ParameterMap();
-                params.add("datasourceclassname", "com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
-                params.add("restype", "javax.sql.DataSource");
+//                params.add("driverclassname", "com.mysql.jdbc.Driver");
+//                params.add("restype", "java.sql.Driver");
+                params.add("datasourceclassname", "com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource");
+                params.add("restype", "javax.sql.ConnectionPoolDataSource");
+
                 params.add("property", "user=" + DB_USER + ":password=" + DB_PASSWORD + ":url=" + JDBC_POOL_URL);
                 params.add("DEFAULT", "vetcontrol-pool-client");
                 CommandRunner runner = server.getHabitat().getComponent(CommandRunner.class);

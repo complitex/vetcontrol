@@ -1,28 +1,13 @@
 package org.vetcontrol.entity;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Query;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.id.enhanced.TableGenerator;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -35,15 +20,11 @@ import org.hibernate.id.enhanced.TableGenerator;
 @IdClass(ClientEntityId.class)
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DocumentCargo extends Synchronized implements IUpdated, IQuery {
+public class DocumentCargo extends Synchronized implements IUpdated {
 
     @Id
-//    @TableGenerator(name = "document_cargo", table = "generator", pkColumnName = "generatorName",
-//            valueColumnName = "generatorValue", allocationSize = 1, initialValue = 100,
-//            uniqueConstraints = @UniqueConstraint(columnNames = {"id", "client_id", "department_id"}))
-//    @GeneratedValue(strategy = GenerationType.TABLE, generator = "document_cargo")
     @GeneratedValue(generator = "EnhancedTableGenerator")
-    @GenericGenerator(name = "EnhancedTableGenerator", strategy = "org.vetcontrol.hibernate.id.TableFallbackToAssignedGenerator",
+    @GenericGenerator(name = "EnhancedTableGenerator", strategy = "org.vetcontrol.hibernate.id.TableGenerator",
     parameters = {
         @Parameter(name = "segment_value", value = "document_cargo"),
         @Parameter(name = "table_name", value = "generator"),
@@ -365,22 +346,5 @@ public class DocumentCargo extends Synchronized implements IUpdated, IQuery {
         result = 31 * result + (details != null ? details.hashCode() : 0);
         result = 31 * result + (cargoMode != null ? cargoMode.hashCode() : 0);
         return result;
-    }
-
-    @Override
-    public Query getInsertQuery(EntityManager em) {
-        return em.createNativeQuery("insert into document_cargo (id, client_id, department_id, creator_id, created, "
-                + "updated, movement_type, vehicle_type, cargo_sender_country_id, cargo_sender_name, "
-                + "cargo_receiver_address, cargo_receiver_name, passing_border_point_id, detention_details, "
-                + "details, cargo_mode_id, sync_status) "
-                + "value (:id, :client_id, :department_id, :creator_id, :created, "
-                + ":updated, :movement_type, :vehicle_type, :cargo_sender_country_id, :cargo_sender_name, "
-                + ":cargo_receiver_address, :cargo_receiver_name, :passing_border_point_id, :detention_details, "
-                + ":details, :cargo_mode_id, :sync_status)").setParameter("id", id).setParameter("client_id", client != null ? client.getId() : null).setParameter("department_id", department != null ? department.getId() : null).setParameter("creator_id", creator != null ? creator.getId() : null).setParameter("created", created).setParameter("updated", updated).setParameter("movement_type", movementType != null ? movementType.name() : null).setParameter("vehicle_type", vehicleType != null ? vehicleType.name() : null).setParameter("cargo_sender_country_id", senderCountry != null ? senderCountry.getId() : null).setParameter("cargo_sender_name", senderName).setParameter("cargo_receiver_address", receiverAddress).setParameter("cargo_receiver_name", receiverName).setParameter("passing_border_point_id", passingBorderPoint != null ? passingBorderPoint.getId() : null).setParameter("detention_details", detentionDetails).setParameter("details", details).setParameter("cargo_mode_id", cargoMode != null ? cargoMode.getId() : null).setParameter("sync_status", syncStatus != null ? syncStatus.name() : null);
-    }
-
-    @Override
-    public Query getUpdateQuery(EntityManager em) {
-        return null;
     }
 }

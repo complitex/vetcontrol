@@ -1,5 +1,6 @@
 package org.vetcontrol.entity;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.vetcontrol.sync.LongAdapter;
 
 import javax.persistence.*;
@@ -23,7 +24,8 @@ public class Update implements ILongId{
     public static enum TYPE {CRITICAL, NOT_CRITICAL}
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "EnhancedIdentityGenerator")
+    @GenericGenerator(name = "EnhancedIdentityGenerator", strategy = "org.vetcontrol.hibernate.id.IdentityGenerator")
     @XmlID @XmlJavaTypeAdapter(LongAdapter.class)
     private Long id;
 

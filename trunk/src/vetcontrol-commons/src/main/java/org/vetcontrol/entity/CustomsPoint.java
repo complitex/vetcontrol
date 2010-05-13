@@ -1,13 +1,16 @@
 package org.vetcontrol.entity;
 
 import org.vetcontrol.util.book.entity.annotation.MappedProperty;
+import org.vetcontrol.util.book.entity.annotation.ViewLength;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
-import org.vetcontrol.util.book.entity.annotation.ViewLength;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -32,15 +35,5 @@ public class CustomsPoint extends Localizable{
 
     public void setNames(List<StringCulture> names) {
         this.names = names;
-    }
-
-    @Override
-    public Query getInsertQuery(EntityManager em){
-        return getInsertQuery(em, "customs_point");
-    }
-
-    @Override
-    public Query getUpdateQuery(EntityManager em) {
-        return getUpdateQuery(em, "customs_point");
     }
 }

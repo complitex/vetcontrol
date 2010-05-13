@@ -1,12 +1,15 @@
 package org.vetcontrol.entity;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.vetcontrol.sync.LongAdapter;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
-import org.hibernate.annotations.GenericGenerator;
 
 /**
  * User: Anatoly A. Ivanov java@inheaven.ru
@@ -18,11 +21,10 @@ import org.hibernate.annotations.GenericGenerator;
 @Table(name = "usergroup")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class UserGroup implements IUpdated, IQuery, ILongId {
+public class UserGroup implements IUpdated, ILongId {
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(generator = "EnhancedIdentityGenerator")
-    @GenericGenerator(name = "EnhancedIdentityGenerator", strategy = "org.vetcontrol.hibernate.id.IdentityFallbackToAssignedGenerator")
+    @GenericGenerator(name = "EnhancedIdentityGenerator", strategy = "org.vetcontrol.hibernate.id.IdentityGenerator")
     @XmlID @XmlJavaTypeAdapter(LongAdapter.class)
     private Long id;
 
@@ -70,26 +72,6 @@ public class UserGroup implements IUpdated, IQuery, ILongId {
     @Override
     public void setUpdated(Date updated) {
         this.updated = updated;
-    }
-
-    @Override
-    public Query getInsertQuery(EntityManager em){
-        return em.createNativeQuery("insert into `usergroup` (id, `usergroup`, login, updated)" +
-                " value (:id, :usergroup, :login, :updated)")
-                .setParameter("id", id)
-                .setParameter("usergroup", securityGroup.name())
-                .setParameter("login", login)
-                .setParameter("updated", updated);    
-    }
-
-    @Override
-    public Query getUpdateQuery(EntityManager em){
-        return em.createNativeQuery("update `usergroup` set `usergroup` = :usergroup, login = :login, " +
-                "updated = :updated where id = :id")
-                .setParameter("id", id)
-                .setParameter("usergroup", securityGroup.name())
-                .setParameter("login", login)
-                .setParameter("updated", updated);
     }
 
     @Override

@@ -108,26 +108,4 @@ public class CargoMode extends Localizable {
     public void setParent(CargoMode parent) {
         this.parent = parent;
     }
-
-    @Override
-    public Query getInsertQuery(EntityManager em) {
-        return em.createNativeQuery("insert into cargo_mode (id, `name`, parent_id, updated, disabled) "
-                + "value (:id, :name, :parent_id, :updated, :disabled)").
-                setParameter("id", id).
-                setParameter("name", name).
-                setParameter("parent_id", parent != null ? parent.getId() : null).
-                setParameter("updated", updated).
-                setParameter("disabled", disabled);
-    }
-
-    @Override
-    public Query getUpdateQuery(EntityManager em) {
-        return em.createNativeQuery("update cargo_mode set `name` = :name, parent_id = :parent_id, "
-                + "updated = :updated, disabled = :disabled where id = :id").
-                setParameter("id", id).
-                setParameter("name", name).
-                setParameter("parent_id", parent != null ? parent.getId() : null).
-                setParameter("updated", updated).
-                setParameter("disabled", disabled);
-    }
 }

@@ -4,15 +4,15 @@
  */
 package org.vetcontrol.entity;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.vetcontrol.sync.LongAdapter;
 import org.vetcontrol.util.book.entity.annotation.ValidProperty;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
-import javax.xml.bind.annotation.XmlRootElement;
-import org.hibernate.annotations.GenericGenerator;
 
 /**
  *
@@ -21,15 +21,14 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Table(name = "container_validator")
 @XmlRootElement
-public class ContainerValidator implements IBook, ILongId, IUpdated, IQuery, IDisabled {
+public class ContainerValidator implements IBook, ILongId, IUpdated, IDisabled {
 
     public static final String CONTAINER_CODE_FORMAT = "XXXX999999-9";
     private Long id;
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(generator = "EnhancedIdentityGenerator")
-    @GenericGenerator(name = "EnhancedIdentityGenerator", strategy = "org.vetcontrol.hibernate.id.IdentityFallbackToAssignedGenerator")
+    @GenericGenerator(name = "EnhancedIdentityGenerator", strategy = "org.vetcontrol.hibernate.id.IdentityGenerator")
     @XmlID
     @XmlJavaTypeAdapter(LongAdapter.class)
     @Override
@@ -97,30 +96,6 @@ public class ContainerValidator implements IBook, ILongId, IUpdated, IQuery, IDi
     @Override
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
-    }
-
-    @Override
-    public Query getInsertQuery(EntityManager em) {
-        return em.createNativeQuery("insert into container_validator (id, carrier_abbr, carrier_name, `prefix`, updated, disabled) "
-                + "value (:id, :carrier_abbr, :carrier_name, :prefix, :updated, :disabled)").
-                setParameter("id", id).
-                setParameter("carrier_name", carrierName).
-                setParameter("carrier_abbr", carrierAbbr).
-                setParameter("prefix", prefix).
-                setParameter("updated", updated).
-                setParameter("disabled", disabled);
-    }
-
-    @Override
-    public Query getUpdateQuery(EntityManager em) {
-        return em.createNativeQuery("update container_validator set carrier_abbr = :carrier_abbr, carrier_name = :carrier_name, "
-                + "`prefix` = :prefix, updated = :updated, disabled = :disabled where id = :id").
-                setParameter("id", id).
-                setParameter("carrier_name", carrierName).
-                setParameter("carrier_abbr", carrierAbbr).
-                setParameter("prefix", prefix).
-                setParameter("updated", updated).
-                setParameter("disabled", disabled);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package org.vetcontrol.entity;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import java.util.Date;
@@ -16,7 +18,8 @@ public class UpdateItem implements ILongId{
     public static enum PACKAGING {WAR, JAR, SQL, SQL_ZIP}
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "EnhancedIdentityGenerator")
+    @GenericGenerator(name = "EnhancedIdentityGenerator", strategy = "org.vetcontrol.hibernate.id.IdentityGenerator")
     private Long id;
 
     @ManyToOne

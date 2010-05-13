@@ -9,7 +9,7 @@ import java.util.Date;
 @Entity
 @Table(name = "stringculture")
 @XmlRootElement
-public class StringCulture implements IUpdated, IQuery, IEmbeddedId<StringCultureId> {
+public class StringCulture implements IUpdated, IEmbeddedId<StringCultureId> {
     public StringCulture() {
     }
 
@@ -63,26 +63,6 @@ public class StringCulture implements IUpdated, IQuery, IEmbeddedId<StringCultur
     @Override
     public void setUpdated(Date updated) {
         this.updated = updated;
-    }
-
-    @Override
-    public Query getInsertQuery(EntityManager em){
-        return em.createNativeQuery("insert into stringculture (id, locale, `value`, updated) " +
-                "value (:id, :locale, :value, :updated)")
-                .setParameter("id", id.getId())
-                .setParameter("locale", id.getLocale())
-                .setParameter("value", value)
-                .setParameter("updated", updated);
-    }
-
-    @Override
-    public Query getUpdateQuery(EntityManager em){
-        return em.createNativeQuery("update stringculture set `value` = :value, updated = :updated " +
-                "where id = :id and locale = :locale")
-                .setParameter("id", id.getId())
-                .setParameter("locale", id.getLocale())
-                .setParameter("value", value)
-                .setParameter("updated", updated);
     }
 
     @Override

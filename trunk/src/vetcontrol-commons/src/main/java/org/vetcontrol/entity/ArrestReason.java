@@ -30,14 +30,4 @@ public class ArrestReason extends Localizable{
     public void setNames(List<StringCulture> names) {
         this.names = names;
     }
-
-    @Override
-    public Query getInsertQuery(EntityManager em){
-        return getInsertQuery(em, "arrest_reason");
-    }
-
-    @Override
-    public Query getUpdateQuery(EntityManager em) {
-        return getUpdateQuery(em, "arrest_reason");
-    }
 }

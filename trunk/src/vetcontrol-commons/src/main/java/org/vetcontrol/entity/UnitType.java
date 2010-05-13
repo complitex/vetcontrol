@@ -55,26 +55,4 @@ public class UnitType extends Localizable {
     public void setShortNames(List<StringCulture> shortNames) {
         this.shortNames = shortNames;
     }
-
-    @Override
-    public Query getInsertQuery(EntityManager em) {
-        return em.createNativeQuery("insert into unit_type (id, `name`, short_name, updated, disabled) "
-                + "value (:id, :name, :short_name, :updated, :disabled)").
-                setParameter("id", id).
-                setParameter("name", name).
-                setParameter("short_name", shortName).
-                setParameter("updated", updated).
-                setParameter("disabled", disabled);
-    }
-
-    @Override
-    public Query getUpdateQuery(EntityManager em) {
-        return em.createNativeQuery("update unit_type set `name` = :name, short_name = :short_name, "
-                + "updated = :updated, disabled = :disabled where id = :id").
-                setParameter("id", id).
-                setParameter("name", name).
-                setParameter("short_name", shortName).
-                setParameter("updated", updated).
-                setParameter("disabled", disabled);
-    }
 }

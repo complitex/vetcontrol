@@ -1,8 +1,10 @@
 package org.vetcontrol.entity;
 
-import javax.persistence.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
 
 /**
  *@author Anatoly A. Ivanov java@inheaven.ru
@@ -17,7 +19,8 @@ public class CargoSender implements ILocalBook, ILongId {
     private Long id;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "EnhancedIdentityGenerator")
+    @GenericGenerator(name = "EnhancedIdentityGenerator", strategy = "org.vetcontrol.hibernate.id.IdentityGenerator")
     @Column(name = "id", nullable = false, unique = true)
     @Override
     public Long getId() {

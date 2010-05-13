@@ -36,29 +36,23 @@ public class StringCultureId implements java.io.Serializable {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if ((this == other)) {
-            return true;
-        }
-        if ((other == null)) {
-            return false;
-        }
-        if (!(other instanceof StringCultureId)) {
-            return false;
-        }
-        StringCultureId castOther = (StringCultureId) other;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof StringCultureId)) return false;
 
-        return (this.getId().equals(castOther.getId()))
-                && ((this.getLocale().equals(castOther.getLocale())) || (this.getLocale() != null && castOther.getLocale() != null && this.getLocale().equals(castOther.getLocale())));
+        StringCultureId that = (StringCultureId) o;
+
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (locale != null ? !locale.equals(that.locale) : that.locale != null) return false;
+
+        return true;
     }
 
     @Override
     public int hashCode() {
-        long result = 17;
-
-        result = 37 * result + this.getId();
-        result = 37 * result + (getLocale() == null ? 0 : this.getLocale().hashCode());
-        return (int)result;
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (locale != null ? locale.hashCode() : 0);
+        return result;
     }
 }
 
