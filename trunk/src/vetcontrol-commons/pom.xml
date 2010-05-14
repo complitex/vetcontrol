@@ -15,34 +15,39 @@
         <dependency>
             <groupId>org.vetcontrol</groupId>
             <artifactId>vetcontrol-resources-common</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket-auth-roles</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket-ioc</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket-extensions</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket-datetime</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.wiquery</groupId>
             <artifactId>wiquery</artifactId>
             <scope>system</scope>
-            <version>1.0</version>
             <systemPath>${project.basedir}/../../lib/wiquery-1.0.jar</systemPath>
         </dependency>
 
@@ -62,7 +67,6 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>3.5.1-Final</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -78,7 +82,6 @@
          <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-json</artifactId>
-            <version>1.1.5</version>
             <scope>provided</scope>
         </dependency>  
     </dependencies>

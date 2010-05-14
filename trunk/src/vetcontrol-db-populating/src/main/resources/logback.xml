@@ -12,6 +12,6 @@
     <appender-ref ref="STDOUT" />
   </root>
 
-  <logger name="org.vetcontrol" level="DEBUG"/>
+  <logger name="org.vetcontrol" level="INFO"/>
   <logger name="org.hibernate" level="WARN"/>
 </configuration>

@@ -15,7 +15,6 @@
         <class>org.vetcontrol.entity.UserGroup</class>
         <class>org.vetcontrol.entity.Job</class>
         <class>org.vetcontrol.entity.CustomsPoint</class>
-        <class>org.vetcontrol.entity.MovementType</class>
         <class>org.vetcontrol.entity.ArrestReason</class>
         <class>org.vetcontrol.entity.PassingBorderPoint</class>
         <class>org.vetcontrol.entity.CargoMode</class>
@@ -51,10 +50,7 @@
         <class>org.vetcontrol.entity.Department</class>
         <class>org.vetcontrol.entity.UserGroup</class>
         <class>org.vetcontrol.entity.Job</class>
-        <class>org.vetcontrol.entity.CargoReceiver</class>
-        <class>org.vetcontrol.entity.CargoSender</class>
         <class>org.vetcontrol.entity.CustomsPoint</class>
-        <class>org.vetcontrol.entity.MovementType</class>
         <class>org.vetcontrol.entity.ArrestReason</class>
         <class>org.vetcontrol.entity.PassingBorderPoint</class>
         <class>org.vetcontrol.entity.CargoMode</class>
@@ -66,6 +62,8 @@
         <class>org.vetcontrol.entity.Cargo</class>
         <class>org.vetcontrol.entity.Client</class>
         <class>org.vetcontrol.entity.DocumentCargo</class>
+        <class>org.vetcontrol.entity.Vehicle</class>
+        <class>org.vetcontrol.entity.ArrestDocument</class>
         
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
