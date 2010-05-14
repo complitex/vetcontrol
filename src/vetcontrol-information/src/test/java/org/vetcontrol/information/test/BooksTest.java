@@ -8,7 +8,6 @@ import com.mysql.jdbc.ConnectionImpl;
 import com.mysql.jdbc.Driver;
 import com.mysql.jdbc.JDBC4Connection;
 import com.mysql.jdbc.JDBC4PreparedStatement;
-import java.lang.Long;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,10 +31,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
-import org.hibernate.EntityMode;
 import org.hibernate.engine.SessionImplementor;
 import org.hibernate.jdbc.Work;
 import org.hibernate.persister.entity.EntityPersister;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.vetcontrol.hibernate.util.EntityPersisterUtil;
 import org.vetcontrol.book.ShowBooksMode;
@@ -53,20 +55,20 @@ public class BooksTest {
     public BooksTest() {
     }
 
-    @org.junit.BeforeClass
+    @BeforeClass
     public static void setUpClass() throws Exception {
     }
 
-    @org.junit.AfterClass
+    @AfterClass
     public static void tearDownClass() throws Exception {
     }
 
-    @org.junit.Before
+    @Before
     public void setUp() throws Exception {
         managerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
     }
 
-    @org.junit.After
+    @After
     public void tearDown() throws Exception {
     }
 

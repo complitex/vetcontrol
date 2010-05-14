@@ -29,18 +29,22 @@
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket-extensions</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket-auth-roles</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket-datetime</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -52,7 +56,6 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>3.5.0-Beta-2</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -70,7 +73,6 @@
             <groupId>org.wiquery</groupId>
             <artifactId>wiquery</artifactId>
             <scope>system</scope>
-            <version>1.0</version>
             <systemPath>${project.basedir}/../../lib/wiquery-1.0.jar</systemPath>
         </dependency>
     </dependencies>

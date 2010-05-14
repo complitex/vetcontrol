@@ -13,10 +13,14 @@ import org.vetcontrol.util.DateUtil;
  *
  * @author Artem
  */
-public class GenerateUtil {
+public final class GenerateUtil {
 
-    private final static Random RANDOM = new Random();
+    private static final Random RANDOM = new Random();
+
     private static final char[] SYMBOLS = new char[36];
+
+    private GenerateUtil() {
+    }
 
     static {
         for (int idx = 0; idx < 10; ++idx) {
@@ -57,6 +61,13 @@ public class GenerateUtil {
     }
 
     public static int generateInt(int n) {
+        if (n == 0) {
+            return n;
+        }
         return RANDOM.nextInt(n);
+    }
+
+    public static double generateDouble(int n) {
+        return RANDOM.nextDouble() * (n - 1) + 1;
     }
 }

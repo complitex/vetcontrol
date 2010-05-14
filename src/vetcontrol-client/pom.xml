@@ -21,7 +21,6 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>3.5.1-Final</version>
             <exclusions>
                 <exclusion>
                     <groupId>hsqldb</groupId>
@@ -57,7 +56,6 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-json</artifactId>
-            <version>1.1.5</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.xml.stream</groupId>
@@ -85,7 +83,6 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.4</version>
         </dependency>
     </dependencies>
 </project>

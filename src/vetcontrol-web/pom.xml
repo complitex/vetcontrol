@@ -33,6 +33,10 @@
                     <groupId>org.vetcontrol</groupId>
                     <artifactId>vetcontrol-sync-server</artifactId>
                 </dependency>
+                <dependency>
+                    <groupId>commons-codec</groupId>
+                    <artifactId>commons-codec</artifactId>
+                </dependency>
             </dependencies>
 
             <build>
@@ -131,7 +135,6 @@
             <groupId>org.wiquery</groupId>
             <artifactId>wiquery</artifactId>
             <scope>system</scope>
-            <version>1.1</version>
             <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/wiquery-1.0.jar</systemPath>
         </dependency>
         <dependency>

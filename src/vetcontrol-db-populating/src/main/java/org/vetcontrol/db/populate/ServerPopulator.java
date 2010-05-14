@@ -20,16 +20,24 @@ public class ServerPopulator extends AbstractPopulator {
     /*--------------------------Settings------------------------------------------------------*/
     private static final String SERVER_PERSISTENCE_UNIT_NAME = "populate.server";
     //count of books to generate
-    private static final int BOOK_COUNT = 60;
+
+    private static final int BOOK_COUNT = 50;
     //count of CargoModeCargoType entries for one CargoMode to generate. The same true for CargoModeUnitType.
+
     private static final int LINK_TABLE_ROWS = 2;
     //count of first level CargoModes
+
     private static final int ROOT_CARGO_MODE_COUNT = 2;
     /*--------------------------- End settings -----------------------------------------------*/
+
     private static final Logger log = LoggerFactory.getLogger(ServerPopulator.class);
+
     private static final List<Class> COMMON_BOOKS = BookTypes.common();
+
     private static final String[] SUPPORTED_LOCALES = {"en", "ru"};
+
     private Sequence sequence;
+
     private IBookDAO bookDAO;
 
     public static void main(String[] args) {
@@ -53,16 +61,16 @@ public class ServerPopulator extends AbstractPopulator {
         log.info("End populate {} entity", CargoMode.class.getSimpleName());
 
         //remaining books
-        for (Class entity : COMMON_BOOKS) {
-            log.info("Start populate {} entity", entity.getSimpleName());
-            int count = count(entity);
+        for (Class entityClazz : COMMON_BOOKS) {
+            log.info("Start populate {} entity", entityClazz.getSimpleName());
+            int count = count(entityClazz);
             for (int i = count; i < BOOK_COUNT; i++) {
                 startTransaction();
                 initServer();
-                populate(entity, true);
+                populate(entityClazz, true);
                 endTransaction();
             }
-            log.info("End populate {} entity", entity.getSimpleName());
+            log.info("End populate {} entity", entityClazz.getSimpleName());
         }
     }
 
