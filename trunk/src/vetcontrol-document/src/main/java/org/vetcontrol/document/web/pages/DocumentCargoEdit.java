@@ -529,6 +529,8 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
             @Override
             public void update(CargoType cargoType) {
+                documentCargoModel.getObject().setCargoMode(null);
+
                 if (cargoType != null){
                     if (!cargoType.getCargoModes().isEmpty()) {
                         if (cargoType.getCargoModes().size() == 1){
