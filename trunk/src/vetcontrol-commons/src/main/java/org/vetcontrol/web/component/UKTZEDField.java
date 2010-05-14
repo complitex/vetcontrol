@@ -63,15 +63,7 @@ public class UKTZEDField extends Panel {
 
             @Override
             protected String getTextValue(String s) {
-                if (s!= null){
-                    if (s.length() > 120){
-                        s = s.substring(0,120) + "...";                        
-                    }
-
-                    return s;
-                }
-                return "";
-
+                return s;
             }
 
             @Override
@@ -127,9 +119,12 @@ public class UKTZEDField extends Panel {
                     String s = ct.getDisplayName(getLocale(), system);
 
                     if (s != null){
+                        if (s.length() > 120){
+                            s = s.substring(0,120) + "...";
+                        }
                         s = s.replaceAll("\t"," ");
                     }
-                    choices.add(s + "\t" + ct.getCode());
+                    choices.add(s + " | \t" + ct.getCode());
                 }
 
                 return choices.iterator();
