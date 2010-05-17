@@ -2,60 +2,68 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/">
-    <head>
-        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
-        <title wicket:id="title"></title>
-    </head>
-    <body>
-        <table border="0" cellspacing="0" cellpadding="0" width="100%">
-            <tr>
-                <td id="Header">
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <title wicket:id="title"></title>
+</head>
+<body>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+    <tr>
+        <td id="Header">
 
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <h1><wicket:message key="sync.client.registration.title"/></h1>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <h1><wicket:message key="sync.client.registration.title"/></h1>
 
-                    <div wicket:id="messages" style="margin-top:10px; color:#ff4500;">
-                    </div>
+            <div wicket:id="messages" style="margin-top:10px; color:#ff4500;">
+            </div>
 
-                    <div wicket:id="info" align="center">
-                        <span wicket:id="registered"></span>
-                        <br/>
-                        <a wicket:id="login" href="#">
-                            <wicket:message key="sync.client.registration.login"/>
-                        </a>
-                    </div>
+            <div wicket:id="info" align="center">
+                <table>
+                    <tr wicket:id="list">
+                        <td><span wicket:id="date"></span></td>
+                        <td><span wicket:id="message"></span></td>
+                    </tr>
+                </table>
 
-                    <form action="#" wicket:id="registration_form">
-                        <table style="margin-top:10px" cellpadding="5" cellspacing="0" border="0" align="center">
-                            <tr>
-                                <th><wicket:message key="sync.client.registration.department"/>:</th>
-                            </tr>
-                            <tr>
-                                <td><select wicket:id="sync.client.registration.department"></select></td>
-                            </tr>
-                            <tr>
-                                <th><wicket:message key="sync.client.registration.key"/>:</th>
-                            </tr>
-                            <tr>
-                                <td><input style="width:100%" type="text" wicket:id="sync.client.registration.key"/></td>
-                            </tr>
-                            <tr>
-                                <td align="center">
-                                    <input type="submit" class="btnBig" wicket:message="value:sync.client.registration.register"/>
-                                </td>
-                            </tr>
-                        </table>
-                    </form>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div wicket:id="spacer"></div>
-                </td>
-            </tr>
-        </table>
-    </body>
+                <br/>
+                <a wicket:id="login" href="#">
+                    <wicket:message key="sync.client.registration.login"/>
+                </a>
+            </div>
+
+            <div wicket:id="form_container">
+                <form action="#" wicket:id="registration_form">
+                    <table style="margin-top:10px" cellpadding="5" cellspacing="0" border="0" align="center">
+                        <tr>
+                            <th><wicket:message key="sync.client.registration.department"/>:</th>
+                        </tr>
+                        <tr>
+                            <td><select wicket:id="sync.client.registration.department"></select></td>
+                        </tr>
+                        <tr>
+                            <th><wicket:message key="sync.client.registration.key"/>:</th>
+                        </tr>
+                        <tr>
+                            <td><input style="width:100%" type="text" wicket:id="sync.client.registration.key"/></td>
+                        </tr>
+                        <tr>
+                            <td align="center">
+                                <input wicket:id="register" type="submit" class="btnBig" wicket:message="value:sync.client.registration.register"/>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div wicket:id="spacer"></div>
+        </td>
+    </tr>
+</table>
+</body>
 </html>

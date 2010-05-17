@@ -1,19 +1,23 @@
 package org.vetcontrol.sync.client.web.pages;
 
-import com.sun.jersey.api.client.UniformInterfaceException;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
+import org.apache.wicket.behavior.IBehavior;
+import org.apache.wicket.datetime.markup.html.basic.DateLabel;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.IChoiceRenderer;
-import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.util.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.Client;
@@ -21,12 +25,14 @@ import org.vetcontrol.entity.Department;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.sync.client.service.RegistrationBean;
+import org.vetcontrol.sync.client.service.SyncMessage;
 import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.pages.login.Login;
 import org.vetcontrol.web.resource.WebCommonResourceInitializer;
 
 import javax.ejb.EJB;
-import javax.ejb.EJBException;
+import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -34,14 +40,20 @@ import java.util.Locale;
  *         Date: 07.02.2010 18:18:28
  */
 public class RegistrationPage extends WebPage {
-
     private static final Logger log = LoggerFactory.getLogger(RegistrationPage.class);
+
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
+
     @EJB(name = "ClientBean")
     private ClientBean clientBean;
+
     @EJB(name = "RegistrationBean")
     private RegistrationBean registrationBean;
+
+    private WebMarkupContainer info, formContainer;
+    private Form form;
+    private BookmarkablePageLink loginLink;
 
     public RegistrationPage() {
         super();
@@ -56,28 +68,56 @@ public class RegistrationPage extends WebPage {
         feedbackPanel.setEscapeModelStrings(false);
         add(feedbackPanel);
 
-        IModel<Client> clientModel = new Model<Client>(new Client());
+        final IModel<Client> clientModel = new Model<Client>(new Client());
 
         //DEBUG
         info("IP: " + clientBean.getCurrentIP() + ", MAC:" + clientBean.getCurrentMAC());
 
-        //Регистрация успешно
-        final WebMarkupContainer info = new WebMarkupContainer("info");
+        //Статус процесса регистрации
+        info = new WebMarkupContainer("info");
         add(info);
-        info.setVisible(false);
 
-        info.add(new Label("registered", getString("sync.client.registration.registered")));
+        final ListView<SyncMessage> listView = new ListView<SyncMessage>("list",
+                new LoadableDetachableModel<List<SyncMessage>>(){
+                    @Override
+                    protected List<SyncMessage> load() {
+                        return registrationBean.getSyncMessages();
+                    }
+                }){
+            @Override
+            protected void populateItem(ListItem<SyncMessage> item) {
+                try {
+                    item.add(DateLabel.forDatePattern("date", new Model<Date>(item.getModelObject().getDate()), "dd.MM.yy HH:mm:ss"));
+                    item.add(new Label("message", item.getModelObject().getMessage()));
+                } catch (Exception e) {
+                    item.add(new Label("date"));
+                    item.add(new Label("message"));
+                }
+            }
+        };
+        info.add(listView);
 
-        BookmarkablePageLink<Void> loginLink = new BookmarkablePageLink<Void>("login", Login.class);
+        if (registrationBean.isProcessing()){
+            info.add(newAjaxTimer());
+        }
+
+        loginLink = new BookmarkablePageLink<Void>("login", Login.class);
+        loginLink.setVisible(false);
         info.add(loginLink);
 
+        formContainer = new WebMarkupContainer("form_container");
+        formContainer.setOutputMarkupId(true);
+        add(formContainer);
 
         //Форма регистрации
-        Form form = new Form<Client>("registration_form", clientModel) {
+        form = new Form<Client>("registration_form", clientModel);
+        form.setVisible(!registrationBean.isProcessing());
+        formContainer.add(form);
 
+        Button register = new Button("register"){
             @Override
-            protected void onSubmit() {
-                Client client = getModelObject();
+            public void onSubmit() {
+                Client client = clientModel.getObject();
 
                 String ip = clientBean.getCurrentIP();
                 if (ip != null) {
@@ -93,26 +133,16 @@ public class RegistrationPage extends WebPage {
                     error("Ошибка получения MAC адреса клиента");
                 }
 
-                try {
-                    client = registrationBean.processRegistration(client);
-                    log.debug("Клиент зарегистрирован. {}", client.toString());
+                info.add(newAjaxTimer());
 
-                    setVisible(false);
-                    info.setVisible(true);
-                } catch (EJBException e) {
-                    if (e.getCausedByException() instanceof UniformInterfaceException) {
-                        UniformInterfaceException uie = (UniformInterfaceException) e.getCausedByException();
-                        String message = uie.getResponse().getEntity(String.class);
-                        log.error(message, e);
-                        error(message);
-                    } else {
-                        log.error(e.getCausedByException().getLocalizedMessage(), e);
-                        error(getString("sync.client.registration.error"));
-                    }
-                }
+                form.setVisible(false);
+
+                registrationBean.processRegistration(client, getLocale());
+
+                listView.getModel().detach();
             }
         };
-        add(form);
+        form.add(register);
 
         DropDownChoice ddc = new DropDownChoice<Department>("sync.client.registration.department",
                 new PropertyModel<Department>(clientModel, "department"),
@@ -136,5 +166,25 @@ public class RegistrationPage extends WebPage {
         form.add(new TextField<String>("sync.client.registration.key", new PropertyModel<String>(clientModel, "secureKey")));
 
         add(new Spacer("spacer"));
+    }
+
+    private IBehavior newAjaxTimer(){
+        return new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)){
+            @Override
+            protected void onPostProcessTarget(AjaxRequestTarget target) {
+                target.addComponent(info);
+
+                if (registrationBean.isComplete()){
+                    if (registrationBean.isError()){
+                        form.setVisible(true);
+                        target.addComponent(formContainer);
+                    }else{
+                        loginLink.setVisible(true);
+                    }
+
+                    this.stop();
+                }
+            }
+        };
     }
 }

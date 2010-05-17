@@ -14,6 +14,13 @@ public class SyncMessage implements Serializable{
     private String name;
     private String message;
 
+    public SyncMessage() {
+    }
+
+    public SyncMessage(String message) {
+        this.message = message;
+    }
+
     public Date getDate() {
         return date;
     }

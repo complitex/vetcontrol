@@ -4,12 +4,13 @@
  */
 package org.vetcontrol.hibernate.util;
 
-import javax.persistence.EntityManager;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.engine.SessionImplementor;
 import org.hibernate.persister.entity.EntityPersister;
+
+import javax.persistence.EntityManager;
 
 /**
  *
@@ -22,9 +23,9 @@ public final class EntityPersisterUtil {
 
     /**
      * Inserts entity.
-     * @param entityManager
-     * @param entity
-     * @throws HibernateException
+     * @param entityManager EntityManager
+     * @param entity Entity Object
+     * @throws HibernateException Hibernate wrapped exception
      */
     public static void insert(EntityManager entityManager, Object entity) throws HibernateException {
         Session session = getSession(entityManager);
@@ -37,9 +38,9 @@ public final class EntityPersisterUtil {
 
     /**
      * Updates entity.
-     * @param entityManager
-     * @param entity
-     * @throws HibernateException
+     * @param entityManager EntityManager
+     * @param entity Entity Object
+     * @throws HibernateException Hibernate wrapped exception
      */
     public static void update(EntityManager entityManager, Object entity) throws HibernateException {
         Session session = getSession(entityManager);
@@ -52,12 +53,33 @@ public final class EntityPersisterUtil {
 
     /**
      * Executes sql statements batch. MUST be invoked right before transaction commit.
-     * @param entityManager
+     * @param entityManager EntityManager
+     * @throws org.hibernate.HibernateException Hibernate wrapped exception
      */
     public static void executeBatch(EntityManager entityManager) throws HibernateException {
         Session session = getSession(entityManager);
         SessionImplementor sessionImplementor = getSessionImplementor(session);
         sessionImplementor.getBatcher().executeBatch();
+    }
+
+    /**
+     * Single insert with batch execution 
+     * @param entityManager EntityManager
+     * @param entity Entity Object
+     */
+    public static void executeInsert(EntityManager entityManager, Object entity){
+        insert(entityManager, entity);
+        executeBatch(entityManager);
+    }
+
+    /**
+     * Single update with batch execution
+     * @param entityManager EntityManager
+     * @param entity Entity Object
+     */
+    public static void executeUpdate(EntityManager entityManager, Object entity){
+        update(entityManager, entity);
+        executeBatch(entityManager);
     }
 
     private static Session getSession(EntityManager entityManager){
