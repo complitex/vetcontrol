@@ -81,6 +81,7 @@ public final class CargoModeEdit extends FormTemplatePage {
         private class UnitTypesModel extends LoadableDetachableModel<List<UnitType>> {
 
             private CargoMode cargoMode;
+
             private CargoModeUnitType cargoModeUnitType;
 
             public UnitTypesModel(CargoMode cargoMode, CargoModeUnitType cargoModeUnitType) {
@@ -164,6 +165,7 @@ public final class CargoModeEdit extends FormTemplatePage {
     private class UKTZEDPanel extends Panel {
 
         private AbstractAutoCompleteTextField<CargoType> autoCompleteTextField;
+
         private CargoModeCargoType cargoModeCargoType;
 
         public UKTZEDPanel(String id, final CargoMode cargoMode, CargoModeCargoType cmct,
@@ -278,17 +280,25 @@ public final class CargoModeEdit extends FormTemplatePage {
             return cargoType.getCode() + "   " + cargoType.getDisplayName(getLocale(), systemLocale);
         }
     }
+
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
+
     @EJB(name = "BookDAO")
     IBookDAO bookDAO;
+
     @EJB(name = "CargoModeDAO")
     private CargoModeDAO cargoModeDAO;
+
     @EJB(name = "LogBean")
     private LogBean logBean;
+
     private static final String UNIT_TYPE_INCORRECT = "unit_type_incorrect";
+
     private static final String CARGO_TYPE_INCORRECT = "cargo_type_incorrect";
+
     private static final Logger log = LoggerFactory.getLogger(CargoModeEdit.class);
+
     private Model<CargoMode> cargoModeModel;
 
     public CargoModeEdit() {
@@ -563,12 +573,12 @@ public final class CargoModeEdit extends FormTemplatePage {
     }
 
     private void disableCargoMode(CargoMode cargoMode) {
-        bookDAO.disable(cargoMode);
+        cargoModeDAO.disable(cargoMode);
         logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, CargoModeEdit.class, CargoMode.class, "ID: " + cargoMode.getId());
     }
 
     private void enableCargoMode(CargoMode cargoMode) {
-        bookDAO.enable(cargoMode);
+        cargoModeDAO.enable(cargoMode);
         logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, CargoModeEdit.class, CargoMode.class, "ID: " + cargoMode.getId());
     }
 
