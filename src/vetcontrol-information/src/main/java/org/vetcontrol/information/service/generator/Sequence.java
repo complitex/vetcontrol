@@ -9,7 +9,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import org.hibernate.LockMode;
+import org.hibernate.LockOptions;
 import org.hibernate.Session;
 import org.vetcontrol.entity.Generator;
 import org.vetcontrol.hibernate.util.HibernateSessionTransformer;
@@ -22,6 +22,7 @@ import org.vetcontrol.hibernate.util.HibernateSessionTransformer;
 public class Sequence {
 
     private static final String BOOK_GENERATOR = "books";
+
     private EntityManager em;
 
     @PersistenceContext
@@ -32,9 +33,9 @@ public class Sequence {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public long next() {
         Session session = HibernateSessionTransformer.getSession(em);
-        Generator g = (Generator)session.get(Generator.class, BOOK_GENERATOR, LockMode.UPGRADE);
+        Generator g = (Generator) session.get(Generator.class, BOOK_GENERATOR, LockOptions.UPGRADE);
         g.setGeneratorValue(g.getGeneratorValue() + 1);
-        g = (Generator)session.merge(g);
+        g = (Generator) session.merge(g);
         return g.getGeneratorValue();
     }
 }

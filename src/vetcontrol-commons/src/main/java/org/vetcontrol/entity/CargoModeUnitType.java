@@ -25,6 +25,7 @@ public class CargoModeUnitType implements IUpdated, IEmbeddedId<CargoModeUnitTyp
 
         @Column(name = "cargo_mode_id")
         private Long cargoModeId;
+
         @Column(name = "unit_type_id")
         private Long unitTypeId;
 
@@ -77,19 +78,21 @@ public class CargoModeUnitType implements IUpdated, IEmbeddedId<CargoModeUnitTyp
             hash = 73 * hash + (this.unitTypeId != null ? this.unitTypeId.hashCode() : 0);
             return hash;
         }
-
-        
     }
+
     @EmbeddedId
     private Id id = new Id();
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cargo_mode_id", insertable = false, updatable = false)
     @XmlTransient
     private CargoMode cargoMode;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "unit_type_id", insertable = false, updatable = false)
     @XmlTransient
     private UnitType unitType;
+
     @Transient
     @XmlTransient
     private boolean needToUpdateVersion;
@@ -115,10 +118,12 @@ public class CargoModeUnitType implements IUpdated, IEmbeddedId<CargoModeUnitTyp
         id.setUnitTypeId(unitType.getId());
     }
 
+    @Override
     public Id getId() {
         return id;
     }
 
+    @Override
     public void setId(Id id) {
         this.id = id;
     }
@@ -130,14 +135,17 @@ public class CargoModeUnitType implements IUpdated, IEmbeddedId<CargoModeUnitTyp
     public void setNeedToUpdateVersion(boolean needToUpdateVersion) {
         this.needToUpdateVersion = needToUpdateVersion;
     }
+
     @Column(name = "updated", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
 
+    @Override
     public Date getUpdated() {
         return updated;
     }
 
+    @Override
     public void setUpdated(Date updated) {
         this.updated = updated;
     }

@@ -72,7 +72,7 @@ public class BooksTest {
     public void tearDown() throws Exception {
     }
 
-//    @Test
+    @Test
     public void simpleSaveTest() throws SQLException {
 
         EntityManager entityManager = managerFactory.createEntityManager();
@@ -81,7 +81,8 @@ public class BooksTest {
 
         Sequence s = new Sequence();
         s.setEntityManager(entityManager);
-        long value = s.next();
+        long naxtValue = s.next();
+        System.out.println("Next generator value: " + naxtValue);
 
         transaction.commit();
         entityManager.close();
@@ -644,7 +645,7 @@ public class BooksTest {
         entityManager.close();
     }
 
-    @Test
+//    @Test
     public void testEntityPersisterUtil() {
         //document cargo
         EntityManager entityManager = managerFactory.createEntityManager();
