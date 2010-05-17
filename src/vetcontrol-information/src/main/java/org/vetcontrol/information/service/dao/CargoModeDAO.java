@@ -18,6 +18,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import org.apache.wicket.util.string.Strings;
+import org.apache.wicket.validation.validator.EmailAddressPatternValidator;
 import org.hibernate.Session;
 import org.vetcontrol.entity.CargoMode;
 import org.vetcontrol.entity.CargoModeCargoType;
@@ -40,12 +41,14 @@ import org.vetcontrol.hibernate.util.HibernateSessionTransformer;
 public class CargoModeDAO {
 
     private static final String DELETED_PRIMARY_KEY_SEPARATOR = ":";
+
     @EJB
     private IBookDAO bookDAO;
 
     public static enum OrderBy {
 
         ID("id"), NAME("name"), UKTZED("uktzed"), PARENT_NAME("parent.name");
+
         private String propertyName;
 
         private OrderBy(String propertyName) {
@@ -65,6 +68,7 @@ public class CargoModeDAO {
             return null;
         }
     }
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -323,5 +327,35 @@ public class CargoModeDAO {
         List<CargoMode> rootCargoModes = entityManager.createQuery(queryBuilder.toString(), CargoMode.class).getResultList();
         bookDAO.addLocalizationSupport(rootCargoModes);
         return rootCargoModes;
+    }
+
+    public void disable(CargoMode cargoMode) {
+        bookDAO.disable(cargoMode);
+        if (cargoMode.getParent() == null) {
+            //first level
+            StringBuilder queryBuilder = new StringBuilder();
+            queryBuilder.append("UPDATE CargoMode cm SET cm.").append(getDisabledPropertyName()).append(" = TRUE, ").
+                    append("cm.").append(getVersionPropertyName()).append(" = :updated ").
+                    append("WHERE cm.parent = :parent");
+            entityManager.createQuery(queryBuilder.toString()).
+                    setParameter("parent", cargoMode).
+                    setParameter("updated", DateUtil.getCurrentDate()).
+                    executeUpdate();
+        }
+    }
+
+    public void enable(CargoMode cargoMode) {
+        bookDAO.enable(cargoMode);
+        if (cargoMode.getParent() == null) {
+            //first level
+            StringBuilder queryBuilder = new StringBuilder();
+            queryBuilder.append("UPDATE CargoMode cm SET cm.").append(getDisabledPropertyName()).append(" = FALSE, ").
+                    append("cm.").append(getVersionPropertyName()).append(" = :updated ").
+                    append("WHERE cm.parent = :parent");
+            entityManager.createQuery(queryBuilder.toString()).
+                    setParameter("parent", cargoMode).
+                    setParameter("updated", DateUtil.getCurrentDate()).
+                    executeUpdate();
+        }
     }
 }

@@ -367,31 +367,13 @@ public final class DepartmentEdit extends FormTemplatePage {
     }
 
     private void disableDepartment() {
-        bookDAO.disable(department);
-        disableReferences();
+        departmentDAO.disable(department);
         logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, DepartmentEdit.class, Department.class, "ID: " + department.getId());
     }
 
-    private void disableReferences() {
-        for (PassingBorderPoint borderPoint : department.getPassingBorderPoints()) {
-            if (!isNewBook(borderPoint)) {
-                bookDAO.disable(borderPoint);
-            }
-        }
-    }
-
     private void enableDepartment() {
-        bookDAO.enable(department);
-        enableReferences();
+        departmentDAO.enable(department);
         logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, DepartmentEdit.class, Department.class, "ID: " + department.getId());
-    }
-
-    private void enableReferences() {
-        for (PassingBorderPoint borderPoint : department.getPassingBorderPoints()) {
-            if (!isNewBook(borderPoint)) {
-                bookDAO.enable(borderPoint);
-            }
-        }
     }
 
     private void updateDepartmentReferences(Department department) {
