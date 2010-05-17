@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.vetcontrol.document.service.ArrestDocumentBean;
 import org.vetcontrol.document.service.CommonDocumentBean;
 import org.vetcontrol.entity.*;
-import org.vetcontrol.service.CargoTypeBean;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.service.UserProfileBean;
@@ -50,21 +49,26 @@ import static org.vetcontrol.web.security.SecurityRoles.*;
 public class ArrestDocumentEdit extends DocumentEditPage {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentCargoEdit.class);
+
     @EJB(name = "DocumentBean")
     private CommonDocumentBean commonDocumentBean;
+
     @EJB(name = "LogBean")
     private LogBean logBean;
-    @EJB(name = "CargoTypeBean")
-    private CargoTypeBean cargoTypeBean;
+
     @EJB(name = "ArrestDocumentBean")
     private ArrestDocumentBean arrestDocumentBean;
+
     @EJB(name = "UserProfileBean")
     private UserProfileBean userProfileBean;
+
     @EJB(name = "ClientBean")
     private ClientBean clientBean;
+
     @EJB(name = "BookViewDAO")
     private IBookViewDAO bookViewDAO;
     //Объект данных
+
     private ArrestDocument ad;
 
     public ArrestDocumentEdit() {
@@ -293,13 +297,7 @@ public class ArrestDocumentEdit extends DocumentEditPage {
 
             @Override
             protected List<UnitType> load() {
-                CargoMode cargoMode = arrestDocumentModel.getObject().getCargoMode();
-
-                if (cargoMode == null) {
-                    return Collections.emptyList();
-                }
-
-                return new ArrayList<UnitType>(cargoMode.getUnitTypes());
+                return commonDocumentBean.getUnitTypes(arrestDocumentModel.getObject().getCargoMode());
             }
         };
 

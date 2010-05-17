@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.vetcontrol.book.annotation.ValidProperty;
 
 /**
  * 2.4.3.12 Справочник видов грузов
@@ -64,20 +65,22 @@ public class CargoMode extends Localizable {
         cargoModeUnitTypes.add(cargoModeUnitType);
     }
 
-    private Set<UnitType> unitTypes;
-
-    @XmlTransient
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "cargo_mode_unit_type",
-            joinColumns = @JoinColumn(name = "cargo_mode_id", insertable = false, updatable = false),
-            inverseJoinColumns = @JoinColumn(name = "unit_type_id", insertable = false, updatable = false))
-    public Set<UnitType> getUnitTypes() {
-        return unitTypes;
-    }
-
-    public void setUnitTypes(Set<UnitType> unitTypes) {
-        this.unitTypes = unitTypes;
-    }
+//    private Set<UnitType> unitTypes;
+//
+//    @XmlTransient
+//    @ValidProperty(false)
+//    @Transient
+////    @ManyToMany(fetch = FetchType.EAGER)
+////    @JoinTable(name = "cargo_mode_unit_type",
+////            joinColumns = @JoinColumn(name = "cargo_mode_id", insertable = false, updatable = false),
+////            inverseJoinColumns = @JoinColumn(name = "unit_type_id", insertable = false, updatable = false))
+//    public Set<UnitType> getUnitTypes() {
+//        return unitTypes;
+//    }
+//
+//    public void setUnitTypes(Set<UnitType> unitTypes) {
+//        this.unitTypes = unitTypes;
+//    }
 
     private List<StringCulture> names = new ArrayList<StringCulture>();
 
@@ -93,6 +96,7 @@ public class CargoMode extends Localizable {
     public void setNames(List<StringCulture> names) {
         this.names = names;
     }
+
     private CargoMode parent;
 
     @BookReference(referencedProperty = "names")
