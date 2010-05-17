@@ -6,14 +6,14 @@ package org.vetcontrol.document.web.component;
 
 import java.util.Locale;
 import org.apache.wicket.Session;
-import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.vetcontrol.entity.Localizable;
+import org.vetcontrol.web.component.book.SimpleDisableAwareChoiceRenderer;
 
 /**
  *
  * @author Artem
  */
-public class BookNamedChoiceRenderer<T extends Localizable> implements IChoiceRenderer<T> {
+public class BookNamedChoiceRenderer<T extends Localizable> extends SimpleDisableAwareChoiceRenderer<T> {
 
     private Locale systemLocale;
 

@@ -42,7 +42,7 @@ import org.vetcontrol.information.util.web.BookWebInfo;
 import org.vetcontrol.information.util.web.CanEditUtil;
 import org.vetcontrol.information.util.web.TruncateUtil;
 import org.vetcontrol.information.web.component.BookChoiceRenderer;
-import org.vetcontrol.information.web.component.DisableAwareDropDownChoice;
+import org.vetcontrol.web.component.book.DisableAwareDropDownChoice;
 import org.vetcontrol.information.web.component.edit.LocalizableTextPanel;
 import org.vetcontrol.information.web.component.edit.SaveUpdateConfirmationDialog;
 import org.vetcontrol.information.web.model.DisplayBookClassModel;

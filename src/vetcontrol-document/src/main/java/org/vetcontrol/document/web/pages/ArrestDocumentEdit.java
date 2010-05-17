@@ -98,6 +98,10 @@ public class ArrestDocumentEdit extends DocumentEditPage {
     }
 
     private void init(final ClientEntityId arrestDocumentId, final ClientEntityId cargoId) {
+
+        //не редактирование и не создание из карточки на груз
+        final boolean isNewDocument = (arrestDocumentId == null) && (cargoId == null);
+
         //редактирование
         if (arrestDocumentId != null) {
             try {
@@ -284,7 +288,7 @@ public class ArrestDocumentEdit extends DocumentEditPage {
         form.add(arrestDate);
 
         //Причина задержания
-        addBookDropDownChoice(form, "arrest.document.arrest_reason", ArrestReason.class, arrestDocumentModel, "arrestReason");
+        addBookDropDownChoice(form, "arrest.document.arrest_reason", ArrestReason.class, arrestDocumentModel, "arrestReason", isNewDocument);
 
         //Детали задержания
         TextArea<String> arrestReasonDetails = new TextArea<String>("arrest.document.arrest_reason_details",
@@ -297,7 +301,7 @@ public class ArrestDocumentEdit extends DocumentEditPage {
 
             @Override
             protected List<UnitType> load() {
-                return commonDocumentBean.getUnitTypes(arrestDocumentModel.getObject().getCargoMode());
+                return commonDocumentBean.getUnitTypes(arrestDocumentModel.getObject().getCargoMode(), getShowMode(isNewDocument));
             }
         };
 
@@ -315,25 +319,33 @@ public class ArrestDocumentEdit extends DocumentEditPage {
         final IModel<CargoType> cargoTypeModel = new PropertyModel<CargoType>(arrestDocumentModel, "cargoType");
         form.add(new UKTZEDField("arrest.document.cargo_type", cargoTypeModel, new Model<CargoMode>(), cargoModeContainer));
 
-        final ListView cargoModeListView = new ListView<CargoMode>("document.cargo.cargo_mode_parent_list",
-                new LoadableDetachableModel<List<CargoMode>>() {
+        final IModel<List<CargoMode>> cargoModesModel = new LoadableDetachableModel<List<CargoMode>>() {
 
-                    @Override
-                    protected List<CargoMode> load() {
-                        List<CargoMode> list = new ArrayList<CargoMode>();
-                        CargoType ct = cargoTypeModel.getObject();
+            @Override
+            protected List<CargoMode> load() {
+                CargoType ct = cargoTypeModel.getObject();
+                return commonDocumentBean.getCargoModes(ct, getShowMode(isNewDocument));
+            }
+        };
 
-                        if (ct != null && ct.getCargoModes() != null) {
-                            for (CargoMode cm : ct.getCargoModes()) {
-                                if (cm.getParent() != null && !list.contains(cm.getParent())) {
-                                    list.add(cm.getParent());
-                                }
-                            }
-                        }
+        IModel rootCargoModesModel = new LoadableDetachableModel<List<CargoMode>>() {
 
-                        return list;
+            @Override
+            protected List<CargoMode> load() {
+                List<CargoMode> list = new ArrayList<CargoMode>();
+
+                for (CargoMode cm : cargoModesModel.getObject()) {
+                    CargoMode parent = cm.getParent();
+                    if (!list.contains(parent)) {
+                        list.add(parent);
                     }
-                }) {
+                }
+
+                return list;
+            }
+        };
+
+        final ListView cargoModeListView = new ListView<CargoMode>("document.cargo.cargo_mode_parent_list", rootCargoModesModel) {
 
             @Override
             protected void populateItem(final ListItem<CargoMode> item) {
@@ -349,8 +361,9 @@ public class ArrestDocumentEdit extends DocumentEditPage {
                                 List<CargoMode> list = new ArrayList<CargoMode>();
                                 CargoType ct = cargoTypeModel.getObject();
 
-                                if (ct != null && ct.getCargoModes() != null) {
-                                    for (CargoMode cm : ct.getCargoModes()) {
+                                if (ct != null) {
+                                    List<CargoMode> cargoModes = cargoModesModel.getObject();
+                                    for (CargoMode cm : cargoModes) {
                                         if (cm.getParent() != null && cm.getParent().equals(item.getModelObject())) {
                                             list.add(cm);
                                         }
@@ -412,7 +425,7 @@ public class ArrestDocumentEdit extends DocumentEditPage {
         //Отправитель
         addSender(form, "arrest.document.cargo_sender_country", "senderCountry",
                 "arrest.document.cargo_sender_name", "senderName",
-                arrestDocumentModel);
+                arrestDocumentModel, isNewDocument);
 
         //Получатель
         addReceiver(form, "arrest.document.cargo_receiver_name", "receiverName",

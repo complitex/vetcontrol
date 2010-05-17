@@ -1,7 +1,6 @@
 package org.vetcontrol.entity;
 
 import org.vetcontrol.book.annotation.MappedProperty;
-import org.vetcontrol.book.annotation.ValidProperty;
 import org.vetcontrol.book.annotation.ViewLength;
 
 import javax.persistence.*;
@@ -9,7 +8,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -32,6 +30,7 @@ public class CargoType extends Localizable {
     public void setCode(String uktZedCode) {
         this.code = uktZedCode;
     }
+
     private List<StringCulture> names = new ArrayList<StringCulture>();
 
     @Transient
@@ -45,24 +44,6 @@ public class CargoType extends Localizable {
 
     public void setNames(List<StringCulture> names) {
         this.names = names;
-    }
-    //using Set as "cannot simultaneously fetch multiple bags" hibernate feature
-    private Set<CargoMode> cargoModes;
-
-    @XmlTransient
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "cargo_mode_cargo_type",
-    joinColumns =
-    @JoinColumn(name = "cargo_type_id", insertable = false, updatable = false),
-    inverseJoinColumns =
-    @JoinColumn(name = "cargo_mode_id", insertable = false, updatable = false))
-    @ValidProperty(false)
-    public Set<CargoMode> getCargoModes() {
-        return cargoModes;
-    }
-
-    public void setCargoModes(Set<CargoMode> cargoModes) {
-        this.cargoModes = cargoModes;
     }
 
     @Override

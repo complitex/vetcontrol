@@ -39,6 +39,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import org.vetcontrol.book.ShowBooksMode;
 import org.vetcontrol.document.service.AvailableMovementTypes;
 import org.vetcontrol.web.component.MovementTypeChoicePanel;
 
@@ -106,7 +107,7 @@ public class DocumentCargoList extends ListTemplatePage {
         filterForm.add(new TextField<String>("receiverAddress"));
         filterForm.add(new TextField<String>("senderName"));
 
-        filterForm.add(new DropDownChoice<CountryBook>("senderCountry", commonDocumentBean.getBookList(CountryBook.class),
+        filterForm.add(new DropDownChoice<CountryBook>("senderCountry", commonDocumentBean.getBookList(CountryBook.class, ShowBooksMode.ALL),
                 new BookNamedChoiceRenderer<CountryBook>(getSystemLocale())));
         DatePicker<Date> created = new DatePicker<Date>("created");
         filterForm.add(created);

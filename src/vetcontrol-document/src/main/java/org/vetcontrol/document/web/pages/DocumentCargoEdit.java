@@ -34,6 +34,7 @@ import org.vetcontrol.web.component.list.AjaxRemovableListView;
 
 import javax.ejb.EJB;
 import java.util.*;
+import org.vetcontrol.book.ShowBooksMode;
 import org.vetcontrol.document.service.CommonDocumentBean;
 
 import static org.vetcontrol.entity.Log.EVENT.CREATE;
@@ -188,11 +189,13 @@ public class DocumentCargoEdit extends DocumentEditPage {
                         error(getString("document.cargo.edit.message.cargo_type.not_found.error"));
                     }
 
-                    if (cargoMode != null && c.getCargoType() != null && c.getCargoType().getCargoModes() != null
-                            && !c.getCargoType().getCargoModes().contains(cargoMode)) {
-                        error(getString("document.cargo.edit.message.cargo_type.unique_cargo_mode.error") + ": "
-                                + c.getCargoType().getCode() + " - "
-                                + cargoMode.getDisplayName(getLocale(), getSystemLocale()));
+                    if (cargoMode != null && c.getCargoType() != null) {
+                        List<CargoMode> cargoModes = commonDocumentBean.getCargoModes(c.getCargoType(), ShowBooksMode.ALL);
+                        if (!cargoModes.contains(cargoMode)) {
+                            error(getString("document.cargo.edit.message.cargo_type.unique_cargo_mode.error") + ": "
+                                    + c.getCargoType().getCode() + " - "
+                                    + cargoMode.getDisplayName(getLocale(), getSystemLocale()));
+                        }
                     }
                 }
             }
@@ -263,17 +266,17 @@ public class DocumentCargoEdit extends DocumentEditPage {
             }
         });
 
+        final boolean isExists = id != null;
+
         //Отправитель
         addSender(form, "document.cargo.cargo_sender_country", "senderCountry",
                 "document.cargo.cargo_sender_name", "senderName",
-                documentCargoModel);
+                documentCargoModel, !isExists);
 
         //Получатель
         addReceiver(form, "document.cargo.cargo_receiver_name", "receiverName",
                 "document.cargo.cargo_receiver_address", "receiverAddress",
                 documentCargoModel);
-
-        boolean visible = id != null;
 
         //Примечания
         TextArea details = new TextArea<String>("document.cargo.details",
@@ -282,11 +285,11 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
         //Автор
         Label l_creator = new Label("l_creator", new ResourceModel("document.cargo.creator"));
-        l_creator.setVisible(visible);
+        l_creator.setVisible(isExists);
         form.add(l_creator);
 
         String fullCreator = "";
-        if (visible) {
+        if (isExists) {
             fullCreator = dc.getCreator().getFullName();
             if (dc.getCreator().getJob() != null) {
                 fullCreator += ", " + dc.getCreator().getJob().getDisplayName(getLocale(), getSystemLocale());
@@ -297,23 +300,23 @@ public class DocumentCargoEdit extends DocumentEditPage {
         }
 
         Label creator = new Label("creator", fullCreator);
-        creator.setVisible(visible);
+        creator.setVisible(isExists);
         form.add(creator);
 
         //Подразделение и Пункт пропуска через границу
         addDepartmentAndPoint(form, "document.cargo.department", "department", "document.cargo.department.label",
                 "document.cargo.passingBorderPoint", "passingBorderPoint", "document.cargo.passingBorderPoint.label",
-                documentCargoModel, currentUser, visible);
+                documentCargoModel, currentUser, isExists);
 
         //Дата создания
         Label l_created = new Label("l_created", new ResourceModel("document.cargo.created"));
-        l_created.setVisible(visible);
+        l_created.setVisible(isExists);
         form.add(l_created);
 
         DateLabel created = new DateLabel("created", new Model<Date>(
-                visible ? documentCargoModel.getObject().getCreated() : new Date()),
+                isExists ? documentCargoModel.getObject().getCreated() : new Date()),
                 new StyleDateConverter(true));
-        created.setVisible(visible);
+        created.setVisible(isExists);
         form.add(created);
 
         //Блок транспортных средств
@@ -450,25 +453,33 @@ public class DocumentCargoEdit extends DocumentEditPage {
         cargoModeSelectLabel.setVisible(false);
         cargoModeContainer.add(cargoModeSelectLabel);
 
-        final ListView cargoModeListView = new ListView<CargoMode>("document.cargo.cargo_mode_parent_list",
-                new LoadableDetachableModel<List<CargoMode>>() {
+        final IModel<List<CargoMode>> cargoModesModel = new LoadableDetachableModel<List<CargoMode>>() {
 
-                    @Override
-                    protected List<CargoMode> load() {
-                        List<CargoMode> list = new ArrayList<CargoMode>();
-                        CargoType ct = cargoTypeModel.getObject();
+            @Override
+            protected List<CargoMode> load() {
+                CargoType ct = cargoTypeModel.getObject();
+                return commonDocumentBean.getCargoModes(ct, getShowMode(!isExists));
+            }
+        };
 
-                        if (ct != null && ct.getCargoModes() != null) {
-                            for (CargoMode cm : ct.getCargoModes()) {
-                                if (cm.getParent() != null && !list.contains(cm.getParent())) {
-                                    list.add(cm.getParent());
-                                }
-                            }
-                        }
+        IModel rootCargoModesModel = new LoadableDetachableModel<List<CargoMode>>() {
 
-                        return list;
+            @Override
+            protected List<CargoMode> load() {
+                List<CargoMode> list = new ArrayList<CargoMode>();
+
+                for (CargoMode cm : cargoModesModel.getObject()) {
+                    CargoMode parent = cm.getParent();
+                    if (!list.contains(parent)) {
+                        list.add(parent);
                     }
-                }) {
+                }
+
+                return list;
+            }
+        };
+
+        final ListView cargoModeListView = new ListView<CargoMode>("document.cargo.cargo_mode_parent_list", rootCargoModesModel) {
 
             @Override
             protected void populateItem(final ListItem<CargoMode> item) {
@@ -484,8 +495,9 @@ public class DocumentCargoEdit extends DocumentEditPage {
                                 List<CargoMode> list = new ArrayList<CargoMode>();
                                 CargoType ct = cargoTypeModel.getObject();
 
-                                if (ct != null && ct.getCargoModes() != null) {
-                                    for (CargoMode cm : ct.getCargoModes()) {
+                                if (ct != null) {
+                                    List<CargoMode> cargoModes = cargoModesModel.getObject();
+                                    for (CargoMode cm : cargoModes) {
                                         if (cm.getParent() != null && cm.getParent().equals(item.getModelObject())) {
                                             list.add(cm);
                                         }
@@ -540,9 +552,10 @@ public class DocumentCargoEdit extends DocumentEditPage {
                 cargoTypeModel.setObject(null);
 
                 if (cargoType != null) {
-                    if (!cargoType.getCargoModes().isEmpty()) {
-                        if (cargoType.getCargoModes().size() == 1) {
-                            CargoMode cm = cargoType.getCargoModes().iterator().next();
+                    List<CargoMode> cargoModes = commonDocumentBean.getCargoModes(cargoType, getShowMode(!isExists));
+                    if (!cargoModes.isEmpty()) {
+                        if (cargoModes.size() == 1) {
+                            CargoMode cm = cargoModes.iterator().next();
                             documentCargoModel.getObject().setCargoMode(cm);
 
                             cargoModeLabel.setVisible(true);
@@ -602,7 +615,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
             @Override
             protected void populateItem(final ListItem<Cargo> item) {
-                addCargo(item, new PropertyModel<CargoMode>(documentCargoModel, "cargoMode"), listener, cargoModeContainer);
+                addCargo(item, new PropertyModel<CargoMode>(documentCargoModel, "cargoMode"), listener, cargoModeContainer, isExists);
 
                 //Копировать
                 final AjaxSubmitLink copyCargoLink = new AjaxSubmitLink("document.cargo.copy", form) {
@@ -687,13 +700,16 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
         private Cargo cargo;
 
-        private UnitTypeModel(Cargo cargo) {
+        private boolean isNewDocument;
+
+        private UnitTypeModel(Cargo cargo, boolean isNewDocument) {
             this.cargo = cargo;
+            this.isNewDocument = isNewDocument;
         }
 
         @Override
         protected List<UnitType> load() {
-            return commonDocumentBean.getUnitTypes(cargo.getDocumentCargo().getCargoMode());
+            return commonDocumentBean.getUnitTypes(cargo.getDocumentCargo().getCargoMode(), getShowMode(isNewDocument));
         }
     }
 
@@ -701,8 +717,11 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
         private CountryBook country;
 
-        private CargoProducerModel(CountryBook country) {
+        private boolean isNewDocument;
+
+        private CargoProducerModel(CountryBook country, boolean isNewDocument) {
             this.country = country;
+            this.isNewDocument = isNewDocument;
         }
 
         public void setCountry(CountryBook country) {
@@ -711,13 +730,14 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
         @Override
         protected List<CargoProducer> load() {
-            return documentCargoBean.getCargoProducer(country);
+            return commonDocumentBean.getCargoProducers(country, getShowMode(isNewDocument));
         }
     }
 
-    private void addCargo(ListItem<Cargo> item, IModel<CargoMode> cargoModeModel, UKTZEDField.IUKTZEDFieldListener listener, Component update) {
+    private void addCargo(ListItem<Cargo> item, IModel<CargoMode> cargoModeModel, UKTZEDField.IUKTZEDFieldListener listener,
+            Component update, boolean isExists) {
         //Единицы измерения        
-        UnitTypeModel unitTypeModel = new UnitTypeModel(item.getModelObject());
+        UnitTypeModel unitTypeModel = new UnitTypeModel(item.getModelObject(), !isExists);
 
         DropDownChoice<UnitType> ddcUnitTypes = addBookDropDownChoice(item, "document.cargo.unit_type",
                 item.getModel(), "unitType", unitTypeModel, false, true);
@@ -776,10 +796,10 @@ public class DocumentCargoEdit extends DocumentEditPage {
                 : item.getModelObject().getDocumentCargo().getSenderCountry();
 
         final DropDownChoice<CountryBook> ddcCountryBook = addBookDropDownChoice(item, "document.cargo.producer_country",
-                CountryBook.class, new Model<CountryBook>(country), true, false);
+                CountryBook.class, new Model<CountryBook>(country), true, false, !isExists);
 
         //Производитель Название
-        final CargoProducerModel cargoProducerModel = new CargoProducerModel(country);
+        final CargoProducerModel cargoProducerModel = new CargoProducerModel(country, !isExists);
 
         final DropDownChoice<CargoProducer> ddcCargoProducer = addBookDropDownChoice(item, "document.cargo.producer_name",
                 item.getModel(), "cargoProducer", cargoProducerModel, true, true);
