@@ -16,13 +16,14 @@ import org.slf4j.LoggerFactory;
 import org.vetcontrol.document.service.CommonDocumentBean;
 import org.vetcontrol.document.web.component.BookNamedChoiceRenderer;
 import org.vetcontrol.entity.*;
-import org.vetcontrol.service.CargoTypeBean;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.web.template.FormTemplatePage;
 
 import javax.ejb.EJB;
 import java.util.Iterator;
 import java.util.List;
+import org.vetcontrol.book.ShowBooksMode;
+import org.vetcontrol.web.component.book.DisableAwareDropDownChoice;
 
 import static org.vetcontrol.entity.Log.EVENT.EDIT;
 import static org.vetcontrol.entity.Log.MODULE.DOCUMENT;
@@ -33,6 +34,7 @@ import static org.vetcontrol.web.security.SecurityRoles.DOCUMENT_DEP_CHILD_EDIT;
  *         Date: 21.04.2010 7:17:41
  */
 public abstract class DocumentEditPage extends FormTemplatePage {
+
     private static final Logger log = LoggerFactory.getLogger(DocumentEditPage.class);
 
     @EJB(name = "CommonDocumentBean")
@@ -41,34 +43,34 @@ public abstract class DocumentEditPage extends FormTemplatePage {
     @EJB(name = "LogBean")
     private LogBean logBean;
 
-    @EJB(name = "CargoTypeBean")
-    private CargoTypeBean cargoTypeBean;         
+    protected ShowBooksMode getShowMode(boolean isNewDocument){
+        return isNewDocument ? ShowBooksMode.ENABLED : ShowBooksMode.ALL;
+    }
 
     protected <T extends Localizable> DropDownChoice<T> addBookDropDownChoice(
-            WebMarkupContainer container, String id, Class<T> bookClass, IModel model, String property) {
-        return addBookDropDownChoice(container, id, bookClass, new PropertyModel<T>(model, property), true, false);
+            WebMarkupContainer container, String id, Class<T> bookClass, IModel model, String property, boolean isNewDocument) {
+        return addBookDropDownChoice(container, id, bookClass, new PropertyModel<T>(model, property), true, false, isNewDocument);
     }
 
     protected <T extends Localizable> DropDownChoice<T> addBookDropDownChoice(
             WebMarkupContainer container, String id, Class<T> bookClass, IModel model, String property,
-            boolean required, boolean outputMarkupId) {
-        return addBookDropDownChoice(container, id, bookClass, new PropertyModel<T>(model, property), required, outputMarkupId);
+            boolean required, boolean outputMarkupId, boolean isNewDocument) {
+        return addBookDropDownChoice(container, id, bookClass, new PropertyModel<T>(model, property), required, outputMarkupId, isNewDocument);
     }
 
     protected <T extends Localizable> DropDownChoice<T> addBookDropDownChoice(
             WebMarkupContainer container, String id, Class<T> bookClass, IModel<T> model,
-            boolean required, boolean outputMarkupId) {
+            boolean required, boolean outputMarkupId, boolean isNewDocument) {
         List<T> list = null;
 
         try {
-            list = commonDocumentBean.getBookList(bookClass);
+            list = commonDocumentBean.getBookList(bookClass, getShowMode(isNewDocument));
         } catch (Exception e) {
             log.error("Ошибка загрузки списка справочников: " + bookClass, e);
             logBean.error(DOCUMENT, EDIT, this.getClass(), bookClass, "Ошибка загрузки данных из базы данных");
         }
 
-        DropDownChoice<T> ddc = new DropDownChoice<T>(id, model, list, new BookNamedChoiceRenderer<T>(getSystemLocale()));
-
+        DisableAwareDropDownChoice<T> ddc = new DisableAwareDropDownChoice<T>(id, model, list, new BookNamedChoiceRenderer<T>(getSystemLocale()));
         ddc.setRequired(required);
         ddc.setOutputMarkupId(outputMarkupId);
         container.add(ddc);
@@ -77,16 +79,16 @@ public abstract class DocumentEditPage extends FormTemplatePage {
     }
 
     protected <T extends Localizable> DropDownChoice<T> addBookDropDownChoice(
-            WebMarkupContainer container, String id, IModel model, String property ,
+            WebMarkupContainer container, String id, IModel model, String property,
             IModel<List<T>> listModel, boolean required, boolean outputMarkupId) {
-        return addBookDropDownChoice(container, id,  new PropertyModel<T>(model, property),
+        return addBookDropDownChoice(container, id, new PropertyModel<T>(model, property),
                 listModel, required, outputMarkupId);
     }
 
     protected <T extends Localizable> DropDownChoice<T> addBookDropDownChoice(
             WebMarkupContainer container, String id, IModel<T> model, IModel<List<T>> listModel,
             boolean required, boolean outputMarkupId) {
-        DropDownChoice<T> ddc = new DropDownChoice<T>(id, model, listModel, new BookNamedChoiceRenderer<T>(getSystemLocale()));
+        DisableAwareDropDownChoice<T> ddc = new DisableAwareDropDownChoice<T>(id, model, listModel, new BookNamedChoiceRenderer<T>(getSystemLocale()));
 
         ddc.setRequired(required);
         ddc.setOutputMarkupId(outputMarkupId);
@@ -96,10 +98,10 @@ public abstract class DocumentEditPage extends FormTemplatePage {
     }
 
     protected void addSender(WebMarkupContainer container, String countryId, String countryProperty, String nameId,
-                             String nameProperty, IModel model){
+            String nameProperty, IModel model, boolean isNewDocument) {
         //Отравитель Страна
         final DropDownChoice<CountryBook> ddcSenderCountry = addBookDropDownChoice(container, countryId,
-                CountryBook.class, model, countryProperty);
+                CountryBook.class, model, countryProperty, isNewDocument);
         ddcSenderCountry.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
             @Override
@@ -128,7 +130,7 @@ public abstract class DocumentEditPage extends FormTemplatePage {
     }
 
     protected void addReceiver(WebMarkupContainer container, String nameId, String nameProperty,
-                               String addressId, String addressProperty, IModel model){
+            String addressId, String addressProperty, IModel model) {
         //Настройки автокомплита
         AutoCompleteSettings settings = new AutoCompleteSettings();
         settings.setAdjustInputWidth(false);
@@ -180,10 +182,10 @@ public abstract class DocumentEditPage extends FormTemplatePage {
     }
 
     protected void addDepartmentAndPoint(WebMarkupContainer container, String ddcDepartmentId, String departmentProperty,
-                                         String labelDepartmentId, String ddcPointId, String pointProperty,
-                                         String labelPointId, IModel model, User currentUser, boolean visible){
+            String labelDepartmentId, String ddcPointId, String pointProperty,
+            String labelPointId, IModel model, User currentUser, final boolean isExists) {
         final Department department = new PropertyModel<Department>(model, departmentProperty).getObject();
-        final PassingBorderPoint point =  new PropertyModel<PassingBorderPoint>(model, pointProperty).getObject();
+        final PassingBorderPoint point = new PropertyModel<PassingBorderPoint>(model, pointProperty).getObject();
 
         //Подразделение
         List<Department> list;
@@ -198,13 +200,13 @@ public abstract class DocumentEditPage extends FormTemplatePage {
             logBean.error(DOCUMENT, EDIT, this.getClass(), Department.class, "Ошибка загрузки данных из базы данных");
         }
 
-        //Если роль редактировать подразделение то отобразить выпадающий список иначе статический текс
-        final DropDownChoice<Department> ddcDepartment =  addBookDropDownChoice(container, ddcDepartmentId, Department.class,
-                model, departmentProperty, true, true);
-        ddcDepartment.setVisible(hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) && !visible);
+        //Если роль редактировать подразделение то отобразить выпадающий список иначе статический текст
+        final DropDownChoice<Department> ddcDepartment = addBookDropDownChoice(container, ddcDepartmentId, Department.class,
+                model, departmentProperty, true, true, !isExists);
+        ddcDepartment.setVisible(hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) && !isExists);
 
         Label departmentLabel = new Label(labelDepartmentId, department.getDisplayName(getLocale(), getSystemLocale()));
-        departmentLabel.setVisible(!hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) || visible);
+        departmentLabel.setVisible(!hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) || isExists);
         container.add(departmentLabel);
 
         //Пункт пропуска через границу
@@ -214,22 +216,22 @@ public abstract class DocumentEditPage extends FormTemplatePage {
 
                     @Override
                     protected List<PassingBorderPoint> load() {
-                        return commonDocumentBean.getPassingBorderPoints(ddcDepartment.getModelObject());
+                        return commonDocumentBean.getPassingBorderPoints(ddcDepartment.getModelObject(), getShowMode(!isExists));
                     }
                 }, new IChoiceRenderer<PassingBorderPoint>() {
 
-                    @Override
-                    public Object getDisplayValue(PassingBorderPoint object) {
-                        return object.getName();
-                    }
+            @Override
+            public Object getDisplayValue(PassingBorderPoint object) {
+                return object.getName();
+            }
 
-                    @Override
-                    public String getIdValue(PassingBorderPoint object, int index) {
-                        return object.getId().toString();
-                    }
-                });
+            @Override
+            public String getIdValue(PassingBorderPoint object, int index) {
+                return object.getId().toString();
+            }
+        });
         ddcPassingBorderPoint.setOutputMarkupId(true);
-        ddcPassingBorderPoint.setVisible(hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) && !visible);
+        ddcPassingBorderPoint.setVisible(hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) && !isExists);
         container.add(ddcPassingBorderPoint);
 
         ddcDepartment.add(new AjaxFormComponentUpdatingBehavior("onchange") {
@@ -241,8 +243,7 @@ public abstract class DocumentEditPage extends FormTemplatePage {
         });
 
         Label passingBorderPointLabel = new Label(labelPointId, point != null ? point.getName() : "");
-        passingBorderPointLabel.setVisible(!hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) || visible);
+        passingBorderPointLabel.setVisible(!hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) || isExists);
         container.add(passingBorderPointLabel);
     }
-
 }

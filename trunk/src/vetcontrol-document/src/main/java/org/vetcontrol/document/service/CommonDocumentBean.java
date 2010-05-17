@@ -3,7 +3,6 @@ package org.vetcontrol.document.service;
 import java.util.Collections;
 import org.vetcontrol.entity.CountryBook;
 import org.vetcontrol.entity.Department;
-import org.vetcontrol.entity.IDisabled;
 import org.vetcontrol.entity.PassingBorderPoint;
 import org.vetcontrol.web.security.SecurityRoles;
 
@@ -13,8 +12,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import javax.persistence.Query;
 import org.vetcontrol.book.BeanPropertyUtil;
+import org.vetcontrol.book.ShowBooksMode;
 import org.vetcontrol.entity.CargoMode;
+import org.vetcontrol.entity.CargoProducer;
+import org.vetcontrol.entity.CargoType;
 import org.vetcontrol.entity.UnitType;
 
 /**
@@ -28,9 +31,24 @@ public class CommonDocumentBean {
     @PersistenceContext
     private EntityManager em;
 
-    public <T extends IDisabled> List<T> getBookList(Class<T> _class) {
-        return em.createQuery("select b from " + _class.getSimpleName() + " b "
-                + "where b.disabled = false", _class).getResultList();
+    public <T> List<T> getBookList(Class<T> bookClass, ShowBooksMode show) {
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("SELECT DISTINCT book FROM ").append(bookClass.getSimpleName()).append(" book ");
+        Boolean isDisabled = null;
+        switch (show) {
+            case ALL:
+                break;
+            case DISABLED:
+            case ENABLED:
+                queryBuilder.append(" WHERE book.").append(BeanPropertyUtil.getDisabledPropertyName()).append(" = :disabled");
+                isDisabled = show == ShowBooksMode.ENABLED ? false : true;
+                break;
+        }
+        Query query = em.createQuery(queryBuilder.toString(), bookClass);
+        if (isDisabled != null) {
+            query.setParameter("disabled", isDisabled);
+        }
+        return query.getResultList();
     }
 
     public List<String> getSenderNames(CountryBook country, String filterName) {
@@ -69,21 +87,95 @@ public class CommonDocumentBean {
         return list;
     }
 
-    public List<PassingBorderPoint> getPassingBorderPoints(Department department) {
-        return em.createQuery("select pbp from PassingBorderPoint pbp "
-                + "where pbp.department = :department and pbp.disabled = false", PassingBorderPoint.class).setParameter("department", department).getResultList();
+    public List<PassingBorderPoint> getPassingBorderPoints(Department department, ShowBooksMode show) {
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("SELECT DISTINCT pbp FROM PassingBorderPoint pbp WHERE pbp.department = :department");
+        Boolean isDisabled = null;
+        switch (show) {
+            case ALL:
+                break;
+            case DISABLED:
+            case ENABLED:
+                queryBuilder.append(" AND pbp.").append(BeanPropertyUtil.getDisabledPropertyName()).append(" = :disabled");
+                isDisabled = show == ShowBooksMode.ENABLED ? false : true;
+                break;
+        }
+        Query query = em.createQuery(queryBuilder.toString(), PassingBorderPoint.class);
+        query.setParameter("department", department);
+        if (isDisabled != null) {
+            query.setParameter("disabled", isDisabled);
+        }
+        return query.getResultList();
     }
 
-    public List<UnitType> getUnitTypes(CargoMode cargoMode) {
+    public List<UnitType> getUnitTypes(CargoMode cargoMode, ShowBooksMode show) {
         if (cargoMode == null) {
             return Collections.emptyList();
         } else {
             StringBuilder queryBuilder = new StringBuilder();
-            queryBuilder.append("SELECT DISTINCT ut FROM UnitType ut WHERE ut.").
-                    append(BeanPropertyUtil.getDisabledPropertyName()).
-                    append(" = FALSE ").
-                    append("AND ut.id IN (SELECT cmut.id.unitTypeId FROM CargoModeUnitType cmut WHERE cmut.cargoMode = :cargoMode)");
-            return em.createQuery(queryBuilder.toString(), UnitType.class).setParameter("cargoMode", cargoMode).getResultList();
+            Boolean isDisabled = null;
+            queryBuilder.append("SELECT DISTINCT ut FROM UnitType ut ");
+            queryBuilder.append("WHERE ut.id IN (SELECT cmut.id.unitTypeId FROM CargoModeUnitType cmut WHERE cmut.cargoMode = :cargoMode) ");
+            switch (show) {
+                case ALL:
+                    break;
+                case DISABLED:
+                case ENABLED:
+                    queryBuilder.append(" AND ut.").append(BeanPropertyUtil.getDisabledPropertyName()).append(" = :disabled");
+                    isDisabled = show == ShowBooksMode.ENABLED ? false : true;
+                    break;
+            }
+            Query query = em.createQuery(queryBuilder.toString(), UnitType.class);
+            query.setParameter("cargoMode", cargoMode);
+            if (isDisabled != null) {
+                query.setParameter("disabled", isDisabled);
+            }
+            return query.getResultList();
         }
     }
+
+    public List<CargoProducer> getCargoProducers(CountryBook country, ShowBooksMode show) {
+        StringBuilder queryBuilder = new StringBuilder();
+        Boolean isDisabled = null;
+        queryBuilder.append("SELECT DISTINCT cp FROM CargoProducer cp ");
+        queryBuilder.append("WHERE cp.country = :country");
+        switch (show) {
+            case ALL:
+                break;
+            case DISABLED:
+            case ENABLED:
+                queryBuilder.append(" AND cp.").append(BeanPropertyUtil.getDisabledPropertyName()).append(" = :disabled");
+                isDisabled = show == ShowBooksMode.ENABLED ? false : true;
+                break;
+        }
+        Query query = em.createQuery(queryBuilder.toString(), CargoProducer.class);
+        query.setParameter("country", country);
+        if (isDisabled != null) {
+            query.setParameter("disabled", isDisabled);
+        }
+        return query.getResultList();
+    }
+
+    public List<CargoMode> getCargoModes(CargoType cargoType, ShowBooksMode show) {
+        StringBuilder queryBuilder = new StringBuilder();
+        Boolean isDisabled = null;
+        queryBuilder.append("SELECT DISTINCT cm FROM CargoMode cm WHERE cm.parent IS NOT NULL ").
+                append("AND cm.id IN (SELECT cmct.cargoMode.id FROM CargoModeCargoType cmct WHERE cmct.cargoType = :cargoType)");
+        switch (show) {
+            case ALL:
+                break;
+            case DISABLED:
+            case ENABLED:
+                queryBuilder.append(" AND cm.").append(BeanPropertyUtil.getDisabledPropertyName()).append(" = :disabled");
+                isDisabled = show == ShowBooksMode.ENABLED ? false : true;
+                break;
+        }
+        Query query = em.createQuery(queryBuilder.toString(), CargoMode.class);
+        query.setParameter("cargoType", cargoType);
+        if (isDisabled != null) {
+            query.setParameter("disabled", isDisabled);
+        }
+        return query.getResultList();
+    }
+
 }
