@@ -12,10 +12,7 @@ import org.vetcontrol.book.annotation.BookReference;
 import org.vetcontrol.book.annotation.ValidProperty;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
 

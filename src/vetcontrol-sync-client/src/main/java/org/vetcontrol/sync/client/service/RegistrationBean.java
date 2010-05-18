@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.Client;
 import org.vetcontrol.entity.Department;
+import org.vetcontrol.entity.PassingBorderPoint;
 import org.vetcontrol.entity.Synchronized;
 import org.vetcontrol.hibernate.util.EntityPersisterUtil;
 import org.vetcontrol.util.DateUtil;
@@ -114,6 +115,13 @@ public class RegistrationBean {
 
     public List<Department> getDepartments(){
         return em.createQuery("select d from Department d", Department.class).getResultList();
+    }
+
+    public List<PassingBorderPoint> getPassingBorderPoints(Department department){
+        return em.createQuery("select pbp from PassingBorderPoint pbp where pbp.disabled = false " +
+                "and pbp.department = :department", PassingBorderPoint.class)
+                .setParameter("department", department)
+                .getResultList();
     }
 
     public boolean isProcessing() {

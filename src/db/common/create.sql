@@ -506,13 +506,14 @@ CREATE TABLE  `log` (
 DROP TABLE IF EXISTS `client`;
 CREATE TABLE `client` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `department_id` bigint(20) NOT NULL,
+  `passing_border_point_id` bigint(20) DEFAULT NULL,
   `ip` varchar(64) NOT NULL,
   `mac` varchar(64) NOT NULL,
   `secure_key` varchar(64) NOT NULL,
   `created` timestamp NOT NULL,
   `updated` timestamp NOT NULL,
   `last_sync` DATETIME DEFAULT NULL,
-  `department_id` bigint(20) NOT NULL,
   `sync_status` varchar(64) DEFAULT NULL,
   `version` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -520,7 +521,9 @@ CREATE TABLE `client` (
   UNIQUE KEY `secure_key` (`secure_key`),
   KEY `FK_department` (`department_id`),
   CONSTRAINT `FK_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`),
-    KEY `client_updated_INDEX` (`updated`)
+  KEY `FK_passing_border_point` (`passing_border_point_id`),
+  CONSTRAINT `FK_passing_border_point` FOREIGN KEY (`passing_border_point_id`) REFERENCES `passing_border_point` (`id`),
+  KEY `client_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

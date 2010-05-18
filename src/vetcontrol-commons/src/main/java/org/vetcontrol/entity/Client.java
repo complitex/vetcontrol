@@ -28,6 +28,10 @@ public class Client extends Synchronized implements ILongId{
     @XmlIDREF
     private Department department;
 
+    @ManyToOne @JoinColumn(name = "passing_border_point_id")
+    @XmlIDREF
+    private PassingBorderPoint passingBorderPoint;
+
     @Column(name = "ip", nullable = false)
     private String ip;
 
@@ -66,6 +70,14 @@ public class Client extends Synchronized implements ILongId{
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    public PassingBorderPoint getPassingBorderPoint() {
+        return passingBorderPoint;
+    }
+
+    public void setPassingBorderPoint(PassingBorderPoint passingBorderPoint) {
+        this.passingBorderPoint = passingBorderPoint;
     }
 
     public String getIp() {
@@ -122,7 +134,7 @@ public class Client extends Synchronized implements ILongId{
 
     public void setVersion(String version) {
         this.version = version;
-    }     
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -136,7 +148,10 @@ public class Client extends Synchronized implements ILongId{
         if (department != null ? !department.equals(client.department) : client.department != null) return false;
         if (id != null ? !id.equals(client.id) : client.id != null) return false;
         if (ip != null ? !ip.equals(client.ip) : client.ip != null) return false;
+        if (lastSync != null ? !lastSync.equals(client.lastSync) : client.lastSync != null) return false;
         if (mac != null ? !mac.equals(client.mac) : client.mac != null) return false;
+        if (passingBorderPoint != null ? !passingBorderPoint.equals(client.passingBorderPoint) : client.passingBorderPoint != null)
+            return false;
         if (secureKey != null ? !secureKey.equals(client.secureKey) : client.secureKey != null) return false;
         if (updated != null ? !updated.equals(client.updated) : client.updated != null) return false;
         if (version != null ? !version.equals(client.version) : client.version != null) return false;
@@ -149,11 +164,13 @@ public class Client extends Synchronized implements ILongId{
         int result = super.hashCode();
         result = 31 * result + (id != null ? id.hashCode() : 0);
         result = 31 * result + (department != null ? department.hashCode() : 0);
+        result = 31 * result + (passingBorderPoint != null ? passingBorderPoint.hashCode() : 0);
         result = 31 * result + (ip != null ? ip.hashCode() : 0);
         result = 31 * result + (mac != null ? mac.hashCode() : 0);
         result = 31 * result + (secureKey != null ? secureKey.hashCode() : 0);
         result = 31 * result + (created != null ? created.hashCode() : 0);
         result = 31 * result + (updated != null ? updated.hashCode() : 0);
+        result = 31 * result + (lastSync != null ? lastSync.hashCode() : 0);
         result = 31 * result + (version != null ? version.hashCode() : 0);
         return result;
     }
@@ -163,6 +180,7 @@ public class Client extends Synchronized implements ILongId{
         return "[hash: " + Integer.toHexString(hashCode())
                 + ", id: " + id
                 + ", department: " + department
+                + ", passingBorderPoint: " + passingBorderPoint
                 + ", ip: " + ip
                 + ", mac: " + mac
                 + ", secureKey: " + secureKey
