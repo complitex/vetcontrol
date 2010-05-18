@@ -4,6 +4,7 @@
  */
 package org.vetcontrol.information.service.dao;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,6 +30,7 @@ public class DepartmentBookDAO {
 
     @EJB
     private IBookDAO bookDAO;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -97,7 +99,17 @@ public class DepartmentBookDAO {
         }
     }
 
-    public void saveOrUpdate(Department department) {
+    public void saveAsNew(Department department) {
+        Long oldId = department.getId();
+        clearBook(department);
+        updateVersionIfNecessary(department, null);
+        setNeedToUpdateReferences(department);
+        updateReferences(department);
+        saveOrUpdate(department, oldId);
+        disable(oldId);
+    }
+
+    public void saveOrUpdate(Department department, Long oldId) {
         bookDAO.saveOrUpdate(department);
         for (PassingBorderPoint borderPoint : department.getPassingBorderPoints()) {
             borderPoint.setDepartment(department);
@@ -105,71 +117,114 @@ public class DepartmentBookDAO {
                 bookDAO.saveOrUpdate(borderPoint);
             }
         }
-    }
 
-    public void disable(Department department) {
-        bookDAO.disable(department);
-        disablePassingBorderPoints(department);
-        if (department.getLevel() == 2 || department.getLevel() == 1) {
-            updateChildDepartments(department.getId(), true);
-        }
-        if(department.getLevel() == 1){
-            List<Long> secondLevelDepartmentIds = getSecondLevelDepartmentIds(department.getId());
-            for(Long id : secondLevelDepartmentIds){
-                updateChildDepartments(id, true);
+        if (oldId != null) {
+            StringBuilder queryBuilder = new StringBuilder();
+            queryBuilder.append("SELECT d FROM Department d WHERE d.parent.id = :parentId AND d.").
+                    append(getDisabledPropertyName()).append(" = FALSE");
+            List<Department> children = entityManager.createQuery(queryBuilder.toString(), Department.class).
+                    setParameter("parentId", oldId).
+                    getResultList();
+            if (!children.isEmpty()) {
+                bookDAO.addLocalizationSupport(children);
+                for (Department child : children) {
+                    loadPassingBorderPoints(child);
+                }
+                entityManager.flush();
+                entityManager.clear();
+
+                for (Department child : children) {
+                    Long oldChildId = child.getId();
+                    clearBook(child);
+                    child.setParent(department);
+                    updateVersionIfNecessary(child, null);
+                    setNeedToUpdateReferences(child);
+                    updateReferences(child);
+                    saveOrUpdate(child, oldChildId);
+                }
             }
         }
     }
 
-    private void updateChildDepartments(Long departmentId, boolean disabled) {
+    public void updateReferences(Department department) {
+        Date newVersion = DateUtil.getCurrentDate();
+        for (PassingBorderPoint borderPoint : department.getPassingBorderPoints()) {
+            if (borderPoint.isNeedToUpdate()) {
+                borderPoint.setUpdated(newVersion);
+            }
+        }
+    }
+
+    public void setNeedToUpdateReferences(Department department) {
+        for (PassingBorderPoint borderPoint : department.getPassingBorderPoints()) {
+            clearBook(borderPoint);
+            borderPoint.setNeedToUpdate(true);
+        }
+    }
+
+    public void disable(Long departmentId) {
+        bookDAO.disable(departmentId, Department.class);
+        disablePassingBorderPoints(departmentId);
+        changeChildrenActivity(departmentId, true);
+    }
+
+    public void changeChildrenActivity(Long parentId, boolean disabled) {
+        List<Long> childrenDepartmentIds = getChildrenDepartmentIds(parentId);
+        if (!childrenDepartmentIds.isEmpty()) {
+
+            StringBuilder queryBuilder = new StringBuilder();
+            queryBuilder.append("UPDATE Department d SET d.").
+                    append(getDisabledPropertyName()).
+                    append(" = :disabled, ").
+                    append("d.").
+                    append(getVersionPropertyName()).
+                    append(" = :updated ").
+                    append("WHERE d.parent.id = :parentId");
+            entityManager.createQuery(queryBuilder.toString()).
+                    setParameter("parentId", parentId).
+                    setParameter("disabled", disabled).
+                    setParameter("updated", DateUtil.getCurrentDate()).
+                    executeUpdate();
+
+            for (Long childId : childrenDepartmentIds) {
+                changeChildrenActivity(childId, disabled);
+            }
+        }
+    }
+
+    public void changeBorderPointActivity(Long departmentId, boolean disabled) {
         StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("UPDATE Department d SET d.").
+        queryBuilder.append("UPDATE PassingBorderPoint pbp SET pbp.").
                 append(getDisabledPropertyName()).
                 append(" = :disabled, ").
-                append("d.").
+                append("pbp.").
                 append(getVersionPropertyName()).
                 append(" = :updated ").
-                append("WHERE d.parent.id = :parentId");
+                append("WHERE pbp.department.id = :departmentId");
         entityManager.createQuery(queryBuilder.toString()).
-                setParameter("parentId", departmentId).
+                setParameter("departmentId", departmentId).
                 setParameter("disabled", disabled).
                 setParameter("updated", DateUtil.getCurrentDate()).
                 executeUpdate();
     }
 
-    public void enable(Department department) {
-        bookDAO.enable(department);
-        enablePassingBorderPoints(department);
-        if (department.getLevel() == 2 || department.getLevel() == 1) {
-            updateChildDepartments(department.getId(), false);
-        }
-        if(department.getLevel() == 1){
-            List<Long> secondLevelDepartmentIds = getSecondLevelDepartmentIds(department.getId());
-            for(Long id : secondLevelDepartmentIds){
-                updateChildDepartments(id, false);
-            }
-        }
+    public void enable(Long departmentId) {
+        bookDAO.enable(departmentId, Department.class);
+        enablePassingBorderPoints(departmentId);
+        changeChildrenActivity(departmentId, false);
     }
 
-    private void disablePassingBorderPoints(Department department) {
-        for (PassingBorderPoint borderPoint : department.getPassingBorderPoints()) {
-            if (!isNewBook(borderPoint)) {
-                bookDAO.disable(borderPoint);
-            }
-        }
+    private void disablePassingBorderPoints(Long departmentId) {
+        changeBorderPointActivity(departmentId, true);
     }
 
-    private void enablePassingBorderPoints(Department department) {
-        for (PassingBorderPoint borderPoint : department.getPassingBorderPoints()) {
-            if (!isNewBook(borderPoint)) {
-                bookDAO.enable(borderPoint);
-            }
-        }
+    private void enablePassingBorderPoints(Long departmentId) {
+        changeBorderPointActivity(departmentId, false);
     }
 
-    private List<Long> getSecondLevelDepartmentIds(Long firstLevelDepartmentId) {
+    private List<Long> getChildrenDepartmentIds(Long parentId) {
         return entityManager.createQuery("SELECT d.id FROM Department d WHERE d.parent.id = :parentId", Long.class).
-                setParameter("parentId", firstLevelDepartmentId).
+                setParameter("parentId", parentId).
                 getResultList();
     }
 }

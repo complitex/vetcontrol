@@ -6,18 +6,12 @@ package org.vetcontrol.entity;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.vetcontrol.book.annotation.BookReference;
-import org.vetcontrol.book.annotation.MappedProperty;
-import org.vetcontrol.book.annotation.ViewLength;
+import org.vetcontrol.book.annotation.*;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import org.vetcontrol.book.annotation.ValidProperty;
 
 /**
  * 2.4.3.12 Справочник видов грузов
@@ -64,23 +58,6 @@ public class CargoMode extends Localizable {
         cargoModeUnitType.setCargoMode(this);
         cargoModeUnitTypes.add(cargoModeUnitType);
     }
-
-//    private Set<UnitType> unitTypes;
-//
-//    @XmlTransient
-//    @ValidProperty(false)
-//    @Transient
-////    @ManyToMany(fetch = FetchType.EAGER)
-////    @JoinTable(name = "cargo_mode_unit_type",
-////            joinColumns = @JoinColumn(name = "cargo_mode_id", insertable = false, updatable = false),
-////            inverseJoinColumns = @JoinColumn(name = "unit_type_id", insertable = false, updatable = false))
-//    public Set<UnitType> getUnitTypes() {
-//        return unitTypes;
-//    }
-//
-//    public void setUnitTypes(Set<UnitType> unitTypes) {
-//        this.unitTypes = unitTypes;
-//    }
 
     private List<StringCulture> names = new ArrayList<StringCulture>();
 

@@ -7,7 +7,6 @@ package org.vetcontrol.information.service.dao;
 
 import java.io.Serializable;
 import javax.ejb.Local;
-import org.vetcontrol.information.service.generator.Sequence;
 import org.vetcontrol.service.dao.IBookViewDAO;
 
 /**
@@ -17,12 +16,16 @@ import org.vetcontrol.service.dao.IBookViewDAO;
 @Local
 public interface IBookDAO extends IBookViewDAO {
 
-    void setSequence(Sequence sequence);
-
     void saveOrUpdate(Serializable book);
 
-    void disable(Serializable book);
+    void saveAsNew(Serializable book);
 
-    void enable(Serializable book);
+//    void disable(Serializable book);
+//
+//    void enable(Serializable book);
+
+    void disable(Long id, Class bookClass);
+
+    void enable(Long id, Class bookClass);
 
 }

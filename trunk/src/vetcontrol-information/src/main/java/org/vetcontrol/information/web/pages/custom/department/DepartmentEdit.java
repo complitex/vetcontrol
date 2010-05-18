@@ -5,7 +5,6 @@
 package org.vetcontrol.information.web.pages.custom.department;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import javax.ejb.EJB;
@@ -49,7 +48,6 @@ import org.vetcontrol.information.web.model.DisplayBookClassModel;
 import org.vetcontrol.information.web.pages.BookPage;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
-import org.vetcontrol.util.DateUtil;
 import static org.vetcontrol.book.BeanPropertyUtil.*;
 import org.vetcontrol.book.BookHash;
 import org.vetcontrol.book.Property;
@@ -69,14 +67,20 @@ public final class DepartmentEdit extends FormTemplatePage {
 
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
+
     @EJB(name = "BookDAO")
     IBookDAO bookDAO;
+
     @EJB(name = "LogBean")
     private LogBean logBean;
+
     @EJB(name = "DepartmentBookDAO")
     private DepartmentBookDAO departmentDAO;
+
     private static final Logger log = LoggerFactory.getLogger(DepartmentEdit.class);
+
     private static final String PASSING_BORDER_POINT_NAME_REQUIRED = "passing_border_point_name";
+
     private Department department;
 
     public DepartmentEdit() {
@@ -263,16 +267,7 @@ public final class DepartmentEdit extends FormTemplatePage {
 
             @Override
             public void createNew() {
-                //disable old entry.
-                disableDepartment();
-
-                //save new entry.
-                clearBook(department);
-                for (PassingBorderPoint borderPoint : department.getPassingBorderPoints()) {
-                    clearBook(borderPoint);
-                    borderPoint.setNeedToUpdate(true);
-                }
-                saveOrUpdate(initial);
+                saveAsNew();
                 goToListPage();
             }
         };
@@ -355,10 +350,10 @@ public final class DepartmentEdit extends FormTemplatePage {
 
         //update version of book and its localizable strings if necessary.
         updateVersionIfNecessary(department, initial);
-        updateDepartmentReferences(department);
+        departmentDAO.updateReferences(department);
 
         try {
-            departmentDAO.saveOrUpdate(department);
+            departmentDAO.saveOrUpdate(department, null);
             logBean.info(Log.MODULE.INFORMATION, event, DepartmentEdit.class, Department.class, "ID: " + department.getId());
         } catch (Exception e) {
             log.error("Ошибка сохранения справочника", e);
@@ -366,23 +361,24 @@ public final class DepartmentEdit extends FormTemplatePage {
         }
     }
 
-    private void disableDepartment() {
-        departmentDAO.disable(department);
-        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, DepartmentEdit.class, Department.class, "ID: " + department.getId());
-    }
-
-    private void enableDepartment() {
-        departmentDAO.enable(department);
-        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, DepartmentEdit.class, Department.class, "ID: " + department.getId());
-    }
-
-    private void updateDepartmentReferences(Department department) {
-        Date newVersion = DateUtil.getCurrentDate();
-        for (PassingBorderPoint borderPoint : department.getPassingBorderPoints()) {
-            if (borderPoint.isNeedToUpdate()) {
-                borderPoint.setUpdated(newVersion);
-            }
+    private void saveAsNew() {
+        try {
+            departmentDAO.saveAsNew(department);
+            logBean.info(Log.MODULE.INFORMATION, Log.EVENT.CREATE, DepartmentEdit.class, Department.class, "ID: " + department.getId());
+        } catch (Exception e) {
+            log.error("Ошибка сохранения справочника", e);
+            logBean.error(Log.MODULE.INFORMATION, Log.EVENT.CREATE, DepartmentEdit.class, Department.class, "ID: " + department.getId());
         }
+    }
+
+    private void disableDepartment(Long departmentId) {
+        departmentDAO.disable(departmentId);
+        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, DepartmentEdit.class, Department.class, "ID: " + departmentId);
+    }
+
+    private void enableDepartment(Long departmentId) {
+        departmentDAO.enable(departmentId);
+        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, DepartmentEdit.class, Department.class, "ID: " + departmentId);
     }
 
     @Override
@@ -392,7 +388,7 @@ public final class DepartmentEdit extends FormTemplatePage {
 
             @Override
             protected void onClick() {
-                disableDepartment();
+                disableDepartment(department.getId());
                 goToListPage();
             }
 
@@ -408,7 +404,7 @@ public final class DepartmentEdit extends FormTemplatePage {
 
             @Override
             protected void onClick() {
-                enableDepartment();
+                enableDepartment(department.getId());
                 goToListPage();
             }
 
@@ -426,7 +422,9 @@ public final class DepartmentEdit extends FormTemplatePage {
     private class PassingBorderPointListItem extends ListItem<PassingBorderPoint> {
 
         private TextField<String> passingBorderPoint;
+
         private AjaxLink activate;
+
         private AjaxLink deactivate;
 
         public PassingBorderPointListItem(int index, IModel<PassingBorderPoint> model) {

@@ -54,24 +54,16 @@ public class BookViewDAO implements IBookViewDAO {
     @Override
     public <T> Long size(T example, ShowBooksMode showBooksMode) {
         Session session = HibernateSessionTransformer.getSession(getEntityManager());
-        try {
-            return ((Number) queryForSize(session, example, showBooksMode).uniqueResult()).longValue();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return ((Number) queryForSize(session, example, showBooksMode).uniqueResult()).longValue();
     }
 
     @Override
     public <T> List<T> getContent(T example, int first, int count, String sortProperty, boolean isAscending, Locale locale, ShowBooksMode showBooksMode) {
         Session session = HibernateSessionTransformer.getSession(getEntityManager());
-        try {
-            List<T> results = queryForContent(session, example, sortProperty, isAscending, locale, showBooksMode).
-                    setFirstResult(first).setMaxResults(count).list();
-            addLocalizationSupport(results);
-            return results;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        List<T> results = queryForContent(session, example, sortProperty, isAscending, locale, showBooksMode).
+                setFirstResult(first).setMaxResults(count).list();
+        addLocalizationSupport(results);
+        return results;
     }
 
     @Override
@@ -90,11 +82,7 @@ public class BookViewDAO implements IBookViewDAO {
     @Override
     public void addLocalizationSupport(Object entity) {
         Session session = HibernateSessionTransformer.getSession(getEntityManager());
-        try {
-            prepareLocalizableStrings(entity, session, 0, 1);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        prepareLocalizableStrings(entity, session, 0, 1);
     }
 
     @Override
@@ -124,43 +112,39 @@ public class BookViewDAO implements IBookViewDAO {
     }
 
     private <T> void prepareLocalizableStrings(T bean, Session session, int currentDepth, int availableDepth) {
-        try {
-            if (currentDepth <= availableDepth) {
-                if (bean != null) {
-                    for (Property prop : getProperties(bean.getClass())) {
-                        if (prop.isLocalizable()) {
-                            Object id = getPropertyValue(bean, prop.getLocalizationForeignKeyProperty());
-                            if (id != null) {
-                                List<StringCulture> strings = session.createCriteria(StringCulture.class).
-                                        addOrder(Order.asc("id.locale")).
-                                        add(Restrictions.eq("id.id", id)).
-                                        list();
-                                setPropertyValue(bean, prop.getName(), strings);
+        if (currentDepth <= availableDepth) {
+            if (bean != null) {
+                for (Property prop : getProperties(bean.getClass())) {
+                    if (prop.isLocalizable()) {
+                        Object id = getPropertyValue(bean, prop.getLocalizationForeignKeyProperty());
+                        if (id != null) {
+                            List<StringCulture> strings = session.createCriteria(StringCulture.class).
+                                    addOrder(Order.asc("id.locale")).
+                                    add(Restrictions.eq("id.id", id)).
+                                    list();
+                            setPropertyValue(bean, prop.getName(), strings);
 //                    for (StringCulture culture : strings) {
 //                        if (culture.getValue() == null) {
 //                            culture.setValue("");
 //                        }
 //                    }
+                        }
+                    } else {
+                        Class propType = prop.getType();
+                        boolean isSuitableType = true;
+                        for (Class simpleType : SIMPLE_TYPIES) {
+                            if (simpleType.isAssignableFrom(propType)) {
+                                isSuitableType = false;
+                                break;
                             }
-                        } else {
-                            Class propType = prop.getType();
-                            boolean isSuitableType = true;
-                            for (Class simpleType : SIMPLE_TYPIES) {
-                                if (simpleType.isAssignableFrom(propType)) {
-                                    isSuitableType = false;
-                                    break;
-                                }
-                            }
-                            if (isSuitableType) {
-                                Object propValue = getPropertyValue(bean, prop.getName());
-                                prepareLocalizableStrings(propValue, session, currentDepth + 1, availableDepth);
-                            }
+                        }
+                        if (isSuitableType) {
+                            Object propValue = getPropertyValue(bean, prop.getName());
+                            prepareLocalizableStrings(propValue, session, currentDepth + 1, availableDepth);
                         }
                     }
                 }
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -225,134 +209,131 @@ public class BookViewDAO implements IBookViewDAO {
         return query;
     }
 
-    private <T> QueryAndParameters query(T example, String sortProperty, Boolean ascending, Locale currentLocale, boolean forSize, ShowBooksMode showBooksMode) {
-        try {
-            Class bookType = example.getClass();
-            Property sortProp = getPropertyByName(bookType, sortProperty);
+    private <T> QueryAndParameters query(T example, String sortProperty, Boolean ascending, Locale currentLocale,
+            boolean forSize, ShowBooksMode showBooksMode) {
+        Class bookType = example.getClass();
+        Property sortProp = getPropertyByName(bookType, sortProperty);
 
-            StringBuilder sql = new StringBuilder();
+        StringBuilder sql = new StringBuilder();
 
-            //select
-            String alias = "e";
-            sql.append("SELECT");
-            if (forSize) {
-                sql.append(" COUNT(DISTINCT ").append(alias).append(".id)");
-            } else {
-                sql.append(" DISTINCT {").append(alias).append(".*}");
-            }
-
-            //from
-            sql.append(" FROM ").append(getTableName(bookType)).append(" ").append(alias);
-
-            //where
-            Map<String, Object> params = new HashMap<String, Object>();
-            sql.append(" WHERE (1=1)");
-
-            //disabed/enabled/all filter
-            switch (showBooksMode) {
-                case ALL:
-                    break;
-                default:
-                    sql.append(" AND ").append(alias).append(".").
-                            append(getDisabledColumnName()).append(" = :disabled ");
-                    params.put("disabled", showBooksMode.equals(ShowBooksMode.ENABLED) ? Boolean.FALSE : Boolean.TRUE);
-                    break;
-            }
-
-            //filters
-            for (Property p : getProperties(bookType)) {
-                Class propType = p.getType();
-                Object propValue = getPropertyValue(example, p.getName());
-                if (p.isBookReference()) {
-                    if (propValue != null) {
-                        if (p.getUiType().equals(UIType.SELECT)) {
-                            sql.append(" AND ").append(alias).append(".").append(p.getColumnName()).
-                                    append(" = :").append(p.getName());
-                            params.put(p.getName(), getPropertyValue(propValue, "id"));
-                        } else if (p.getUiType().equals(UIType.AUTO_COMPLETE)) {
-                            throw new UnsupportedOperationException("Search by auto complete field yet not implemented.");
-                        }
-                    }
-                } else if (p.isLocalizable()) {
-                    List<StringCulture> strings = (List<StringCulture>) propValue;
-                    if (strings != null && !strings.isEmpty()) {
-                        String value = strings.get(0).getValue();
-                        if (!Strings.isEmpty(value)) {
-                            String stringCultureAlias = "sc_" + p.getName();
-                            StringBuilder subquery = new StringBuilder();
-                            subquery.append("SELECT ").append(stringCultureAlias).append(".id FROM ").
-                                    append(getTableName(StringCulture.class)).
-                                    append(" ").append(stringCultureAlias).append(" WHERE ").
-                                    append(stringCultureAlias).append(".value LIKE :").append(p.getName());
-                            params.put(p.getName(), "%" + value + "%");
-
-                            sql.append(" AND ").append(alias).append(".").append(p.getColumnName()).append(" IN (").
-                                    append(subquery).append(")");
-                        }
-                    }
-                } else if (isPrimitive(propType)) {
-                    if (propValue != null) {
-                        sql.append(" AND ").append(alias).append(".").append(p.getColumnName());
-
-                        if (!Date.class.isAssignableFrom(propType)) {
-                            sql.append(" LIKE :");
-                            params.put(p.getName(), "%" + propValue + "%");
-                        } else {
-                            sql.append(" = :");
-                            params.put(p.getName(), propValue);
-                        }
-                        sql.append(p.getName());
-                    }
-                } else {
-                    throw new UnsupportedOperationException("Not possible case.");
-                }
-            }
-            sql.append(" ");
-
-            //order by
-            if (sortProp != null) {
-                sql.append("ORDER BY ");
-                if (sortProp.isLocalizable()) {
-                    sql.append("(").append(localizationOrderBy(currentLocale, params)).
-                            append(alias).append(".").append(sortProp.getColumnName()).
-                            append(")");
-                } else if (sortProp.isBookReference()) {
-                    Class referencedBeanClass = sortProp.getType();
-                    String referencedPropName = sortProp.getReferencedField();
-                    Property referencedProperty = getPropertyByName(referencedBeanClass, referencedPropName);
-
-                    StringBuilder subquery = new StringBuilder();
-                    String referenceTableAlias = "ref";
-                    subquery.append("SELECT ").append(referenceTableAlias).append(".").append(referencedProperty.getColumnName()).
-                            append(" FROM ").append(getTableName(referencedBeanClass)).append(" ").append(referenceTableAlias).append(" WHERE ").
-                            append(referenceTableAlias).append(".id = ").append(alias).append(".").append(sortProp.getColumnName());
-
-                    if (referencedProperty.isLocalizable()) {
-                        sql.append("(").append(localizationOrderBy(currentLocale, params)).
-                                append("(").append(subquery).append(")").
-                                append(")");
-                    } else {
-                        sql.append("(").append(subquery).append(")");
-                    }
-                } else {
-                    //simple property
-                    sql.append(alias).append(".").append(sortProp.getColumnName());
-                }
-            } else {
-                if (sortProperty != null) {
-                    sql.append("ORDER BY ").append(alias).append(".").append(sortProperty);
-                } else {
-                    //do not sort.
-                }
-            }
-            if (ascending != null) {
-                sql.append(" ").append(ascending ? "ASC" : "DESC");
-            }
-
-            return new QueryAndParameters(alias, bookType, sql.toString(), params);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        //select
+        String alias = "e";
+        sql.append("SELECT");
+        if (forSize) {
+            sql.append(" COUNT(DISTINCT ").append(alias).append(".id)");
+        } else {
+            sql.append(" DISTINCT {").append(alias).append(".*}");
         }
+
+        //from
+        sql.append(" FROM ").append(getTableName(bookType)).append(" ").append(alias);
+
+        //where
+        Map<String, Object> params = new HashMap<String, Object>();
+        sql.append(" WHERE (1=1)");
+
+        //disabed/enabled/all filter
+        switch (showBooksMode) {
+            case ALL:
+                break;
+            default:
+                sql.append(" AND ").append(alias).append(".").
+                        append(getDisabledColumnName()).append(" = :disabled ");
+                params.put("disabled", showBooksMode.equals(ShowBooksMode.ENABLED) ? Boolean.FALSE : Boolean.TRUE);
+                break;
+        }
+
+        //filters
+        for (Property p : getProperties(bookType)) {
+            Class propType = p.getType();
+            Object propValue = getPropertyValue(example, p.getName());
+            if (p.isBookReference()) {
+                if (propValue != null) {
+                    if (p.getUiType().equals(UIType.SELECT)) {
+                        sql.append(" AND ").append(alias).append(".").append(p.getColumnName()).
+                                append(" = :").append(p.getName());
+                        params.put(p.getName(), getId(propValue));
+                    } else if (p.getUiType().equals(UIType.AUTO_COMPLETE)) {
+                        throw new UnsupportedOperationException("Search by auto complete field yet not implemented.");
+                    }
+                }
+            } else if (p.isLocalizable()) {
+                List<StringCulture> strings = (List<StringCulture>) propValue;
+                if (strings != null && !strings.isEmpty()) {
+                    String value = strings.get(0).getValue();
+                    if (!Strings.isEmpty(value)) {
+                        String stringCultureAlias = "sc_" + p.getName();
+                        StringBuilder subquery = new StringBuilder();
+                        subquery.append("SELECT ").append(stringCultureAlias).append(".id FROM ").
+                                append(getTableName(StringCulture.class)).
+                                append(" ").append(stringCultureAlias).append(" WHERE ").
+                                append(stringCultureAlias).append(".value LIKE :").append(p.getName());
+                        params.put(p.getName(), "%" + value + "%");
+
+                        sql.append(" AND ").append(alias).append(".").append(p.getColumnName()).append(" IN (").
+                                append(subquery).append(")");
+                    }
+                }
+            } else if (isPrimitive(propType)) {
+                if (propValue != null) {
+                    sql.append(" AND ").append(alias).append(".").append(p.getColumnName());
+
+                    if (!Date.class.isAssignableFrom(propType)) {
+                        sql.append(" LIKE :");
+                        params.put(p.getName(), "%" + propValue + "%");
+                    } else {
+                        sql.append(" = :");
+                        params.put(p.getName(), propValue);
+                    }
+                    sql.append(p.getName());
+                }
+            } else {
+                throw new UnsupportedOperationException("Not possible case.");
+            }
+        }
+        sql.append(" ");
+
+        //order by
+        if (sortProp != null) {
+            sql.append("ORDER BY ");
+            if (sortProp.isLocalizable()) {
+                sql.append("(").append(localizationOrderBy(currentLocale, params)).
+                        append(alias).append(".").append(sortProp.getColumnName()).
+                        append(")");
+            } else if (sortProp.isBookReference()) {
+                Class referencedBeanClass = sortProp.getType();
+                String referencedPropName = sortProp.getReferencedField();
+                Property referencedProperty = getPropertyByName(referencedBeanClass, referencedPropName);
+
+                StringBuilder subquery = new StringBuilder();
+                String referenceTableAlias = "ref";
+                subquery.append("SELECT ").append(referenceTableAlias).append(".").append(referencedProperty.getColumnName()).
+                        append(" FROM ").append(getTableName(referencedBeanClass)).append(" ").append(referenceTableAlias).append(" WHERE ").
+                        append(referenceTableAlias).append(".id = ").append(alias).append(".").append(sortProp.getColumnName());
+
+                if (referencedProperty.isLocalizable()) {
+                    sql.append("(").append(localizationOrderBy(currentLocale, params)).
+                            append("(").append(subquery).append(")").
+                            append(")");
+                } else {
+                    sql.append("(").append(subquery).append(")");
+                }
+            } else {
+                //simple property
+                sql.append(alias).append(".").append(sortProp.getColumnName());
+            }
+        } else {
+            if (sortProperty != null) {
+                sql.append("ORDER BY ").append(alias).append(".").append(sortProperty);
+            } else {
+                //do not sort.
+            }
+        }
+        if (ascending != null) {
+            sql.append(" ").append(ascending ? "ASC" : "DESC");
+        }
+
+        return new QueryAndParameters(alias, bookType, sql.toString(), params);
     }
 
     private StringBuilder localizationOrderBy(Locale currentLocale, Map<String, Object> params) {
@@ -575,8 +556,11 @@ public class BookViewDAO implements IBookViewDAO {
     private class QueryAndParameters {
 
         private String alias;
+
         private Class entityType;
+
         private String query;
+
         private Map<String, Object> parameters;
 
         public QueryAndParameters(String alias, Class entityType, String query, Map<String, Object> parameters) {

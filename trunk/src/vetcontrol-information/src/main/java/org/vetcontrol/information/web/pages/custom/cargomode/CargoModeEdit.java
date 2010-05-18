@@ -6,7 +6,6 @@ package org.vetcontrol.information.web.pages.custom.cargomode;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import javax.ejb.EJB;
@@ -56,7 +55,6 @@ import org.vetcontrol.information.web.component.edit.SaveUpdateConfirmationDialo
 import org.vetcontrol.information.web.model.DisplayBookClassModel;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
-import org.vetcontrol.util.DateUtil;
 import static org.vetcontrol.book.BeanPropertyUtil.*;
 import org.vetcontrol.book.BookHash;
 import org.vetcontrol.web.component.Spacer;
@@ -306,14 +304,15 @@ public final class CargoModeEdit extends FormTemplatePage {
     }
 
     private void init() {
-        final Locale systemLocale = localeDAO.systemLocale();
+        final Locale systemLocale = getSystemLocale();
+        List<Locale> allLocales = localeDAO.all();
 
         final CargoMode cargoMode = getSession().getMetaData(CargoModeList.SELECTED_BOOK_ENTRY);
         if (cargoMode == null) {
             throw new IllegalArgumentException("selected book entry may not be null");
         }
         bookDAO.addLocalizationSupport(cargoMode);
-        addLocalization(cargoMode, localeDAO.all());
+        addLocalization(cargoMode, allLocales);
 
         //calculate initial hash code for book entry in order to increment version of the book entry if necessary later.
         final BookHash initial = hash(cargoMode);
@@ -461,18 +460,7 @@ public final class CargoModeEdit extends FormTemplatePage {
 
             @Override
             public void createNew() {
-                //disable old entry.
-                disableCargoMode(cargoModeModel.getObject());
-
-                //save new entry.
-                clearBook(cargoModeModel.getObject());
-                for (CargoModeCargoType cmct : cargoModeModel.getObject().getCargoModeCargoTypes()) {
-                    cmct.setNeedToUpdateVersion(true);
-                }
-                for (CargoModeUnitType cmut : cargoModeModel.getObject().getCargoModeUnitTypes()) {
-                    cmut.setNeedToUpdateVersion(true);
-                }
-                saveOrUpdate(cargoModeModel, initial);
+                saveAsNew();
                 goToListPage();
             }
         };
@@ -561,10 +549,10 @@ public final class CargoModeEdit extends FormTemplatePage {
 
         //update version of book and its localizable strings if necessary.
         updateVersionIfNecessary(cargoModeModel.getObject(), initial);
-        updateCargoModeReferences(cargoModeModel);
+        cargoModeDAO.updateReferences(cargoModeModel.getObject());
 
         try {
-            cargoModeDAO.saveOrUpdate(cargoModeModel.getObject());
+            cargoModeDAO.saveOrUpdate(cargoModeModel.getObject(), null);
             logBean.info(Log.MODULE.INFORMATION, event, CargoModeEdit.class, CargoMode.class, "ID: " + cargoModeModel.getObject().getId());
         } catch (Exception e) {
             log.error("Ошибка сохранения справочника", e);
@@ -572,28 +560,24 @@ public final class CargoModeEdit extends FormTemplatePage {
         }
     }
 
-    private void disableCargoMode(CargoMode cargoMode) {
-        cargoModeDAO.disable(cargoMode);
-        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, CargoModeEdit.class, CargoMode.class, "ID: " + cargoMode.getId());
+    private void saveAsNew() {
+        try {
+            cargoModeDAO.saveAsNew(cargoModeModel.getObject());
+            logBean.info(Log.MODULE.INFORMATION, Log.EVENT.CREATE, CargoModeEdit.class, CargoMode.class, "ID: " + cargoModeModel.getObject().getId());
+        } catch (Exception e) {
+            log.error("Ошибка сохранения справочника", e);
+            logBean.error(Log.MODULE.INFORMATION, Log.EVENT.CREATE, CargoModeEdit.class, CargoMode.class, "ID: " + cargoModeModel.getObject().getId());
+        }
     }
 
-    private void enableCargoMode(CargoMode cargoMode) {
-        cargoModeDAO.enable(cargoMode);
-        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, CargoModeEdit.class, CargoMode.class, "ID: " + cargoMode.getId());
+    private void disableCargoMode(Long cargoModeId) {
+        cargoModeDAO.disable(cargoModeId);
+        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, CargoModeEdit.class, CargoMode.class, "ID: " + cargoModeId);
     }
 
-    private void updateCargoModeReferences(IModel<CargoMode> cargoModeModel) {
-        Date newVersion = DateUtil.getCurrentDate();
-        for (CargoModeCargoType cmct : cargoModeModel.getObject().getCargoModeCargoTypes()) {
-            if (cmct.isNeedToUpdateVersion()) {
-                cmct.setUpdated(newVersion);
-            }
-        }
-        for (CargoModeUnitType cmut : cargoModeModel.getObject().getCargoModeUnitTypes()) {
-            if (cmut.isNeedToUpdateVersion()) {
-                cmut.setUpdated(newVersion);
-            }
-        }
+    private void enableCargoMode(Long cargoModeId) {
+        cargoModeDAO.enable(cargoModeId);
+        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, CargoModeEdit.class, CargoMode.class, "ID: " + cargoModeId);
     }
 
     @Override
@@ -603,7 +587,7 @@ public final class CargoModeEdit extends FormTemplatePage {
 
             @Override
             protected void onClick() {
-                disableCargoMode(cargoModeModel.getObject());
+                disableCargoMode(cargoModeModel.getObject().getId());
                 goToListPage();
             }
 
@@ -619,7 +603,7 @@ public final class CargoModeEdit extends FormTemplatePage {
 
             @Override
             protected void onClick() {
-                enableCargoMode(cargoModeModel.getObject());
+                enableCargoMode(cargoModeModel.getObject().getId());
                 goToListPage();
             }
 

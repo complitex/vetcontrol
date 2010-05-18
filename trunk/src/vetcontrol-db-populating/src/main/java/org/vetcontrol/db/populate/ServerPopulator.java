@@ -3,7 +3,6 @@ package org.vetcontrol.db.populate;
 import static org.vetcontrol.db.populate.util.GenerateUtil.*;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.information.service.dao.BookDAO;
-import org.vetcontrol.information.service.dao.IBookDAO;
 import org.vetcontrol.information.service.generator.Sequence;
 import org.vetcontrol.book.Property;
 import static org.vetcontrol.book.BeanPropertyUtil.*;
@@ -38,7 +37,7 @@ public class ServerPopulator extends AbstractPopulator {
 
     private Sequence sequence;
 
-    private IBookDAO bookDAO;
+    private BookDAO bookDAO;
 
     public static void main(String[] args) {
         new ServerPopulator().populate();
