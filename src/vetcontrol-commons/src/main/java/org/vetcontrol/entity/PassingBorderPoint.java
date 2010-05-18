@@ -42,6 +42,7 @@ public class PassingBorderPoint implements ILongId, IBook, IUpdated, IDisabled {
     public void setId(Long id) {
         this.id = id;
     }
+
     private String name;
 
     @Column(name = "name", nullable = false, length = 100)
@@ -52,6 +53,7 @@ public class PassingBorderPoint implements ILongId, IBook, IUpdated, IDisabled {
     public void setName(String name) {
         this.name = name;
     }
+
     private Department department;
 
     @BookReference(referencedProperty = "names")
@@ -66,6 +68,7 @@ public class PassingBorderPoint implements ILongId, IBook, IUpdated, IDisabled {
     public void setDepartment(Department department) {
         this.department = department;
     }
+
     private Date updated;
 
     @ValidProperty(false)
@@ -80,6 +83,7 @@ public class PassingBorderPoint implements ILongId, IBook, IUpdated, IDisabled {
     public void setUpdated(Date updated) {
         this.updated = updated;
     }
+
     private boolean disabled;
 
     @ValidProperty(false)
@@ -109,16 +113,30 @@ public class PassingBorderPoint implements ILongId, IBook, IUpdated, IDisabled {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PassingBorderPoint)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PassingBorderPoint)) {
+            return false;
+        }
 
         PassingBorderPoint that = (PassingBorderPoint) o;
 
-        if (disabled != that.disabled) return false;
-        if (department != null ? !department.equals(that.department) : that.department != null) return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (updated != null ? !updated.equals(that.updated) : that.updated != null) return false;
+        if (disabled != that.disabled) {
+            return false;
+        }
+        if (department != null ? !department.equals(that.department) : that.department != null) {
+            return false;
+        }
+        if (id != null ? !id.equals(that.id) : that.id != null) {
+            return false;
+        }
+        if (name != null ? !name.equals(that.name) : that.name != null) {
+            return false;
+        }
+        if (updated != null ? !updated.equals(that.updated) : that.updated != null) {
+            return false;
+        }
 
         return true;
     }

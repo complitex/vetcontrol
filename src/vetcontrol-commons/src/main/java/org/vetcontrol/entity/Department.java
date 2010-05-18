@@ -40,6 +40,7 @@ public class Department extends Localizable {
     public void setNames(List<StringCulture> names) {
         this.names = names;
     }
+
     private Department parent;
 
     @BookReference(referencedProperty = "names")
@@ -54,6 +55,7 @@ public class Department extends Localizable {
     public void setParent(Department parent) {
         this.parent = parent;
     }
+
     private CustomsPoint customsPoint;
 
     @BookReference(referencedProperty = "names")
@@ -68,6 +70,7 @@ public class Department extends Localizable {
     public void setCustomsPoint(CustomsPoint customsPoint) {
         this.customsPoint = customsPoint;
     }
+
     private Integer level = 1;
 
     @ValidProperty(false)
@@ -79,6 +82,7 @@ public class Department extends Localizable {
     public void setLevel(Integer level) {
         this.level = level;
     }
+
     private List<PassingBorderPoint> passingBorderPoints = new ArrayList<PassingBorderPoint>();
 
     @ValidProperty(false)
@@ -99,15 +103,27 @@ public class Department extends Localizable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Department)) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Department)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         Department that = (Department) o;
 
-        if (customsPoint != null ? !customsPoint.equals(that.customsPoint) : that.customsPoint != null) return false;
-        if (level != null ? !level.equals(that.level) : that.level != null) return false;
-        if (parent != null ? !parent.equals(that.parent) : that.parent != null) return false;
+        if (customsPoint != null ? !customsPoint.equals(that.customsPoint) : that.customsPoint != null) {
+            return false;
+        }
+        if (level != null ? !level.equals(that.level) : that.level != null) {
+            return false;
+        }
+        if (parent != null ? !parent.equals(that.parent) : that.parent != null) {
+            return false;
+        }
 
         return true;
     }

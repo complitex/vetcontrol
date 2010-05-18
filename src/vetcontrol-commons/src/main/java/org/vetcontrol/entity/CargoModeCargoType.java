@@ -25,6 +25,7 @@ public class CargoModeCargoType implements IUpdated, IEmbeddedId<CargoModeCargoT
 
         @Column(name = "cargo_mode_id")
         private Long cargoModeId;
+
         @Column(name = "cargo_type_id")
         private Long cargoTypeId;
 
@@ -77,8 +78,8 @@ public class CargoModeCargoType implements IUpdated, IEmbeddedId<CargoModeCargoT
             hash = 97 * hash + (this.cargoTypeId != null ? this.cargoTypeId.hashCode() : 0);
             return hash;
         }
-
     }
+
     @EmbeddedId
     private Id id = new Id();
 
@@ -155,15 +156,27 @@ public class CargoModeCargoType implements IUpdated, IEmbeddedId<CargoModeCargoT
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CargoModeCargoType)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof CargoModeCargoType)) {
+            return false;
+        }
 
         CargoModeCargoType that = (CargoModeCargoType) o;
 
-        if (cargoMode != null ? !cargoMode.equals(that.cargoMode) : that.cargoMode != null) return false;
-        if (cargoType != null ? !cargoType.equals(that.cargoType) : that.cargoType != null) return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (updated != null ? !updated.equals(that.updated) : that.updated != null) return false;
+        if (cargoMode != null ? !cargoMode.equals(that.cargoMode) : that.cargoMode != null) {
+            return false;
+        }
+        if (cargoType != null ? !cargoType.equals(that.cargoType) : that.cargoType != null) {
+            return false;
+        }
+        if (id != null ? !id.equals(that.id) : that.id != null) {
+            return false;
+        }
+        if (updated != null ? !updated.equals(that.updated) : that.updated != null) {
+            return false;
+        }
 
         return true;
     }
@@ -179,6 +192,6 @@ public class CargoModeCargoType implements IUpdated, IEmbeddedId<CargoModeCargoT
 
     @Override
     public String toString() {
-        return "cmId = "+id.cargoModeId + " ctId = "+id.cargoTypeId;
+        return "cmId = " + id.cargoModeId + " ctId = " + id.cargoTypeId;
     }
 }

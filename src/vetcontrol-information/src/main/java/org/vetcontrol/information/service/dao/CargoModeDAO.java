@@ -5,6 +5,7 @@
 package org.vetcontrol.information.service.dao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -18,7 +19,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import org.apache.wicket.util.string.Strings;
-import org.apache.wicket.validation.validator.EmailAddressPatternValidator;
 import org.hibernate.Session;
 import org.vetcontrol.entity.CargoMode;
 import org.vetcontrol.entity.CargoModeCargoType;
@@ -180,7 +180,17 @@ public class CargoModeDAO {
         return ((Long) typedQuery.getSingleResult()).intValue();
     }
 
-    public void saveOrUpdate(CargoMode cargoMode) {
+    public void saveAsNew(CargoMode cargoMode) {
+        Long oldId = cargoMode.getId();
+        clearBook(cargoMode);
+        updateVersionIfNecessary(cargoMode, null);
+        setNeedToUpdateReferences(cargoMode);
+        updateReferences(cargoMode);
+        saveOrUpdate(cargoMode, oldId);
+        disable(oldId);
+    }
+
+    public void saveOrUpdate(CargoMode cargoMode, Long oldId) {
         if (cargoMode.getId() != null) {
             //cargo types
             List<Long> toRemove = new ArrayList<Long>();
@@ -266,6 +276,52 @@ public class CargoModeDAO {
             cmut.getId().setCargoModeId(cargoMode.getId());
             session.saveOrUpdate(cmut);
         }
+
+        if (oldId != null) {
+            StringBuilder queryBuilder = new StringBuilder();
+            queryBuilder.append("SELECT cm FROM CargoMode cm WHERE cm.parent.id = :parentId AND cm.").
+                    append(getDisabledPropertyName()).append(" = FALSE");
+            List<CargoMode> children = entityManager.createQuery(queryBuilder.toString(), CargoMode.class).
+                    setParameter("parentId", oldId).
+                    getResultList();
+            if (!children.isEmpty()) {
+                bookDAO.addLocalizationSupport(children);
+                entityManager.flush();
+                entityManager.clear();
+                
+                for (CargoMode child : children) {
+                    clearBook(child);
+                    child.setParent(cargoMode);
+                    updateVersionIfNecessary(child, null);
+                    setNeedToUpdateReferences(child);
+                    updateReferences(child);
+                    saveOrUpdate(child, null);
+                }
+            }
+        }
+    }
+
+    public void setNeedToUpdateReferences(CargoMode cargoMode) {
+        for (CargoModeCargoType cmct : cargoMode.getCargoModeCargoTypes()) {
+            cmct.setNeedToUpdateVersion(true);
+        }
+        for (CargoModeUnitType cmut : cargoMode.getCargoModeUnitTypes()) {
+            cmut.setNeedToUpdateVersion(true);
+        }
+    }
+
+    public void updateReferences(CargoMode cargoMode) {
+        Date newVersion = DateUtil.getCurrentDate();
+        for (CargoModeCargoType cmct : cargoMode.getCargoModeCargoTypes()) {
+            if (cmct.isNeedToUpdateVersion()) {
+                cmct.setUpdated(newVersion);
+            }
+        }
+        for (CargoModeUnitType cmut : cargoMode.getCargoModeUnitTypes()) {
+            if (cmut.isNeedToUpdateVersion()) {
+                cmut.setUpdated(newVersion);
+            }
+        }
     }
 
     private DeletedEmbeddedId createDeletedEntry(Long cargoModeId, Class entityType, Long id) {
@@ -329,33 +385,25 @@ public class CargoModeDAO {
         return rootCargoModes;
     }
 
-    public void disable(CargoMode cargoMode) {
-        bookDAO.disable(cargoMode);
-        if (cargoMode.getParent() == null) {
-            //first level
-            StringBuilder queryBuilder = new StringBuilder();
-            queryBuilder.append("UPDATE CargoMode cm SET cm.").append(getDisabledPropertyName()).append(" = TRUE, ").
-                    append("cm.").append(getVersionPropertyName()).append(" = :updated ").
-                    append("WHERE cm.parent = :parent");
-            entityManager.createQuery(queryBuilder.toString()).
-                    setParameter("parent", cargoMode).
-                    setParameter("updated", DateUtil.getCurrentDate()).
-                    executeUpdate();
-        }
+    public void disable(Long cargoModeId) {
+        bookDAO.disable(cargoModeId, CargoMode.class);
+        changeChildrenActivity(cargoModeId, true);
     }
 
-    public void enable(CargoMode cargoMode) {
-        bookDAO.enable(cargoMode);
-        if (cargoMode.getParent() == null) {
-            //first level
-            StringBuilder queryBuilder = new StringBuilder();
-            queryBuilder.append("UPDATE CargoMode cm SET cm.").append(getDisabledPropertyName()).append(" = FALSE, ").
-                    append("cm.").append(getVersionPropertyName()).append(" = :updated ").
-                    append("WHERE cm.parent = :parent");
-            entityManager.createQuery(queryBuilder.toString()).
-                    setParameter("parent", cargoMode).
-                    setParameter("updated", DateUtil.getCurrentDate()).
-                    executeUpdate();
-        }
+    public void enable(Long cargoModeId) {
+        bookDAO.enable(cargoModeId, CargoMode.class);
+        changeChildrenActivity(cargoModeId, false);
+    }
+
+    private void changeChildrenActivity(Long parentId, boolean disabled) {
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("UPDATE CargoMode cm SET cm.").append(getDisabledPropertyName()).append(" = :disabled, ").
+                append("cm.").append(getVersionPropertyName()).append(" = :updated ").
+                append("WHERE cm.parent.id = :parentId");
+        entityManager.createQuery(queryBuilder.toString()).
+                setParameter("disabled", disabled).
+                setParameter("parentId", parentId).
+                setParameter("updated", DateUtil.getCurrentDate()).
+                executeUpdate();
     }
 }
