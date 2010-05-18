@@ -2,6 +2,7 @@ package org.vetcontrol.sync.client.web.pages;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.datetime.markup.html.basic.DateLabel;
 import org.apache.wicket.markup.html.CSSPackageResource;
@@ -22,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.Client;
 import org.vetcontrol.entity.Department;
+import org.vetcontrol.entity.PassingBorderPoint;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.sync.client.service.RegistrationBean;
@@ -144,7 +146,8 @@ public class RegistrationPage extends WebPage {
         };
         form.add(register);
 
-        DropDownChoice ddc = new DropDownChoice<Department>("sync.client.registration.department",
+        //Подразделение
+        DropDownChoice ddcDepartment = new DropDownChoice<Department>("sync.client.registration.department",
                 new PropertyModel<Department>(clientModel, "department"),
                 registrationBean.getDepartments(),
                 new IChoiceRenderer<Department>() {
@@ -159,9 +162,41 @@ public class RegistrationPage extends WebPage {
                         return department.getId().toString();
                     }
                 });
-        ddc.setRequired(true);
+        ddcDepartment.setRequired(true);
+        form.add(ddcDepartment);
 
-        form.add(ddc);
+        //Пункт пропуска через границу
+        final DropDownChoice<PassingBorderPoint> ddcPassingBorderPoint =
+                new DropDownChoice<PassingBorderPoint>("sync.client.registration.passing_border_point",
+                        new PropertyModel<PassingBorderPoint>(clientModel, "passingBorderPoint"),
+                        new LoadableDetachableModel<List<PassingBorderPoint>>() {
+
+                            @Override
+                            protected List<PassingBorderPoint> load() {
+                                return registrationBean.getPassingBorderPoints(clientModel.getObject().getDepartment());
+                            }
+                        }, new IChoiceRenderer<PassingBorderPoint>() {
+
+                            @Override
+                            public Object getDisplayValue(PassingBorderPoint object) {
+                                return object.getName();
+                            }
+
+                            @Override
+                            public String getIdValue(PassingBorderPoint object, int index) {
+                                return object.getId().toString();
+                            }
+                        });
+        ddcPassingBorderPoint.setOutputMarkupId(true);
+        form.add(ddcPassingBorderPoint);
+
+        ddcDepartment.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                target.addComponent(ddcPassingBorderPoint);
+            }
+        });
 
         form.add(new TextField<String>("sync.client.registration.key", new PropertyModel<String>(clientModel, "secureKey")));
 
