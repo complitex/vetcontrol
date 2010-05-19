@@ -12,7 +12,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.EnumChoiceRenderer;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -32,9 +31,12 @@ public final class ArrestReportForm extends FormTemplatePage {
 
     static final MetaDataKey<Date> START_DATE_KEY = new MetaDataKey<Date>() {
     };
+
     static final MetaDataKey<Date> END_DATE_KEY = new MetaDataKey<Date>() {
     };
-    static final MetaDataKey<ArrestReportType> REPORT_TYPE = new MetaDataKey<ArrestReportType>() {};
+
+    static final MetaDataKey<ArrestReportType> REPORT_TYPE = new MetaDataKey<ArrestReportType>() {
+    };
 
     public ArrestReportForm() {
         init();
@@ -59,7 +61,7 @@ public final class ArrestReportForm extends FormTemplatePage {
             }
         };
 
-        IModel<ArrestReportType> reportTypeModel = new Model<ArrestReportType>(ArrestReportType.SIMPLE){
+        IModel<ArrestReportType> reportTypeModel = new Model<ArrestReportType>(ArrestReportType.SIMPLE) {
 
             @Override
             public ArrestReportType getObject() {
