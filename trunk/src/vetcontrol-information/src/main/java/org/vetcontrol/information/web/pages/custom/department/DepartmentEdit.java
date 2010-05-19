@@ -526,25 +526,17 @@ public final class DepartmentEdit extends FormTemplatePage {
         }
     }
 
-    private static boolean areStringsEqual(String a, String b) {
-        if (a == b) {
+    private static boolean areStringsEqual(String string1, String string2) {
+        if ((string1 == null) && (string2 == null)) {
             return true;
         }
-
-        String strippedA = null;
-        if (a != null) {
-            strippedA = a.trim();
-        }
-
-        String strippedB = null;
-        if (b != null) {
-            strippedB = b.trim();
-        }
-
-        if (strippedA != null && strippedB != null && strippedA.equals(strippedB)) {
+        if (Strings.isEmpty(string1) && Strings.isEmpty(string2)) {
             return true;
         }
-        return false;
+        if (string1 == null || string2 == null) {
+            return false;
+        }
+        return string1.trim().equals(string2.trim());
     }
 }
     
