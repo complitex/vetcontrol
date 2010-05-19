@@ -59,7 +59,7 @@ import org.vetcontrol.web.component.toolbar.EnableItemButton;
  *
  * @author Artem
  */
-@AuthorizeInstantiation(SecurityRoles.INFORMATION_VIEW)
+@AuthorizeInstantiation({SecurityRoles.INFORMATION_VIEW, SecurityRoles.INFORMATION_EDIT})
 public class AddUpdateBookEntryPage extends FormTemplatePage {
 
     private static final Logger log = LoggerFactory.getLogger(AddUpdateBookEntryPage.class);

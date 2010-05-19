@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -31,6 +32,7 @@ import org.vetcontrol.util.DateUtil;
 import static org.vetcontrol.book.BeanPropertyUtil.*;
 import org.vetcontrol.book.ShowBooksMode;
 import org.vetcontrol.hibernate.util.HibernateSessionTransformer;
+import org.vetcontrol.web.security.SecurityRoles;
 
 /**
  *
@@ -38,6 +40,7 @@ import org.vetcontrol.hibernate.util.HibernateSessionTransformer;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
+@RolesAllowed({SecurityRoles.INFORMATION_VIEW, SecurityRoles.INFORMATION_EDIT})
 public class CargoModeDAO {
 
     private static final String DELETED_PRIMARY_KEY_SEPARATOR = ":";
