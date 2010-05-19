@@ -37,8 +37,10 @@ public final class CargosInDayReportForm extends FormTemplatePage {
 
     @EJB(name = "DepartmentDAO")
     private DepartmentDAO departmentDAO;
+
     static final MetaDataKey<Date> DAY_KEY = new MetaDataKey<Date>() {
     };
+
     static final MetaDataKey<Long> DEPARTMENT_KEY = new MetaDataKey<Long>() {
     };
 
@@ -94,7 +96,7 @@ public final class CargosInDayReportForm extends FormTemplatePage {
                 return d1.getId().compareTo(d2.getId());
             }
         });
-        departmentPanel.add(new DepartmentPicker("departmentPicker", department, availableDepartments));
+        departmentPanel.add(new DepartmentPicker("departmentPicker", department, availableDepartments, getSystemLocale()));
 
         if (availableDepartments.size() == 1) {
             department.setObject(availableDepartments.get(0));

@@ -36,8 +36,10 @@ public final class MovementTypesReportForm extends FormTemplatePage {
 
     @EJB(name = "DepartmentDAO")
     private DepartmentDAO departmentDAO;
+
     static final MetaDataKey<Integer> MONTH_KEY = new MetaDataKey<Integer>() {
     };
+
     static final MetaDataKey<Long> DEPARTMENT_KEY = new MetaDataKey<Long>() {
     };
 
@@ -89,7 +91,7 @@ public final class MovementTypesReportForm extends FormTemplatePage {
                 return d1.getId().compareTo(d2.getId());
             }
         });
-        departmentPanel.add(new DepartmentPicker("departmentPicker", department, availableDepartments));
+        departmentPanel.add(new DepartmentPicker("departmentPicker", department, availableDepartments, getSystemLocale()));
 
         if (availableDepartments.size() == 1) {
             department.setObject(availableDepartments.get(0));

@@ -6,13 +6,11 @@ package org.vetcontrol.report.web.components;
 
 import java.util.List;
 import java.util.Locale;
-import javax.ejb.EJB;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.vetcontrol.entity.Department;
-import org.vetcontrol.service.dao.ILocaleDAO;
 
 /**
  *
@@ -20,13 +18,9 @@ import org.vetcontrol.service.dao.ILocaleDAO;
  */
 public final class DepartmentPicker extends Panel {
 
-    @EJB(name = "LocaleDAO")
-    private ILocaleDAO localeDAO;
-
-    public DepartmentPicker(String id, IModel<Department> model, List<Department> availableDeprtments) {
+    public DepartmentPicker(String id, IModel<Department> model, List<Department> availableDeprtments, final Locale systemLocale) {
         super(id);
 
-        final Locale systemLocale = localeDAO.systemLocale();
         IChoiceRenderer<Department> renderer = new IChoiceRenderer<Department>() {
 
             @Override
