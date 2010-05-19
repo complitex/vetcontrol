@@ -28,7 +28,7 @@ import static org.vetcontrol.book.BeanPropertyUtil.*;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@RolesAllowed({SecurityRoles.INFORMATION_VIEW, SecurityRoles.INFORMATION_EDIT})
+@RolesAllowed(SecurityRoles.INFORMATION_VIEW)
 public class DepartmentBookDAO {
 
     @EJB

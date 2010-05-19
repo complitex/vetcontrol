@@ -63,7 +63,7 @@ import org.vetcontrol.web.template.FormTemplatePage;
  *
  * @author Artem
  */
-@AuthorizeInstantiation({SecurityRoles.INFORMATION_VIEW, SecurityRoles.INFORMATION_EDIT})
+@AuthorizeInstantiation(SecurityRoles.INFORMATION_VIEW)
 public final class DepartmentEdit extends FormTemplatePage {
 
     private static final Logger log = LoggerFactory.getLogger(DepartmentEdit.class);
