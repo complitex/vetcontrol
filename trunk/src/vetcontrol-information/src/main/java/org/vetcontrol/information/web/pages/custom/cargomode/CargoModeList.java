@@ -40,7 +40,6 @@ import org.vetcontrol.information.web.component.list.ShowBooksModePanel;
 import org.vetcontrol.information.web.model.DisplayBookClassModel;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UIPreferences.PreferenceType;
-import org.vetcontrol.service.dao.ILocaleDAO;
 import static org.vetcontrol.book.BeanPropertyUtil.*;
 import org.vetcontrol.book.Property;
 import org.vetcontrol.book.ShowBooksMode;
@@ -58,15 +57,19 @@ import org.vetcontrol.web.template.ListTemplatePage;
 @AuthorizeInstantiation(SecurityRoles.INFORMATION_VIEW)
 public class CargoModeList extends ListTemplatePage {
 
-    @EJB(name = "LocaleDAO")
-    private ILocaleDAO localeDAO;
     @EJB(name = "CargoModeDAO")
     private CargoModeDAO cargoModeDAO;
+
     private static final String PAGE_NUMBER_KEY = CargoModeList.class.getSimpleName() + "_PAGE_NUMBER";
+
     private static final String SORT_PROPERTY_KEY = CargoModeList.class.getSimpleName() + "_SORT_PROPERTY";
+
     private static final String SORT_ORDER_KEY = CargoModeList.class.getSimpleName() + "_SORT_ORDER";
+
     private static final String FILTER_KEY = CargoModeList.class.getSimpleName() + "_FILTER";
+
     private static final String SHOW_BOOKS_MODE_KEY = CargoModeList.class.getSimpleName() + "_SHOW_BOOKS_MODE";
+
     static final MetaDataKey<CargoMode> SELECTED_BOOK_ENTRY = new MetaDataKey<CargoMode>() {
     };
 
@@ -77,7 +80,7 @@ public class CargoModeList extends ListTemplatePage {
     private void init() {
         try {
 
-            final Locale systemLocale = localeDAO.systemLocale();
+            final Locale systemLocale = getSystemLocale();
 
             add(new Label("title", new DisplayBookClassModel(CargoMode.class)));
             Label bookName = new Label("bookName", new DisplayBookClassModel(CargoMode.class));

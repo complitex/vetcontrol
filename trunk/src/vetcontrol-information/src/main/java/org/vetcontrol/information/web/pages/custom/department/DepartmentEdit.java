@@ -27,6 +27,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,14 +89,15 @@ public final class DepartmentEdit extends FormTemplatePage {
     }
 
     private void init() {
-        final Locale systemLocale = localeDAO.systemLocale();
+        final Locale systemLocale = getSystemLocale();
+        final List<Locale> allLocales = localeDAO.all();
 
         department = (Department) getSession().getMetaData(BookPage.SELECTED_BOOK_ENTRY);
         if (department == null) {
             throw new IllegalArgumentException("selected book entry may not be null");
         }
         bookDAO.addLocalizationSupport(department);
-        addLocalization(department, localeDAO.all());
+        addLocalization(department, allLocales);
         departmentDAO.loadPassingBorderPoints(department);
 
         //calculate initial hash code for book entry in order to increment version of the book entry if necessary later.
@@ -347,6 +349,8 @@ public final class DepartmentEdit extends FormTemplatePage {
 
     private void saveOrUpdate(BookHash initial) {
         Log.EVENT event = isNewBook(department) ? Log.EVENT.CREATE : Log.EVENT.EDIT;
+        Long oldId = department.getId();
+        String resourceKey = "log.save_update";
 
         //update version of book and its localizable strings if necessary.
         updateVersionIfNecessary(department, initial);
@@ -354,31 +358,41 @@ public final class DepartmentEdit extends FormTemplatePage {
 
         try {
             departmentDAO.saveOrUpdate(department, null);
-            logBean.info(Log.MODULE.INFORMATION, event, DepartmentEdit.class, Department.class, "ID: " + department.getId());
+            Long newId = department.getId();
+            String message = new StringResourceModel(resourceKey, this, null, new Object[]{newId}).getObject();
+            logBean.info(Log.MODULE.INFORMATION, event, DepartmentEdit.class, Department.class, message);
         } catch (Exception e) {
             log.error("Ошибка сохранения справочника", e);
-            logBean.error(Log.MODULE.INFORMATION, event, DepartmentEdit.class, Department.class, "ID: " + department.getId());
+            String message = new StringResourceModel(resourceKey, this, null, new Object[]{oldId}).getObject();
+            logBean.error(Log.MODULE.INFORMATION, event, DepartmentEdit.class, Department.class, message);
         }
     }
 
     private void saveAsNew() {
+        Long oldId = department.getId();
+        String resourceKey = "log.save_as_new";
         try {
             departmentDAO.saveAsNew(department);
-            logBean.info(Log.MODULE.INFORMATION, Log.EVENT.CREATE, DepartmentEdit.class, Department.class, "ID: " + department.getId());
+            Long newId = department.getId();
+            String message = new StringResourceModel(resourceKey, this, null, new Object[]{oldId, newId}).getObject();
+            logBean.info(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, DepartmentEdit.class, Department.class, message);
         } catch (Exception e) {
             log.error("Ошибка сохранения справочника", e);
-            logBean.error(Log.MODULE.INFORMATION, Log.EVENT.CREATE, DepartmentEdit.class, Department.class, "ID: " + department.getId());
+            String message = new StringResourceModel(resourceKey, this, null, new Object[]{oldId, null}).getObject();
+            logBean.error(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, DepartmentEdit.class, Department.class, message);
         }
     }
 
     private void disableDepartment(Long departmentId) {
         departmentDAO.disable(departmentId);
-        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, DepartmentEdit.class, Department.class, "ID: " + departmentId);
+        String message = new StringResourceModel("log.enable_disable", this, null, new Object[]{departmentId}).getObject();
+        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, DepartmentEdit.class, Department.class, message);
     }
 
     private void enableDepartment(Long departmentId) {
         departmentDAO.enable(departmentId);
-        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, DepartmentEdit.class, Department.class, "ID: " + departmentId);
+        String message = new StringResourceModel("log.enable_disable", this, null, new Object[]{departmentId}).getObject();
+        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, DepartmentEdit.class, Department.class, message);
     }
 
     @Override

@@ -19,9 +19,7 @@ import org.vetcontrol.web.security.SecurityRoles;
 import org.vetcontrol.web.template.FormTemplatePage;
 
 import javax.ejb.EJB;
-import java.beans.IntrospectionException;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,6 +34,7 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.vetcontrol.book.BeanPropertyUtil;
 import org.vetcontrol.entity.Log;
 import org.vetcontrol.information.service.dao.IBookDAO;
@@ -77,16 +76,18 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
 
     private Serializable bookEntry;
 
-    public AddUpdateBookEntryPage() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IntrospectionException, InvocationTargetException {
+    public AddUpdateBookEntryPage() {
         init();
     }
 
-    public void init() throws IntrospectionException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException {
+    public void init() {
         bookEntry = getSession().getMetaData(BookPage.SELECTED_BOOK_ENTRY);
         if (bookEntry == null) {
             throw new IllegalArgumentException("selected book entry may not be null");
         }
-        final Locale systemLocale = localeDAO.systemLocale();
+
+        final Locale systemLocale = getSystemLocale();
+        final List<Locale> allLocales = localeDAO.all();
 
         //title
         add(new Label("title", new ResourceModel("page.title")));
@@ -101,7 +102,7 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
         form.setOutputMarkupId(true);
         add(form);
 
-        BeanPropertyUtil.addLocalization(bookEntry, localeDAO.all());
+        BeanPropertyUtil.addLocalization(bookEntry, allLocales);
         //calculate initial hash code for book entry in order to increment version of the book entry if necessary later.
         final BookHash initial = BeanPropertyUtil.hash(bookEntry);
 
@@ -167,7 +168,8 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
                     selectablePanel = new SelectPanel("selectablePanel", m, prop, bookDAO.getContent(prop.getType(), ShowBooksMode.ALL),
                             systemLocale, CanEditUtil.canEdit(bookEntry));
                 } else if (isAutoComplete) {
-                    autoCompleteSelectPanel = new AutoCompleteSelectPanel("autoCompleteSelectPanel", m, prop, CanEditUtil.canEdit(bookEntry));
+                    autoCompleteSelectPanel = new AutoCompleteSelectPanel("autoCompleteSelectPanel", m, prop, CanEditUtil.canEdit(bookEntry),
+                            systemLocale);
                 } else if (isBoolean) {
                     booleanPanel = new BooleanPanel("booleanPanel", m, prop, CanEditUtil.canEdit(bookEntry));
                 }
@@ -244,40 +246,49 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
 
     private void saveOrUpdate(BookHash initial) {
         Log.EVENT event = BeanPropertyUtil.isNewBook(bookEntry) ? Log.EVENT.CREATE : Log.EVENT.EDIT;
-        Long id = BeanPropertyUtil.getId(bookEntry);
+        Long oldId = BeanPropertyUtil.getId(bookEntry);
+        String resourceKey = "log.save_update";
+
         //update version of book and its localizable strings if necessary.
         BeanPropertyUtil.updateVersionIfNecessary(bookEntry, initial);
+
         try {
             bookDAO.saveOrUpdate(bookEntry);
-            id = BeanPropertyUtil.getId(bookEntry);
-            logBean.info(Log.MODULE.INFORMATION, event, AddUpdateBookEntryPage.class, bookEntry.getClass(), "ID: " + id);
+            Long newId = BeanPropertyUtil.getId(bookEntry);
+            String message = new StringResourceModel(resourceKey, this, null, new Object[]{newId}).getObject();
+            logBean.info(Log.MODULE.INFORMATION, event, AddUpdateBookEntryPage.class, bookEntry.getClass(), message);
         } catch (Exception e) {
             log.error("Ошибка сохранения справочника", e);
-            logBean.error(Log.MODULE.INFORMATION, event, AddUpdateBookEntryPage.class, bookEntry.getClass(), "ID: " + id);
+            String message = new StringResourceModel(resourceKey, this, null, new Object[]{oldId}).getObject();
+            logBean.error(Log.MODULE.INFORMATION, event, AddUpdateBookEntryPage.class, bookEntry.getClass(), message);
         }
     }
 
     private void saveAsNew() {
-        Long id = BeanPropertyUtil.getId(bookEntry);
+        Long oldId = BeanPropertyUtil.getId(bookEntry);
+        String resourceKey = "log.save_as_new";
         try {
             bookDAO.saveAsNew(bookEntry);
-            logBean.info(Log.MODULE.INFORMATION, Log.EVENT.CREATE, AddUpdateBookEntryPage.class, bookEntry.getClass(), "ID: " + id);
+            Long newId = BeanPropertyUtil.getId(bookEntry);
+            String message = new StringResourceModel(resourceKey, this, null, new Object[]{oldId, newId}).getObject();
+            logBean.info(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, AddUpdateBookEntryPage.class, bookEntry.getClass(), message);
         } catch (Exception e) {
             log.error("Ошибка сохранения справочника", e);
-            logBean.error(Log.MODULE.INFORMATION, Log.EVENT.CREATE, AddUpdateBookEntryPage.class, bookEntry.getClass(), "ID: " + id);
+            String message = new StringResourceModel(resourceKey, this, null, new Object[]{oldId, null}).getObject();
+            logBean.error(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, AddUpdateBookEntryPage.class, bookEntry.getClass(), message);
         }
     }
 
-    private void disableBookEntry() {
-        Long id = BeanPropertyUtil.getId(bookEntry);
-        bookDAO.disable(BeanPropertyUtil.getId(bookEntry), bookEntry.getClass());
-        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, AddUpdateBookEntryPage.class, bookEntry.getClass(), "ID: " + id);
+    private void disableBook(Long id) {
+        bookDAO.disable(id, bookEntry.getClass());
+        String message = new StringResourceModel("log.enable_disable", this, null, new Object[]{id}).getObject();
+        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, AddUpdateBookEntryPage.class, bookEntry.getClass(), message);
     }
 
-    private void enableBookEntry() {
-        Long id = BeanPropertyUtil.getId(bookEntry);
-        bookDAO.enable(BeanPropertyUtil.getId(bookEntry), bookEntry.getClass());
-        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, AddUpdateBookEntryPage.class, bookEntry.getClass(), "ID: " + id);
+    private void enableBook(Long id) {
+        bookDAO.enable(id, bookEntry.getClass());
+        String message = new StringResourceModel("log.enable_disable", this, null, new Object[]{id}).getObject();
+        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, AddUpdateBookEntryPage.class, bookEntry.getClass(), message);
     }
 
     private void goToBooksPage() {
@@ -292,7 +303,7 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
 
             @Override
             protected void onClick() {
-                disableBookEntry();
+                disableBook(BeanPropertyUtil.getId(bookEntry));
                 goToBooksPage();
             }
 
@@ -308,7 +319,7 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
 
             @Override
             protected void onClick() {
-                enableBookEntry();
+                enableBook(BeanPropertyUtil.getId(bookEntry));
                 goToBooksPage();
             }
 

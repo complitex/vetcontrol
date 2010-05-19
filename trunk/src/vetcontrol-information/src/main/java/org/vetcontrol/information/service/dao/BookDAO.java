@@ -115,23 +115,19 @@ public class BookDAO extends BookViewDAO implements IBookDAO {
 //        }
 //    }
     private void changeActiveState(Long id, Class bookClass, boolean disabled) {
-        try {
-            StringBuilder updateQuery = new StringBuilder().append("UPDATE ").
-                    append(bookClass.getSimpleName()).
-                    append(" a SET a.").
-                    append(getDisabledPropertyName()).
-                    append(" = :disabled").
-                    append(", a.").
-                    append(getVersionPropertyName()).
-                    append(" = :updated").
-                    append(" WHERE a.id = :id");
-            getEntityManager().createQuery(updateQuery.toString()).
-                    setParameter("updated", DateUtil.getCurrentDate(), TemporalType.TIMESTAMP).
-                    setParameter("disabled", disabled).
-                    setParameter("id", id).
-                    executeUpdate();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        StringBuilder updateQuery = new StringBuilder().append("UPDATE ").
+                append(bookClass.getSimpleName()).
+                append(" a SET a.").
+                append(getDisabledPropertyName()).
+                append(" = :disabled").
+                append(", a.").
+                append(getVersionPropertyName()).
+                append(" = :updated").
+                append(" WHERE a.id = :id");
+        getEntityManager().createQuery(updateQuery.toString()).
+                setParameter("updated", DateUtil.getCurrentDate(), TemporalType.TIMESTAMP).
+                setParameter("disabled", disabled).
+                setParameter("id", id).
+                executeUpdate();
     }
 }
