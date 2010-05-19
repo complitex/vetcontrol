@@ -9,7 +9,6 @@ import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.web.component.toolbar.ToolbarButton;
 
 import javax.ejb.EJB;
@@ -59,6 +58,7 @@ public class BookPage extends ListTemplatePage {
     public class DataProvider extends SortableDataProvider<Serializable> implements IFilterStateLocator, IBookDataProvider {
 
         private Serializable filterBean;
+
         private LoadableDetachableModel<Integer> sizeModel;
 
         public DataProvider() {
@@ -130,21 +130,31 @@ public class BookPage extends ListTemplatePage {
             }
         }
     }
+
     private static final Logger log = LoggerFactory.getLogger(BookPage.class);
+
     @EJB(name = "BookViewDAO")
     private IBookViewDAO bookViewDAO;
-    @EJB(name = "LocaleDAO")
-    private ILocaleDAO localeDAO;
+
     public static final MetaDataKey SELECTED_BOOK_ENTRY = new MetaDataKey() {
     };
+
     public static final String BOOK_TYPE = "bookType";
+
     private static final String FILTER_KEY_SUFFIX = "_FILTER";
+
     private static final String PAGE_NUMBER_KEY_SUFFIX = "_PAGING";
+
     private static final String SORT_PROPERTY_KEY_SUFFIX = "_SORT_PROPERTY";
+
     private static final String SORT_ORDER_KEY_SUFFIX = "_SORT_ORDER";
+
     private static final String SHOW_BOOKS_MODE_KEY_SUFFIX = "_SHOW_BOOKS_MODE";
+
     private UIPreferences preferences;
+
     private String bookTypeName;
+
     private IModel<ShowBooksMode> showBooksModeModel;
 
     public BookPage(PageParameters params) {
@@ -165,7 +175,7 @@ public class BookPage extends ListTemplatePage {
             dataProvider.init(bookType, "id", true);
             dataProvider.initSize();
 
-            Locale systemLocale = localeDAO.systemLocale();
+            final Locale systemLocale = getSystemLocale();
 
             //title
             add(new Label("title", new DisplayBookClassModel(bookType)));

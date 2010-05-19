@@ -29,7 +29,6 @@ import org.vetcontrol.information.util.web.Constants;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 import org.vetcontrol.information.web.model.StringCultureModel;
 import org.vetcontrol.service.dao.IBookViewDAO;
-import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.book.BeanPropertyUtil;
 import org.vetcontrol.book.Property;
 import org.vetcontrol.book.ShowBooksMode;
@@ -44,20 +43,22 @@ public class AutoCompleteSelectPanel<T> extends Panel {
      * Message format example: ${property} is incorrect.
      */
     private static final String ERROR_PROPERTY_PARAMETER = "property";
+
     private static final String SUCH_REFERENCE_IS_NOT_EXIST_ERROR_KEY = AutoCompleteSelectPanel.class.getSimpleName() + ".such_reference_is_not_exist";
-    @EJB(name = "LocaleDAO")
-    private ILocaleDAO localeDAO;
+
     @EJB(name = "BookViewDAO")
     private IBookViewDAO bookViewDAO;
+
     private final IModel<String> exampleModel;
+
     private final T example;
+
     private AbstractAutoCompleteTextField<T> autoCompleteTextField;
 
-    public AutoCompleteSelectPanel(String id, final IModel<T> model, final Property property, boolean enabled) {
+    public AutoCompleteSelectPanel(String id, final IModel<T> model, final Property property, boolean enabled, final Locale systemLocale) {
         super(id);
 
         try {
-            final Locale systemLocale = localeDAO.systemLocale();
 
             AutoCompleteSettings settings = new AutoCompleteSettings();
             settings.setAdjustInputWidth(false);

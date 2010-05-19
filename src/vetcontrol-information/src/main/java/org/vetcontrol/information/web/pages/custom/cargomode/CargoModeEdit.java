@@ -31,6 +31,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -305,7 +306,7 @@ public final class CargoModeEdit extends FormTemplatePage {
 
     private void init() {
         final Locale systemLocale = getSystemLocale();
-        List<Locale> allLocales = localeDAO.all();
+        final List<Locale> allLocales = localeDAO.all();
 
         final CargoMode cargoMode = getSession().getMetaData(CargoModeList.SELECTED_BOOK_ENTRY);
         if (cargoMode == null) {
@@ -546,6 +547,8 @@ public final class CargoModeEdit extends FormTemplatePage {
 
     private void saveOrUpdate(IModel<CargoMode> cargoModeModel, BookHash initial) {
         Log.EVENT event = isNewBook(cargoModeModel.getObject()) ? Log.EVENT.CREATE : Log.EVENT.EDIT;
+        Long oldId = cargoModeModel.getObject().getId();
+        String resourceKey = "log.save_update";
 
         //update version of book and its localizable strings if necessary.
         updateVersionIfNecessary(cargoModeModel.getObject(), initial);
@@ -553,31 +556,41 @@ public final class CargoModeEdit extends FormTemplatePage {
 
         try {
             cargoModeDAO.saveOrUpdate(cargoModeModel.getObject(), null);
-            logBean.info(Log.MODULE.INFORMATION, event, CargoModeEdit.class, CargoMode.class, "ID: " + cargoModeModel.getObject().getId());
+            Long newId = cargoModeModel.getObject().getId();
+            String message = new StringResourceModel(resourceKey, this, null, new Object[]{newId}).getObject();
+            logBean.info(Log.MODULE.INFORMATION, event, CargoModeEdit.class, CargoMode.class, message);
         } catch (Exception e) {
             log.error("Ошибка сохранения справочника", e);
-            logBean.error(Log.MODULE.INFORMATION, event, CargoModeEdit.class, CargoMode.class, "ID: " + cargoModeModel.getObject().getId());
+            String message = new StringResourceModel(resourceKey, this, null, new Object[]{oldId}).getObject();
+            logBean.error(Log.MODULE.INFORMATION, event, CargoModeEdit.class, CargoMode.class, message);
         }
     }
 
     private void saveAsNew() {
+        Long oldId = cargoModeModel.getObject().getId();
+        String resourceKey = "log.save_as_new";
         try {
             cargoModeDAO.saveAsNew(cargoModeModel.getObject());
-            logBean.info(Log.MODULE.INFORMATION, Log.EVENT.CREATE, CargoModeEdit.class, CargoMode.class, "ID: " + cargoModeModel.getObject().getId());
+            Long newId = cargoModeModel.getObject().getId();
+            String message = new StringResourceModel(resourceKey, this, null, new Object[]{oldId, newId}).getObject();
+            logBean.info(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, CargoModeEdit.class, CargoMode.class, message);
         } catch (Exception e) {
             log.error("Ошибка сохранения справочника", e);
-            logBean.error(Log.MODULE.INFORMATION, Log.EVENT.CREATE, CargoModeEdit.class, CargoMode.class, "ID: " + cargoModeModel.getObject().getId());
+            String message = new StringResourceModel(resourceKey, this, null, new Object[]{oldId, null}).getObject();
+            logBean.error(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, CargoModeEdit.class, CargoMode.class, message);
         }
     }
 
     private void disableCargoMode(Long cargoModeId) {
         cargoModeDAO.disable(cargoModeId);
-        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, CargoModeEdit.class, CargoMode.class, "ID: " + cargoModeId);
+        String message = new StringResourceModel("log.enable_disable", this, null, new Object[]{cargoModeId}).getObject();
+        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, CargoModeEdit.class, CargoMode.class, message);
     }
 
     private void enableCargoMode(Long cargoModeId) {
         cargoModeDAO.enable(cargoModeId);
-        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, CargoModeEdit.class, CargoMode.class, "ID: " + cargoModeId);
+        String message = new StringResourceModel("log.enable_disable", this, null, new Object[]{cargoModeId}).getObject();
+        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, CargoModeEdit.class, CargoMode.class, message);
     }
 
     @Override
