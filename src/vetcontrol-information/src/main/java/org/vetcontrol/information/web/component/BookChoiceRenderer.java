@@ -14,10 +14,12 @@ import org.vetcontrol.web.component.book.SimpleDisableAwareChoiceRenderer;
  *
  * @author Artem
  */
-public class BookChoiceRenderer extends SimpleDisableAwareChoiceRenderer<Object>{
+public class BookChoiceRenderer extends SimpleDisableAwareChoiceRenderer<Object> {
 
     private Property property;
+
     private Locale systemLocale;
+
     private ITruncate truncateLogic;
 
     public BookChoiceRenderer(Property property, Locale systemLocale, ITruncate truncateLogic) {
@@ -36,6 +38,6 @@ public class BookChoiceRenderer extends SimpleDisableAwareChoiceRenderer<Object>
 
     @Override
     public String getIdValue(Object object, int index) {
-        return getPropertyValue(object, "id").toString();
+        return String.valueOf(getId(object));
     }
 }
