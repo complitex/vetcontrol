@@ -40,7 +40,7 @@ import org.vetcontrol.web.security.SecurityRoles;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@RolesAllowed({SecurityRoles.INFORMATION_VIEW, SecurityRoles.INFORMATION_EDIT})
+@RolesAllowed(SecurityRoles.INFORMATION_VIEW)
 public class CargoModeDAO {
 
     private static final String DELETED_PRIMARY_KEY_SEPARATOR = ":";
