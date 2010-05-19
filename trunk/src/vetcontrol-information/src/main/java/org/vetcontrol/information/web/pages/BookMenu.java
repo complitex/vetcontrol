@@ -21,7 +21,7 @@ import org.vetcontrol.information.util.web.BookTypeWebInfoUtil;
  *
  * @author Artem
  */
-@AuthorizeInstantiation(SecurityRoles.INFORMATION_VIEW)
+@AuthorizeInstantiation({SecurityRoles.INFORMATION_VIEW, SecurityRoles.INFORMATION_EDIT})
 public class BookMenu implements ITemplateMenu {
 
     @Override
