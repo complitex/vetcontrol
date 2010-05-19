@@ -42,7 +42,6 @@ import org.vetcontrol.entity.CargoType;
 import org.vetcontrol.entity.Log;
 import org.vetcontrol.entity.UnitType;
 import org.vetcontrol.information.service.dao.CargoModeDAO;
-import org.vetcontrol.information.service.dao.IBookDAO;
 import org.vetcontrol.information.util.web.BookTypeWebInfoUtil;
 import org.vetcontrol.information.util.web.BookWebInfo;
 import org.vetcontrol.information.util.web.CanEditUtil;
@@ -58,6 +57,7 @@ import org.vetcontrol.service.LogBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import static org.vetcontrol.book.BeanPropertyUtil.*;
 import org.vetcontrol.book.BookHash;
+import org.vetcontrol.service.dao.IBookViewDAO;
 import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.component.book.IDisableAwareChoiceRenderer;
 import org.vetcontrol.web.component.book.SimpleDisableAwareChoiceRenderer;
@@ -72,7 +72,7 @@ import org.vetcontrol.web.template.FormTemplatePage;
  *
  * @author Artem
  */
-@AuthorizeInstantiation(SecurityRoles.INFORMATION_VIEW)
+@AuthorizeInstantiation({SecurityRoles.INFORMATION_VIEW, SecurityRoles.INFORMATION_EDIT})
 public final class CargoModeEdit extends FormTemplatePage {
 
     private class UnitTypesChoiceContainer extends WebMarkupContainer {
@@ -280,23 +280,23 @@ public final class CargoModeEdit extends FormTemplatePage {
         }
     }
 
+    private static final Logger log = LoggerFactory.getLogger(CargoModeEdit.class);
+
+    private static final String UNIT_TYPE_INCORRECT = "unit_type_incorrect";
+
+    private static final String CARGO_TYPE_INCORRECT = "cargo_type_incorrect";
+
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
 
-    @EJB(name = "BookDAO")
-    IBookDAO bookDAO;
+    @EJB(name = "BookViewDAO")
+    private IBookViewDAO bookViewDAO;
 
     @EJB(name = "CargoModeDAO")
     private CargoModeDAO cargoModeDAO;
 
     @EJB(name = "LogBean")
     private LogBean logBean;
-
-    private static final String UNIT_TYPE_INCORRECT = "unit_type_incorrect";
-
-    private static final String CARGO_TYPE_INCORRECT = "cargo_type_incorrect";
-
-    private static final Logger log = LoggerFactory.getLogger(CargoModeEdit.class);
 
     private Model<CargoMode> cargoModeModel;
 
@@ -312,7 +312,7 @@ public final class CargoModeEdit extends FormTemplatePage {
         if (cargoMode == null) {
             throw new IllegalArgumentException("selected book entry may not be null");
         }
-        bookDAO.addLocalizationSupport(cargoMode);
+        bookViewDAO.addLocalizationSupport(cargoMode);
         addLocalization(cargoMode, allLocales);
 
         //calculate initial hash code for book entry in order to increment version of the book entry if necessary later.

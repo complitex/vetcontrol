@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -18,6 +19,7 @@ import org.vetcontrol.entity.CustomsPoint;
 import org.vetcontrol.entity.Department;
 import org.vetcontrol.entity.PassingBorderPoint;
 import org.vetcontrol.util.DateUtil;
+import org.vetcontrol.web.security.SecurityRoles;
 import static org.vetcontrol.book.BeanPropertyUtil.*;
 
 /**
@@ -26,6 +28,7 @@ import static org.vetcontrol.book.BeanPropertyUtil.*;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
+@RolesAllowed({SecurityRoles.INFORMATION_VIEW, SecurityRoles.INFORMATION_EDIT})
 public class DepartmentBookDAO {
 
     @EJB

@@ -36,7 +36,6 @@ import org.vetcontrol.entity.Department;
 import org.vetcontrol.entity.Log;
 import org.vetcontrol.entity.PassingBorderPoint;
 import org.vetcontrol.information.service.dao.DepartmentBookDAO;
-import org.vetcontrol.information.service.dao.IBookDAO;
 import org.vetcontrol.information.util.web.BookTypeWebInfoUtil;
 import org.vetcontrol.information.util.web.BookWebInfo;
 import org.vetcontrol.information.util.web.CanEditUtil;
@@ -52,6 +51,7 @@ import org.vetcontrol.service.dao.ILocaleDAO;
 import static org.vetcontrol.book.BeanPropertyUtil.*;
 import org.vetcontrol.book.BookHash;
 import org.vetcontrol.book.Property;
+import org.vetcontrol.service.dao.IBookViewDAO;
 import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.component.toolbar.DisableItemButton;
 import org.vetcontrol.web.component.toolbar.EnableItemButton;
@@ -63,24 +63,24 @@ import org.vetcontrol.web.template.FormTemplatePage;
  *
  * @author Artem
  */
-@AuthorizeInstantiation(SecurityRoles.INFORMATION_VIEW)
+@AuthorizeInstantiation({SecurityRoles.INFORMATION_VIEW, SecurityRoles.INFORMATION_EDIT})
 public final class DepartmentEdit extends FormTemplatePage {
+
+    private static final Logger log = LoggerFactory.getLogger(DepartmentEdit.class);
+
+    private static final String PASSING_BORDER_POINT_NAME_REQUIRED = "passing_border_point_name";
 
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
 
-    @EJB(name = "BookDAO")
-    IBookDAO bookDAO;
+    @EJB(name = "BookViewDAO")
+    private IBookViewDAO bookViewDAO;
 
     @EJB(name = "LogBean")
     private LogBean logBean;
 
     @EJB(name = "DepartmentBookDAO")
     private DepartmentBookDAO departmentDAO;
-
-    private static final Logger log = LoggerFactory.getLogger(DepartmentEdit.class);
-
-    private static final String PASSING_BORDER_POINT_NAME_REQUIRED = "passing_border_point_name";
 
     private Department department;
 
@@ -96,7 +96,7 @@ public final class DepartmentEdit extends FormTemplatePage {
         if (department == null) {
             throw new IllegalArgumentException("selected book entry may not be null");
         }
-        bookDAO.addLocalizationSupport(department);
+        bookViewDAO.addLocalizationSupport(department);
         addLocalization(department, allLocales);
         departmentDAO.loadPassingBorderPoints(department);
 
