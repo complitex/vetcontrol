@@ -7,7 +7,7 @@ package org.vetcontrol.information.web.pages;
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.vetcontrol.information.util.web.ResourceUtil;
+import org.vetcontrol.information.web.util.ResourceUtil;
 import org.vetcontrol.information.web.model.DisplayBookClassModel;
 import org.vetcontrol.book.BookTypes;
 import org.vetcontrol.web.security.SecurityRoles;
@@ -15,7 +15,7 @@ import org.vetcontrol.web.template.ITemplateLink;
 import org.vetcontrol.web.template.ITemplateMenu;
 
 import java.util.*;
-import org.vetcontrol.information.util.web.BookTypeWebInfoUtil;
+import org.vetcontrol.information.web.util.BookWebInfoContainer;
 
 /**
  *
@@ -42,12 +42,12 @@ public class BookMenu implements ITemplateMenu {
 
                 @Override
                 public Class<? extends Page> getPage() {
-                    return BookTypeWebInfoUtil.getInfo(bookType).getListPage();
+                    return BookWebInfoContainer.getListPage(bookType);
                 }
 
                 @Override
                 public PageParameters getParameters() {
-                    return BookTypeWebInfoUtil.getInfo(bookType).getListPageParameters();
+                    return BookWebInfoContainer.getListPageParameters(bookType);
                 }
 
                 @Override

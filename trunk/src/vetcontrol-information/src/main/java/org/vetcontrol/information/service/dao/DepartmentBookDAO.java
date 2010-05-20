@@ -37,9 +37,13 @@ public class DepartmentBookDAO {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<Department> getAvailableDepartments(Department department) {
+    public List<Department> getFirstAndSecondLevelDepartments() {
+        return getAvailableDepartments(null);
+    }
+
+    public List<Department> getAvailableDepartments(Long departmentId) {
         Set<Long> exclude = new HashSet<Long>();
-        getAvailableDepartments(department.getId(), exclude);
+        getAvailableDepartments(departmentId, exclude);
 
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT DISTINCT d FROM Department d WHERE d.level IN (1,2)");

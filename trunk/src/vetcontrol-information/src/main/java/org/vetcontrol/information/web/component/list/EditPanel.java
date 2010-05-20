@@ -5,7 +5,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.vetcontrol.information.util.web.CanEditUtil;
+import org.vetcontrol.information.web.util.CanEditUtil;
 
 public abstract class EditPanel extends Panel {
 

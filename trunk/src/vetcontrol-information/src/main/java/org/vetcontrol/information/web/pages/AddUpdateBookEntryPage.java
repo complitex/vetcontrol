@@ -37,9 +37,8 @@ import org.apache.wicket.model.StringResourceModel;
 import org.vetcontrol.book.BeanPropertyUtil;
 import org.vetcontrol.entity.Log;
 import org.vetcontrol.information.service.dao.IBookDAO;
-import org.vetcontrol.information.util.web.BookTypeWebInfoUtil;
-import org.vetcontrol.information.util.web.BookWebInfo;
-import org.vetcontrol.information.util.web.CanEditUtil;
+import org.vetcontrol.information.web.util.BookWebInfoContainer;
+import org.vetcontrol.information.web.util.CanEditUtil;
 import org.vetcontrol.information.web.component.edit.AutoCompleteSelectPanel;
 import org.vetcontrol.information.web.component.edit.BooleanPanel;
 import org.vetcontrol.information.web.component.edit.DatePanel;
@@ -291,8 +290,7 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
     }
 
     private void goToBooksPage() {
-        BookWebInfo bookWebInfo = BookTypeWebInfoUtil.getInfo(bookEntry.getClass());
-        setResponsePage(bookWebInfo.getListPage(), bookWebInfo.getListPageParameters());
+        setResponsePage(BookWebInfoContainer.getListPage(bookEntry.getClass()), BookWebInfoContainer.getListPageParameters(bookEntry.getClass()));
     }
 
     @Override
