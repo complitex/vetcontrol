@@ -467,7 +467,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
             }
         };
 
-        IModel rootCargoModesModel = new LoadableDetachableModel<List<CargoMode>>() {
+        IModel<List<CargoMode>> rootCargoModesModel = new LoadableDetachableModel<List<CargoMode>>() {
 
             @Override
             protected List<CargoMode> load() {

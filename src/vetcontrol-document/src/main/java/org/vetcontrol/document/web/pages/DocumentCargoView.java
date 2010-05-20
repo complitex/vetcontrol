@@ -15,12 +15,14 @@ import org.slf4j.LoggerFactory;
 import org.vetcontrol.document.service.DocumentCargoBean;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.UserProfileBean;
-import org.vetcontrol.web.component.Spacer;
+import org.vetcontrol.web.component.MovementTypeChoicePanel;
 import org.vetcontrol.web.template.TemplatePage;
 
 import javax.ejb.EJB;
 import java.util.Date;
-import org.vetcontrol.web.component.MovementTypeChoicePanel;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.vetcontrol.web.security.SecurityRoles.*;
 
@@ -105,6 +107,9 @@ public class DocumentCargoView extends TemplatePage {
         add(new Label("document.cargo.department", dc.getDepartment().getDisplayName(getLocale(), getSystemLocale())));
         add(new Label("document.cargo.passingBorderPoint", dc.getPassingBorderPoint() != null ? dc.getPassingBorderPoint().getName() : ""));
 
+        add(new Label("document.cargo.cargo_list.weight", getCargoListWeight(dc.getCargos())));
+        add(new Label("document.cargo.cargo_list.count", String.valueOf(dc.getCargos().size())));
+
         String fullCreator = dc.getCreator().getFullName();
         if (dc.getCreator().getJob() != null) {
             fullCreator += ", " + dc.getCreator().getJob().getDisplayName(getLocale(), getSystemLocale());
@@ -121,7 +126,14 @@ public class DocumentCargoView extends TemplatePage {
             protected void populateItem(ListItem<Cargo> item) {
                 Cargo c = item.getModelObject();
 
-                item.add(new Label("document.cargo.cargo_type", c.getCargoType() != null ? c.getCargoType().getDisplayName(getLocale(), getSystemLocale()) : ""));
+                item.add(new Label("document.cargo.cargo_type.code", c.getCargoType() != null ? c.getCargoType().getCode() : ""));
+
+                String cargo_type = c.getCargoType() != null ? c.getCargoType().getDisplayName(getLocale(), getSystemLocale()) : "";
+                if (cargo_type.length() > 70){
+                    cargo_type = cargo_type.substring(0, 70);
+                }
+                item.add(new Label("document.cargo.cargo_type", cargo_type));
+
                 item.add(new Label("document.cargo.count", c.getCount() != null ? c.getCount() + "" : ""));
                 item.add(new Label("document.cargo.unit_type", c.getUnitType() != null ? c.getUnitType().getDisplayName(getLocale(), getSystemLocale()) : ""));
                 item.add(new Label("document.cargo.vehicle", c.getVehicle() != null ? c.getVehicle().getVehicleDetails() : ""));
@@ -134,7 +146,26 @@ public class DocumentCargoView extends TemplatePage {
         };
 
         add(dataView);
+    }
 
-        add(new Spacer("spacer"));
+     private String getCargoListWeight(List<Cargo> cargos){
+        Map<UnitType, Double> weightMap = new HashMap<UnitType, Double>();
+
+        for (Cargo c : cargos){
+            if (c.getUnitType() != null && c.getCount() != null){
+                Double sum = weightMap.get(c.getUnitType());
+                Double count = c.getCount();
+
+                weightMap.put(c.getUnitType(), sum != null ? sum + count : count);
+            }
+        }
+
+        String weightString = "";
+
+        for (UnitType ut : weightMap.keySet()){
+            weightString +=  weightMap.get(ut) + ut.getDisplayShortName(getLocale(), getSystemLocale()) + " ";
+        }
+
+        return weightString;
     }
 }
