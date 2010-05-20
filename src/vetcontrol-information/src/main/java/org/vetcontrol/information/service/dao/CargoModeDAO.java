@@ -27,7 +27,7 @@ import org.vetcontrol.entity.CargoModeUnitType;
 import org.vetcontrol.entity.CargoType;
 import org.vetcontrol.entity.DeletedEmbeddedId;
 import org.vetcontrol.entity.UnitType;
-import org.vetcontrol.information.util.web.cargomode.CargoModeFilterBean;
+import org.vetcontrol.information.entity.filter.CargoModeFilter;
 import org.vetcontrol.util.DateUtil;
 import static org.vetcontrol.book.BeanPropertyUtil.*;
 import org.vetcontrol.book.ShowBooksMode;
@@ -79,7 +79,7 @@ public class CargoModeDAO {
         return new HashMap<String, Object>();
     }
 
-    public List<CargoMode> getAll(CargoModeFilterBean filter, int first, int count, OrderBy orderBy, boolean asc, Locale currentLocale,
+    public List<CargoMode> getAll(CargoModeFilter filter, int first, int count, OrderBy orderBy, boolean asc, Locale currentLocale,
             ShowBooksMode showBooksMode) {
         Map<String, Object> params = newParams();
         StringBuilder queryBuilder = select(false, params, orderBy, currentLocale);
@@ -124,7 +124,7 @@ public class CargoModeDAO {
         return queryBuilder;
     }
 
-    private StringBuilder where(CargoModeFilterBean filter, Map<String, Object> params, ShowBooksMode showBooksMode) {
+    private StringBuilder where(CargoModeFilter filter, Map<String, Object> params, ShowBooksMode showBooksMode) {
         StringBuilder where = new StringBuilder(" WHERE (1=1) ");
         switch (showBooksMode) {
             case ALL:
@@ -171,7 +171,7 @@ public class CargoModeDAO {
         return order;
     }
 
-    public int size(CargoModeFilterBean filter, Locale currentLocale, ShowBooksMode showBooksMode) {
+    public int size(CargoModeFilter filter, Locale currentLocale, ShowBooksMode showBooksMode) {
         Map<String, Object> params = newParams();
         StringBuilder query = select(true, params, null, currentLocale);
         query.append(where(filter, params, showBooksMode));
@@ -291,7 +291,7 @@ public class CargoModeDAO {
                 bookDAO.addLocalizationSupport(children);
                 entityManager.flush();
                 entityManager.clear();
-                
+
                 for (CargoMode child : children) {
                     clearBook(child);
                     child.setParent(cargoMode);

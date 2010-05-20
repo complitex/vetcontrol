@@ -24,8 +24,8 @@ public abstract class ModifyColumn implements IFilteredColumn, IColumn {
         cellItem.add(new EditPanel(componentId, rowModel) {
 
             @Override
-            protected void selected(Serializable bean) {
-                ModifyColumn.this.selected(bean);
+            protected void selected(Serializable bookEntry) {
+                ModifyColumn.this.selected(bookEntry);
             }
         });
     }
@@ -56,5 +56,5 @@ public abstract class ModifyColumn implements IFilteredColumn, IColumn {
     public void detach() {
     }
 
-    protected abstract void selected(Serializable bean);
+    protected abstract void selected(Serializable bookEntry);
 }

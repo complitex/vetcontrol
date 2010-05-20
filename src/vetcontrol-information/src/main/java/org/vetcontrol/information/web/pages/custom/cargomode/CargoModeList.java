@@ -31,9 +31,9 @@ import org.apache.wicket.model.Model;
 import org.vetcontrol.entity.CargoMode;
 import org.vetcontrol.information.service.dao.CargoModeDAO;
 import org.vetcontrol.information.service.dao.CargoModeDAO.OrderBy;
-import org.vetcontrol.information.util.web.BookTypeWebInfoUtil;
-import org.vetcontrol.information.util.web.TruncateUtil;
-import org.vetcontrol.information.util.web.cargomode.CargoModeFilterBean;
+import org.vetcontrol.information.web.util.BookWebInfoContainer;
+import org.vetcontrol.information.web.util.TruncateUtil;
+import org.vetcontrol.information.entity.filter.CargoModeFilter;
 import org.vetcontrol.information.web.component.BookChoiceRenderer;
 import org.vetcontrol.information.web.component.list.EditPanel;
 import org.vetcontrol.information.web.component.list.ShowBooksModePanel;
@@ -94,13 +94,13 @@ public class CargoModeList extends ListTemplatePage {
 
             Panel showBooksModePanel = new ShowBooksModePanel("showBooksModePanel", showBooksModeModel);
 
-            CargoModeFilterBean filterObject = preferences.getPreference(PreferenceType.FILTER,
-                    FILTER_KEY, CargoModeFilterBean.class);
+            CargoModeFilter filterObject = preferences.getPreference(PreferenceType.FILTER,
+                    FILTER_KEY, CargoModeFilter.class);
             if (filterObject == null) {
                 filterObject = newCargoModeFilterBean();
             }
-            final CompoundPropertyModel<CargoModeFilterBean> filterModel = new CompoundPropertyModel<CargoModeFilterBean>(filterObject);
-            final Form<CargoModeFilterBean> filterForm = new Form<CargoModeFilterBean>("filterForm", filterModel);
+            final CompoundPropertyModel<CargoModeFilter> filterModel = new CompoundPropertyModel<CargoModeFilter>(filterObject);
+            final Form<CargoModeFilter> filterForm = new Form<CargoModeFilter>("filterForm", filterModel);
             Link clear = new Link("clear") {
 
                 @Override
@@ -229,13 +229,13 @@ public class CargoModeList extends ListTemplatePage {
         });
     }
 
-    private CargoModeFilterBean newCargoModeFilterBean() {
-        return new CargoModeFilterBean();
+    private CargoModeFilter newCargoModeFilterBean() {
+        return new CargoModeFilter();
     }
 
     private void goToEditPage(Serializable entry) {
         getSession().setMetaData(SELECTED_BOOK_ENTRY, entry);
-        setResponsePage(BookTypeWebInfoUtil.getInfo(CargoMode.class).getEditPage());
+        setResponsePage(BookWebInfoContainer.getEditPage(CargoMode.class));
     }
 
     @Override

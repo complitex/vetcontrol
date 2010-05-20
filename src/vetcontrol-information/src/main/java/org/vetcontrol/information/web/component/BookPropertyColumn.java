@@ -22,8 +22,8 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.lang.PropertyResolver;
 import org.apache.wicket.util.string.Strings;
 import static org.vetcontrol.book.BeanPropertyUtil.*;
-import org.vetcontrol.information.util.web.ResourceUtil;
-import org.vetcontrol.information.util.web.TruncateUtil;
+import org.vetcontrol.information.web.util.ResourceUtil;
+import org.vetcontrol.information.web.util.TruncateUtil;
 import org.vetcontrol.information.web.component.list.DateFilter;
 import org.vetcontrol.information.web.component.list.BookTextFilter;
 import org.vetcontrol.information.web.model.AutoCompleteBookReferenceModel;
@@ -40,13 +40,17 @@ import org.vetcontrol.book.annotation.UIType;
 public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
 
     private Property property;
+
     private Locale systemLocale;
-    private Component component;
+
+    private Component resourceComponent;
+
     private final IBookViewDAO bookViewDAO;
 
-    public BookPropertyColumn(Component component, IModel<String> displayModel, Property property, IBookViewDAO bookViewDAO, Locale systemLocale) {
-        super(displayModel, property.getName(), property.getName());
-        this.component = component;
+    public BookPropertyColumn(Component resourceComponent, IModel<String> displayPropertyModel, Property property, IBookViewDAO bookViewDAO,
+            Locale systemLocale) {
+        super(displayPropertyModel, property.getName(), property.getName());
+        this.resourceComponent = resourceComponent;
         this.property = property;
         this.systemLocale = systemLocale;
         this.bookViewDAO = bookViewDAO;
@@ -58,7 +62,7 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
 
         String asString = "";
         if (property.getType().equals(boolean.class) || property.getType().equals(Boolean.class)) {
-            asString = ResourceUtil.getString(String.valueOf(propertyValue), component);
+            asString = ResourceUtil.getString(String.valueOf(propertyValue), resourceComponent);
         } else if (property.isBookReference() && property.getUiType().equals(UIType.AUTO_COMPLETE)
                 && !Strings.isEmpty(property.getBookReferencePattern())) {
             asString = applyPattern(property.getBookReferencePattern(), propertyValue, systemLocale);
@@ -104,7 +108,7 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
 
                 @Override
                 public Object getDisplayValue(Boolean object) {
-                    return ResourceUtil.getString(String.valueOf(object), component);
+                    return ResourceUtil.getString(String.valueOf(object), resourceComponent);
                 }
 
                 @Override
@@ -112,7 +116,6 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
                     return String.valueOf(object);
                 }
             };
-
             ChoiceFilter filter = new ChoiceFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()),
                     form, choices, booleanChoiceRenderer, false);
             return filter;
@@ -120,5 +123,9 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
             BookTextFilter filter = new BookTextFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form, property);
             return filter;
         }
+    }
+
+    protected Property getProperty() {
+        return property;
     }
 }

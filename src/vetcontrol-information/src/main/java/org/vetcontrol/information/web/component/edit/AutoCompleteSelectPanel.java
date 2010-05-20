@@ -25,7 +25,7 @@ import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.IValidationError;
 import org.apache.wicket.validation.ValidationError;
 import org.apache.wicket.validation.validator.AbstractValidator;
-import org.vetcontrol.information.util.web.Constants;
+import org.vetcontrol.information.web.util.Constants;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 import org.vetcontrol.information.web.model.StringCultureModel;
 import org.vetcontrol.service.dao.IBookViewDAO;

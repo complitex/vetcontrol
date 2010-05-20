@@ -36,10 +36,9 @@ import org.vetcontrol.entity.Department;
 import org.vetcontrol.entity.Log;
 import org.vetcontrol.entity.PassingBorderPoint;
 import org.vetcontrol.information.service.dao.DepartmentBookDAO;
-import org.vetcontrol.information.util.web.BookTypeWebInfoUtil;
-import org.vetcontrol.information.util.web.BookWebInfo;
-import org.vetcontrol.information.util.web.CanEditUtil;
-import org.vetcontrol.information.util.web.TruncateUtil;
+import org.vetcontrol.information.web.util.BookWebInfoContainer;
+import org.vetcontrol.information.web.util.CanEditUtil;
+import org.vetcontrol.information.web.util.TruncateUtil;
 import org.vetcontrol.information.web.component.BookChoiceRenderer;
 import org.vetcontrol.web.component.book.DisableAwareDropDownChoice;
 import org.vetcontrol.information.web.component.edit.LocalizableTextPanel;
@@ -128,7 +127,7 @@ public final class DepartmentEdit extends FormTemplatePage {
 
             @Override
             protected List<Department> load() {
-                return departmentDAO.getAvailableDepartments(department);
+                return departmentDAO.getAvailableDepartments(department.getId());
             }
         };
         IModel<Department> parentModel = new IModel<Department>() {
@@ -207,6 +206,10 @@ public final class DepartmentEdit extends FormTemplatePage {
             public void onClick(AjaxRequestTarget target) {
                 department.addPassingBorderPoint(new PassingBorderPoint());
                 target.addComponent(passingBorderPointsSection);
+
+                String setFocusOnNewBorderPoint = "newBorderPointInputId = $('#passingBorderPoints tbody tr:last input[type=\"text\"]:first').attr('id');"
+                        + "Wicket.Focus.setFocusOnId(newBorderPointInputId);";
+                target.appendJavascript(setFocusOnNewBorderPoint);
             }
         };
         addPassingBorderPoint.setVisible(CanEditUtil.canEdit(department));
@@ -343,8 +346,7 @@ public final class DepartmentEdit extends FormTemplatePage {
     }
 
     private void goToListPage() {
-        BookWebInfo departmentWebInfo = BookTypeWebInfoUtil.getInfo(Department.class);
-        setResponsePage(departmentWebInfo.getListPage(), departmentWebInfo.getListPageParameters());
+        setResponsePage(BookWebInfoContainer.getListPage(Department.class), BookWebInfoContainer.getListPageParameters(Department.class));
     }
 
     private void saveOrUpdate(BookHash initial) {

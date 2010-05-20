@@ -42,11 +42,10 @@ import org.vetcontrol.entity.CargoType;
 import org.vetcontrol.entity.Log;
 import org.vetcontrol.entity.UnitType;
 import org.vetcontrol.information.service.dao.CargoModeDAO;
-import org.vetcontrol.information.util.web.BookTypeWebInfoUtil;
-import org.vetcontrol.information.util.web.BookWebInfo;
-import org.vetcontrol.information.util.web.CanEditUtil;
-import org.vetcontrol.information.util.web.Constants;
-import org.vetcontrol.information.util.web.TruncateUtil;
+import org.vetcontrol.information.web.util.BookWebInfoContainer;
+import org.vetcontrol.information.web.util.CanEditUtil;
+import org.vetcontrol.information.web.util.Constants;
+import org.vetcontrol.information.web.util.TruncateUtil;
 import org.vetcontrol.information.web.component.BookChoiceRenderer;
 import org.vetcontrol.web.component.book.DisableAwareDropDownChoice;
 import org.vetcontrol.information.web.component.edit.AbstractAutoCompleteTextField;
@@ -637,8 +636,7 @@ public final class CargoModeEdit extends FormTemplatePage {
     }
 
     private void goToListPage() {
-        BookWebInfo cargoModeWebInfo = BookTypeWebInfoUtil.getInfo(CargoMode.class);
-        setResponsePage(cargoModeWebInfo.getListPage(), cargoModeWebInfo.getListPageParameters());
+        setResponsePage(BookWebInfoContainer.getListPage(CargoMode.class), BookWebInfoContainer.getListPageParameters(CargoMode.class));
     }
 }
 

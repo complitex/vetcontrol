@@ -15,7 +15,7 @@ import javax.ejb.EJB;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Locale;
+import org.apache.wicket.Component;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
@@ -29,7 +29,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vetcontrol.information.util.web.BookTypeWebInfoUtil;
+import org.vetcontrol.information.web.util.BookWebInfoContainer;
 import org.vetcontrol.book.ShowBooksMode;
 import org.vetcontrol.information.web.component.BookPropertyColumn;
 import org.vetcontrol.information.web.component.list.IBookDataProvider;
@@ -153,7 +153,7 @@ public class BookPage extends ListTemplatePage {
 
     private UIPreferences preferences;
 
-    private String bookTypeName;
+    private Class bookClass;
 
     private IModel<ShowBooksMode> showBooksModeModel;
 
@@ -161,67 +161,68 @@ public class BookPage extends ListTemplatePage {
         init(params.getString(BOOK_TYPE));
     }
 
-    public void init(String bookTypeName) {
-        try {
-            this.bookTypeName = bookTypeName;
-            Class bookType = getBookType();
-            preferences = getPreferences();
+    public void init(String bookClassName) {
+        bookClass = getBookClass(bookClassName);
+        preferences = getPreferences();
 
-            ShowBooksMode showBooksModeFromPreferences = preferences.getPreference(PreferenceType.SHOW_BOOKS_MODE,
-                    bookType.getSimpleName() + SHOW_BOOKS_MODE_KEY_SUFFIX, ShowBooksMode.class);
-            showBooksModeModel = new Model(showBooksModeFromPreferences != null ? showBooksModeFromPreferences : ShowBooksMode.ENABLED);
+        ShowBooksMode showBooksModeFromPreferences = preferences.getPreference(PreferenceType.SHOW_BOOKS_MODE,
+                bookClass.getSimpleName() + SHOW_BOOKS_MODE_KEY_SUFFIX, ShowBooksMode.class);
+        showBooksModeModel = new Model(showBooksModeFromPreferences != null ? showBooksModeFromPreferences : ShowBooksMode.ENABLED);
 
-            final DataProvider dataProvider = new DataProvider();
-            dataProvider.init(bookType, "id", true);
-            dataProvider.initSize();
+        final DataProvider dataProvider = new DataProvider();
+        dataProvider.init(bookClass, "id", true);
+        dataProvider.initSize();
 
-            final Locale systemLocale = getSystemLocale();
+        //title
+        add(new Label("title", new DisplayBookClassModel(bookClass)));
 
-            //title
-            add(new Label("title", new DisplayBookClassModel(bookType)));
+        Label bookName = new Label("bookName", new DisplayBookClassModel(bookClass));
 
-            Label bookName = new Label("bookName", new DisplayBookClassModel(bookType));
+        Panel showBooksModePanel = new ShowBooksModePanel("showBooksModePanel", showBooksModeModel);
 
-            Panel showBooksModePanel = new ShowBooksModePanel("showBooksModePanel", showBooksModeModel);
+        List<IColumn<? extends Serializable>> columns = new ArrayList<IColumn<? extends Serializable>>();
+        for (Property prop : BeanPropertyUtil.getProperties(bookClass)) {
+            columns.add(newColumn(this, new DisplayPropertyLocalizableModel(prop, this), prop));
+        }
+        columns.add(new ModifyColumn(bookClass, dataProvider) {
 
-            List<IColumn<Serializable>> columns = new ArrayList<IColumn<Serializable>>();
-            for (Property prop : BeanPropertyUtil.getProperties(bookType)) {
-                columns.add(new BookPropertyColumn<Serializable>(this, new DisplayPropertyLocalizableModel(prop, this), prop, bookViewDAO, systemLocale));
+            @Override
+            protected void selected(Serializable bookEntry) {
+                goToEditPage(bookEntry);
             }
-            columns.add(new ModifyColumn(bookType, dataProvider) {
+        });
 
-                @Override
-                protected void selected(Serializable bean) {
-                    goToEditPage(bean);
-                }
-            });
+        final DataTable table = new DataTable("table", columns.toArray(new IColumn[columns.size()]), dataProvider, 1);
 
-            final DataTable table = new DataTable("table", columns.toArray(new IColumn[columns.size()]), dataProvider, 1);
+        table.addTopToolbar(new ArrowHeadersToolbar(table, dataProvider));
 
-            table.addTopToolbar(new ArrowHeadersToolbar(table, dataProvider));
+        final FilterForm filterForm = new FilterForm("filterForm", dataProvider);
 
-            final FilterForm filterForm = new FilterForm("filterForm", dataProvider);
+        table.addTopToolbar(new FilterToolbar(table, filterForm, dataProvider));
+        filterForm.add(bookName);
+        filterForm.add(table);
+        filterForm.add(showBooksModePanel);
+        add(new FeedbackPanel("messages"));
+        add(filterForm);
+        add(new PagingNavigator("navigator", table, "rowsPerPage", preferences, bookClass.getSimpleName() + PAGE_NUMBER_KEY_SUFFIX));
+    }
 
-            table.addTopToolbar(new FilterToolbar(table, filterForm, dataProvider));
-            filterForm.add(bookName);
-            filterForm.add(table);
-            filterForm.add(showBooksModePanel);
-            add(new FeedbackPanel("messages"));
-            add(filterForm);
-            add(new PagingNavigator("navigator", table, "rowsPerPage", preferences, bookType.getSimpleName() + PAGE_NUMBER_KEY_SUFFIX));
-        } catch (Exception e) {
+    protected IColumn<? extends Serializable> newColumn(Component resourceComponent, IModel<String> displayPropertyModel, Property property) {
+        return new BookPropertyColumn<Serializable>(resourceComponent, displayPropertyModel, property, bookViewDAO, getSystemLocale());
+    }
+
+    private void goToEditPage(Serializable bookEntry) {
+        getSession().setMetaData(SELECTED_BOOK_ENTRY, bookEntry);
+        setResponsePage(BookWebInfoContainer.getEditPage(bookEntry.getClass()));
+    }
+
+    private static Class getBookClass(String bookClassName) {
+        try {
+            return Thread.currentThread().getContextClassLoader().loadClass(bookClassName);
+        } catch (ClassNotFoundException e) {
+            log.error("Couldn't to load {} class.", bookClassName);
             throw new RuntimeException(e);
         }
-    }
-
-    private void goToEditPage(Serializable entry) {
-        getSession().setMetaData(SELECTED_BOOK_ENTRY, entry);
-        setResponsePage(BookTypeWebInfoUtil.getInfo(entry.getClass()).getEditPage());
-    }
-
-    private Class getBookType() throws ClassNotFoundException {
-        final Class bookClass = Thread.currentThread().getContextClassLoader().loadClass(bookTypeName);
-        return bookClass;
     }
 
     @Override
@@ -233,10 +234,11 @@ public class BookPage extends ListTemplatePage {
                 @Override
                 protected void onClick() {
                     try {
-                        final Serializable entry = (Serializable) getBookType().newInstance();
-                        goToEditPage(entry);
+                        Serializable newBookEntry = (Serializable) bookClass.newInstance();
+                        goToEditPage(newBookEntry);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.error("Couldn't to instantiate new instance of {} class.", bookClass);
+                        throw new RuntimeException(e);
                     }
                 }
             });

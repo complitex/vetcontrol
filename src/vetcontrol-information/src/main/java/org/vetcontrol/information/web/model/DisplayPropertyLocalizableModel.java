@@ -7,7 +7,7 @@ package org.vetcontrol.information.web.model;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.vetcontrol.book.Property;
-import org.vetcontrol.information.util.web.ResourceUtil;
+import org.vetcontrol.information.web.util.ResourceUtil;
 
 /**
  *
@@ -19,12 +19,12 @@ public class DisplayPropertyLocalizableModel extends AbstractReadOnlyModel<Strin
     private static final String SUFFIX = "prop";
     private Class<?> clazz;
     private String property;
-    private Component component;
+    private Component resourceComponent;
 
-    public DisplayPropertyLocalizableModel(Property property, Component component) {
+    public DisplayPropertyLocalizableModel(Property property, Component resourceComponent) {
         this.clazz = property.getSurroundingClass();
         this.property = property.getName();
-        this.component = component;
+        this.resourceComponent = resourceComponent;
     }
 
     @Override
@@ -48,6 +48,6 @@ public class DisplayPropertyLocalizableModel extends AbstractReadOnlyModel<Strin
     }
 
     private String attempt(String key) {
-        return ResourceUtil.getString(key, component);
+        return ResourceUtil.getString(key, resourceComponent);
     }
 }
