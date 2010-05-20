@@ -13,17 +13,19 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vetcontrol.book.ShowBooksMode;
 import org.vetcontrol.document.service.CommonDocumentBean;
 import org.vetcontrol.document.web.component.BookNamedChoiceRenderer;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.LogBean;
+import org.vetcontrol.web.component.book.DisableAwareDropDownChoice;
 import org.vetcontrol.web.template.FormTemplatePage;
 
 import javax.ejb.EJB;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import org.vetcontrol.book.ShowBooksMode;
-import org.vetcontrol.web.component.book.DisableAwareDropDownChoice;
+import java.util.Map;
 
 import static org.vetcontrol.entity.Log.EVENT.EDIT;
 import static org.vetcontrol.entity.Log.MODULE.DOCUMENT;
@@ -98,7 +100,7 @@ public abstract class DocumentEditPage extends FormTemplatePage {
     }
 
     protected void addSender(WebMarkupContainer container, String countryId, String countryProperty, String nameId,
-            String nameProperty, IModel model, boolean isNewDocument) {
+                             String nameProperty, IModel model, boolean isNewDocument) {
         //Отравитель Страна
         final DropDownChoice<CountryBook> ddcSenderCountry = addBookDropDownChoice(container, countryId,
                 CountryBook.class, model, countryProperty, isNewDocument);
@@ -130,7 +132,7 @@ public abstract class DocumentEditPage extends FormTemplatePage {
     }
 
     protected void addReceiver(WebMarkupContainer container, String nameId, String nameProperty,
-            String addressId, String addressProperty, IModel model) {
+                               String addressId, String addressProperty, IModel model) {
         //Настройки автокомплита
         AutoCompleteSettings settings = new AutoCompleteSettings();
         settings.setAdjustInputWidth(false);
@@ -182,8 +184,8 @@ public abstract class DocumentEditPage extends FormTemplatePage {
     }
 
     protected void addDepartmentAndPoint(WebMarkupContainer container, String ddcDepartmentId, String departmentProperty,
-            String labelDepartmentId, String ddcPointId, String pointProperty,
-            String labelPointId, IModel model, User currentUser, final boolean isExists) {
+                                         String labelDepartmentId, String ddcPointId, String pointProperty,
+                                         String labelPointId, IModel model, User currentUser, final boolean isExists) {
         final Department department = new PropertyModel<Department>(model, departmentProperty).getObject();
         final PassingBorderPoint point = new PropertyModel<PassingBorderPoint>(model, pointProperty).getObject();
 
@@ -220,16 +222,16 @@ public abstract class DocumentEditPage extends FormTemplatePage {
                     }
                 }, new IChoiceRenderer<PassingBorderPoint>() {
 
-            @Override
-            public Object getDisplayValue(PassingBorderPoint object) {
-                return object.getName();
-            }
+                    @Override
+                    public Object getDisplayValue(PassingBorderPoint object) {
+                        return object.getName();
+                    }
 
-            @Override
-            public String getIdValue(PassingBorderPoint object, int index) {
-                return object.getId().toString();
-            }
-        });
+                    @Override
+                    public String getIdValue(PassingBorderPoint object, int index) {
+                        return object.getId().toString();
+                    }
+                });
         ddcPassingBorderPoint.setOutputMarkupId(true);
         ddcPassingBorderPoint.setVisible(hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) && !isExists);
         container.add(ddcPassingBorderPoint);
@@ -245,5 +247,26 @@ public abstract class DocumentEditPage extends FormTemplatePage {
         Label passingBorderPointLabel = new Label(labelPointId, point != null ? point.getName() : "");
         passingBorderPointLabel.setVisible(!hasAnyRole(DOCUMENT_DEP_CHILD_EDIT) || isExists);
         container.add(passingBorderPointLabel);
+    }
+
+    protected String getCargoListWeight(List<Cargo> cargos){
+        Map<UnitType, Double> weightMap = new HashMap<UnitType, Double>();
+
+        for (Cargo c : cargos){
+            if (c.getUnitType() != null && c.getCount() != null){
+                Double sum = weightMap.get(c.getUnitType());
+                Double count = c.getCount();
+
+                weightMap.put(c.getUnitType(), sum != null ? sum + count : count);
+            }
+        }
+
+        String weightString = "";
+
+        for (UnitType ut : weightMap.keySet()){
+            weightString +=  weightMap.get(ut) + ut.getDisplayShortName(getLocale(), getSystemLocale()) + " ";
+        }
+
+        return weightString;
     }
 }

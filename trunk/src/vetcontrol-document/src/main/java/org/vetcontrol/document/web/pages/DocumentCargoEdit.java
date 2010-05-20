@@ -21,7 +21,9 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vetcontrol.book.ShowBooksMode;
 import org.vetcontrol.document.service.AvailableMovementTypes;
+import org.vetcontrol.document.service.CommonDocumentBean;
 import org.vetcontrol.document.service.DocumentCargoBean;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.ClientBean;
@@ -34,8 +36,6 @@ import org.vetcontrol.web.component.list.AjaxRemovableListView;
 
 import javax.ejb.EJB;
 import java.util.*;
-import org.vetcontrol.book.ShowBooksMode;
-import org.vetcontrol.document.service.CommonDocumentBean;
 
 import static org.vetcontrol.entity.Log.EVENT.CREATE;
 import static org.vetcontrol.entity.Log.EVENT.EDIT;
@@ -334,6 +334,23 @@ public class DocumentCargoEdit extends DocumentEditPage {
         cargoModeContainer.setOutputMarkupId(true);
         form.add(cargoModeContainer);
 
+        //Информация о ошибках типов груза
+        FeedbackPanel cargoModeFeedbackPanel = new FeedbackPanel("document.cargo.cargo_mode.feedback",
+                new IFeedbackMessageFilter() {
+
+                    @Override
+                    public boolean accept(FeedbackMessage message) {
+                        return cargoModeContainer.equals(message.getReporter());
+                    }
+                });
+        cargoModeFeedbackPanel.setOutputMarkupId(true);
+        cargoModeContainer.add(cargoModeFeedbackPanel);
+
+        //Блок общего веса и количества мест партии груза
+        final WebMarkupContainer cargoListInfoContainer = new WebMarkupContainer("document.cargo.cargo_list_info_container");
+        cargoListInfoContainer.setOutputMarkupId(true);
+        form.add(cargoListInfoContainer);
+
         //Добавить транспортное средство
         final AjaxSubmitLink addVehicleLink = new AjaxSubmitLink("document.cargo.vehicle.add", form) {
 
@@ -436,18 +453,6 @@ public class DocumentCargoEdit extends DocumentEditPage {
         cargoModeValue.setVisible(cm != null);
         cargoModeContainer.add(cargoModeValue);
 
-        //Информация о ошибках типов груза
-        FeedbackPanel cargoModeFeedbackPanel = new FeedbackPanel("document.cargo.cargo_mode.feedback",
-                new IFeedbackMessageFilter() {
-
-                    @Override
-                    public boolean accept(FeedbackMessage message) {
-                        return cargoModeContainer.equals(message.getReporter());
-                    }
-                });
-        cargoModeFeedbackPanel.setOutputMarkupId(true);
-        cargoModeContainer.add(cargoModeFeedbackPanel);
-
         //Список видов груза
         final Label cargoModeSelectLabel = new Label("document.cargo.select_cargo_mode.label", getString("document.cargo.select_cargo_mode"));
         cargoModeSelectLabel.setVisible(false);
@@ -544,6 +549,26 @@ public class DocumentCargoEdit extends DocumentEditPage {
         cargoModeRadioGroup.add(cargoModeListView);
         cargoModeContainer.add(cargoModeRadioGroup);
 
+        //общий вес груза
+        Label cargoListWeight = new Label("document.cargo.cargo_list.weight", new LoadableDetachableModel<String>(){
+            @Override
+            protected String load() {
+                
+                return getCargoListWeight(documentCargoModel.getObject().getCargos());
+            }
+        });
+        cargoListInfoContainer.add(cargoListWeight);
+
+        //количества мест партии груза
+        final Label cargoListCount = new Label("document.cargo.cargo_list.count", new LoadableDetachableModel<String>(){
+            @Override
+            protected String load() {
+                return String.valueOf(documentCargoModel.getObject().getCargos().size());
+            }
+        });
+        cargoListInfoContainer.add(cargoListCount);
+
+        //Слушатель изменений элемента ввода типа груза
         final UKTZEDField.IUKTZEDFieldListener listener = new UKTZEDField.IUKTZEDFieldListener() {
 
             @Override
@@ -600,6 +625,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
                 target.addComponent(cargoContainer);
                 target.addComponent(vehicleContainer);
+                target.addComponent(cargoListInfoContainer);
 
                 String setFocusOnNewCargo = "newCargoFirstInputId = $('#cargos tbody tr:last input[type=\"text\"]:first').attr('id');"
                         + "Wicket.Focus.setFocusOnId(newCargoFirstInputId);";
@@ -615,7 +641,8 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
             @Override
             protected void populateItem(final ListItem<Cargo> item) {
-                addCargo(item, new PropertyModel<CargoMode>(documentCargoModel, "cargoMode"), listener, cargoModeContainer, isExists);
+                addCargo(item, new PropertyModel<CargoMode>(documentCargoModel, "cargoMode"), listener,
+                        cargoModeContainer, cargoListInfoContainer, isExists);
 
                 //Копировать
                 final AjaxSubmitLink copyCargoLink = new AjaxSubmitLink("document.cargo.copy", form) {
@@ -660,6 +687,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
                         cargo.setDocumentCargo(dc);
                         dc.getCargos().add(cargo);
                         target.addComponent(cargoContainer);
+                        target.addComponent(cargoListInfoContainer);
 
 
                         String setFocusOnNewCargo = "newCargoFirstInputId = $('.table_input tbody tr:last input[type=\"text\"]:first').attr('id');"
@@ -688,7 +716,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
                 arrestLink.setVisible(item.getModelObject().getId() != null);
                 item.add(arrestLink);
 
-                addRemoveSubmitLink("document.cargo.delete", form, item, addCargoLink, cargoContainer);
+                addRemoveSubmitLink("document.cargo.delete", form, item, addCargoLink, cargoContainer, cargoListInfoContainer);
             }
         };
         cargoContainer.add(cargoListView);
@@ -735,12 +763,20 @@ public class DocumentCargoEdit extends DocumentEditPage {
     }
 
     private void addCargo(ListItem<Cargo> item, IModel<CargoMode> cargoModeModel, UKTZEDField.IUKTZEDFieldListener listener,
-            Component update, boolean isExists) {
+            final Component cargoModeContainer, final Component cargoListInfoContainer, boolean isExists) {
+
         //Единицы измерения        
         UnitTypeModel unitTypeModel = new UnitTypeModel(item.getModelObject(), !isExists);
 
         DropDownChoice<UnitType> ddcUnitTypes = addBookDropDownChoice(item, "document.cargo.unit_type",
                 item.getModel(), "unitType", unitTypeModel, false, true);
+        ddcUnitTypes.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                target.addComponent(cargoListInfoContainer);
+            }
+        });
 
         //УКТЗЕД и Тип груза
         UKTZEDField uktzedField;
@@ -749,7 +785,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
             uktzedField = new UKTZEDField("document.cargo.cargo_type",
                     new PropertyModel<CargoType>(item.getModel(), "cargoType"),
                     cargoModeModel,
-                    ddcUnitTypes, update);
+                    ddcUnitTypes, cargoModeContainer);
             uktzedField.setListener(listener);
         } else {
             uktzedField = new UKTZEDField("document.cargo.cargo_type",
@@ -762,6 +798,13 @@ public class DocumentCargoEdit extends DocumentEditPage {
         //Количество
         TextField<Double> count = new TextField<Double>("document.cargo.count",
                 new PropertyModel<Double>(item.getModel(), "count"));
+        count.add( new AjaxFormComponentUpdatingBehavior("onchange") {
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                target.addComponent(cargoListInfoContainer);
+            }
+        });
         item.add(count);
 
         //Транспортное средство
