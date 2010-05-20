@@ -111,6 +111,7 @@ public abstract class Localizable implements IBook, ILongId, IUpdated, IDisabled
         if (disabled != that.disabled) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (namesMap != null ? !namesMap.equals(that.namesMap) : that.namesMap != null) return false;
         if (updated != null ? !updated.equals(that.updated) : that.updated != null) return false;
 
         return true;
@@ -120,6 +121,7 @@ public abstract class Localizable implements IBook, ILongId, IUpdated, IDisabled
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (namesMap != null ? namesMap.hashCode() : 0);
         result = 31 * result + (updated != null ? updated.hashCode() : 0);
         result = 31 * result + (disabled ? 1 : 0);
         return result;

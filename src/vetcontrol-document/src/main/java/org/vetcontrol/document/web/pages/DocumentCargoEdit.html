@@ -120,6 +120,7 @@
         <fieldset style="margin-bottom:10px">
             <legend>Грузы</legend>
             <div wicket:id="document.cargo.cargo_mode_container">
+                <span wicket:id="document.cargo.cargo_mode.feedback"></span>
                 
                 <table  border="0" cellspacing="0" cellpadding="0" class="tbForm">
                     <tr>
@@ -144,9 +145,19 @@
                         </td>
                     </tr>
                 </table>
-                <div>
-                    <span wicket:id="document.cargo.cargo_mode.feedback"></span>
-                </div>
+            </div>
+
+            <div wicket:id="document.cargo.cargo_list_info_container">
+                <table  border="0" cellspacing="0" cellpadding="0" class="tbForm">
+                    <tr>
+                        <th><wicket:message key="document.cargo.cargo_list.weight"/>:</th>
+                        <td><span wicket:id="document.cargo.cargo_list.weight"></span></td>
+                    </tr>
+                    <tr>
+                        <th><wicket:message key="document.cargo.cargo_list.count"/>:</th>
+                        <td><span wicket:id="document.cargo.cargo_list.count"></span></td>
+                    </tr>
+                </table>
             </div>
 
             <div wicket:id="document.cargo.cargo_container"> 
