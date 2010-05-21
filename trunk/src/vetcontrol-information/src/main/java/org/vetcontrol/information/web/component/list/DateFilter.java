@@ -8,9 +8,9 @@ import java.util.Date;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.AbstractFilter;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterForm;
 import org.apache.wicket.model.IModel;
-import org.odlabs.wiquery.ui.datepicker.DatePicker;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 import org.vetcontrol.book.Property;
+import org.vetcontrol.web.component.DatePicker;
 
 /**
  *

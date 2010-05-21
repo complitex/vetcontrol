@@ -34,6 +34,7 @@ public class UnitType extends Localizable {
     public void setNames(List<StringCulture> names) {
         this.names = names;
     }
+
     private Long shortName;
 
     @Column(name = "short_name")
@@ -44,11 +45,12 @@ public class UnitType extends Localizable {
     public void setShortName(Long shortName) {
         this.shortName = shortName;
     }
+
     private List<StringCulture> shortNames = new ArrayList<StringCulture>();
 
     @Transient
     @MappedProperty("shortName")
-    @Column(length = 10, nullable = true)
+    @Column(length = 10, nullable = false)
     @XmlTransient
     public List<StringCulture> getShortNames() {
         return shortNames;
@@ -64,8 +66,10 @@ public class UnitType extends Localizable {
     @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name = "locale", insertable = false, updatable = false)
     @CollectionTable(name = "stringculture",
-            joinColumns = @JoinColumn(name = "id", referencedColumnName = "short_name", insertable = false, updatable = false),
-            uniqueConstraints = @UniqueConstraint(columnNames = {"id", "locale"}))
+    joinColumns =
+    @JoinColumn(name = "id", referencedColumnName = "short_name", insertable = false, updatable = false),
+    uniqueConstraints =
+    @UniqueConstraint(columnNames = {"id", "locale"}))
     @Column(name = "value", insertable = false, updatable = false)
     @XmlTransient
     public Map<String, String> getShortNamesMap() {
@@ -88,17 +92,30 @@ public class UnitType extends Localizable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof UnitType)) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof UnitType)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         UnitType unitType = (UnitType) o;
 
-        if (names != null ? !names.equals(unitType.names) : unitType.names != null) return false;
-        if (shortName != null ? !shortName.equals(unitType.shortName) : unitType.shortName != null) return false;
-        if (shortNames != null ? !shortNames.equals(unitType.shortNames) : unitType.shortNames != null) return false;
-        if (shortNamesMap != null ? !shortNamesMap.equals(unitType.shortNamesMap) : unitType.shortNamesMap != null)
+        if (names != null ? !names.equals(unitType.names) : unitType.names != null) {
             return false;
+        }
+        if (shortName != null ? !shortName.equals(unitType.shortName) : unitType.shortName != null) {
+            return false;
+        }
+        if (shortNames != null ? !shortNames.equals(unitType.shortNames) : unitType.shortNames != null) {
+            return false;
+        }
+        if (shortNamesMap != null ? !shortNamesMap.equals(unitType.shortNamesMap) : unitType.shortNamesMap != null) {
+            return false;
+        }
 
         return true;
     }

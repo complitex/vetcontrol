@@ -159,7 +159,7 @@ public class BookViewDAO implements IBookViewDAO {
             query.addOrder(order);
         }
 
-        final List<Property> properties = getProperties(bookType);
+        final Collection<Property> properties = getProperties(bookType);
 
         Example exampleBook = Example.create(example).
                 ignoreCase().
