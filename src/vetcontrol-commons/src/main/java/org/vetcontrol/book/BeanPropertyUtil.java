@@ -24,6 +24,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.text.DateFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.persistence.Table;
 import org.apache.wicket.util.string.interpolator.VariableInterpolator;
 import org.vetcontrol.util.DateUtil;
@@ -48,148 +49,196 @@ public class BeanPropertyUtil {
                 String.class, Date.class
             });
 
-    public static List<Property> getProperties(Class<?> beanClass) {
-        try {
-            BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
-            PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
-            List<Property> filtered = new ArrayList<Property>();
-            List<String> excludes = new ArrayList<String>();
-            for (PropertyDescriptor prop : props) {
+    private static class EntityMetadata {
 
-                boolean validProperty = true;
+        String tableName;
 
-                if (prop.getName().equals("class")) {
-                    validProperty = false;
-                }
+        /**
+         * Property name to property map.
+         */
+        LinkedHashMap<String, Property> propertyNamesMap;
+    }
 
-                Property property = new Property();
-                property.setName(prop.getDisplayName());
-                property.setType(prop.getPropertyType());
-                property.setSurroundingClass(beanClass);
+    private static final ConcurrentHashMap<Class, EntityMetadata> metadataCache = new ConcurrentHashMap<Class, EntityMetadata>();
 
-                if (prop.getReadMethod() != null
-                        && Modifier.isPublic(prop.getReadMethod().getModifiers())
-                        && !Modifier.isAbstract(prop.getReadMethod().getModifiers())) {
-
-                    property.setReadable(true);
-
-                    if (prop.getWriteMethod() == null
-                            || !Modifier.isPublic(prop.getWriteMethod().getModifiers())
-                            || Modifier.isAbstract(prop.getWriteMethod().getModifiers())) {
-
-                        property.setWritable(false);
-                        validProperty = false;
-                    } else {
-                        property.setWritable(true);
-                        for (Annotation annotation : prop.getReadMethod().getAnnotations()) {
-                            if (annotation.annotationType().equals(ValidProperty.class)) {
-                                validProperty = ((ValidProperty) annotation).value();
-                            }
-
-                            if (annotation.annotationType().equals(Id.class)) {
-                                validProperty = false;
-                            }
-
-                            if (annotation.annotationType().equals(Column.class)) {
-                                Column column = (Column) annotation;
-                                property.setNullable(column.nullable());
-                                property.setLength(column.length());
-                                property.setColumnName(column.name());
-                            }
-
-                            if (annotation.annotationType().equals(MappedProperty.class)) {
-                                property.setLocalizable(true);
-                                String excludeProp = ((MappedProperty) annotation).value();
-                                property.setLocalizationForeignKeyProperty(excludeProp);
-                                excludes.add(excludeProp);
-                            }
-
-                            if (annotation.annotationType().equals(BookReference.class)) {
-                                property.setBookReference(true);
-                                BookReference bookReference = (BookReference) annotation;
-                                String referencedField = bookReference.referencedProperty();
-                                property.setReferencedField(referencedField);
-
-                                UIType uIType = bookReference.uiType();
-                                property.setUiType(uIType);
-
-                                String pattern = bookReference.pattern();
-                                property.setBookReferencePattern(pattern);
-                            }
-
-                            if (annotation.annotationType().equals(JoinColumn.class)) {
-                                JoinColumn joinColumn = (JoinColumn) annotation;
-                                property.setNullable(joinColumn.nullable());
-                                property.setColumnName(joinColumn.name());
-                            }
-
-                            if (annotation.annotationType().equals(ViewLength.class)) {
-                                ViewLength viewLength = (ViewLength) annotation;
-                                property.setViewLength(viewLength.value());
-                            }
-                        }
-                    }
-                } else {
-                    property.setReadable(false);
-                    validProperty = false;
-                }
-
-                if (validProperty) {
-                    filtered.add(property);
-                }
-            }
-
-            for (Property prop : filtered) {
-                for (Property p : filtered) {
-                    if (p.getName().equals(prop.getLocalizationForeignKeyProperty())) {
-                        prop.setColumnName(p.getColumnName());
-                        break;
-                    }
-                }
-            }
-
-            List<Property> result = new ArrayList<Property>();
-
-            for (Property prop : filtered) {
-                boolean isInclude = true;
-                for (String ex : excludes) {
-                    if (prop.getName().equals(ex)) {
-                        isInclude = false;
-                        break;
-                    }
-                }
-                if (isInclude) {
-                    result.add(prop);
-                }
-            }
-
-            Collections.sort(result, new Comparator<Property>() {
-
-                @Override
-                public int compare(Property o1, Property o2) {
-                    if (o1.isLocalizable()) {
-                        if (o2.isLocalizable()) {
-                            return 0;
-                        } else {
-                            return 1;
-                        }
-                    } else {
-                        return -1;
-                    }
-                }
-            });
-
-            return result;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    private static void initMetadata(EntityMetadata metadata) {
+        if (metadata.propertyNamesMap == null) {
+            metadata.propertyNamesMap = newPropertyMap();
         }
     }
 
-    public static void addLocalization(Object bookEntry, List<Locale> supportedLocales) {
+    private static EntityMetadata newEntityMetadata() {
+        return new EntityMetadata();
+    }
+
+    private static LinkedHashMap<String, Property> newPropertyMap() {
+        return new LinkedHashMap<String, Property>();
+    }
+
+    public static Collection<Property> getProperties(Class<?> entityClass) {
+        //check cache for the presence of metadata:
+        EntityMetadata metadata = metadataCache.get(entityClass);
+        if (metadata != null) {
+            return metadata.propertyNamesMap.values();
+        } else {
+            //create and initialize new metadata:
+            metadata = newEntityMetadata();
+            initMetadata(metadata);
+
+            metadata.tableName = getTableName(entityClass);
+
+            try {
+                BeanInfo beanInfo = Introspector.getBeanInfo(entityClass);
+                PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
+                List<Property> filtered = new ArrayList<Property>();
+                List<String> excludes = new ArrayList<String>();
+                for (PropertyDescriptor prop : props) {
+
+                    boolean validProperty = true;
+
+                    if (prop.getName().equals("class")) {
+                        validProperty = false;
+                    }
+
+                    Property property = new Property();
+                    property.setName(prop.getDisplayName());
+                    property.setType(prop.getPropertyType());
+                    property.setSurroundingClass(entityClass);
+
+                    if (prop.getReadMethod() != null
+                            && Modifier.isPublic(prop.getReadMethod().getModifiers())
+                            && !Modifier.isAbstract(prop.getReadMethod().getModifiers())) {
+
+                        property.setReadable(true);
+
+                        if (prop.getWriteMethod() == null
+                                || !Modifier.isPublic(prop.getWriteMethod().getModifiers())
+                                || Modifier.isAbstract(prop.getWriteMethod().getModifiers())) {
+
+                            property.setWritable(false);
+                            validProperty = false;
+                        } else {
+                            property.setWritable(true);
+                            for (Annotation annotation : prop.getReadMethod().getAnnotations()) {
+                                if (annotation.annotationType().equals(ValidProperty.class)) {
+                                    validProperty = ((ValidProperty) annotation).value();
+                                }
+
+                                if (annotation.annotationType().equals(Id.class)) {
+                                    validProperty = false;
+                                }
+
+                                if (annotation.annotationType().equals(Column.class)) {
+                                    Column column = (Column) annotation;
+                                    property.setNullable(column.nullable());
+                                    property.setLength(column.length());
+                                    property.setColumnName(column.name());
+                                }
+
+                                if (annotation.annotationType().equals(MappedProperty.class)) {
+                                    property.setLocalizable(true);
+                                    String excludeProp = ((MappedProperty) annotation).value();
+                                    property.setLocalizationForeignKeyProperty(excludeProp);
+                                    excludes.add(excludeProp);
+                                }
+
+                                if (annotation.annotationType().equals(BookReference.class)) {
+                                    property.setBookReference(true);
+                                    BookReference bookReference = (BookReference) annotation;
+                                    String referencedField = bookReference.referencedProperty();
+                                    property.setReferencedField(referencedField);
+
+                                    UIType uIType = bookReference.uiType();
+                                    property.setUiType(uIType);
+
+                                    String pattern = bookReference.pattern();
+                                    property.setBookReferencePattern(pattern);
+                                }
+
+                                if (annotation.annotationType().equals(JoinColumn.class)) {
+                                    JoinColumn joinColumn = (JoinColumn) annotation;
+                                    property.setNullable(joinColumn.nullable());
+                                    property.setColumnName(joinColumn.name());
+                                }
+
+                                if (annotation.annotationType().equals(ViewLength.class)) {
+                                    ViewLength viewLength = (ViewLength) annotation;
+                                    property.setViewLength(viewLength.value());
+                                }
+                            }
+                        }
+                    } else {
+                        property.setReadable(false);
+                        validProperty = false;
+                    }
+
+                    if (validProperty) {
+                        filtered.add(property);
+                    }
+                }
+
+                for (Property prop : filtered) {
+                    for (Property p : filtered) {
+                        if (p.getName().equals(prop.getLocalizationForeignKeyProperty())) {
+                            prop.setColumnName(p.getColumnName());
+                            break;
+                        }
+                    }
+                }
+
+                List<Property> result = new ArrayList<Property>();
+
+                for (Property prop : filtered) {
+                    boolean isInclude = true;
+                    for (String ex : excludes) {
+                        if (prop.getName().equals(ex)) {
+                            isInclude = false;
+                            break;
+                        }
+                    }
+                    if (isInclude) {
+                        result.add(prop);
+                    }
+                }
+
+                Collections.sort(result, new Comparator<Property>() {
+
+                    @Override
+                    public int compare(Property o1, Property o2) {
+                        if (o1.isLocalizable()) {
+                            if (o2.isLocalizable()) {
+                                return 0;
+                            } else {
+                                return 1;
+                            }
+                        } else {
+                            return -1;
+                        }
+                    }
+                });
+
+                LinkedHashMap<String, Property> propertyMap = metadata.propertyNamesMap;
+                for (Property prop : result) {
+                    propertyMap.put(prop.getName(), prop);
+                }
+
+                //check whether cache already contains bean class key. This could occur in other thread while current thread was in processing.
+                if (!metadataCache.containsKey(entityClass)) {
+                    metadataCache.put(entityClass, metadata);
+                }
+
+                return result;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public static void addLocalization(Object book, List<Locale> supportedLocales) {
         try {
-            for (Property prop : getProperties(bookEntry.getClass())) {
+            for (Property prop : getProperties(book.getClass())) {
                 if (prop.isLocalizable()) {
-                    List<StringCulture> strings = (List<StringCulture>) getPropertyValue(bookEntry, prop.getName());
+                    List<StringCulture> strings = (List<StringCulture>) getPropertyValue(book, prop.getName());
 
                     List<StringCulture> toAdd = new ArrayList<StringCulture>();
                     if (strings.size() < supportedLocales.size()) {
@@ -223,7 +272,7 @@ public class BeanPropertyUtil {
                             return o1.getId().getLocale().compareToIgnoreCase(o2.getId().getLocale());
                         }
                     });
-                    setPropertyValue(bookEntry, prop.getName(), strings);
+                    setPropertyValue(book, prop.getName(), strings);
                 }
             }
         } catch (Exception e) {
@@ -261,11 +310,10 @@ public class BeanPropertyUtil {
                     return prop.getReadMethod().invoke(target);
                 }
             }
-            throw new RuntimeException("Property '" + propertyName + "' was not found in type " + target.getClass());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
+        throw new RuntimeException("Property '" + propertyName + "' was not found in type " + target.getClass());
     }
 
     public static String getPropertyAsString(Object propertyValue, Property property, Locale systemLocale) {
@@ -285,7 +333,6 @@ public class BeanPropertyUtil {
                 try {
                     value = getPropertyValue(referencedBook, referencedField);
                 } catch (Exception e) {
-                    //TODO: remove it after testing.
                     throw new RuntimeException(e);
                 }
                 return getPropertyAsString(value, getPropertyByName(referencedBook.getClass(), referencedField), systemLocale);
@@ -349,8 +396,8 @@ public class BeanPropertyUtil {
         return asString;
     }
 
-    public static Property getPropertyByName(Class beanClass, String propertyName) {
-        for (Property prop : getProperties(beanClass)) {
+    public static Property getPropertyByName(Class entityClass, String propertyName) {
+        for (Property prop : getProperties(entityClass)) {
             if (prop.getName().equals(propertyName)) {
                 return prop;
             }
@@ -504,17 +551,23 @@ public class BeanPropertyUtil {
         return "disabled";
     }
 
-    public static String getTableName(Class<?> entity) {
-        Table tableAnnotation = entity.getAnnotation(Table.class);
-        if (tableAnnotation == null) {
-            throw new IllegalArgumentException("Entity definition must specify table name.");
+    public static String getTableName(Class<?> entityClass) {
+        //check cache for metadata:
+        EntityMetadata metadata = metadataCache.get(entityClass);
+        if (metadata != null) {
+            return metadata.tableName;
+        } else {
+            Table tableAnnotation = entityClass.getAnnotation(Table.class);
+            if (tableAnnotation == null) {
+                throw new IllegalArgumentException("Entity definition must specify table name.");
+            }
+            return tableAnnotation.name();
         }
-        return tableAnnotation.name();
     }
 
     public static boolean isPrimitive(Class type) {
         boolean isPrimitive = false;
-        for (Class primitive : BeanPropertyUtil.PRIMITIVES) {
+        for (Class primitive : PRIMITIVES) {
             if (primitive.isAssignableFrom(type)) {
                 isPrimitive = true;
                 break;

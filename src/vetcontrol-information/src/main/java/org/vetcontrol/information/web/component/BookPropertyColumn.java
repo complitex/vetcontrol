@@ -96,8 +96,7 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
                 return new BookTextFilter(componentId,
                         new AutoCompleteBookReferenceModel(property, new PropertyModel(form.getDefaultModel(), getPropertyExpression())), form, property);
             } else {
-                //TODO: remove after tests.
-                throw new RuntimeException("Not real case.");
+                throw new UnsupportedOperationException("Not possible case.");
             }
         } else if (Date.class.isAssignableFrom(property.getType())) {
             DateFilter filter = new DateFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form, property);

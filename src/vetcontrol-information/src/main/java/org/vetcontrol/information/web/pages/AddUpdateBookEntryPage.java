@@ -104,7 +104,7 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
         //calculate initial hash code for book entry in order to increment version of the book entry if necessary later.
         final BookHash initial = BeanPropertyUtil.hash(bookEntry);
 
-        List<Property> filtered = BeanPropertyUtil.getProperties(bookEntry.getClass());
+        List<Property> filtered = new ArrayList(BeanPropertyUtil.getProperties(bookEntry.getClass()));
         ListView<Property> fields = new ListView<Property>("bookFields", filtered) {
 
             @Override

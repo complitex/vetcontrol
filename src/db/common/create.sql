@@ -279,7 +279,7 @@ DROP TABLE IF EXISTS `unit_type`;
 CREATE TABLE  `unit_type` (
     `id` bigint(20) NOT NULL auto_increment,
     `name` bigint(20) NOT NULL,
-    `short_name` bigint(20) NULL,
+    `short_name` bigint(20) NOT NULL,
     `updated` timestamp NOT NULL DEFAULT NOW(),
  /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
   `disabled` tinyint(1) NOT NULL default '0',
