@@ -61,7 +61,7 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
         Object propertyValue = PropertyResolver.getValue(getPropertyExpression(), rowModel.getObject());
 
         String asString = "";
-        if (property.getType().equals(boolean.class) || property.getType().equals(Boolean.class)) {
+        if (isBoolType(property.getType())) {
             asString = ResourceUtil.getString(String.valueOf(propertyValue), resourceComponent);
         } else if (property.isBookReference() && property.getUiType().equals(UIType.AUTO_COMPLETE)
                 && !Strings.isEmpty(property.getBookReferencePattern())) {
@@ -98,10 +98,10 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
             } else {
                 throw new UnsupportedOperationException("Not possible case.");
             }
-        } else if (Date.class.isAssignableFrom(property.getType())) {
+        } else if (isDateType(property.getType())) {
             DateFilter filter = new DateFilter(componentId, new PropertyModel(form.getDefaultModel(), getPropertyExpression()), form, property);
             return filter;
-        } else if (property.getType().equals(boolean.class) || property.getType().equals(Boolean.class)) {
+        } else if (isBoolType(property.getType())) {
             List choices = Arrays.asList(new Boolean[]{Boolean.TRUE, Boolean.FALSE});
             ChoiceRenderer<Boolean> booleanChoiceRenderer = new ChoiceRenderer<Boolean>() {
 

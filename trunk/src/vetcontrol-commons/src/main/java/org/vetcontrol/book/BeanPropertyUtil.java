@@ -37,17 +37,22 @@ import org.vetcontrol.book.annotation.ViewLength;
  */
 public class BeanPropertyUtil {
 
-    public static final List<Class> SIMPLE_TYPIES = Arrays.asList(new Class[]{
-                int.class, byte.class, short.class, long.class, double.class, float.class, boolean.class,
-                Integer.class, Byte.class, Short.class, Long.class, Double.class, Float.class, Boolean.class,
-                String.class, Date.class, List.class, Set.class, Map.class
-            });
+    public static final Class[] SIMPLE_TYPES = {
+        int.class, byte.class, short.class, long.class, double.class, float.class, boolean.class,
+        Integer.class, Byte.class, Short.class, Long.class, Double.class, Float.class, Boolean.class,
+        String.class, Date.class, List.class, Set.class, Map.class
+    };
 
-    public static final List<Class> PRIMITIVES = Arrays.asList(new Class[]{
-                int.class, byte.class, short.class, long.class, double.class, float.class, boolean.class,
-                Integer.class, Byte.class, Short.class, Long.class, Double.class, Float.class, Boolean.class,
-                String.class, Date.class
-            });
+    public static final Class[] PRIMITIVES = {
+        int.class, byte.class, short.class, long.class, double.class, float.class, boolean.class,
+        Integer.class, Byte.class, Short.class, Long.class, Double.class, Float.class, Boolean.class,
+        String.class, Date.class
+    };
+
+    public static final Class[] NUMBER_TYPES = {
+        int.class, byte.class, short.class, long.class, double.class, float.class,
+        Integer.class, Byte.class, Short.class, Long.class, Double.class, Float.class
+    };
 
     private static class EntityMetadata {
 
@@ -318,7 +323,7 @@ public class BeanPropertyUtil {
 
     public static String getPropertyAsString(Object propertyValue, Property property, Locale systemLocale) {
         if (propertyValue != null) {
-            if (Date.class.isAssignableFrom(property.getType())) {
+            if (isDateType(property.getType())) {
                 DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Session.get().getLocale());
                 return dateFormat.format((Date) propertyValue);
             } else if (property.isLocalizable()) {
@@ -574,6 +579,25 @@ public class BeanPropertyUtil {
             }
         }
         return isPrimitive;
+    }
+
+    public static boolean isNumberType(Class type){
+        boolean isNumberType = false;
+        for (Class numberType : NUMBER_TYPES) {
+            if (numberType.isAssignableFrom(type)) {
+                isNumberType = true;
+                break;
+            }
+        }
+        return isNumberType;
+    }
+
+    public static final boolean isBoolType(Class type){
+        return type.equals(boolean.class) || type.equals(Boolean.class);
+    }
+
+    public static final boolean isDateType(Class type){
+        return Date.class.isAssignableFrom(type);
     }
 
     public static Long getId(Object book) {

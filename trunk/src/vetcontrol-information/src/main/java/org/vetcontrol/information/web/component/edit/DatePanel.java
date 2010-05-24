@@ -20,7 +20,7 @@ public final class DatePanel extends Panel {
     public DatePanel(String id, IModel model, Property prop, boolean enabled) {
         super(id);
 
-        DatePicker<Date> dateField = new DatePicker<Date>("dateField", model);
+        DatePicker<Date> dateField = new DatePicker<Date>("dateField", model, Date.class);
         dateField.setEnabled(enabled);
         dateField.setLabel(new DisplayPropertyLocalizableModel(prop, this));
         dateField.setRequired(!prop.isNullable());

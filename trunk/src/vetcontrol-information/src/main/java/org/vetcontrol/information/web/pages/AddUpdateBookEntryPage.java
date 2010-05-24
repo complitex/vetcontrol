@@ -123,10 +123,9 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
                 boolean isAutoComplete = false;
                 boolean isBoolean = false;
 
-                if (prop.getType().equals(String.class) || prop.getType().equals(int.class) || prop.getType().equals(Integer.class)
-                        || prop.getType().equals(long.class) || prop.getType().equals(Long.class)) {
+                if (prop.getType().equals(String.class) || BeanPropertyUtil.isNumberType(prop.getType())) {
                     isSimpleText = true;
-                } else if (Date.class.isAssignableFrom(prop.getType())) {
+                } else if (BeanPropertyUtil.isDateType(prop.getType())) {
                     isDate = true;
                 } else if (prop.isLocalizable()) {
                     isLocalizableText = true;
@@ -139,7 +138,7 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
                             isAutoComplete = true;
                             break;
                     }
-                } else if (prop.getType().equals(boolean.class) || prop.getType().equals(Boolean.class)) {
+                } else if (BeanPropertyUtil.isBoolType(prop.getType())) {
                     isBoolean = true;
                 }
 
