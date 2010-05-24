@@ -9,7 +9,6 @@ import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.validation.validator.StringValidator;
 import org.vetcontrol.information.web.util.Constants;
 import org.vetcontrol.book.Property;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
@@ -24,23 +23,27 @@ public final class TextPanel extends Panel {
         super(id);
 
         IModel labelModel = new DisplayPropertyLocalizableModel(prop, this);
+        Class propertyType = determinePropertyType(prop);
 
         TextField textField = new TextField("textField", model);
+        textField.setType(propertyType);
         textField.setEnabled(enabled);
         textField.setLabel(labelModel);
         textField.setRequired(!prop.isNullable());
 
         if (prop.getLength() > 0) {
             textField.add(new SimpleAttributeModifier("maxlength", String.valueOf(prop.getLength())));
+            textField.add(new MaximumLengthValidator(prop.getLength()));
         }
 
         TextArea textArea = new TextArea("textArea", model);
+        textArea.setType(propertyType);
         textArea.setEnabled(enabled);
         textArea.setLabel(labelModel);
         textArea.setRequired(!prop.isNullable());
 
         if (prop.getLength() > 0) {
-            textArea.add(StringValidator.maximumLength(prop.getLength()));
+            textArea.add(new MaximumLengthValidator(prop.getLength()));
         }
 
         if (prop.getLength() > 0) {
@@ -54,5 +57,13 @@ public final class TextPanel extends Panel {
         }
         add(textField);
         add(textArea);
+    }
+
+    protected Class determinePropertyType(Property prop) {
+        Class propertyType = prop.getType();
+        if (prop.isLocalizable()) {
+            propertyType = String.class;
+        }
+        return propertyType;
     }
 }
