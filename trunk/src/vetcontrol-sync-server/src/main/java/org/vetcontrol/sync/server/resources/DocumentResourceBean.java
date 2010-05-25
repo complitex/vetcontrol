@@ -7,6 +7,7 @@ import org.vetcontrol.hibernate.util.EntityPersisterUtil;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.sync.*;
+import org.vetcontrol.util.DateUtil;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -71,6 +72,11 @@ public class DocumentResourceBean {
                     }
                 }
 
+
+                //Client Last Sync
+                client.setLastSync(DateUtil.getCurrentDate());
+                EntityPersisterUtil.update(em, client);
+
                 EntityPersisterUtil.executeBatch(em);
 
                 logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, DocumentCargo.class,
@@ -121,6 +127,10 @@ public class DocumentResourceBean {
                     }
                 }
 
+                //Client Last Sync
+                client.setLastSync(DateUtil.getCurrentDate());
+                EntityPersisterUtil.update(em, client);
+
                 EntityPersisterUtil.executeBatch(em);
 
                 logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Cargo.class,
@@ -170,7 +180,11 @@ public class DocumentResourceBean {
                     }
                 }
 
-                EntityPersisterUtil.executeBatch(em);  
+                //Client Last Sync
+                client.setLastSync(DateUtil.getCurrentDate());
+                EntityPersisterUtil.update(em, client);
+
+                EntityPersisterUtil.executeBatch(em);
 
                 logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Vehicle.class,
                         rb.getString("info.sync.processed"), size,
@@ -212,7 +226,7 @@ public class DocumentResourceBean {
                     }
                     securityCheck(client, ArrestDocument.class, arrestDocument.getClient(), r);
 
-                    EntityPersisterUtil.insert(em, arrestDocument);                  
+                    EntityPersisterUtil.insert(em, arrestDocument);
 
                     if (index++ % DB_BATCH_SIZE == 0){
                         EntityPersisterUtil.executeBatch(em);
@@ -220,6 +234,11 @@ public class DocumentResourceBean {
                 }
 
                 EntityPersisterUtil.executeBatch(em);
+
+
+                //Client Last Sync
+                client.setLastSync(DateUtil.getCurrentDate());
+                EntityPersisterUtil.executeUpdate(em, client);
 
                 logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, ArrestDocument.class,
                         rb.getString("info.sync.processed"), size,

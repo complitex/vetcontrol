@@ -3,10 +3,12 @@ package org.vetcontrol.sync.server.resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.*;
+import org.vetcontrol.hibernate.util.EntityPersisterUtil;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.sync.Count;
 import org.vetcontrol.sync.SyncRequestEntity;
+import org.vetcontrol.util.DateUtil;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -299,6 +301,10 @@ public class BookResourceBean {
         List<T> list = query.getResultList();
 
         if (!list.isEmpty()) {
+            //Last Sync
+            client.setLastSync(DateUtil.getCurrentDate());
+            EntityPersisterUtil.executeUpdate(em, client);
+
             logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC_UPDATED, BookResourceBean.class, entity,
                     rb.getString("info.sync.processed"), list.size(), r.getRemoteHost(), client.getIp());
 
@@ -354,6 +360,10 @@ public class BookResourceBean {
         List<DeletedEmbeddedId> list = query.getResultList();
 
         if (!list.isEmpty()) {
+            //Last Sync
+            client.setLastSync(DateUtil.getCurrentDate());
+            EntityPersisterUtil.executeUpdate(em, client);
+
             logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC_DELETED, BookResourceBean.class, entity,
                     rb.getString("info.sync.processed"), list.size(), r.getRemoteHost(), client.getIp());
 

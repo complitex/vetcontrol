@@ -2,22 +2,22 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.vetcontrol.document.web.component;
+package org.vetcontrol.web.component.book;
 
-import java.util.Locale;
 import org.apache.wicket.Session;
 import org.vetcontrol.entity.Localizable;
-import org.vetcontrol.web.component.book.SimpleDisableAwareChoiceRenderer;
+
+import java.util.Locale;
 
 /**
  *
  * @author Artem
  */
-public class BookNamedChoiceRenderer<T extends Localizable> extends SimpleDisableAwareChoiceRenderer<T> {
+public class BookChoiceRenderer<T extends Localizable> extends SimpleDisableAwareChoiceRenderer<T> {
 
     private Locale systemLocale;
 
-    public BookNamedChoiceRenderer(Locale systemLocale) {
+    public BookChoiceRenderer(Locale systemLocale) {
         this.systemLocale = systemLocale;
     }
 

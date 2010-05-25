@@ -4,11 +4,11 @@
  */
 package org.vetcontrol.web.component.book;
 
-import org.vetcontrol.web.component.book.IDisableAwareChoiceRenderer;
-import java.util.List;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.IModel;
 import org.vetcontrol.entity.IDisabled;
+
+import java.util.List;
 
 /**
  *
@@ -18,7 +18,7 @@ public class DisableAwareDropDownChoice<T extends IDisabled> extends DropDownCho
 
     /**
      * @see org.apache.wicket.markup.html.form.AbstractChoice#AbstractChoice(String,
-     *      List,IChoiceRenderer)
+     *      List, org.apache.wicket.markup.html.form.IChoiceRenderer)
      */
     public DisableAwareDropDownChoice(final String id, final List<? extends T> data,
             final IDisableAwareChoiceRenderer<? super T> renderer) {
@@ -27,7 +27,7 @@ public class DisableAwareDropDownChoice<T extends IDisabled> extends DropDownCho
 
     /**
      * @see org.apache.wicket.markup.html.form.AbstractChoice#AbstractChoice(String, IModel, List,
-     *      IChoiceRenderer)
+     *      org.apache.wicket.markup.html.form.IChoiceRenderer)
      */
     public DisableAwareDropDownChoice(final String id, IModel<T> model, final List<? extends T> data,
             final IDisableAwareChoiceRenderer<? super T> renderer) {
@@ -36,7 +36,7 @@ public class DisableAwareDropDownChoice<T extends IDisabled> extends DropDownCho
 
     /**
      * @see org.apache.wicket.markup.html.form.AbstractChoice#AbstractChoice(String,
-     *      IModel,IChoiceRenderer)
+     *      IModel,org.apache.wicket.markup.html.form.IChoiceRenderer)
      */
     public DisableAwareDropDownChoice(String id, IModel<? extends List<? extends T>> choices,
             IDisableAwareChoiceRenderer<? super T> renderer) {
@@ -45,7 +45,7 @@ public class DisableAwareDropDownChoice<T extends IDisabled> extends DropDownCho
 
     /**
      * @see org.apache.wicket.markup.html.form.AbstractChoice#AbstractChoice(String, IModel,
-     *      IModel,IChoiceRenderer)
+     *      IModel, org.apache.wicket.markup.html.form.IChoiceRenderer)
      */
     public DisableAwareDropDownChoice(String id, IModel<T> model, IModel<? extends List<? extends T>> choices,
             IDisableAwareChoiceRenderer<? super T> renderer) {

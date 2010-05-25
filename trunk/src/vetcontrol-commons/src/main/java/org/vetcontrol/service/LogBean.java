@@ -142,7 +142,25 @@ public class LogBean {
     public Date getLastDate(MODULE module, EVENT event, STATUS status) {
         try {
             return entityManager.createQuery("select max(l.date) from Log l where l.module = :module "
-                    + "and l.event = :event and l.status = :status", Date.class).setParameter("module", module).setParameter("event", event).setParameter("status", status).getSingleResult();
+                    + "and l.event = :event and l.status = :status", Date.class)
+                    .setParameter("module", module)
+                    .setParameter("event", event)
+                    .setParameter("status", status)
+                    .getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public Date getLastDate(Client client, MODULE module, EVENT event, STATUS status) {
+        try {
+            return entityManager.createQuery("select max(l.date) from Log l where l.client = :client"
+                    + " and l.module = :module  and l.event = :event and l.status = :status", Date.class)
+                    .setParameter("client", client)
+                    .setParameter("module", module)
+                    .setParameter("event", event)
+                    .setParameter("status", status)
+                    .getSingleResult();
         } catch (Exception e) {
             return null;
         }

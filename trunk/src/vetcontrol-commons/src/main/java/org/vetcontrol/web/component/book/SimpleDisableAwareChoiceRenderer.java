@@ -13,7 +13,7 @@ import org.vetcontrol.entity.IDisabled;
 public abstract class SimpleDisableAwareChoiceRenderer<T> implements IDisableAwareChoiceRenderer<T> {
 
     @Override
-    public boolean isDisabled(Object object) {
+    public boolean isDisabled(T object) {
         if (object instanceof IDisabled) {
             return ((IDisabled) object).isDisabled();
         }

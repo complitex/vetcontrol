@@ -31,6 +31,7 @@ public class UserTemplateMenu extends ResourceTemplateMenu{
     @Override
     public List<ITemplateLink> getTemplateLinks(Locale locale) {
         List<ITemplateLink> links = new ArrayList<ITemplateLink>();
+
         links.add(new ITemplateLink(){
             @Override
             public String getLabel(Locale locale) {
@@ -50,9 +51,28 @@ public class UserTemplateMenu extends ResourceTemplateMenu{
             public String getTagId() {
                 return "UserList";
             }
-
         });
 
+        links.add(new ITemplateLink(){
+            @Override
+            public String getLabel(Locale locale) {
+                return getString(UserTemplateMenu.class, locale, "user.template.menu.client.list");
+            }
+            @Override
+            public Class<? extends Page> getPage() {
+                return ClientList.class;
+            }
+
+            @Override
+            public PageParameters getParameters() {
+                return PageParameters.NULL;
+            }
+
+            @Override
+            public String getTagId() {
+                return "ClientList";
+            }
+        });
 
         try {
             final Class logList = Class.forName("org.vetcontrol.logging.web.pages.LogList");

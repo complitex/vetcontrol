@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.book.ShowBooksMode;
 import org.vetcontrol.document.service.CommonDocumentBean;
-import org.vetcontrol.document.web.component.BookNamedChoiceRenderer;
+import org.vetcontrol.web.component.book.BookChoiceRenderer;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.web.component.book.DisableAwareDropDownChoice;
@@ -72,7 +72,7 @@ public abstract class DocumentEditPage extends FormTemplatePage {
             logBean.error(DOCUMENT, EDIT, this.getClass(), bookClass, "Ошибка загрузки данных из базы данных");
         }
 
-        DisableAwareDropDownChoice<T> ddc = new DisableAwareDropDownChoice<T>(id, model, list, new BookNamedChoiceRenderer<T>(getSystemLocale()));
+        DisableAwareDropDownChoice<T> ddc = new DisableAwareDropDownChoice<T>(id, model, list, new BookChoiceRenderer<T>(getSystemLocale()));
         ddc.setRequired(required);
         ddc.setOutputMarkupId(outputMarkupId);
         container.add(ddc);
@@ -90,7 +90,7 @@ public abstract class DocumentEditPage extends FormTemplatePage {
     protected <T extends Localizable> DropDownChoice<T> addBookDropDownChoice(
             WebMarkupContainer container, String id, IModel<T> model, IModel<List<T>> listModel,
             boolean required, boolean outputMarkupId) {
-        DisableAwareDropDownChoice<T> ddc = new DisableAwareDropDownChoice<T>(id, model, listModel, new BookNamedChoiceRenderer<T>(getSystemLocale()));
+        DisableAwareDropDownChoice<T> ddc = new DisableAwareDropDownChoice<T>(id, model, listModel, new BookChoiceRenderer<T>(getSystemLocale()));
 
         ddc.setRequired(required);
         ddc.setOutputMarkupId(outputMarkupId);
