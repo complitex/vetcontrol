@@ -48,6 +48,13 @@
         </dependency>
 
         <dependency>
+            <groupId>org.wiquery</groupId>
+            <artifactId>wiquery</artifactId>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../../lib/wiquery-1.0.jar</systemPath>
+        </dependency>
+
+        <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
             <scope>provided</scope>

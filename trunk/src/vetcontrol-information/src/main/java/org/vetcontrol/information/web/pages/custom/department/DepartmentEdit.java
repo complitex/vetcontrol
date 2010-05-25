@@ -19,7 +19,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -27,6 +26,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
 import org.slf4j.Logger;
@@ -43,13 +43,15 @@ import org.vetcontrol.information.web.component.BookChoiceRenderer;
 import org.vetcontrol.web.component.book.DisableAwareDropDownChoice;
 import org.vetcontrol.information.web.component.edit.LocalizableTextPanel;
 import org.vetcontrol.information.web.component.edit.SaveUpdateConfirmationDialog;
-import org.vetcontrol.information.web.model.DisplayBookClassModel;
 import org.vetcontrol.information.web.pages.BookPage;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import static org.vetcontrol.book.BeanPropertyUtil.*;
 import org.vetcontrol.book.BookHash;
 import org.vetcontrol.book.Property;
+import org.vetcontrol.information.web.component.edit.GoToListPagePanel;
+import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
+import org.vetcontrol.information.web.util.CommonResourceKeys;
 import org.vetcontrol.service.dao.IBookViewDAO;
 import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.component.toolbar.DisableItemButton;
@@ -103,8 +105,7 @@ public final class DepartmentEdit extends FormTemplatePage {
         final BookHash initial = hash(department);
 
         //title
-        add(new Label("title", new DisplayBookClassModel(Department.class)));
-        add(new Label("caption", new DisplayBookClassModel(Department.class)));
+        add(new Label("title", new ResourceModel("page.title")));
 
         //messages
         final FeedbackPanel messages = new FeedbackPanel("messages");
@@ -117,12 +118,16 @@ public final class DepartmentEdit extends FormTemplatePage {
         add(form);
 
         //department name
+        form.add(new Label("nameLabel", new DisplayPropertyLocalizableModel(getPropertyByName(Department.class, "names"), this)));
+
         form.add(new LocalizableTextPanel("name",
                 new PropertyModel(department, "names"),
                 getPropertyByName(Department.class, "names"),
                 systemLocale, CanEditUtil.canEdit(department)));
 
         //parent department
+        form.add(new Label("parentLabel", new DisplayPropertyLocalizableModel(getPropertyByName(Department.class, "parent"), this)));
+
         IModel<List<Department>> parentDepartmentsModel = new LoadableDetachableModel<List<Department>>() {
 
             @Override
@@ -163,6 +168,8 @@ public final class DepartmentEdit extends FormTemplatePage {
 
         //customs point
         final WebMarkupContainer customsPointMessageZone = new WebMarkupContainer("customsPointMessageZone");
+        customsPointMessageZone.add(new Label("customsPointLabel",
+                new DisplayPropertyLocalizableModel(getPropertyByName(Department.class, "customsPoint"), this)));
         final WebMarkupContainer customsPointSelectZone = new WebMarkupContainer("customsPointSelectZone");
 
         final WebMarkupContainer customsPointZone = new WebMarkupContainer("customsPointZone") {
@@ -321,27 +328,7 @@ public final class DepartmentEdit extends FormTemplatePage {
         };
         save.setVisible(CanEditUtil.canEdit(department));
         form.add(save);
-
-        Link cancel = new Link("cancel") {
-
-            @Override
-            public void onClick() {
-                goToListPage();
-            }
-        };
-        cancel.setVisible(CanEditUtil.canEdit(department));
-        form.add(cancel);
-
-        Link back = new Link("back") {
-
-            @Override
-            public void onClick() {
-                goToListPage();
-            }
-        };
-        back.setVisible(!CanEditUtil.canEdit(department));
-        form.add(back);
-
+        form.add(new GoToListPagePanel("goToListPagePanel", department));
         form.add(new Spacer("spacer"));
     }
 
@@ -352,7 +339,6 @@ public final class DepartmentEdit extends FormTemplatePage {
     private void saveOrUpdate(BookHash initial) {
         Log.EVENT event = isNewBook(department) ? Log.EVENT.CREATE : Log.EVENT.EDIT;
         Long oldId = department.getId();
-        String resourceKey = "log.save_update";
 
         //update version of book and its localizable strings if necessary.
         updateVersionIfNecessary(department, initial);
@@ -361,39 +347,38 @@ public final class DepartmentEdit extends FormTemplatePage {
         try {
             departmentDAO.saveOrUpdate(department, null);
             Long newId = department.getId();
-            String message = new StringResourceModel(resourceKey, this, null, new Object[]{newId}).getObject();
+            String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_UPDATE_KEY, this, null, new Object[]{newId}).getObject();
             logBean.info(Log.MODULE.INFORMATION, event, DepartmentEdit.class, Department.class, message);
         } catch (Exception e) {
             log.error("Ошибка сохранения справочника", e);
-            String message = new StringResourceModel(resourceKey, this, null, new Object[]{oldId}).getObject();
+            String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_UPDATE_KEY, this, null, new Object[]{oldId}).getObject();
             logBean.error(Log.MODULE.INFORMATION, event, DepartmentEdit.class, Department.class, message);
         }
     }
 
     private void saveAsNew() {
         Long oldId = department.getId();
-        String resourceKey = "log.save_as_new";
         try {
             departmentDAO.saveAsNew(department);
             Long newId = department.getId();
-            String message = new StringResourceModel(resourceKey, this, null, new Object[]{oldId, newId}).getObject();
+            String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_AS_NEW_KEY, this, null, new Object[]{oldId, newId}).getObject();
             logBean.info(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, DepartmentEdit.class, Department.class, message);
         } catch (Exception e) {
             log.error("Ошибка сохранения справочника", e);
-            String message = new StringResourceModel(resourceKey, this, null, new Object[]{oldId, null}).getObject();
+            String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_AS_NEW_KEY, this, null, new Object[]{oldId, null}).getObject();
             logBean.error(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, DepartmentEdit.class, Department.class, message);
         }
     }
 
     private void disableDepartment(Long departmentId) {
         departmentDAO.disable(departmentId);
-        String message = new StringResourceModel("log.enable_disable", this, null, new Object[]{departmentId}).getObject();
+        String message = new StringResourceModel(CommonResourceKeys.LOG_ENABLE_DISABLE_KEY, this, null, new Object[]{departmentId}).getObject();
         logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, DepartmentEdit.class, Department.class, message);
     }
 
     private void enableDepartment(Long departmentId) {
         departmentDAO.enable(departmentId);
-        String message = new StringResourceModel("log.enable_disable", this, null, new Object[]{departmentId}).getObject();
+        String message = new StringResourceModel(CommonResourceKeys.LOG_ENABLE_DISABLE_KEY, this, null, new Object[]{departmentId}).getObject();
         logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, DepartmentEdit.class, Department.class, message);
     }
 

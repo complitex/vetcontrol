@@ -26,7 +26,7 @@ public class BookMenu implements ITemplateMenu {
 
     @Override
     public String getTitle(Locale locale) {
-        return ResourceUtil.getString(ResourceUtil.BOOK_NAMES_BUNDLE, "book.menu.title", locale);
+        return ResourceUtil.getString(ResourceUtil.COMMON_RESOURCES_BUNDLE, "book.menu.title", locale, true);
     }
 
     @Override

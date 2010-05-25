@@ -41,6 +41,6 @@ public class DisplayBookClassModel extends AbstractReadOnlyModel<String> {
     }
 
     private String attempt(String key) {
-        return ResourceUtil.getString(ResourceUtil.BOOK_NAMES_BUNDLE, key, Session.get().getLocale());
+        return ResourceUtil.getString(ResourceUtil.COMMON_RESOURCES_BUNDLE, key, Session.get().getLocale(), false);
     }
 }

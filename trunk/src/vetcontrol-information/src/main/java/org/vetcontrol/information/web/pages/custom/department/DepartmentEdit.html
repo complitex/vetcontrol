@@ -8,14 +8,14 @@
     </head>
     <body>
         <wicket:extend>
-            <h2><span wicket:id="caption"></span></h2>
+            <h2><wicket:message key="page.caption"/></h2>
             <div wicket:id="messages"></div>
             <form wicket:id="form">
                 <table class="tbForm" cellpadding="0" cellspacing="0" border="0">
                     <tr>
-                        <td>
-                            <wicket:message key="parent"/>
-                        </td>
+                        <th>
+                            <span wicket:id="parentLabel"></span> :
+                        </th>
                         <td>
                             <select wicket:id="parent">
                                 <option></option>
@@ -23,19 +23,19 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            <wicket:message key="Department.names.prop"/> :
-                        </td>
+                        <th>
+                            <span wicket:id="nameLabel"></span> :
+                        </th>
                         <td>
                             <div wicket:id="name"></div>
                         </td>
                     </tr>
                     <tr wicket:id="customsPointZone">
-                        <td>
+                        <th>
                             <span wicket:id="customsPointMessageZone">
-                                <wicket:message key="customsPoint"/> :
+                                <span wicket:id="customsPointLabel"></span> :
                             </span>
-                        </td>
+                        </th>
                         <td>
                             <span wicket:id="customsPointSelectZone">
                                 <select wicket:id="customsPoint">
@@ -97,9 +97,8 @@
                 </div>
 
                 <div wicket:id="spacer"></div>
-                <input class="btnMiddle" type="button" wicket:message="value:save" wicket:id="save"/>
-                <input class="btnMiddle" type="button" wicket:message="value:cancel" wicket:id="cancel"/>
-                <input class="btnMiddle" type="button" wicket:message="value:back" wicket:id="back"/>
+                <input class="btnMiddle" type="button" wicket:message="value:book.edit.button.save_update" wicket:id="save"/>
+                <span wicket:id="goToListPagePanel"></span>
             </form>
 
             <div wicket:id="confirmationDialogPanel"></div>

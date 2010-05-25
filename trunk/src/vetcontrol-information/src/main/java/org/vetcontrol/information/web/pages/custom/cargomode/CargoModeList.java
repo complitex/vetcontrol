@@ -28,6 +28,7 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.vetcontrol.entity.CargoMode;
 import org.vetcontrol.information.service.dao.CargoModeDAO;
 import org.vetcontrol.information.service.dao.CargoModeDAO.OrderBy;
@@ -43,6 +44,7 @@ import org.vetcontrol.service.UIPreferences.PreferenceType;
 import static org.vetcontrol.book.BeanPropertyUtil.*;
 import org.vetcontrol.book.Property;
 import org.vetcontrol.book.ShowBooksMode;
+import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
 import org.vetcontrol.web.component.paging.PagingNavigator;
 import org.vetcontrol.web.component.toolbar.AddItemButton;
@@ -178,9 +180,14 @@ public class CargoModeList extends ListTemplatePage {
             filterForm.add(showBooksModePanel);
             filterForm.add(cargoModes);
 
-            addOrderByBorder(filterForm, "parentNameHeader", OrderBy.PARENT_NAME.getPropertyName(), dataProvider, cargoModes);
-            addOrderByBorder(filterForm, "nameHeader", OrderBy.NAME.getPropertyName(), dataProvider, cargoModes);
-            addOrderByBorder(filterForm, "uktzedHeader", OrderBy.UKTZED.getPropertyName(), dataProvider, cargoModes);
+            addOrderByBorder(filterForm, "parentNameHeader", "parentNameLabel",
+                    new DisplayPropertyLocalizableModel(getPropertyByName(CargoMode.class, "parent"), this),
+                    OrderBy.PARENT_NAME.getPropertyName(), dataProvider, cargoModes);
+            addOrderByBorder(filterForm, "nameHeader", "nameLabel",
+                    new DisplayPropertyLocalizableModel(getPropertyByName(CargoMode.class, "names"), this),
+                    OrderBy.NAME.getPropertyName(), dataProvider, cargoModes);
+            addOrderByBorder(filterForm, "uktzedHeader", "uktzedLabel", new ResourceModel("cargoMode.list.uktzed.header"),
+                    OrderBy.UKTZED.getPropertyName(), dataProvider, cargoModes);
 
             add(filterForm);
             add(new PagingNavigator("navigator", cargoModes, "itemsPerPage", getPreferences(), PAGE_NUMBER_KEY));
@@ -219,14 +226,17 @@ public class CargoModeList extends ListTemplatePage {
         return label;
     }
 
-    private void addOrderByBorder(MarkupContainer container, String id, String property, ISortStateLocator stateLocator, final DataView dateView) {
-        container.add(new ArrowOrderByBorder(id, property, stateLocator) {
+    private void addOrderByBorder(MarkupContainer container, String id, String labelId, IModel<String> displayModel, String property,
+            ISortStateLocator stateLocator, final DataView dateView) {
+        ArrowOrderByBorder border = new ArrowOrderByBorder(id, property, stateLocator) {
 
             @Override
             protected void onSortChanged() {
                 dateView.setCurrentPage(0);
             }
-        });
+        };
+        border.add(new Label(labelId, displayModel));
+        container.add(border);
     }
 
     private CargoModeFilter newCargoModeFilterBean() {

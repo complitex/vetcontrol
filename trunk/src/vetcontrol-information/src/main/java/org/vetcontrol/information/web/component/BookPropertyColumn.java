@@ -62,7 +62,7 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
 
         String asString = "";
         if (isBoolType(property.getType())) {
-            asString = ResourceUtil.getString(String.valueOf(propertyValue), resourceComponent);
+            asString = ResourceUtil.getString(resourceComponent, String.valueOf(propertyValue));
         } else if (property.isBookReference() && property.getUiType().equals(UIType.AUTO_COMPLETE)
                 && !Strings.isEmpty(property.getBookReferencePattern())) {
             asString = applyPattern(property.getBookReferencePattern(), propertyValue, systemLocale);
@@ -107,7 +107,7 @@ public class BookPropertyColumn<T> extends FilteredPropertyColumn<T> {
 
                 @Override
                 public Object getDisplayValue(Boolean object) {
-                    return ResourceUtil.getString(String.valueOf(object), resourceComponent);
+                    return ResourceUtil.getString(resourceComponent, String.valueOf(object));
                 }
 
                 @Override

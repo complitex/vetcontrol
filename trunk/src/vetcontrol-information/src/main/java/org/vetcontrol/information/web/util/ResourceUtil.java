@@ -9,8 +9,6 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,35 +18,28 @@ import org.slf4j.LoggerFactory;
  */
 public class ResourceUtil {
 
-    public static final String BOOK_NAMES_BUNDLE = "org.vetcontrol.information.web.pages.Books";
+    public static final String COMMON_RESOURCES_BUNDLE = "org.vetcontrol.information.web.pages.CommonResources";
+
     private static final Logger log = LoggerFactory.getLogger(ResourceUtil.class);
 
-    public static String getString(String key, Component component) {
+    public static String getString(Component component, String key) {
         try {
             return Application.get().getResourceSettings().getLocalizer().getString(key, component);
         } catch (MissingResourceException e) {
             log.error("error with finding resource", e);
-            return null;
         }
+        return null;
     }
 
-    public static String getString(String key, Component component, IModel<?> model) {
+    public static String getString(String bundle, String key, Locale locale, boolean printErrorOnMissingResource) {
         try {
-            return new StringResourceModel(key, component, model).getString();
+            return getResourceBundle(bundle, locale).getString(key);
         } catch (MissingResourceException e) {
-            log.error("error with finding resource", e);
-            return null;
+            if (printErrorOnMissingResource) {
+                log.error("error with finding resource", e);
+            }
         }
-    }
-
-    public static String getString(String bundle, String key, Locale locale) {
-        String result = key;
-        try {
-            result = getResourceBundle(bundle, locale).getString(key);
-        } catch (MissingResourceException e) {
-            log.error("error with finding resource", e);
-        }
-        return result;
+        return null;
     }
 
     private static ResourceBundle getResourceBundle(String bundle, Locale locale) {

@@ -16,9 +16,13 @@ import org.vetcontrol.information.web.util.ResourceUtil;
 public class DisplayPropertyLocalizableModel extends AbstractReadOnlyModel<String> {
 
     private static final String SEPARATOR = ".";
+
     private static final String SUFFIX = "prop";
+
     private Class<?> clazz;
+
     private String property;
+
     private Component resourceComponent;
 
     public DisplayPropertyLocalizableModel(Property property, Component resourceComponent) {
@@ -48,6 +52,6 @@ public class DisplayPropertyLocalizableModel extends AbstractReadOnlyModel<Strin
     }
 
     private String attempt(String key) {
-        return ResourceUtil.getString(key, resourceComponent);
+        return ResourceUtil.getString(resourceComponent, key);
     }
 }
