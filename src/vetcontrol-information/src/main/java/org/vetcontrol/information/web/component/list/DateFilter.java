@@ -10,6 +10,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.Filte
 import org.apache.wicket.model.IModel;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 import org.vetcontrol.book.Property;
+import org.vetcontrol.information.web.util.CommonResourceKeys;
 import org.vetcontrol.web.component.DatePicker;
 
 /**
@@ -22,7 +23,13 @@ public class DateFilter extends AbstractFilter {
 
     public DateFilter(String id, IModel model, FilterForm form, Property property) {
         super(id, form);
-        filter = new DatePicker<Date>("filter", model);
+        filter = new DatePicker<Date>("filter", model) {
+
+            @Override
+            public String getValidatorKeyPrefix() {
+                return CommonResourceKeys.FILTER_COMPONENT_PREFIX;
+            }
+        };
         filter.setLabel(new DisplayPropertyLocalizableModel(property, this));
         filter.setShowOn(DatePicker.ShowOnEnum.FOCUS);
         enableFocusTracking(filter);

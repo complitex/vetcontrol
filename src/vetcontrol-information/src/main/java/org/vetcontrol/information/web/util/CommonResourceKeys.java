@@ -18,4 +18,6 @@ public final class CommonResourceKeys {
     public static final String LOG_SAVE_UPDATE_KEY = "log.save_update";
 
     public static final String LOG_ENABLE_DISABLE_KEY = "log.enable_disable";
+
+    public static final String FILTER_COMPONENT_PREFIX = "Filter";
 }
