@@ -20,13 +20,11 @@ import org.vetcontrol.web.template.FormTemplatePage;
 import javax.ejb.EJB;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
@@ -50,6 +48,8 @@ import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 import org.vetcontrol.book.BookHash;
 import org.vetcontrol.book.Property;
 import org.vetcontrol.book.ShowBooksMode;
+import org.vetcontrol.information.web.component.edit.GoToListPagePanel;
+import org.vetcontrol.information.web.util.CommonResourceKeys;
 import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.component.toolbar.DisableItemButton;
 import org.vetcontrol.web.component.toolbar.EnableItemButton;
@@ -217,34 +217,13 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
         };
         saveOrUpdateBook.setVisible(CanEditUtil.canEdit(bookEntry));
         form.add(saveOrUpdateBook);
-
-        Link cancel = new Link("cancel") {
-
-            @Override
-            public void onClick() {
-                goToBooksPage();
-            }
-        };
-        cancel.setVisible(CanEditUtil.canEdit(bookEntry));
-        form.add(cancel);
-
-        Link back = new Link("back") {
-
-            @Override
-            public void onClick() {
-                goToBooksPage();
-            }
-        };
-        back.setVisible(!CanEditUtil.canEdit(bookEntry));
-        form.add(back);
-
+        form.add(new GoToListPagePanel("goToListPagePanel", bookEntry));
         form.add(new Spacer("spacer"));
     }
 
     private void saveOrUpdate(BookHash initial) {
         Log.EVENT event = BeanPropertyUtil.isNewBook(bookEntry) ? Log.EVENT.CREATE : Log.EVENT.EDIT;
         Long oldId = BeanPropertyUtil.getId(bookEntry);
-        String resourceKey = "log.save_update";
 
         //update version of book and its localizable strings if necessary.
         BeanPropertyUtil.updateVersionIfNecessary(bookEntry, initial);
@@ -252,39 +231,38 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
         try {
             bookDAO.saveOrUpdate(bookEntry);
             Long newId = BeanPropertyUtil.getId(bookEntry);
-            String message = new StringResourceModel(resourceKey, this, null, new Object[]{newId}).getObject();
+            String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_UPDATE_KEY, this, null, new Object[]{newId}).getObject();
             logBean.info(Log.MODULE.INFORMATION, event, AddUpdateBookEntryPage.class, bookEntry.getClass(), message);
         } catch (Exception e) {
             log.error("Ошибка сохранения справочника", e);
-            String message = new StringResourceModel(resourceKey, this, null, new Object[]{oldId}).getObject();
+            String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_UPDATE_KEY, this, null, new Object[]{oldId}).getObject();
             logBean.error(Log.MODULE.INFORMATION, event, AddUpdateBookEntryPage.class, bookEntry.getClass(), message);
         }
     }
 
     private void saveAsNew() {
         Long oldId = BeanPropertyUtil.getId(bookEntry);
-        String resourceKey = "log.save_as_new";
         try {
             bookDAO.saveAsNew(bookEntry);
             Long newId = BeanPropertyUtil.getId(bookEntry);
-            String message = new StringResourceModel(resourceKey, this, null, new Object[]{oldId, newId}).getObject();
+            String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_AS_NEW_KEY, this, null, new Object[]{oldId, newId}).getObject();
             logBean.info(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, AddUpdateBookEntryPage.class, bookEntry.getClass(), message);
         } catch (Exception e) {
             log.error("Ошибка сохранения справочника", e);
-            String message = new StringResourceModel(resourceKey, this, null, new Object[]{oldId, null}).getObject();
+            String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_AS_NEW_KEY, this, null, new Object[]{oldId, null}).getObject();
             logBean.error(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, AddUpdateBookEntryPage.class, bookEntry.getClass(), message);
         }
     }
 
     private void disableBook(Long id) {
         bookDAO.disable(id, bookEntry.getClass());
-        String message = new StringResourceModel("log.enable_disable", this, null, new Object[]{id}).getObject();
+        String message = new StringResourceModel(CommonResourceKeys.LOG_ENABLE_DISABLE_KEY, this, null, new Object[]{id}).getObject();
         logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, AddUpdateBookEntryPage.class, bookEntry.getClass(), message);
     }
 
     private void enableBook(Long id) {
         bookDAO.enable(id, bookEntry.getClass());
-        String message = new StringResourceModel("log.enable_disable", this, null, new Object[]{id}).getObject();
+        String message = new StringResourceModel(CommonResourceKeys.LOG_ENABLE_DISABLE_KEY, this, null, new Object[]{id}).getObject();
         logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, AddUpdateBookEntryPage.class, bookEntry.getClass(), message);
     }
 

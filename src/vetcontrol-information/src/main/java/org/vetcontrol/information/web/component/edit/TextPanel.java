@@ -17,13 +17,13 @@ import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
  *
  * @author Artem
  */
-public final class TextPanel extends Panel {
+public class TextPanel extends Panel {
 
     public TextPanel(String id, IModel model, Property prop, boolean enabled) {
         super(id);
 
         IModel labelModel = new DisplayPropertyLocalizableModel(prop, this);
-        Class propertyType = determinePropertyType(prop);
+        Class propertyType = determineFieldType(prop);
 
         TextField textField = new TextField("textField", model);
         textField.setType(propertyType);
@@ -59,7 +59,7 @@ public final class TextPanel extends Panel {
         add(textArea);
     }
 
-    protected Class determinePropertyType(Property prop) {
+    protected Class determineFieldType(Property prop) {
         Class propertyType = prop.getType();
         if (prop.isLocalizable()) {
             propertyType = String.class;

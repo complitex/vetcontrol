@@ -22,7 +22,6 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -31,6 +30,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
 import org.slf4j.Logger;
@@ -51,11 +51,13 @@ import org.vetcontrol.web.component.book.DisableAwareDropDownChoice;
 import org.vetcontrol.information.web.component.edit.AbstractAutoCompleteTextField;
 import org.vetcontrol.information.web.component.edit.LocalizableTextPanel;
 import org.vetcontrol.information.web.component.edit.SaveUpdateConfirmationDialog;
-import org.vetcontrol.information.web.model.DisplayBookClassModel;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import static org.vetcontrol.book.BeanPropertyUtil.*;
 import org.vetcontrol.book.BookHash;
+import org.vetcontrol.information.web.component.edit.GoToListPagePanel;
+import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
+import org.vetcontrol.information.web.util.CommonResourceKeys;
 import org.vetcontrol.service.dao.IBookViewDAO;
 import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.component.book.IDisableAwareChoiceRenderer;
@@ -320,8 +322,7 @@ public final class CargoModeEdit extends FormTemplatePage {
         cargoModeModel = new Model<CargoMode>(cargoMode);
 
         //title
-        add(new Label("title", new DisplayBookClassModel(CargoMode.class)));
-        add(new Label("caption", new DisplayBookClassModel(CargoMode.class)));
+        add(new Label("title", new ResourceModel("page.title")));
 
         //messages
         final FeedbackPanel messages = new FeedbackPanel("messages");
@@ -334,13 +335,18 @@ public final class CargoModeEdit extends FormTemplatePage {
         add(form);
 
         //cargo mode name
+        form.add(new Label("nameLabel", new DisplayPropertyLocalizableModel(getPropertyByName(CargoMode.class, "names"), this)));
+
         form.add(new LocalizableTextPanel("name",
                 new PropertyModel(cargoModeModel, "names"),
                 getPropertyByName(CargoMode.class, "names"),
                 systemLocale, CanEditUtil.canEdit(cargoModeModel.getObject())));
 
 
+        //cargo mode parent
         WebMarkupContainer parentZone = new WebMarkupContainer("parentZone");
+        parentZone.add(new Label("parentNameLabel", new DisplayPropertyLocalizableModel(getPropertyByName(CargoMode.class, "parent"), this)));
+
         parentZone.setVisible(isNewBook(cargoModeModel.getObject()) || !isRootCargoMode(cargoModeModel.getObject()));
         form.add(parentZone);
 
@@ -358,6 +364,7 @@ public final class CargoModeEdit extends FormTemplatePage {
                 rootCargoModeModel,
                 parentChoiceRenderer);
         parentChoice.setEnabled(CanEditUtil.canEdit(cargoModeModel.getObject()));
+        parentChoice.setLabel(new ResourceModel("cargoMode.edit.parent"));
         parentZone.add(parentChoice);
 
         //cargo and unit types container
@@ -520,34 +527,13 @@ public final class CargoModeEdit extends FormTemplatePage {
         };
         save.setVisible(CanEditUtil.canEdit(cargoModeModel.getObject()));
         form.add(save);
-
-        Link cancel = new Link("cancel") {
-
-            @Override
-            public void onClick() {
-                goToListPage();
-            }
-        };
-        cancel.setVisible(CanEditUtil.canEdit(cargoModeModel.getObject()));
-        form.add(cancel);
-
-        Link back = new Link("back") {
-
-            @Override
-            public void onClick() {
-                goToListPage();
-            }
-        };
-        back.setVisible(!CanEditUtil.canEdit(cargoModeModel.getObject()));
-        form.add(back);
-
+        form.add(new GoToListPagePanel("goToListPagePanel", cargoModeModel.getObject()));
         form.add(new Spacer("spacer"));
     }
 
     private void saveOrUpdate(IModel<CargoMode> cargoModeModel, BookHash initial) {
         Log.EVENT event = isNewBook(cargoModeModel.getObject()) ? Log.EVENT.CREATE : Log.EVENT.EDIT;
         Long oldId = cargoModeModel.getObject().getId();
-        String resourceKey = "log.save_update";
 
         //update version of book and its localizable strings if necessary.
         updateVersionIfNecessary(cargoModeModel.getObject(), initial);
@@ -556,39 +542,39 @@ public final class CargoModeEdit extends FormTemplatePage {
         try {
             cargoModeDAO.saveOrUpdate(cargoModeModel.getObject(), null);
             Long newId = cargoModeModel.getObject().getId();
-            String message = new StringResourceModel(resourceKey, this, null, new Object[]{newId}).getObject();
+            String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_UPDATE_KEY, this, null, new Object[]{newId}).getObject();
             logBean.info(Log.MODULE.INFORMATION, event, CargoModeEdit.class, CargoMode.class, message);
         } catch (Exception e) {
             log.error("Ошибка сохранения справочника", e);
-            String message = new StringResourceModel(resourceKey, this, null, new Object[]{oldId}).getObject();
+            String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_UPDATE_KEY, this, null, new Object[]{oldId}).getObject();
             logBean.error(Log.MODULE.INFORMATION, event, CargoModeEdit.class, CargoMode.class, message);
         }
     }
 
     private void saveAsNew() {
         Long oldId = cargoModeModel.getObject().getId();
-        String resourceKey = "log.save_as_new";
+
         try {
             cargoModeDAO.saveAsNew(cargoModeModel.getObject());
             Long newId = cargoModeModel.getObject().getId();
-            String message = new StringResourceModel(resourceKey, this, null, new Object[]{oldId, newId}).getObject();
+            String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_AS_NEW_KEY, this, null, new Object[]{oldId, newId}).getObject();
             logBean.info(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, CargoModeEdit.class, CargoMode.class, message);
         } catch (Exception e) {
             log.error("Ошибка сохранения справочника", e);
-            String message = new StringResourceModel(resourceKey, this, null, new Object[]{oldId, null}).getObject();
+            String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_AS_NEW_KEY, this, null, new Object[]{oldId, null}).getObject();
             logBean.error(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, CargoModeEdit.class, CargoMode.class, message);
         }
     }
 
     private void disableCargoMode(Long cargoModeId) {
         cargoModeDAO.disable(cargoModeId);
-        String message = new StringResourceModel("log.enable_disable", this, null, new Object[]{cargoModeId}).getObject();
+        String message = new StringResourceModel(CommonResourceKeys.LOG_ENABLE_DISABLE_KEY, this, null, new Object[]{cargoModeId}).getObject();
         logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, CargoModeEdit.class, CargoMode.class, message);
     }
 
     private void enableCargoMode(Long cargoModeId) {
         cargoModeDAO.enable(cargoModeId);
-        String message = new StringResourceModel("log.enable_disable", this, null, new Object[]{cargoModeId}).getObject();
+        String message = new StringResourceModel(CommonResourceKeys.LOG_ENABLE_DISABLE_KEY, this, null, new Object[]{cargoModeId}).getObject();
         logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, CargoModeEdit.class, CargoMode.class, message);
     }
 

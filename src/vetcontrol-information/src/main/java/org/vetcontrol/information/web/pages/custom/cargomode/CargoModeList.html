@@ -25,34 +25,34 @@
             <thead>
                 <tr>
                     <th wicket:id="parentNameHeader">
-            <wicket:message key="cargoMode.list.parent_name.header"/>
-            </th>
-            <th wicket:id="nameHeader">
-            <wicket:message key="cargoMode.list.name.header"/>
-            </th>
-            <th wicket:id="uktzedHeader">
-            <wicket:message key="cargoMode.list.uktzed.header"/>
-            </th>
-            <th>
-                <input class="btnSmall"  wicket:id="clear" type="button" wicket:message="value:cargoMode.list.clear"/>
-            </th>
-            </tr>
-            <tr>
-                <th>
-                    <select wicket:id="parent">
-                        <option></option>
-                    </select>
-                </th>
-                <th>
-                    <input type="text" wicket:id="name" style="width: 100%"/>
-                </th>
-                <th>
-                    <input type="text" wicket:id="uktzed" style="width: 100%"/>
-                </th>
-                <th class="center">
-                    <input class="btnSmall default" type="submit" wicket:message="value:cargoMode.list.go"/>
-                </th>
-            </tr>
+                        <span wicket:id="parentNameLabel"></span>
+                    </th>
+                    <th wicket:id="nameHeader">
+                        <span wicket:id="nameLabel"></span>
+                    </th>
+                    <th wicket:id="uktzedHeader">
+                        <span wicket:id="uktzedLabel"></span>
+                    </th>
+                    <th>
+                        <input class="btnSmall"  wicket:id="clear" type="button" wicket:message="value:book.filter.button.clear"/>
+                    </th>
+                </tr>
+                <tr>
+                    <th>
+                        <select wicket:id="parent">
+                            <option></option>
+                        </select>
+                    </th>
+                    <th>
+                        <input type="text" wicket:id="name" style="width: 100%"/>
+                    </th>
+                    <th>
+                        <input type="text" wicket:id="uktzed" style="width: 100%"/>
+                    </th>
+                    <th class="center">
+                        <input class="btnSmall default" type="submit" wicket:message="value:book.filter.button.go"/>
+                    </th>
+                </tr>
             </thead>
             <tbody>
                 <tr wicket:id="cargoModes">

@@ -28,6 +28,7 @@ public class CargoMode extends Localizable {
     @OneToMany(mappedBy = "cargoMode", fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @XmlTransient
+    @ValidProperty(false)
     public List<CargoModeCargoType> getCargoModeCargoTypes() {
         return cargoModeCargoTypes;
     }
@@ -46,6 +47,7 @@ public class CargoMode extends Localizable {
     @OneToMany(mappedBy = "cargoMode", fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @XmlTransient
+    @ValidProperty(false)
     public List<CargoModeUnitType> getCargoModeUnitTypes() {
         return cargoModeUnitTypes;
     }
