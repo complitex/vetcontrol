@@ -1,6 +1,7 @@
 package org.vetcontrol.logging.service;
 
 import org.vetcontrol.entity.Log;
+import org.vetcontrol.logging.util.DisplayUserUtil;
 import org.vetcontrol.util.DateUtil;
 
 import javax.ejb.Stateless;
@@ -9,7 +10,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
-import org.vetcontrol.logging.util.DisplayUserUtil;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -79,46 +79,46 @@ public class LogListBean {
     }
 
     private String getWhere(LogFilter filter) {
-        String select = " where 1+1=2";
+        String where = " where 1+1=2";
 
         if (filter != null) {
             if (filter.getId() != null) {
-                select += " and l.id like :id";
+                where += " and l.id like :id";
             }
             if (filter.getDate() != null) {
-                select += " and l.date between :date_s and :date_e";
+                where += " and l.date between :date_s and :date_e";
             }
             if (filter.getLogin() != null) {
                 if (filter.getLogin().equalsIgnoreCase(DisplayUserUtil.SYSTEM_USER_LOGIN)) {
-                    select += " and l.user is null";
+                    where += " and l.user is null";
                 } else {
-                    select += " and l.user.login like :login";
+                    where += " and l.user.login like :login";
                 }
             }
             if (filter.getControllerClass() != null) {
-                select += " and upper(l.controllerClass) like :controllerClass";
+                where += " and upper(l.controllerClass) like :controllerClass";
             }
             if (filter.getModelClass() != null) {
-                select += " and upper(l.modelClass) like :modelClass";
+                where += " and upper(l.modelClass) like :modelClass";
             }
             if (filter.getModule() != null) {
-                select += " and l.module = :module";
+                where += " and l.module = :module";
             }
             if (filter.getEvent() != null) {
-                select += " and l.event = :event";
+                where += " and l.event = :event";
             }
             if (filter.getStatus() != null) {
-                select += " and l.status = :status";
+                where += " and l.status = :status";
             }
             if (filter.getDescription() != null) {
-                select += " and upper(l.description) like :description";
+                where += " and upper(l.description) like :description";
             }
             if (filter.getClient() != null) {
-                select += " and l.client.id = :client";
+                where += " and l.client.id = :client";
             }
         }
 
-        return select;
+        return where;
     }
 
     private void addParameters(LogFilter filter, Query query) {

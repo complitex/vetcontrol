@@ -19,7 +19,7 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.*;
 import org.vetcontrol.document.service.ArrestDocumentBean;
 import org.vetcontrol.document.service.ArrestDocumentFilter;
-import org.vetcontrol.document.web.component.BookNamedChoiceRenderer;
+import org.vetcontrol.web.component.book.BookChoiceRenderer;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.UIPreferences;
@@ -101,16 +101,16 @@ public class ArrestDocumentList extends ListTemplatePage {
         filterForm.add(new TextField<String>("cargoMode"));
         filterForm.add(new TextField<String>("count"));
         filterForm.add(new DropDownChoice<UnitType>("unitType", arrestDocumentBean.getList(UnitType.class),
-                new BookNamedChoiceRenderer<UnitType>(getSystemLocale())));
+                new BookChoiceRenderer<UnitType>(getSystemLocale())));
         filterForm.add(new VehicleTypeChoicePanel("vehicleType", new PropertyModel<VehicleType>(filter, "vehicleType"), false));
         filterForm.add(new DropDownChoice<CountryBook>("senderCountry", arrestDocumentBean.getList(CountryBook.class),
-                new BookNamedChoiceRenderer<CountryBook>(getSystemLocale())));
+                new BookChoiceRenderer<CountryBook>(getSystemLocale())));
         filterForm.add(new TextField<String>("senderName"));
         filterForm.add(new TextField<String>("receiverAddress"));
         filterForm.add(new TextField<String>("receiverName"));
 
         filterForm.add(new DropDownChoice<ArrestReason>("arrestReason", arrestDocumentBean.getList(ArrestReason.class),
-                new BookNamedChoiceRenderer<ArrestReason>(getSystemLocale())));
+                new BookChoiceRenderer<ArrestReason>(getSystemLocale())));
         filterForm.add(new DatePicker<Date>("arrestDate"));
 
         DropDownChoice<Synchronized.SyncStatus> ddcSyncStatus =

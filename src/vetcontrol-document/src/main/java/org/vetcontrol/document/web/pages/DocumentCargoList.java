@@ -20,7 +20,7 @@ import org.apache.wicket.model.*;
 import org.vetcontrol.document.service.CommonDocumentBean;
 import org.vetcontrol.document.service.DocumentCargoBean;
 import org.vetcontrol.document.service.DocumentCargoFilter;
-import org.vetcontrol.document.web.component.BookNamedChoiceRenderer;
+import org.vetcontrol.web.component.book.BookChoiceRenderer;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.UIPreferences;
@@ -108,7 +108,7 @@ public class DocumentCargoList extends ListTemplatePage {
         filterForm.add(new TextField<String>("senderName"));
 
         filterForm.add(new DropDownChoice<CountryBook>("senderCountry", commonDocumentBean.getBookList(CountryBook.class, ShowBooksMode.ALL),
-                new BookNamedChoiceRenderer<CountryBook>(getSystemLocale())));
+                new BookChoiceRenderer<CountryBook>(getSystemLocale())));
         DatePicker<Date> created = new DatePicker<Date>("created");
         filterForm.add(created);
 

@@ -5,10 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.vetcontrol.entity.Client;
 import org.vetcontrol.entity.Log;
 import org.vetcontrol.entity.User;
+import org.vetcontrol.hibernate.util.EntityPersisterUtil;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.sync.Count;
 import org.vetcontrol.sync.SyncRequestEntity;
+import org.vetcontrol.util.DateUtil;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -70,6 +72,10 @@ public class UserResourceBean {
                 .getResultList();
 
         if (!list.isEmpty()){
+            //Client Last Sync
+            client.setLastSync(DateUtil.getCurrentDate());
+            EntityPersisterUtil.executeUpdate(em, client);
+
             logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, UserResourceBean.class, User.class,
                     rb.getString("info.sync.processed"), list.size(),
                     r.getRemoteHost(), client.getIp());

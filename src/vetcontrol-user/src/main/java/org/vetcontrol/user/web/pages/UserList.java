@@ -21,7 +21,6 @@ import org.vetcontrol.entity.User;
 import org.vetcontrol.entity.UserGroup;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UIPreferences.PreferenceType;
-import org.vetcontrol.service.dao.ILocaleDAO;
 import org.vetcontrol.user.service.UserBean;
 import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
 import org.vetcontrol.web.component.paging.PagingNavigator;
@@ -43,17 +42,17 @@ import java.util.List;
  */
 @AuthorizeInstantiation(SecurityRoles.USER_EDIT)
 public class UserList extends TemplatePage {
-
     private static final Logger log = LoggerFactory.getLogger(UserList.class);
+
     @EJB(name = "UserBean")
     private UserBean userBean;
-    @EJB(name = "LocaleDAO")
-    private ILocaleDAO localeDAO;
+
     private UIPreferences preferences;
     private static final String SORT_PROPERTY_KEY = UserList.class.getSimpleName() + "_SORT_PROPERTY";
     private static final String SORT_ORDER_KEY = UserList.class.getSimpleName() + "_SORT_ORDER";
     private static final String FILTER_KEY = UserList.class.getSimpleName() + "_FILTER";
     private static final String PAGE_NUMBER_KEY = UserList.class.getSimpleName() + "_PAGE_NUMBER";
+
     private DataView<User> userDataView;
 
     public UserList() {
@@ -134,11 +133,11 @@ public class UserList extends TemplatePage {
                 userItem.add(new Label("first_name", user.getFirstName()));
                 userItem.add(new Label("middle_name", user.getMiddleName()));
                 if (user.getJob() != null){
-                    userItem.add(new Label("job", user.getJob().getDisplayName(getLocale(), localeDAO.systemLocale())));
+                    userItem.add(new Label("job", user.getJob().getDisplayName(getLocale(), getSystemLocale())));
                 }else{
                     userItem.add(new Label("job",""));                                        
                 }
-                userItem.add(new Label("department", user.getDepartment().getDisplayName(getLocale(), localeDAO.systemLocale())));
+                userItem.add(new Label("department", user.getDepartment().getDisplayName(getLocale(), getSystemLocale())));
                 userItem.add(new Label("passingBorderPoint", user.getPassingBorderPoint() != null ? user.getPassingBorderPoint().getName() : ""));
                 Link<UserEdit> edit = new BookmarkablePageLink<UserEdit>("edit", UserEdit.class,
                         new PageParameters("user_id=" + user.getId()));

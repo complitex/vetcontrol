@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"  xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+    <head>
+        <wicket:head><title wicket:id="title"></title></wicket:head>
+    </head>
+
+    <body>
+        <wicket:extend>
+            <div>
+                <h1 wicket:id="header"></h1>
+                <div id="messages" wicket:id="messages"></div>
+
+                <form id="filter_form" action="#" wicket:id="filter_form">
+                    <table  border="0" cellspacing="0" cellpadding="0" class="tbColor table_input">
+                        <thead>
+                            <tr>
+                                <th class="center" wicket:id="order_id"><wicket:message key="user.client.id"/></th>
+                                <th class="center" wicket:id="order_department"><wicket:message key="user.client.department"/></th>
+                                <th class="center" wicket:id="order_passing_border_point"><wicket:message key="user.client.passing_border_point"/></th>
+                                <th class="center" wicket:id="order_ip"><wicket:message key="user.client.ip"/></th>
+                                <th class="center" wicket:id="order_mac"><wicket:message key="user.client.mac"/></th>
+                                <th class="center" wicket:id="order_created"><wicket:message key="user.client.created"/></th>
+                                <th class="center" wicket:id="order_last_sync"><wicket:message key="user.client.last_sync"/></th>
+                                <th class="center" wicket:id="order_version"><wicket:message key="user.client.version"/></th>
+                                <th class="center">
+                                    <input class="btnSmall"  wicket:id="filter_reset" type="button" wicket:message="value:user.client.list.filter.clear"/>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="center"><input type="text" wicket:id="id"/></th>
+                                <th class="center"><select wicket:id="department"></select></th>
+                                <th class="center"><select wicket:id="passingBorderPoint"></select></th>
+                                <th class="center"><input type="text" wicket:id="ip"/></th>
+                                <th class="center"><input type="text" wicket:id="mac"/></th>
+                                 <th class="center">
+                                    <div style="width:102px">
+                                        <input style="width:80px" type="text" wicket:id="created"/>
+                                    </div>
+                                </th>
+                                 <th class="center">
+                                    <div style="width:102px">
+                                        <input style="width:80px" type="text" wicket:id="lastSync"/>
+                                    </div>
+                                </th>                                 
+                                <th class="center"><input type="text" wicket:id="version"/></th>
+                                <th class="center">
+                                    <input class="btnSmall default" type="submit" wicket:message="value:user.client.list.filter.go" tabindex="0" />
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr wicket:id="logs">
+                                <td><span wicket:id="id"></span></td>
+                                <td><span wicket:id="department"></span></td>
+                                <td><span wicket:id="passingBorderPoint"></span></td>
+                                <td><span wicket:id="ip"></span></td>
+                                <td><span wicket:id="mac"></span></td>
+                                <td><span wicket:id="created"></span></td>
+                                <td><span wicket:id="lastSync"></span></td>
+                                <td colspan="2"><span wicket:id="version"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div>
+                        <span wicket:id="navigator">[data view navigator]</span>
+                    </div>
+                </form>
+            </div>
+
+        </wicket:extend>
+    </body>
+</html>
