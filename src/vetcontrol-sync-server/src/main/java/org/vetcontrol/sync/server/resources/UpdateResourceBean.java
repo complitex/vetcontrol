@@ -56,16 +56,15 @@ public class UpdateResourceBean {
                 .getResultList();
 
         if (!list.isEmpty()){
-
-            //Client Last Sync
-            client.setLastSync(DateUtil.getCurrentDate());
-            EntityPersisterUtil.executeUpdate(em, client);
-
              logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC_UPDATED, BookResourceBean.class, Update.class,
                     rb.getString("info.sync.processed"), list.size(), r.getRemoteHost(), client.getIp());
 
             log.info("Синхронизация " + Update.class.getSimpleName() + ". " + rb.getString("info.sync.processed.log"),
                     new Object[]{client.getId(), list.size(), r.getRemoteHost(), client.getIp()});
+
+             //Client Last Sync
+            client.setLastSync(DateUtil.getCurrentDate());
+            EntityPersisterUtil.executeUpdate(em, client);
         }
 
         return list;
