@@ -72,11 +72,6 @@ public class DocumentResourceBean {
                     }
                 }
 
-
-                //Client Last Sync
-                client.setLastSync(DateUtil.getCurrentDate());
-                EntityPersisterUtil.update(em, client);
-
                 EntityPersisterUtil.executeBatch(em);
 
                 logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, DocumentCargo.class,
@@ -84,6 +79,10 @@ public class DocumentResourceBean {
 
                 log.info("Синхронизация карточек на груз. " + rb.getString("info.sync.processed.log"),
                         new Object[]{client.getId(), size, r.getRemoteHost(), client.getIp()});
+
+                //Client Last Sync
+                client.setLastSync(DateUtil.getCurrentDate());
+                EntityPersisterUtil.update(em, client);
             } catch (WebApplicationException e) {
                 throw e;
             } catch (Exception e) {
@@ -127,10 +126,6 @@ public class DocumentResourceBean {
                     }
                 }
 
-                //Client Last Sync
-                client.setLastSync(DateUtil.getCurrentDate());
-                EntityPersisterUtil.update(em, client);
-
                 EntityPersisterUtil.executeBatch(em);
 
                 logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Cargo.class,
@@ -139,6 +134,10 @@ public class DocumentResourceBean {
 
                 log.info("Синхронизация грузов. " + rb.getString("info.sync.processed.log"),
                         new Object[]{client.getId(), size, r.getRemoteHost(), client.getIp()});
+
+                //Client Last Sync
+                client.setLastSync(DateUtil.getCurrentDate());
+                EntityPersisterUtil.update(em, client);
             } catch (Exception e) {
                 logBean.error(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Cargo.class,
                         rb.getString("info.sync.processed"), size, r.getRemoteHost(), client.getIp());
@@ -180,10 +179,6 @@ public class DocumentResourceBean {
                     }
                 }
 
-                //Client Last Sync
-                client.setLastSync(DateUtil.getCurrentDate());
-                EntityPersisterUtil.update(em, client);
-
                 EntityPersisterUtil.executeBatch(em);
 
                 logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Vehicle.class,
@@ -192,6 +187,10 @@ public class DocumentResourceBean {
 
                 log.info("Синхронизация транспортных средств. " + rb.getString("info.sync.processed.log"),
                         new Object[]{client.getId(), size, r.getRemoteHost(), client.getIp()});
+
+                //Client Last Sync
+                client.setLastSync(DateUtil.getCurrentDate());
+                EntityPersisterUtil.update(em, client);
             } catch (Exception e) {
                 logBean.error(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Vehicle.class,
                         rb.getString("info.sync.processed"), size, r.getRemoteHost(), client.getIp());
@@ -235,17 +234,16 @@ public class DocumentResourceBean {
 
                 EntityPersisterUtil.executeBatch(em);
 
-
-                //Client Last Sync
-                client.setLastSync(DateUtil.getCurrentDate());
-                EntityPersisterUtil.executeUpdate(em, client);
-
                 logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, ArrestDocument.class,
                         rb.getString("info.sync.processed"), size,
                         r.getRemoteHost(), client.getIp());
 
                 log.info("Синхронизация актов задержания груза. " + rb.getString("info.sync.processed.log"),
                         new Object[]{client.getId(), size, r.getRemoteHost(), client.getIp()});
+
+                //Client Last Sync
+                client.setLastSync(DateUtil.getCurrentDate());
+                EntityPersisterUtil.executeUpdate(em, client);
             } catch (Exception e) {
                 logBean.error(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, ArrestDocument.class,
                         rb.getString("info.sync.processed"), size, r.getRemoteHost(), client.getIp());

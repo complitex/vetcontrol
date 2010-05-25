@@ -78,15 +78,15 @@ public class LogResourceBean {
                 em.persist(log);
             }
 
-            //Last Sync
-            client.setLastSync(DateUtil.getCurrentDate());
-            EntityPersisterUtil.executeUpdate(em, client);
-
             logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, LogResourceBean.class, Log.class,
                     rb.getString("info.sync.processed"), size, r.getRemoteHost(), client.getIp());
 
             log.info("Синхронизация лога документов. " + rb.getString("info.sync.processed.log"),
                     new Object[]{client.getId(), size, r.getRemoteHost(), client.getIp()});
+
+            //Last Sync
+            client.setLastSync(DateUtil.getCurrentDate());
+            EntityPersisterUtil.executeUpdate(em, client);
         } catch (Exception e) {
             logBean.error(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, LogResourceBean.class, Log.class,
                     rb.getString("info.sync.processed"), size, r.getRemoteHost(), client.getIp());

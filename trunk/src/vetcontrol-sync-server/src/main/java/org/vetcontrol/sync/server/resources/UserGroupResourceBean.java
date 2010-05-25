@@ -67,16 +67,16 @@ public class UserGroupResourceBean {
                 + "where ug.login = u.login and u.department = :department and ug.updated > :updated order by ug.updated", UserGroup.class).setParameter("department", client.getDepartment()).setParameter("updated", requestEntity.getUpdated()).getResultList();
 
         if (!list.isEmpty()) {
-            //Client Last Sync
-            client.setLastSync(DateUtil.getCurrentDate());
-            EntityPersisterUtil.executeUpdate(em, client);
-
             logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, UserGroupResourceBean.class, UserGroup.class,
                     rb.getString("info.sync.processed"), list.size(),
                     r.getRemoteHost(), client.getIp());
 
             log.info("Синхронизация групп пользователей. " + rb.getString("info.sync.processed.log"),
                     new Object[]{client.getId(), list.size(), r.getRemoteHost(), client.getIp()});
+
+            //Client Last Sync
+            client.setLastSync(DateUtil.getCurrentDate());
+            EntityPersisterUtil.executeUpdate(em, client);
         }
 
         return new GenericEntity<List<UserGroup>>(list) {
@@ -99,16 +99,16 @@ public class UserGroupResourceBean {
                 + "where d.id.entity = :entity and d.deleted > :updated order by d.deleted", DeletedLongId.class).setParameter("entity", UserGroup.class.getCanonicalName()).setParameter("updated", requestEntity.getUpdated()).getResultList();
 
         if (!list.isEmpty()) {
-            //Client Last Sync
-            client.setLastSync(DateUtil.getCurrentDate());
-            EntityPersisterUtil.executeUpdate(em, client);
-
             logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, UserGroupResourceBean.class, UserGroup.class,
                     rb.getString("info.sync.processed"), list.size(),
                     r.getRemoteHost(), client.getIp());
 
             log.info("Синхронизация удаленных групп пользователей. " + rb.getString("info.sync.processed.log"),
                     new Object[]{client.getId(), list.size(), r.getRemoteHost(), client.getIp()});
+
+            //Client Last Sync
+            client.setLastSync(DateUtil.getCurrentDate());
+            EntityPersisterUtil.executeUpdate(em, client);
         }
 
         return new GenericEntity<List<DeletedLongId>>(list) {

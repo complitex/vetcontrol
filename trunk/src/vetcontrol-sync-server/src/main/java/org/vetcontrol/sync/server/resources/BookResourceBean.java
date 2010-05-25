@@ -301,15 +301,15 @@ public class BookResourceBean {
         List<T> list = query.getResultList();
 
         if (!list.isEmpty()) {
-            //Last Sync
-            client.setLastSync(DateUtil.getCurrentDate());
-            EntityPersisterUtil.executeUpdate(em, client);
-
             logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC_UPDATED, BookResourceBean.class, entity,
                     rb.getString("info.sync.processed"), list.size(), r.getRemoteHost(), client.getIp());
 
             log.info("Синхронизация " + entity.getSimpleName() + ". " + rb.getString("info.sync.processed.log"),
                     new Object[]{client.getId(), list.size(), r.getRemoteHost(), client.getIp()});
+
+            //Last Sync
+            client.setLastSync(DateUtil.getCurrentDate());
+            EntityPersisterUtil.executeUpdate(em, client);
         }
 
         return list;
@@ -360,15 +360,15 @@ public class BookResourceBean {
         List<DeletedEmbeddedId> list = query.getResultList();
 
         if (!list.isEmpty()) {
-            //Last Sync
-            client.setLastSync(DateUtil.getCurrentDate());
-            EntityPersisterUtil.executeUpdate(em, client);
-
             logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC_DELETED, BookResourceBean.class, entity,
                     rb.getString("info.sync.processed"), list.size(), r.getRemoteHost(), client.getIp());
 
             log.info("Синхронизация " + entity.getSimpleName() + ". " + rb.getString("info.sync.processed.log"),
                     new Object[]{client.getId(), list.size(), r.getRemoteHost(), client.getIp()});
+
+            //Last Sync
+            client.setLastSync(DateUtil.getCurrentDate());
+            EntityPersisterUtil.executeUpdate(em, client);
         }
 
         return list;
