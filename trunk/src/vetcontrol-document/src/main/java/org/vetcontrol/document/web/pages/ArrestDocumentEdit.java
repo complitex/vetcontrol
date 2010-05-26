@@ -1,6 +1,7 @@
 package org.vetcontrol.document.web.pages;
 
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;
 import org.apache.wicket.authorization.UnauthorizedInstantiationException;
@@ -12,33 +13,36 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.*;
+import org.apache.wicket.protocol.http.WebRequestCycle;
+import org.apache.wicket.validation.validator.StringValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.document.service.ArrestDocumentBean;
 import org.vetcontrol.document.service.CommonDocumentBean;
 import org.vetcontrol.entity.*;
-import org.vetcontrol.service.ClientBean;
-import org.vetcontrol.service.LogBean;
-import org.vetcontrol.service.UserProfileBean;
-import org.vetcontrol.util.DateUtil;
-import org.vetcontrol.web.component.DatePicker;
-import org.vetcontrol.web.component.UKTZEDField;
-
-import javax.ejb.EJB;
-import java.util.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.vetcontrol.report.commons.jasper.ExportType;
 import org.vetcontrol.report.commons.web.components.PrintButton;
 import org.vetcontrol.report.document.jasper.arrest.ArrestDocumentReportServlet;
+import org.vetcontrol.service.ClientBean;
+import org.vetcontrol.service.LogBean;
+import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.service.dao.IBookViewDAO;
+import org.vetcontrol.util.DateUtil;
+import org.vetcontrol.web.component.DatePicker;
+import org.vetcontrol.web.component.UKTZEDField;
+import org.vetcontrol.web.component.toolbar.ToolbarButton;
+
+import javax.ejb.EJB;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import static org.vetcontrol.entity.Log.EVENT.CREATE;
 import static org.vetcontrol.entity.Log.EVENT.EDIT;
 import static org.vetcontrol.entity.Log.MODULE.DOCUMENT;
-import org.vetcontrol.web.component.toolbar.ToolbarButton;
 import static org.vetcontrol.web.security.SecurityRoles.*;
 
 /**
@@ -293,6 +297,7 @@ public class ArrestDocumentEdit extends DocumentEditPage {
         //Детали задержания
         TextArea<String> arrestReasonDetails = new TextArea<String>("arrest.document.arrest_reason_details",
                 new PropertyModel<String>(arrestDocumentModel, "arrestReasonDetails"));
+        arrestReasonDetails.add(StringValidator.maximumLength(1024));
         arrestReasonDetails.setRequired(true);
         form.add(arrestReasonDetails);
 
@@ -419,6 +424,7 @@ public class ArrestDocumentEdit extends DocumentEditPage {
         //Реквизиты транспортного средства
         TextField<String> vehicleDetails = new TextField<String>("arrest.document.vehicle_details",
                 new PropertyModel<String>(arrestDocumentModel, "vehicleDetails"));
+        vehicleDetails.add(StringValidator.maximumLength(255));
         vehicleDetails.setRequired(true);
         form.add(vehicleDetails);
 
@@ -441,6 +447,7 @@ public class ArrestDocumentEdit extends DocumentEditPage {
         //Реквизиты сертификата
         TextField<String> certificateDetails = new TextField<String>("arrest.document.certificate_detail",
                 new PropertyModel<String>(arrestDocumentModel, "certificateDetails"));
+        certificateDetails.add(StringValidator.maximumLength(255));
         certificateDetails.setRequired(true);
         form.add(certificateDetails);
 
