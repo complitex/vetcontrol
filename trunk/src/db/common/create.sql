@@ -480,7 +480,7 @@ CREATE TABLE  `vehicle` (
 DROP TABLE IF EXISTS `log`;
 CREATE TABLE  `log` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `client_id` bigint(20) NULL,
+  `client_id` bigint(20) DEFAULT NULL,
   `date` datetime DEFAULT NULL,
   `user_id` bigint(20) DEFAULT NULL,
   `controller_class` varchar(255) DEFAULT NULL,
