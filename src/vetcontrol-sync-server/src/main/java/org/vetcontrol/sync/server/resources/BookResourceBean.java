@@ -282,13 +282,13 @@ public class BookResourceBean {
         String equalSymbol = getEqualSymbol(re.getLastSyncStatus());
 
 
-        String order = "";
+        String order = " order by e.updated";
         if (CargoMode.class.equals(entity) || Department.class.equals(entity)) {
-            order = ", e.parent.id";
+            order = " order by e.parent.id, e.updated" ;
         }
 
         TypedQuery<T> query = em.createQuery("select e from " + entity.getSimpleName()
-                + " e where e.updated >" + equalSymbol + " :updated order by e.updated " + order, entity).setParameter("updated", re.getUpdated());
+                + " e where e.updated >" + equalSymbol + " :updated " + order, entity).setParameter("updated", re.getUpdated());
 
         if (maxResults != null) {
             query.setMaxResults(Integer.parseInt(maxResults));
