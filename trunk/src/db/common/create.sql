@@ -400,14 +400,14 @@ CREATE TABLE `document_cargo` (
 
   `cargo_mode_id` bigint(20) NOT NULL,
 
-  `cargo_sender_name` varchar(100) NOT NULL,
+  `cargo_sender_name` varchar(255) NOT NULL,
   `cargo_sender_country_id` bigint(20) NOT NULL,
 
-  `cargo_receiver_name` varchar(100) NOT NULL,
-  `cargo_receiver_address` varchar(100) NOT NULL,
+  `cargo_receiver_name` varchar(255) NOT NULL,
+  `cargo_receiver_address` varchar(255) NOT NULL,
 
   `passing_border_point_id` bigint(20) DEFAULT NULL,
-  `details` varchar(255) DEFAULT NULL,
+  `details` varchar(1024) DEFAULT NULL,
   `detention_details` varchar(255) DEFAULT NULL,
   `sync_status` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id`,`department_id`,`client_id`),

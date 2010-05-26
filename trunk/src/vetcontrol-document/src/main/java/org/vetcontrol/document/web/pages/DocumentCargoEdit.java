@@ -19,6 +19,8 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.*;
+import org.apache.wicket.validation.validator.MaximumValidator;
+import org.apache.wicket.validation.validator.StringValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.book.ShowBooksMode;
@@ -279,8 +281,9 @@ public class DocumentCargoEdit extends DocumentEditPage {
                 documentCargoModel);
 
         //Примечания
-        TextArea details = new TextArea<String>("document.cargo.details",
+        TextArea<String> details = new TextArea<String>("document.cargo.details",
                 new PropertyModel<String>(documentCargoModel, "details"));
+        details.add(StringValidator.maximumLength(1024));
         form.add(details);
 
         //Автор
@@ -388,8 +391,9 @@ public class DocumentCargoEdit extends DocumentEditPage {
             protected void populateItem(final ListItem<Vehicle> item) {
                 final Vehicle vehicle = item.getModelObject();
 
-                TextField details = new TextField<String>("document.cargo.vehicle.details",
+                TextField<String> details = new TextField<String>("document.cargo.vehicle.details",
                         new PropertyModel<String>(vehicle, "vehicleDetails"));
+                details.add(StringValidator.maximumLength(255));
                 details.setOutputMarkupId(true);
                 item.add(details);
 
@@ -798,6 +802,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
         //Количество
         TextField<Double> count = new TextField<Double>("document.cargo.count",
                 new PropertyModel<Double>(item.getModel(), "count"));
+        count.add(new MaximumValidator<Double>(99999999999D));
         count.add( new AjaxFormComponentUpdatingBehavior("onchange") {
 
             @Override
@@ -859,6 +864,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
         //Реквизиты сертификата
         TextField<String> certificateDetails = new TextField<String>("document.cargo.certificate_detail",
                 new PropertyModel<String>(item.getModel(), "certificateDetails"));
+        certificateDetails.add(StringValidator.maximumLength(255));
         certificateDetails.setRequired(true);
         item.add(certificateDetails);
 
