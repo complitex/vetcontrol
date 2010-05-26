@@ -97,6 +97,10 @@ public class CargoModeCargoType implements IUpdated, IEmbeddedId<CargoModeCargoT
     @XmlTransient
     private boolean needToUpdateVersion;
 
+    @Transient
+    @XmlTransient
+    private String invalidUktzedCode;
+
     public CargoModeCargoType() {
     }
 
@@ -152,6 +156,14 @@ public class CargoModeCargoType implements IUpdated, IEmbeddedId<CargoModeCargoT
     @Override
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    public String getInvalidUktzedCode() {
+        return invalidUktzedCode;
+    }
+
+    public void setInvalidUktzedCode(String invalidUktzedCode) {
+        this.invalidUktzedCode = invalidUktzedCode;
     }
 
     @Override

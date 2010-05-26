@@ -42,6 +42,7 @@ import org.vetcontrol.service.UIPreferences.PreferenceType;
 import org.vetcontrol.service.dao.IBookViewDAO;
 import org.vetcontrol.book.BeanPropertyUtil;
 import org.vetcontrol.book.Property;
+import org.vetcontrol.information.web.util.PageManager;
 import org.vetcontrol.web.component.datatable.ArrowHeadersToolbar;
 import org.vetcontrol.web.component.paging.PagingNavigator;
 import org.vetcontrol.web.component.toolbar.AddItemButton;
@@ -213,7 +214,7 @@ public class BookPage extends ListTemplatePage {
 
     private void goToEditPage(Serializable bookEntry) {
         getSession().setMetaData(SELECTED_BOOK_ENTRY, bookEntry);
-        setResponsePage(BookWebInfoContainer.getEditPage(bookEntry.getClass()));
+        PageManager.goToEditPage(this, bookClass);
     }
 
     private static Class getBookClass(String bookClassName) {

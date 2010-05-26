@@ -4,6 +4,7 @@
  */
 package org.vetcontrol.information.web.pages.custom.cargomode;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +43,6 @@ import org.vetcontrol.entity.CargoType;
 import org.vetcontrol.entity.Log;
 import org.vetcontrol.entity.UnitType;
 import org.vetcontrol.information.service.dao.CargoModeDAO;
-import org.vetcontrol.information.web.util.BookWebInfoContainer;
 import org.vetcontrol.information.web.util.CanEditUtil;
 import org.vetcontrol.information.web.util.Constants;
 import org.vetcontrol.information.web.util.TruncateUtil;
@@ -58,6 +58,7 @@ import org.vetcontrol.book.BookHash;
 import org.vetcontrol.information.web.component.edit.GoToListPagePanel;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 import org.vetcontrol.information.web.util.CommonResourceKeys;
+import org.vetcontrol.information.web.util.PageManager;
 import org.vetcontrol.service.dao.IBookViewDAO;
 import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.component.book.IDisableAwareChoiceRenderer;
@@ -194,27 +195,27 @@ public final class CargoModeEdit extends FormTemplatePage {
 
             class AutoCompleteTextFieldModel extends Model<String> {
 
-                private String localObject;
-
                 @Override
                 public String getObject() {
-                    CargoType objectModel = cargoModeCargoType.getCargoType();
-                    if (objectModel == null) {
-                        return localObject;
+                    CargoType cargoType = cargoModeCargoType.getCargoType();
+                    if (cargoType == null) {
+                        return cargoModeCargoType.getInvalidUktzedCode();
                     } else {
-                        return objectModel.getCode();
+                        return cargoType.getCode();
                     }
                 }
 
                 @Override
                 public void setObject(String object) {
-                    CargoType cargoType = autoCompleteTextField.findChoice();
-                    CargoType old = cargoModeCargoType.getCargoType();
-                    if (old == null || !old.equals(cargoType)) {
+                    CargoType newCargoType = autoCompleteTextField.findChoice();
+                    CargoType oldCargoType = cargoModeCargoType.getCargoType();
+                    if (oldCargoType == null || !oldCargoType.equals(newCargoType)) {
                         cargoModeCargoType.setNeedToUpdateVersion(true);
                     }
-                    cargoModeCargoType.setCargoType(cargoType);
-                    localObject = object;
+                    cargoModeCargoType.setCargoType(newCargoType);
+                    if (newCargoType == null && !Strings.isEmpty(object)) {
+                        cargoModeCargoType.setInvalidUktzedCode(object);
+                    }
                 }
             }
 
@@ -283,9 +284,14 @@ public final class CargoModeEdit extends FormTemplatePage {
 
     private static final Logger log = LoggerFactory.getLogger(CargoModeEdit.class);
 
-    private static final String UNIT_TYPE_INCORRECT = "unit_type_incorrect";
+    /* Keys of error messages */
+    private static final String UNIT_TYPE_EMPTY = "unit_type_empty";
 
     private static final String CARGO_TYPE_INCORRECT = "cargo_type_incorrect";
+
+    private static final String CARGO_TYPE_EMPTY = "cargo_type_empty";
+
+    private static final String EMPTY_CARGO_MODE = "empty_cargo_mode";
 
     @EJB(name = "LocaleDAO")
     private ILocaleDAO localeDAO;
@@ -504,21 +510,42 @@ public final class CargoModeEdit extends FormTemplatePage {
                 if (!validated) {
                     validated = true;
                     boolean isValid = true;
+
+                    //empty uktzed code
                     for (CargoModeCargoType cargoModeCargoType : cargoModeModel.getObject().getCargoModeCargoTypes()) {
                         CargoType cargoType = cargoModeCargoType.getCargoType();
-                        if (cargoType == null) {
+                        if (cargoType == null && Strings.isEmpty(cargoModeCargoType.getInvalidUktzedCode())) {
                             isValid = false;
-                            error(getString(CARGO_TYPE_INCORRECT));
+                            error(getString(CARGO_TYPE_EMPTY));
                             break;
                         }
                     }
+
+                    //invalid uktzed code
+                    for (CargoModeCargoType cargoModeCargoType : cargoModeModel.getObject().getCargoModeCargoTypes()) {
+                        CargoType cargoType = cargoModeCargoType.getCargoType();
+                        if (cargoType == null && !Strings.isEmpty(cargoModeCargoType.getInvalidUktzedCode())) {
+                            isValid = false;
+                            error(MessageFormat.format(getString(CARGO_TYPE_INCORRECT), cargoModeCargoType.getInvalidUktzedCode()));
+                        }
+                    }
+
+                    //empty unit type
                     for (CargoModeUnitType cargoModeUnitType : cargoModeModel.getObject().getCargoModeUnitTypes()) {
                         UnitType unitType = cargoModeUnitType.getUnitType();
                         if (unitType == null) {
                             isValid = false;
-                            error(getString(UNIT_TYPE_INCORRECT));
+                            error(getString(UNIT_TYPE_EMPTY));
                             break;
                         }
+                    }
+
+                    //no unit types and uktzed codes but it is second-level cargo mode
+                    if (cargoModeModel.getObject().getParent() != null
+                            && cargoModeModel.getObject().getCargoModeCargoTypes().isEmpty()
+                            && cargoModeModel.getObject().getCargoModeUnitTypes().isEmpty()) {
+                        isValid = false;
+                        error(getString(EMPTY_CARGO_MODE));
                     }
                     return isValid;
                 }
@@ -622,7 +649,7 @@ public final class CargoModeEdit extends FormTemplatePage {
     }
 
     private void goToListPage() {
-        setResponsePage(BookWebInfoContainer.getListPage(CargoMode.class), BookWebInfoContainer.getListPageParameters(CargoMode.class));
+        PageManager.goToListPage(this, CargoMode.class);
     }
 }
 

@@ -7,8 +7,8 @@ package org.vetcontrol.information.web.component.edit;
 import java.io.Serializable;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.vetcontrol.information.web.util.BookWebInfoContainer;
 import org.vetcontrol.information.web.util.CanEditUtil;
+import org.vetcontrol.information.web.util.PageManager;
 
 /**
  *
@@ -41,6 +41,6 @@ public class GoToListPagePanel extends Panel {
     }
 
     protected void goToListPage(final Class<?> entityClass) {
-        setResponsePage(BookWebInfoContainer.getListPage(entityClass), BookWebInfoContainer.getListPageParameters(entityClass));
+        PageManager.goToListPage(this, entityClass);
     }
 }

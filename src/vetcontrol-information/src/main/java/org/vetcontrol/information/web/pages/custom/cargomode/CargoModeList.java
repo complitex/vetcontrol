@@ -45,6 +45,7 @@ import static org.vetcontrol.book.BeanPropertyUtil.*;
 import org.vetcontrol.book.Property;
 import org.vetcontrol.book.ShowBooksMode;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
+import org.vetcontrol.information.web.util.PageManager;
 import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
 import org.vetcontrol.web.component.paging.PagingNavigator;
 import org.vetcontrol.web.component.toolbar.AddItemButton;
@@ -245,7 +246,7 @@ public class CargoModeList extends ListTemplatePage {
 
     private void goToEditPage(Serializable entry) {
         getSession().setMetaData(SELECTED_BOOK_ENTRY, entry);
-        setResponsePage(BookWebInfoContainer.getEditPage(CargoMode.class));
+        PageManager.goToEditPage(this, CargoMode.class);
     }
 
     @Override

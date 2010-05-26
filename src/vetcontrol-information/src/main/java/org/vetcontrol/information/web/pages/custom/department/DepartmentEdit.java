@@ -36,7 +36,6 @@ import org.vetcontrol.entity.Department;
 import org.vetcontrol.entity.Log;
 import org.vetcontrol.entity.PassingBorderPoint;
 import org.vetcontrol.information.service.dao.DepartmentBookDAO;
-import org.vetcontrol.information.web.util.BookWebInfoContainer;
 import org.vetcontrol.information.web.util.CanEditUtil;
 import org.vetcontrol.information.web.util.TruncateUtil;
 import org.vetcontrol.information.web.component.BookChoiceRenderer;
@@ -52,6 +51,7 @@ import org.vetcontrol.book.Property;
 import org.vetcontrol.information.web.component.edit.GoToListPagePanel;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 import org.vetcontrol.information.web.util.CommonResourceKeys;
+import org.vetcontrol.information.web.util.PageManager;
 import org.vetcontrol.service.dao.IBookViewDAO;
 import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.component.toolbar.DisableItemButton;
@@ -333,7 +333,7 @@ public final class DepartmentEdit extends FormTemplatePage {
     }
 
     private void goToListPage() {
-        setResponsePage(BookWebInfoContainer.getListPage(Department.class), BookWebInfoContainer.getListPageParameters(Department.class));
+        PageManager.goToListPage(this, Department.class);
     }
 
     private void saveOrUpdate(BookHash initial) {
