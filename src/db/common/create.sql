@@ -397,15 +397,11 @@ CREATE TABLE `document_cargo` (
   `updated` timestamp NOT NULL,
   `movement_type` VARCHAR(15) NOT NULL,
   `vehicle_type` varchar(10) NOT NULL,
-
   `cargo_mode_id` bigint(20) NOT NULL,
-
   `cargo_sender_name` varchar(255) NOT NULL,
   `cargo_sender_country_id` bigint(20) NOT NULL,
-
   `cargo_receiver_name` varchar(255) NOT NULL,
   `cargo_receiver_address` varchar(255) NOT NULL,
-
   `passing_border_point_id` bigint(20) DEFAULT NULL,
   `details` varchar(1024) DEFAULT NULL,
   `detention_details` varchar(255) DEFAULT NULL,
@@ -586,31 +582,23 @@ CREATE TABLE `arrest_document` (
     `client_id` bigint(20) NOT NULL,
     `department_id` bigint(20) NOT NULL,
     `creator_id` bigint(20) NOT NULL,
-
     `arrest_date` TIMESTAMP NOT NULL,
     `arrest_reason_id` bigint(20) NOT NULL,
-    `arrest_reason_details` VARCHAR(500) DEFAULT NULL,
-
+    `arrest_reason_details` VARCHAR(1024) DEFAULT NULL,
     `passing_border_point_id` bigint(20) DEFAULT NULL,
     `count` DOUBLE (11,2) DEFAULT NULL,
     `cargo_mode_id` bigint(20) NOT NULL,
     `certificate_date` DATE NOT NULL,
     `certificate_details` VARCHAR(255) NOT NULL,
-
-    `cargo_sender_name` VARCHAR(100) NOT NULL,
+    `cargo_sender_name` VARCHAR(255) NOT NULL,
     `cargo_sender_country_id` bigint(20) NOT NULL,
-
-    `cargo_receiver_name` VARCHAR(100) NOT NULL,
-    `cargo_receiver_address` VARCHAR(100) NOT NULL,
-
+    `cargo_receiver_name` VARCHAR(255) NOT NULL,
+    `cargo_receiver_address` VARCHAR(255) NOT NULL,
     `cargo_type_id` bigint(20) NOT NULL,
     `unit_type_id` bigint(20) DEFAULT NULL,
-
     `vehicle_type` VARCHAR(10) NOT NULL,
     `vehicle_details` VARCHAR(255) NOT NULL,
-
     `document_cargo_created` TIMESTAMP NOT NULL,
-
     `updated` TIMESTAMP NOT NULL,
     `sync_status` VARCHAR(64) DEFAULT NULL,
     PRIMARY KEY (`id`, `client_id`, `department_id`),
