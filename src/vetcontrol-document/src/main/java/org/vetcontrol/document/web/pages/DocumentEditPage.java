@@ -11,13 +11,14 @@ import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.validation.validator.StringValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vetcontrol.book.ShowBooksMode;
 import org.vetcontrol.document.service.CommonDocumentBean;
-import org.vetcontrol.web.component.book.BookChoiceRenderer;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.LogBean;
+import org.vetcontrol.web.component.book.BookChoiceRenderer;
 import org.vetcontrol.web.component.book.DisableAwareDropDownChoice;
 import org.vetcontrol.web.template.FormTemplatePage;
 
@@ -126,6 +127,7 @@ public abstract class DocumentEditPage extends FormTemplatePage {
                 return commonDocumentBean.getSenderNames(ddcSenderCountry.getModelObject(), input).iterator();
             }
         };
+        senderName.add(StringValidator.maximumLength(255));
         senderName.setRequired(true);
         senderName.setOutputMarkupId(true);
         container.add(senderName);
@@ -146,6 +148,7 @@ public abstract class DocumentEditPage extends FormTemplatePage {
                 return commonDocumentBean.getReceiverNames(input).iterator();
             }
         };
+        receiverName.add(StringValidator.maximumLength(255));
         receiverName.setRequired(true);
         receiverName.setOutputMarkupId(true);
         container.add(receiverName);
@@ -160,6 +163,7 @@ public abstract class DocumentEditPage extends FormTemplatePage {
                 return commonDocumentBean.getReceiverNames(input).iterator();
             }
         };
+        receiverAddress.add(StringValidator.maximumLength(255));
         receiverAddress.setRequired(true);
         receiverAddress.setOutputMarkupId(true);
         container.add(receiverAddress);
