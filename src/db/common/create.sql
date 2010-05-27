@@ -176,23 +176,24 @@ CREATE TABLE  `department` (
     KEY `department_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `cargo_sender`;
-CREATE TABLE  `cargo_sender` (
-    `id` bigint(20) NOT NULL auto_increment,
-    `name` varchar(100) NOT NULL,
-    `country_id` bigint(20) NOT NULL,
-    PRIMARY KEY (`id`),
-    KEY `FK_cargo_sender_country_ref` (`country_id`),
-    CONSTRAINT `FK_cargo_sender_country_ref` FOREIGN KEY (`country_id`) REFERENCES `countrybook` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS `cargo_receiver`;
-CREATE TABLE  `cargo_receiver` (
-    `id` bigint(20) NOT NULL auto_increment,
-    `name` varchar(100) NOT NULL,
-    `address` varchar(100) NOT NULL,
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/* Не используемые пока справочники */
+--DROP TABLE IF EXISTS `cargo_sender`;
+--CREATE TABLE  `cargo_sender` (
+--    `id` bigint(20) NOT NULL auto_increment,
+--    `name` varchar(100) NOT NULL,
+--    `country_id` bigint(20) NOT NULL,
+--    PRIMARY KEY (`id`),
+--    KEY `FK_cargo_sender_country_ref` (`country_id`),
+--    CONSTRAINT `FK_cargo_sender_country_ref` FOREIGN KEY (`country_id`) REFERENCES `countrybook` (`id`)
+--) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+--
+--DROP TABLE IF EXISTS `cargo_receiver`;
+--CREATE TABLE  `cargo_receiver` (
+--    `id` bigint(20) NOT NULL auto_increment,
+--    `name` varchar(100) NOT NULL,
+--    `address` varchar(100) NOT NULL,
+--    PRIMARY KEY (`id`)
+--) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /* Справочник мест таможенного оформления грузов */
 DROP TABLE IF EXISTS `customs_point`;
@@ -445,7 +446,7 @@ CREATE TABLE `document_cargo` (
   `movement_type` VARCHAR(15) NOT NULL,
   /* Тип транспортного средства. Все возможные значения перечислены в VehicleType.class */
   `vehicle_type` varchar(10) NOT NULL,
-  /* Вид грузов */
+  /* Вид груза */
   `cargo_mode_id` bigint(20) NOT NULL,
   /* Наименование отправителя грузов */
   `cargo_sender_name` varchar(255) NOT NULL,
@@ -486,7 +487,7 @@ CREATE TABLE  `cargo` (
   `client_id` bigint(20) NOT NULL,
   /* Подразделение */
   `department_id` bigint(20) NOT NULL,
-  /* Суррогатный идентификатор карточки на груз, которой данный груз принадлежит */
+  /* Суррогатный идентификатор карточки на грузы, к которой данный груз принадлежит */
   `document_cargo_id` bigint(20) NOT NULL,
   /* Категория груза */
   `cargo_type_id` bigint(20) NOT NULL,
@@ -533,7 +534,7 @@ CREATE TABLE  `vehicle` (
     `client_id` bigint(20) NOT NULL,
     /* Подразделение */
     `department_id` bigint(20) NOT NULL,
-    /* Суррогатный идентификатор карточки на груз, которой данное транспортное средство принадлежит */
+    /* Суррогатный идентификатор карточки на грузы, которой данное транспортное средство принадлежит */
     `document_cargo_id` bigint(20) NOT NULL,
     /* Тип транспортного средства. Все возможные значения перечислены в VehicleType.class */
     `vehicle_type` varchar(10) NOT NULL,
@@ -650,6 +651,7 @@ CREATE TABLE `deleted_long_id` (
     KEY `deleted_long_id_deleted_INDEX` (`deleted`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
+/*TODO: add comments */
 DROP TABLE IF EXISTS `client_update`;
 CREATE TABLE  `client_update` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -661,6 +663,7 @@ CREATE TABLE  `client_update` (
   UNIQUE KEY `version` (`version`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/*TODO: add comments */
 DROP TABLE IF EXISTS `client_update_item`;
 CREATE TABLE  `client_update_item` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -674,30 +677,54 @@ CREATE TABLE  `client_update_item` (
   CONSTRAINT `FK_update_id` FOREIGN KEY (`update_id`) REFERENCES `client_update` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/* Таблица задержаний грузов */
 DROP TABLE IF EXISTS `arrest_document`;
 CREATE TABLE `arrest_document` (
+    /* Суррогатный идентификатор */
     `id` bigint(20) NOT NULL,
+    /* Идентификатор удаленного клиента */
     `client_id` bigint(20) NOT NULL,
+    /* Подразделение */
     `department_id` bigint(20) NOT NULL,
+    /* Идентификатор пользователя, создавшего документ */
     `creator_id` bigint(20) NOT NULL,
+    /* Дата задержания */
     `arrest_date` TIMESTAMP NOT NULL,
+    /* Причина задержания */
     `arrest_reason_id` bigint(20) NOT NULL,
+    /* Детали задержания */
     `arrest_reason_details` VARCHAR(1024) DEFAULT NULL,
+    /* Пункт пропуска через границу */
     `passing_border_point_id` bigint(20) DEFAULT NULL,
+    /* Количество груза */
     `count` DOUBLE (11,2) DEFAULT NULL,
+    /* Вид груза */
     `cargo_mode_id` bigint(20) NOT NULL,
+    /* Дата сертификации груза */
     `certificate_date` DATE NOT NULL,
+    /* Детали сертификации груза */
     `certificate_details` VARCHAR(255) NOT NULL,
+    /* Наименование отправителя грузов */
     `cargo_sender_name` VARCHAR(255) NOT NULL,
+    /* Страна отправителя */
     `cargo_sender_country_id` bigint(20) NOT NULL,
+    /* Наименование получателя */
     `cargo_receiver_name` VARCHAR(255) NOT NULL,
+    /* Адрес получателя */
     `cargo_receiver_address` VARCHAR(255) NOT NULL,
+    /* Категория груза */
     `cargo_type_id` bigint(20) NOT NULL,
+    /* Единица измерения */
     `unit_type_id` bigint(20) DEFAULT NULL,
+    /* Тип транспортного средства. Все возможные значения перечислены в VehicleType.class */
     `vehicle_type` VARCHAR(10) NOT NULL,
+    /* Детали транспортного средства(например, номер автомобиля) */
     `vehicle_details` VARCHAR(255) NOT NULL,
+    /* Дата создания карточки на грузы, груз которой был задержан */
     `document_cargo_created` TIMESTAMP NOT NULL,
+    /* Дата последней модификации(создание/обновление) записи */
     `updated` TIMESTAMP NOT NULL,
+    /* Статус синронизации с сервером. Все возможные значения перечислены в Synchronized.SyncStatus.class */
     `sync_status` VARCHAR(64) DEFAULT NULL,
     PRIMARY KEY (`id`, `client_id`, `department_id`),
     KEY `FK_arrest_client` (`client_id`),
