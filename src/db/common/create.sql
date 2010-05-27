@@ -7,21 +7,33 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
--- users --
+/* Пользователи */
 
+/* Талица пользователей системы */
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE  `user` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  /* Логин */
   `login` VARCHAR(32) NOT NULL,
+  /* Пароль */
   `_password` VARCHAR(32) DEFAULT NULL,
+  /* Имя */
   `first_name` VARCHAR(45) DEFAULT NULL,
+  /* Отчество */
   `middle_name` VARCHAR(45) DEFAULT NULL,
+  /* Фамилия */
   `last_name` VARCHAR(45) DEFAULT NULL,
-   `job_id` BIGINT(20) DEFAULT NULL,
+  /* Должность пользователя */
+  `job_id` BIGINT(20) DEFAULT NULL,
+   /* Подразделение, в котором работает пользователь */
   `department_id` BIGINT(20) DEFAULT NULL,
-   `passing_border_point_id` BIGINT(20) DEFAULT NULL,
+  /* Пункт пропуска через границу, к которому принадлежит пользователь */
+  `passing_border_point_id` BIGINT(20) DEFAULT NULL,
+  /* Дата последней модификации(создание/обновление) записи */
   `updated` TIMESTAMP NOT NULL DEFAULT NOW(),
+  /* Язык, на котором пользователь предпочитает работать с системой */
   `locale` VARCHAR(2) NULL,
+  /* Количество записей на страницу, которое пользователь предпочитает использовать на страницах просмотра списка сущностей */
   `page_size` INT(3) NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_login` (`login`),
@@ -34,11 +46,15 @@ CREATE TABLE  `user` (
     KEY `user_updated_INDEX` (`updated`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
+/* Таблица ролей пользователей */
 DROP TABLE IF EXISTS `usergroup`;
 CREATE TABLE  `usergroup` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  /* Логин пользователя */
   `login` VARCHAR(32) NOT NULL,
+  /* Роль пользователя */
   `usergroup` VARCHAR(32) NOT NULL,
+  /* Дата последней модификации(создание/обновление) записи */
   `updated` TIMESTAMP NOT NULL DEFAULT NOW(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `login_usergroup` (`login`,`usergroup`),
@@ -46,55 +62,55 @@ CREATE TABLE  `usergroup` (
   KEY `usergroup_updated_INDEX` (`updated`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
+/* Вспомогательные таблицы */
 
-
- -- books --
-
-
--- auxiliary tables --
-
-/*Table structure for table `locales` */
-
+/* Таблица поддерживаемых системой языков */
 DROP TABLE IF EXISTS `locales`;
-
 CREATE TABLE `locales` (
+  /* ISO 639 код языка */
   `language` varchar(2) NOT NULL,
+  /* Системный язык является языком по умолчанию для системы */
   `isSystem` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`language`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `generator` */
+/* Вспомогательная таблица для хранения значений, генерируемых табличными генераторами */
 DROP TABLE IF EXISTS `generator`;
-
 create table `generator`(
+   /* Наименование генератора */
    `generatorName` varchar(20) NOT NULL ,
+   /* Значение генератора */
    `generatorValue` bigint UNSIGNED NOT NULL DEFAULT '0' ,
    PRIMARY KEY (`generatorName`)
  )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `stringculture` */
-
+/* Таблица для хранения локализованных строк в справочниках */
 DROP TABLE IF EXISTS `stringculture`;
-
 CREATE TABLE `stringculture` (
   `id` bigint(20) NOT NULL,
+  /* Код языка */
   `locale` varchar(2) NOT NULL,
+  /* Локализованное значение */
   `value` varchar(1024) default NULL,
+  /* Дата последней модификации(создание/обновление) записи */
   `updated` timestamp NOT NULL DEFAULT NOW(),
   PRIMARY KEY  (`id`, `locale`),
     KEY `stringculture_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `countrybook` */
+/* Справочники */
 
+/* Справочник стран */
 DROP TABLE IF EXISTS `countrybook`;
-
 CREATE TABLE `countrybook` (
   `id` bigint(20) NOT NULL auto_increment,
+  /* ISO 3166 двух символьный код страны */
   `code` varchar(2) NOT NULL,
+  /* Название страны */
   `name` bigint(20) NOT NULL,
+  /* Дата последней модификации(создание/обновление) записи */
   `updated` timestamp NOT NULL DEFAULT NOW(),
-  /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
+  /* Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован */
   `disabled` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `FK_countrybook_name` (`name`),
@@ -102,20 +118,25 @@ CREATE TABLE `countrybook` (
     KEY `countrybook_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `registeredproducts` */
-
+/* Справочник перечня препаратов, зарегестрированных в Украине */
 DROP TABLE IF EXISTS `registered_products`;
-
 CREATE TABLE `registered_products` (
   `id` bigint(20) NOT NULL auto_increment,
+  /* Наименование препарата */
   `name` bigint(20) NOT NULL,
+  /* Классификатор */
   `classificator` bigint(20) NOT NULL,
+  /* Производитель */
   `cargo_producer_id` bigint(20) NOT NULL,
+  /* Регистрационный номер */
   `regnumber` varchar(50) NOT NULL,
+  /* Дата регистрации */
   `date` date NOT NULL,
+  /* Страна производителя */
   `country_id` bigint(20) NOT NULL,
+  /* Дата последней модификации(создание/обновление) записи */
   `updated` timestamp NOT NULL DEFAULT NOW(),
- /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
+  /* Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован */
   `disabled` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `FK_registeredproducts_name` (`name`),
@@ -129,18 +150,22 @@ CREATE TABLE `registered_products` (
     KEY `registered_products_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `department` */
-
+/* Справочник структурных единиц */
 DROP TABLE IF EXISTS `department`;
 CREATE TABLE  `department` (
     `id` bigint(20) NOT NULL auto_increment,
+    /* Наименование подразделения */
     `name` bigint(20) NOT NULL,
+    /* Идентификатор вышестоящего подразделения */
     `parent_id` bigint(20) NULL,
+    /* Место таможенного оформления грузов */
     `custom_point_id` bigint(20) NULL,
+    /* Уровень данного подразделения в 3-х уровневой иерархии */
     `level` int(2) NOT NULL,
+    /* Дата последней модификации(создание/обновление) записи */
     `updated` timestamp NOT NULL DEFAULT NOW(),
- /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
-  `disabled` tinyint(1) NOT NULL default '0',
+    /* Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован */
+    `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_department_name` (`name`),
     CONSTRAINT `FK_department_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
@@ -150,8 +175,6 @@ CREATE TABLE  `department` (
     CONSTRAINT `FK_department_custom_point` FOREIGN KEY (`custom_point_id`) REFERENCES `customs_point` (`id`),
     KEY `department_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-/*Table structure for table `cargo_sender` */
 
 DROP TABLE IF EXISTS `cargo_sender`;
 CREATE TABLE  `cargo_sender` (
@@ -163,8 +186,6 @@ CREATE TABLE  `cargo_sender` (
     CONSTRAINT `FK_cargo_sender_country_ref` FOREIGN KEY (`country_id`) REFERENCES `countrybook` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `cargo_receiver` */
-
 DROP TABLE IF EXISTS `cargo_receiver`;
 CREATE TABLE  `cargo_receiver` (
     `id` bigint(20) NOT NULL auto_increment,
@@ -173,31 +194,34 @@ CREATE TABLE  `cargo_receiver` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `customs_point` */
-
+/* Справочник мест таможенного оформления грузов */
 DROP TABLE IF EXISTS `customs_point`;
 CREATE TABLE  `customs_point` (
     `id` bigint(20) NOT NULL auto_increment,
+    /* Наименование */
     `name` bigint(20) NOT NULL,
+    /* Дата последней модификации(создание/обновление) записи */
     `updated` timestamp NOT NULL DEFAULT NOW(),
- /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
-  `disabled` tinyint(1) NOT NULL default '0',
+    /* Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован */
+    `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_customs_point_name` (`name`),
     CONSTRAINT `FK_customs_point_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
     KEY `customs_point_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `cargo_producer` */
-
+/* Справочник производителей */
 DROP TABLE IF EXISTS `cargo_producer`;
 CREATE TABLE  `cargo_producer` (
     `id` bigint(20) NOT NULL auto_increment,
+    /* Наименование */
     `name` bigint(20) NOT NULL,
+    /* Страна производителя */
     `country_id` bigint(20) NOT NULL,
+    /* Дата последней модификации(создание/обновление) записи */
     `updated` timestamp NOT NULL DEFAULT NOW(),
- /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
-  `disabled` tinyint(1) NOT NULL default '0',
+    /* Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован */
+    `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_cargo_producer_name` (`name`),
     CONSTRAINT `FK_cargo_producer_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
@@ -206,16 +230,18 @@ CREATE TABLE  `cargo_producer` (
     KEY `cargo_producer_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `cargo_type` */
-
+/* Справочник категорий(типов) грузов */
 DROP TABLE IF EXISTS `cargo_type`;
 CREATE TABLE  `cargo_type` (
     `id` bigint(20) NOT NULL auto_increment,
+    /* Наименование категории грузов */
     `name` bigint(20) NOT NULL,
+    /* Уникальный УКТ ЗЕД код категории грузов */
     `ukt_zed_code` VARCHAR(10) NOT NULL,
+    /* Дата последней модификации(создание/обновление) записи */
     `updated` timestamp NOT NULL,
- /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
-  `disabled` tinyint(1) NOT NULL default '0',
+    /* Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован */
+    `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     UNIQUE KEY `code` (`ukt_zed_code`),
     KEY `FK_cargo_type_name` (`name`),
@@ -223,13 +249,12 @@ CREATE TABLE  `cargo_type` (
     KEY `cargo_type_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `cargo_mode_cargo_type` */
-/* Link table between cargo_mode and cargo_type. */
-
+/* Таблица, связывающая виды грузов и категории грузов */
 DROP TABLE IF EXISTS `cargo_mode_cargo_type`;
 CREATE TABLE  `cargo_mode_cargo_type` (
     `cargo_mode_id` bigint(20) NOT NULL,
     `cargo_type_id` bigint(20) NOT NULL,
+    /* Дата последней модификации(создание/обновление) записи */
     `updated` timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`cargo_mode_id`, `cargo_type_id`),
     KEY `FK_cargo_mode_cargo_type_cargo_mode_id` (`cargo_mode_id`),
@@ -239,16 +264,18 @@ CREATE TABLE  `cargo_mode_cargo_type` (
     KEY `cargo_mode_cargo_type_updated_INDEX` (`updated`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `cargo_mode` */
-
+/* Справочник видов грузов */
 DROP TABLE IF EXISTS `cargo_mode`;
 CREATE TABLE  `cargo_mode` (
     `id` bigint(20) NOT NULL auto_increment,
+    /* Наименование вида грузов */
     `name` bigint(20) NOT NULL,
+    /* Идентификатор родителького вида грузов в 2-х уровневой иерархии видов грузов */
     `parent_id` bigint(20) NULL,
+    /* Дата последней модификации(создание/обновление) записи */
     `updated` timestamp NOT NULL DEFAULT NOW(),
- /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
-  `disabled` tinyint(1) NOT NULL default '0',
+    /* Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован */
+    `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_cargo_mode_name` (`name`),
     CONSTRAINT `FK_cargo_mode_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
@@ -257,13 +284,12 @@ CREATE TABLE  `cargo_mode` (
     KEY `cargo_mode_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `cargo_mode_unit_type` */
-/* Link table between cargo_mode and unit_type. */
-
+/* Таблица, связывающая виды грузов и единицы измерения */
 DROP TABLE IF EXISTS `cargo_mode_unit_type`;
 CREATE TABLE  `cargo_mode_unit_type` (
     `cargo_mode_id` bigint(20) NOT NULL,
     `unit_type_id` bigint(20) NOT NULL,
+    /* Дата последней модификации(создание/обновление) записи */
     `updated` timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`cargo_mode_id`, `unit_type_id`),
     KEY `FK_cargo_mode_unit_type_cargo_mode_id` (`cargo_mode_id`),
@@ -273,16 +299,18 @@ CREATE TABLE  `cargo_mode_unit_type` (
     KEY `cargo_mode_unit_type_updated_INDEX` (`updated`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `unit_type` */
-
+/* Справочник единиц измерения */
 DROP TABLE IF EXISTS `unit_type`;
 CREATE TABLE  `unit_type` (
     `id` bigint(20) NOT NULL auto_increment,
+    /* Наименование единицы измерения */
     `name` bigint(20) NOT NULL,
+    /* Сокращенное название единицы измрения */
     `short_name` bigint(20) NOT NULL,
+    /* Дата последней модификации(создание/обновление) записи */
     `updated` timestamp NOT NULL DEFAULT NOW(),
- /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
-  `disabled` tinyint(1) NOT NULL default '0',
+    /* Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован */
+    `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_unit_type_name` (`name`),
     CONSTRAINT `FK_unit_type_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
@@ -291,86 +319,96 @@ CREATE TABLE  `unit_type` (
     KEY `unit_type_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `job` */
-
+/* Справочник должностей */
 DROP TABLE IF EXISTS `job`;
 CREATE TABLE  `job` (
     `id` bigint(20) NOT NULL auto_increment,
+    /* Название должности */
     `name` bigint(20) NOT NULL,
+    /* Дата последней модификации(создание/обновление) записи */
     `updated` timestamp NOT NULL DEFAULT NOW(),
- /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
-  `disabled` tinyint(1) NOT NULL default '0',
+    /* Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован */
+    `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_job_name` (`name`),
     CONSTRAINT `FK_job_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
     KEY `job_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `arrest_reason` */
-
+/* Справочник причин задержания грузов */
 DROP TABLE IF EXISTS `arrest_reason`;
 CREATE TABLE  `arrest_reason` (
     `id` bigint(20) NOT NULL auto_increment,
+    /* Наименование причины */
     `name` bigint(20) NOT NULL,
+    /* Дата последней модификации(создание/обновление) записи */
     `updated` timestamp NOT NULL DEFAULT NOW(),
- /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
-  `disabled` tinyint(1) NOT NULL default '0',
+    /* Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован */
+    `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_arrest_reason_name` (`name`),
     CONSTRAINT `FK_arrest_reason_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
     KEY `arrest_reason_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `bad_epizootic_situation` */
-
+/* Справочник стран с неблагоприятной эпизоотической ситуацией */
 DROP TABLE IF EXISTS `bad_epizootic_situation`;
 CREATE TABLE  `bad_epizootic_situation` (
     `id` bigint(20) NOT NULL auto_increment,
+    /* Название страны */
     `name` bigint(20) NOT NULL,
+    /* Дата последней модификации(создание/обновление) записи */
     `updated` timestamp NOT NULL DEFAULT NOW(),
- /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
-  `disabled` tinyint(1) NOT NULL default '0',
+    /* Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован */
+    `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_bad_epizootic_situation_name` (`name`),
     CONSTRAINT `FK_bad_epizootic_situation_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
     KEY `bad_epizootic_situation_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `passing_border_point` */
-
+/* Справочник пунктов пропуска через границу */
 DROP TABLE IF EXISTS `passing_border_point`;
 CREATE TABLE  `passing_border_point` (
     `id` bigint(20) NOT NULL auto_increment,
+    /* Название пункта */
     `name` varchar(100) NOT NULL,
+    /* Подразделение, к которому относится данный пункт пропуска */
     `department_id` bigint(20) NOT NULL,
+    /* Дата последней модификации(создание/обновление) записи */
     `updated` timestamp NOT NULL DEFAULT NOW(),
- /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
-  `disabled` tinyint(1) NOT NULL default '0',
+    /* Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован */
+    `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `FK_passing_border_point_department` (`department_id`),
     CONSTRAINT `FK_passing_border_point_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`),
     KEY `passing_border_point_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `container_validator` */
-
+/* Справочник кодов контейнеров */
 DROP TABLE IF EXISTS `container_validator`;
 CREATE TABLE  `container_validator` (
     `id` bigint(20) NOT NULL auto_increment,
+    /* Уникальный 4-х значный префикс кода контейнера */
     `prefix` varchar(4) NOT NULL,
+    /* Аббравиатура фирмы-производителя контейнера */
     `carrier_abbr` varchar(50) NULL,
+    /* Полное название фирмы-производителя контейнера */
     `carrier_name` varchar(100) NOT NULL,
+    /* Дата последней модификации(создание/обновление) записи */
     `updated` timestamp NOT NULL DEFAULT NOW(),
- /* Represents state of object. When disabled column's value is 1, when enabled(by default) - 1. */
-  `disabled` tinyint(1) NOT NULL default '0',
+    /* Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован */
+    `disabled` tinyint(1) NOT NULL default '0',
     PRIMARY KEY (`id`),
     KEY `container_validator_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/* Auxiliary table for link between cargo modes and reports. */
+/* Вспомогательная таблица связывающая таблицу видов грузов и таблицу отчетов. Показывает какие виды грузов используются в каких отчетах */
 DROP TABLE IF EXISTS `cargo_mode_report`;
 CREATE TABLE `cargo_mode_report` (
+    /* Идентификатор вида грузов */
     `cargo_mode_id` bigint(20) NOT NULL,
+    /* Идентификатор отчета */
     `report_id` VARCHAR(50) NOT NULL,
     PRIMARY KEY (`cargo_mode_id`, `report_id`),
     KEY `FK_cargo_mode_report_cargo_mode` (`cargo_mode_id`),
@@ -379,7 +417,7 @@ CREATE TABLE `cargo_mode_report` (
 
         -- Reports --
 
-/* Auxiliary constant table that used for example for association with cargo modes. */
+/* Талица, перечисляющая все отчеты в системе. Используется например в таблице `cargo_mode_report` */
 DROP TABLE IF EXISTS `reports`;
 CREATE TABLE `reports` (
     `id` VARCHAR(50) NOT NULL,
@@ -387,6 +425,7 @@ CREATE TABLE `reports` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*documents*/
+
 DROP TABLE IF EXISTS `document_cargo`;
 CREATE TABLE `document_cargo` (
   `id` bigint(20) NOT NULL,
