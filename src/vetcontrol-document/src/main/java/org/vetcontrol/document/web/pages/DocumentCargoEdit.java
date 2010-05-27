@@ -774,6 +774,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
         DropDownChoice<UnitType> ddcUnitTypes = addBookDropDownChoice(item, "document.cargo.unit_type",
                 item.getModel(), "unitType", unitTypeModel, false, true);
+        ddcUnitTypes.setRequired(true);
         ddcUnitTypes.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
             @Override
@@ -828,6 +829,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
                         return index + ":" + object.getId();
                     }
                 });
+        ddcVehicle.setRequired(true);
         item.add(ddcVehicle);
 
         ddcVehicle.add(new AjaxFormComponentUpdatingBehavior("onchange") {
