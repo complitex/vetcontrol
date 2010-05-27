@@ -492,11 +492,11 @@ CREATE TABLE  `cargo` (
   /* Категория груза */
   `cargo_type_id` bigint(20) NOT NULL,
   /* Единица измерения */
-  `unit_type_id` bigint(20) DEFAULT NULL,
+  `unit_type_id` bigint(20) NOT NULL,
   /* Производитель груза */
   `cargo_producer_id` bigint(20) NOT NULL,
   /* Суррогатный идентификатор транспортного средства */
-  `vehicle_id` bigint(20) DEFAULT NULL,
+  `vehicle_id` bigint(20) NOT NULL,
   /* Количество груза */
   `count` DOUBLE (11,2) DEFAULT NULL,
   /* Дата сертификации груза */

@@ -62,7 +62,7 @@ public class Cargo extends Synchronized implements IUpdated{
     private CargoType cargoType;
 
     @ManyToOne
-    @JoinColumn(name = "unit_type_id", nullable = true)
+    @JoinColumn(name = "unit_type_id", nullable = false)
     @XmlIDREF
     private UnitType unitType;
 
@@ -93,7 +93,7 @@ public class Cargo extends Synchronized implements IUpdated{
     @XmlIDREF
     private Vehicle vehicle;
 
-    @Column(name = "vehicle_id")
+    @Column(name = "vehicle_id", nullable=false)
     private Long vehicleId;
 
     @PrePersist @PreUpdate

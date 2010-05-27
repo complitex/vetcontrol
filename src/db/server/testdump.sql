@@ -64,17 +64,28 @@ INSERT INTO `document_cargo`(`id`, `client_id`, `department_id`, `creator_id`, `
                   (6,1,3,20,1, '2010-02-16 17:25:00', '2010-02-16 17:25:00', 'IMPORT','CAR', 'sender 1',1,'receiver 1', 'receiver 1 address', 1, 'примечание','задержан', 'NOT_SYNCHRONIZED'),
                   (7,1,3,20,2, '2010-02-16 17:49:00', '2010-02-16 17:48:00', 'IMPORT','CONTAINER', 'sender 3',1,'receiver 3', 'receiver 3 address', 3, 'примечание','задержан', 'NOT_SYNCHRONIZED');
 
+INSERT INTO `vehicle`(`id`, `client_id`, `department_id`, `document_cargo_id`, `vehicle_type`, `vehicle_details`, `sync_status`)
+VALUES 
+(1, 1, 3, 1, 'CAR', '№ 123456789', 'NOT_SYNCHRONIZED'),
+(2, 1, 3, 2, 'SHIP', '№ 123456789', 'NOT_SYNCHRONIZED'),
+(3, 1, 3, 3, 'CONTAINER', '1234', 'NOT_SYNCHRONIZED'),
+(4, 1, 3, 4, 'CARRIAGE', '№ 123456789', 'NOT_SYNCHRONIZED'),
+(5, 1, 3, 5, 'AIRCRAFT', '№ 123456789', 'NOT_SYNCHRONIZED'),
+(6, 1, 3, 6, 'CAR', '№ 123456789', 'NOT_SYNCHRONIZED'),
+(7, 1, 3, 7, 'CONTAINER', '6789', 'NOT_SYNCHRONIZED');
+
+
 INSERT INTO `cargo`(`id`, `client_id`, `department_id`, `document_cargo_id`, `cargo_type_id`, `unit_type_id`, `cargo_producer_id`, `vehicle_id`,
  `count`, `certificate_date`, `certificate_details`, `sync_status`)
- VALUES (1,1,3,1,119,1,1,NULL,20.2,'2010-01-15','сертификат 1', 'NOT_SYNCHRONIZED'),
-        (2,1,3,2,119,2,2,NULL,30.5,'2010-02-15','сертификат 2', 'NOT_SYNCHRONIZED'),
-        (3,1,3,2,120,3,3,NULL,23.8,'2010-02-15','сертификат 2', 'NOT_SYNCHRONIZED'),
-        (4,1,3,2,120,4,1,NULL,73,'2010-02-15','сертификат 2', 'NOT_SYNCHRONIZED'),
-        (5,1,3,4,119,5,1,NULL,40, '2010-03-30', 'сертификат 3', 'NOT_SYNCHRONIZED'),
-        (6,1,3,4,119,6,2,NULL,89, '2010-03-30', 'сертификат 3', 'NOT_SYNCHRONIZED'),
-        (7,1,3,3,119,1,2,NULL,50,'2010-02-16', 'сертификат 4', 'NOT_SYNCHRONIZED'),
-        (8,1,3,7,119,1,2,NULL,145.99,'2010-02-16', 'сертификат 4', 'NOT_SYNCHRONIZED'),
-        (9,1,3,7,119,NULL,2,NULL,NULL,'2010-02-16', 'сертификат 4', 'NOT_SYNCHRONIZED');
+ VALUES (1,1,3,1,119,1,1,1,20.2,'2010-01-15','сертификат 1', 'NOT_SYNCHRONIZED'),
+        (2,1,3,2,119,2,2,2,30.5,'2010-02-15','сертификат 2', 'NOT_SYNCHRONIZED'),
+        (3,1,3,2,120,3,3,2,23.8,'2010-02-15','сертификат 2', 'NOT_SYNCHRONIZED'),
+        (4,1,3,2,120,4,1,2,73,'2010-02-15','сертификат 2', 'NOT_SYNCHRONIZED'),
+        (5,1,3,4,119,5,1,4,40, '2010-03-30', 'сертификат 3', 'NOT_SYNCHRONIZED'),
+        (6,1,3,4,119,6,2,4,89, '2010-03-30', 'сертификат 3', 'NOT_SYNCHRONIZED'),
+        (7,1,3,3,119,1,2,3,50,'2010-02-16', 'сертификат 4', 'NOT_SYNCHRONIZED'),
+        (8,1,3,7,119,1,2,7,145.99,'2010-02-16', 'сертификат 4', 'NOT_SYNCHRONIZED'),
+        (9,1,3,7,119,1,2,7,NULL,'2010-02-16', 'сертификат 4', 'NOT_SYNCHRONIZED');
 
 INSERT INTO `arrest_document`(`id`, `client_id`, `department_id`, `creator_id`, `arrest_date`, `arrest_reason_id`, `arrest_reason_details`, `passing_border_point_id`,
                                 `count`, `cargo_mode_id`, `certificate_date`, `certificate_details`, `cargo_sender_name`, `cargo_sender_country_id`, `cargo_receiver_name`, `cargo_receiver_address`,
