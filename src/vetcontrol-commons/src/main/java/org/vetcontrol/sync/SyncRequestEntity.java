@@ -14,6 +14,7 @@ public class SyncRequestEntity {
 
     private String secureKey;
     private Date updated;
+    private Date syncStart;
     private STATUS lastSyncStatus;
     private String version;
 
@@ -28,6 +29,13 @@ public class SyncRequestEntity {
     public SyncRequestEntity(String secureKey, Date updated, STATUS lastSyncStatus) {
         this.secureKey = secureKey;
         this.updated = updated;
+        this.lastSyncStatus = lastSyncStatus;
+    }
+
+    public SyncRequestEntity(String secureKey, Date updated, Date syncStart, STATUS lastSyncStatus) {
+        this.secureKey = secureKey;
+        this.updated = updated;
+        this.syncStart = syncStart;
         this.lastSyncStatus = lastSyncStatus;
     }
 
@@ -52,6 +60,14 @@ public class SyncRequestEntity {
 
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    public Date getSyncStart() {
+        return syncStart;
+    }
+
+    public void setSyncStart(Date syncStart) {
+        this.syncStart = syncStart;
     }
 
     public STATUS getLastSyncStatus() {

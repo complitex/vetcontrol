@@ -7,7 +7,9 @@ import org.vetcontrol.entity.*;
 import org.vetcontrol.hibernate.util.EntityPersisterUtil;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.sync.Count;
+import org.vetcontrol.sync.SyncProcess;
 import org.vetcontrol.sync.SyncRequestEntity;
+import org.vetcontrol.util.DateUtil;
 
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -38,31 +40,42 @@ public class UserSyncBean extends SyncInfo {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void process() {
-        processUser();
-        processUserGroups();
+        Date syncStart = processSyncStart();
+
+        processUser(syncStart);
+        processUserGroups(syncStart);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void processTxRequied() {
-        processUser();
-        processUserGroups();
+        Date syncStart = processSyncStart();
+
+        processUser(syncStart);
+        processUserGroups(syncStart);
     }
 
-    private void processUser() {
+    private Date processSyncStart(){
+        return createJSONClient("/book/start")
+                .post(SyncProcess.class, new SyncRequestEntity(clientBean.getCurrentSecureKey(), DateUtil.getCurrentDate()))
+                .getSyncStart();
+    }
+
+
+    private void processUser(Date syncStart) {
         String secureKey = clientBean.getCurrentSecureKey();
 
         log.debug("\n==================== Synchronizing: User ============================");
 
         //Количество пользователей для загрузки
-        int count = createJSONClient("/user/count").post(Count.class, new SyncRequestEntity(secureKey, getUpdated(User.class))).getCount();
+        int count = createJSONClient("/user/count")
+                .post(Count.class, new SyncRequestEntity(secureKey, getUpdated(User.class), syncStart, null)).getCount();
         start(new SyncEvent(count, User.class));
         int index = 0;
 
         if (count > 0) {
             //Загрузка с сервера списка пользователей
-            List<User> users = createJSONClient("/user/list").post(new GenericType<List<User>>() {
-            },
-                    new SyncRequestEntity(secureKey, getUpdated(User.class)));
+            List<User> users = createJSONClient("/user/list").post(new GenericType<List<User>>() {},
+                    new SyncRequestEntity(secureKey, getUpdated(User.class), syncStart, null));
 
             //Сохранение в базу данных списка пользователей
             index = 0;
@@ -93,25 +106,28 @@ public class UserSyncBean extends SyncInfo {
         log.debug("++++++++++++++++++++ Synchronizing Complete: User +++++++++++++++++++\n");
     }
 
-    private void processUserGroups() {
+    private void processUserGroups(Date syncStart) {
         String secureKey = clientBean.getCurrentSecureKey();
 
         log.debug("\n==================== Synchronizing: User Group ============================");
 
         //Количество удаленных групп пользователей для загрузки
-        int count_deleted = createJSONClient("/usergroup/deleted/count").
-                post(Count.class, new SyncRequestEntity(secureKey, getDeleted(UserGroup.class))).
-                getCount();
+        int count_deleted = createJSONClient("/user/usergroup/deleted/count")
+                .post(Count.class, new SyncRequestEntity(secureKey, getDeleted(UserGroup.class), syncStart, null))
+                .getCount();
 
         //Количество групп пользователей для загрузки
-        int count_updated = createJSONClient("/usergroup/count").post(Count.class, new SyncRequestEntity(secureKey, getUpdated(UserGroup.class))).getCount();
+        int count_updated = createJSONClient("/user/usergroup/count")
+                .post(Count.class, new SyncRequestEntity(secureKey, getUpdated(UserGroup.class), syncStart, null))
+                .getCount();
         start(new SyncEvent(count_deleted + count_updated, UserGroup.class));
         int index = 0;
 
         if (count_deleted > 0) {
             //Загрузка с сервера списка идентификаторов удаленных групп пользователей
-            List<DeletedLongId> ids = createJSONClient("/usergroup/deleted/list").post(new GenericType<List<DeletedLongId>>() {
-            }, new SyncRequestEntity(secureKey, getDeleted(UserGroup.class)));
+            List<DeletedLongId> ids = createJSONClient("/user/usergroup/deleted/list")
+                    .post(new GenericType<List<DeletedLongId>>() {},
+                            new SyncRequestEntity(secureKey, getDeleted(UserGroup.class), syncStart, null));
 
             Date serverMaxDeletedDate = null;
             //Удаление групп пользователей
@@ -138,8 +154,8 @@ public class UserSyncBean extends SyncInfo {
 
         if (count_updated > 0) {
             //Загрузка с сервера списка групп пользователей
-            List<UserGroup> userGroups = createJSONClient("/usergroup/list").post(new GenericType<List<UserGroup>>() {
-            }, new SyncRequestEntity(secureKey, getUpdated(UserGroup.class)));
+            List<UserGroup> userGroups = createJSONClient("/user/usergroup/list").post(new GenericType<List<UserGroup>>() {},
+                    new SyncRequestEntity(secureKey, getUpdated(UserGroup.class), syncStart, null));
 
             //Сохранение в базу данных списка групп пользователей
             index = 0;

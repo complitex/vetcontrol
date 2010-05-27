@@ -92,8 +92,7 @@ public class RegistrationPage extends WebPage {
                     item.add(DateLabel.forDatePattern("date", new Model<Date>(item.getModelObject().getDate()), "dd.MM.yy HH:mm:ss"));
                     item.add(new Label("message", item.getModelObject().getMessage()));
                 } catch (Exception e) {
-                    item.add(new Label("date"));
-                    item.add(new Label("message"));
+                    //nothing
                 }
             }
         };

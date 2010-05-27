@@ -177,23 +177,23 @@ CREATE TABLE  `department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /* Не используемые пока справочники */
---DROP TABLE IF EXISTS `cargo_sender`;
---CREATE TABLE  `cargo_sender` (
---    `id` bigint(20) NOT NULL auto_increment,
---    `name` varchar(100) NOT NULL,
---    `country_id` bigint(20) NOT NULL,
---    PRIMARY KEY (`id`),
---    KEY `FK_cargo_sender_country_ref` (`country_id`),
---    CONSTRAINT `FK_cargo_sender_country_ref` FOREIGN KEY (`country_id`) REFERENCES `countrybook` (`id`)
---) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+-- DROP TABLE IF EXISTS `cargo_sender`;
+-- CREATE TABLE  `cargo_sender` (
+--     `id` bigint(20) NOT NULL auto_increment,
+--     `name` varchar(100) NOT NULL,
+--     `country_id` bigint(20) NOT NULL,
+--     PRIMARY KEY (`id`),
+--     KEY `FK_cargo_sender_country_ref` (`country_id`),
+--     CONSTRAINT `FK_cargo_sender_country_ref` FOREIGN KEY (`country_id`) REFERENCES `countrybook` (`id`)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 --
---DROP TABLE IF EXISTS `cargo_receiver`;
---CREATE TABLE  `cargo_receiver` (
---    `id` bigint(20) NOT NULL auto_increment,
---    `name` varchar(100) NOT NULL,
---    `address` varchar(100) NOT NULL,
---    PRIMARY KEY (`id`)
---) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+-- DROP TABLE IF EXISTS `cargo_receiver`;
+-- CREATE TABLE  `cargo_receiver` (
+--     `id` bigint(20) NOT NULL auto_increment,
+--     `name` varchar(100) NOT NULL,
+--     `address` varchar(100) NOT NULL,
+--     PRIMARY KEY (`id`)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /* Справочник мест таможенного оформления грузов */
 DROP TABLE IF EXISTS `customs_point`;

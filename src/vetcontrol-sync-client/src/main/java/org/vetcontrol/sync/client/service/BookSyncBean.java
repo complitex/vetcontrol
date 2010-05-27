@@ -8,9 +8,11 @@ import org.vetcontrol.hibernate.util.EntityPersisterUtil;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.sync.Count;
+import org.vetcontrol.sync.SyncProcess;
 import org.vetcontrol.sync.SyncRequestEntity;
 import org.vetcontrol.sync.client.service.exception.DBOperationException;
 import org.vetcontrol.sync.client.service.exception.NetworkConnectionException;
+import org.vetcontrol.util.DateUtil;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -93,10 +95,24 @@ public class BookSyncBean extends SyncInfo {
     }
 
     public void process() {
-        for (Class book : syncBooks) {
+        Date syncStart = processSyncStart();
+
+        for (Class book : BookSyncBean.syncBooks) {
+            if (book.equals(CargoModeCargoType.class)) {
+                processDeleted(CargoModeCargoType.class, syncStart);
+            } else if (book.equals(CargoModeUnitType.class)) {
+                processDeleted(CargoModeUnitType.class, syncStart);
+            }
+
             //noinspection unchecked
-            processBook(book);
+            processBook(book, syncStart);
         }
+    }
+
+    private Date processSyncStart(){
+        return createJSONClient("/book/start")
+                .post(SyncProcess.class, new SyncRequestEntity(clientBean.getCurrentSecureKey(), DateUtil.getCurrentDate()))
+                .getSyncStart();
     }
 
     /**
@@ -104,7 +120,7 @@ public class BookSyncBean extends SyncInfo {
      * @param bookClass класс справочника
      * @param <T> тип справочника
      */
-    public <T extends IUpdated> void processDeleted(Class<T> bookClass) {
+    private <T extends IUpdated> void processDeleted(Class<T> bookClass, Date syncStart) {
         Log.EVENT event = Log.EVENT.SYNC_DELETED;
         Log.STATUS lastSyncStatus = logBean.getLastStatus(Log.MODULE.SYNC_CLIENT, event, bookClass);
 
@@ -119,7 +135,7 @@ public class BookSyncBean extends SyncInfo {
         int count;
         try {
             count = createJSONClient("/book/" + bookClass.getSimpleName() + "/deleted/count").
-                    post(Count.class, new SyncRequestEntity(secureKey, localMaxDeletedDate, lastSyncStatus)).getCount();
+                    post(Count.class, new SyncRequestEntity(secureKey, localMaxDeletedDate, syncStart, lastSyncStatus)).getCount();
         } catch (Exception e) {
             throw new NetworkConnectionException("Network connection exception.", e, bookClass, event);
         }
@@ -135,7 +151,7 @@ public class BookSyncBean extends SyncInfo {
                 try {
                     ids = ClientFactory.createJSONClient("/book/" + bookClass.getSimpleName()
                             + "/deleted/list/" + i * NETWORK_BATCH_SIZE + "/" + NETWORK_BATCH_SIZE).post(new GenericType<List<DeletedEmbeddedId>>() {
-                    }, new SyncRequestEntity(secureKey, localMaxDeletedDate, lastSyncStatus));
+                    }, new SyncRequestEntity(secureKey, localMaxDeletedDate, syncStart, lastSyncStatus));
                 } catch (Exception e) {
                     throw new NetworkConnectionException("Network connection exception.", e, bookClass, event);
                 }
@@ -233,7 +249,7 @@ public class BookSyncBean extends SyncInfo {
         return localMaxDeletedDate;
     }
 
-    public <T extends IUpdated> void processBook(Class<T> bookClass) {
+    private <T extends IUpdated> void processBook(Class<T> bookClass, Date syncStart) {
         Log.EVENT event = Log.EVENT.SYNC_UPDATED;
         Log.STATUS lastSyncStatus = logBean.getLastStatus(Log.MODULE.SYNC_CLIENT, event, bookClass);
 
@@ -246,7 +262,8 @@ public class BookSyncBean extends SyncInfo {
         //Количество записей загрузки
         int count = 0;
         try {
-            count = createJSONClient("/book/" + bookClass.getSimpleName() + "/count").post(Count.class, new SyncRequestEntity(secureKey, maxUpdated, lastSyncStatus)).getCount();
+            count = createJSONClient("/book/" + bookClass.getSimpleName() + "/count")
+                    .post(Count.class, new SyncRequestEntity(secureKey, maxUpdated, syncStart,lastSyncStatus)).getCount();
         } catch (Exception e) {
             throw new NetworkConnectionException("Network connection exception.", e, bookClass, event);
         }
@@ -261,7 +278,7 @@ public class BookSyncBean extends SyncInfo {
             try {
                 books = ClientFactory.createJSONClient("/book/" + bookClass.getSimpleName()
                         + "/list/" + i * NETWORK_BATCH_SIZE + "/" + NETWORK_BATCH_SIZE).post((GenericType<List<T>>) genericTypeMap.get(bookClass),
-                        new SyncRequestEntity(secureKey, maxUpdated, lastSyncStatus));
+                        new SyncRequestEntity(secureKey, maxUpdated, syncStart, lastSyncStatus));
             } catch (Exception e) {
                 throw new NetworkConnectionException("Network connection exception.", e, bookClass, event);
             }

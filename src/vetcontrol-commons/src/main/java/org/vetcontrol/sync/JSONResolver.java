@@ -30,7 +30,7 @@ public class JSONResolver {
             Department.class, Job.class, PassingBorderPoint.class,
             RegisteredProducts.class, UnitType.class, Count.class,
             DocumentCargo.class, Cargo.class, SyncCargo.class, SyncVehicle.class, SyncDocumentCargo.class, SyncRequestEntity.class,
-            SyncLog.class, Log.class, ArrestDocument.class, SyncArrestDocument.class
+            SyncLog.class, Log.class, ArrestDocument.class, SyncArrestDocument.class, SyncProcess.class
     };
     
     private final static Set<Class> types = new HashSet<Class>(Arrays.asList(cTypes));
