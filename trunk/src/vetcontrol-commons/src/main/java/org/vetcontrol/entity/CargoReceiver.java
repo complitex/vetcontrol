@@ -8,6 +8,7 @@ import javax.persistence.*;
  * @author Artem
  *
  * Справочник получателей грузов
+ * НЕ ИСПОЛЬЗУЕТСЯ СЕЙЧАС!
  */
 @Entity
 @Table(name = "cargo_receiver")

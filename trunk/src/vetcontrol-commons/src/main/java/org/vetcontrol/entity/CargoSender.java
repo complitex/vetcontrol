@@ -11,6 +11,7 @@ import javax.persistence.*;
  *         Date: 12.01.2010 14:38:41
  *
  * Справочник отправителей грузов
+ * НЕ ИСПОЛЬЗУЕТСЯ СЕЙЧАС!
  */
 @Entity
 @Table(name = "cargo_sender")
