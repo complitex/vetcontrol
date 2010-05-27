@@ -415,7 +415,7 @@ CREATE TABLE `cargo_mode_report` (
     CONSTRAINT `FK_cargo_mode_report_cargo_mode` FOREIGN KEY (`cargo_mode_id`) REFERENCES `cargo_mode` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-        -- Reports --
+/* Отчеты */
 
 /* Талица, перечисляющая все отчеты в системе. Используется например в таблице `cargo_mode_report` */
 DROP TABLE IF EXISTS `reports`;
@@ -424,26 +424,44 @@ CREATE TABLE `reports` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*documents*/
+/* Документы */
 
+/* Карточка на груз */
 DROP TABLE IF EXISTS `document_cargo`;
 CREATE TABLE `document_cargo` (
+  /* Суррогатный идентификатор */
   `id` bigint(20) NOT NULL,
+  /* Идентификатор удаленного клиента */
   `client_id` bigint(20) NOT NULL,
+  /* Подразделение */
   `department_id` bigint(20) NOT NULL,
+  /* Идентификатор пользователя, создавшего карточку */
   `creator_id` bigint(20) NOT NULL,
+  /* Дата создания карточки */
   `created` timestamp NOT NULL,
+  /* Дата последней модификации(создание/обновление) записи */
   `updated` timestamp NOT NULL,
+  /* Тип передвижения. Все возможные значения перечислены в MovementType.class */
   `movement_type` VARCHAR(15) NOT NULL,
+  /* Тип транспортного средства. Все возможные значения перечислены в VehicleType.class */
   `vehicle_type` varchar(10) NOT NULL,
+  /* Вид грузов */
   `cargo_mode_id` bigint(20) NOT NULL,
+  /* Наименование отправителя грузов */
   `cargo_sender_name` varchar(255) NOT NULL,
+  /* Страна отправителя */
   `cargo_sender_country_id` bigint(20) NOT NULL,
+  /* Наименование получателя */
   `cargo_receiver_name` varchar(255) NOT NULL,
+  /* Адрес получателя */
   `cargo_receiver_address` varchar(255) NOT NULL,
+  /* Пункт пропуска через границу, на котором была оформлена данная карточка */
   `passing_border_point_id` bigint(20) DEFAULT NULL,
+  /* Замечания */
   `details` varchar(1024) DEFAULT NULL,
+  /* Детали задержания */
   `detention_details` varchar(255) DEFAULT NULL,
+  /* Статус синронизации с сервером. Все возможные значения перечислены в Synchronized.SyncStatus.class */
   `sync_status` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id`,`department_id`,`client_id`),
   KEY `FK_department_0` (`department_id`),
@@ -459,20 +477,34 @@ CREATE TABLE `document_cargo` (
     KEY `document_cargo_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
+/* Грузы */
 DROP TABLE IF EXISTS `cargo`;
 CREATE TABLE  `cargo` (
+  /* Суррогатный идентификатор */
   `id` bigint(20) NOT NULL,
+  /* Идентификатор удаленного клиента */
   `client_id` bigint(20) NOT NULL,
+  /* Подразделение */
   `department_id` bigint(20) NOT NULL,
-  `document_cargo_id` bigint(20) NOT NULL,  
+  /* Суррогатный идентификатор карточки на груз, которой данный груз принадлежит */
+  `document_cargo_id` bigint(20) NOT NULL,
+  /* Категория груза */
   `cargo_type_id` bigint(20) NOT NULL,
+  /* Единица измерения */
   `unit_type_id` bigint(20) DEFAULT NULL,
+  /* Производитель груза */
   `cargo_producer_id` bigint(20) NOT NULL,
+  /* Суррогатный идентификатор транспортного средства */
   `vehicle_id` bigint(20) DEFAULT NULL,
+  /* Количество груза */
   `count` DOUBLE (11,2) DEFAULT NULL,
+  /* Дата сертификации груза */
   `certificate_date` date NOT NULL,
+  /* Детали сертификации груза */
   `certificate_details` varchar(255) NOT NULL,
+  /* Дата последней модификации(создание/обновление) записи */
   `updated` timestamp DEFAULT NOW(),
+  /* Статус синронизации с сервером. Все возможные значения перечислены в Synchronized.SyncStatus.class */
   `sync_status` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id`,`department_id`,`client_id`),
   KEY `FK_department_1` (`department_id`),
@@ -492,15 +524,24 @@ CREATE TABLE  `cargo` (
   KEY `cargo_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/* Таблица транспортных средств */
 DROP TABLE IF EXISTS `vehicle`;
 CREATE TABLE  `vehicle` (
+    /* Суррогатный идентификатор */
     `id` bigint(20) NOT NULL,
+    /* Идентификатор удаленного клиента */
     `client_id` bigint(20) NOT NULL,
+    /* Подразделение */
     `department_id` bigint(20) NOT NULL,
+    /* Суррогатный идентификатор карточки на груз, которой данное транспортное средство принадлежит */
     `document_cargo_id` bigint(20) NOT NULL,
+    /* Тип транспортного средства. Все возможные значения перечислены в VehicleType.class */
     `vehicle_type` varchar(10) NOT NULL,
+    /* Детали транспортного средства(например, номер автомобиля) */
     `vehicle_details` varchar(255) NOT NULL,
+    /* Дата последней модификации(создание/обновление) записи */
     `updated` timestamp DEFAULT NOW(),
+    /* Статус синронизации с сервером. Все возможные значения перечислены в Synchronized.SyncStatus.class */
     `sync_status` varchar(64) DEFAULT NULL,
     PRIMARY KEY (`id`,`department_id`,`client_id`),
     KEY `FK_vehicle_client` (`client_id`),
@@ -512,17 +553,27 @@ CREATE TABLE  `vehicle` (
     KEY `vehicle_updated_INDEX` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/* Журнал логов приложения */
 DROP TABLE IF EXISTS `log`;
 CREATE TABLE  `log` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  /* Идентификатор удаленного клиента */
   `client_id` bigint(20) DEFAULT NULL,
+  /* Дата */
   `date` datetime DEFAULT NULL,
+  /* Пользователь, инициировавший логирование */
   `user_id` bigint(20) DEFAULT NULL,
+  /* Страница(или другой класс), в котором произошла некая операция */
   `controller_class` varchar(255) DEFAULT NULL,
+  /* Класс, над которым произошло действие */
   `model_class` varchar(255) DEFAULT NULL,
+  /* Тип операции. Все возможные значения перечислены в Log.EVENT.class */
   `event` varchar(255) DEFAULT NULL,
-  `module` varchar(255) DEFAULT NULL,       
+  /* Модуль, в котором произошла операция. Все возможные значения перечислены в Log.MODULE.class*/
+  `module` varchar(255) DEFAULT NULL,
+  /* Успешность завершения операции. Все возможные значения перечислены в Log.STATUS.class */
   `status` varchar(255) DEFAULT NULL,
+  /* Дополнительное описание */
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_user` (`user_id`),
@@ -538,18 +589,29 @@ CREATE TABLE  `log` (
   CONSTRAINT `FK_log_client_id` FOREIGN KEY (`client_id`) REFERENCES `client` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/* Объект удаленного клиента */
 DROP TABLE IF EXISTS `client`;
 CREATE TABLE `client` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  /* Подразделение */
   `department_id` bigint(20) NOT NULL,
+  /* Пункт пропуска через границу */
   `passing_border_point_id` bigint(20) DEFAULT NULL,
+  /* IP адрес клиента */
   `ip` varchar(64) NOT NULL,
+  /* MAC адрес клиента */
   `mac` varchar(64) NOT NULL,
+  /* Защитный ключ */
   `secure_key` varchar(64) NOT NULL,
+  /* Дата создания клиента */
   `created` timestamp NOT NULL,
+  /* Дата последней модификации(создание/обновление) записи */
   `updated` timestamp NOT NULL,
+  /* Дата последней синхронизации с сервером */
   `last_sync` DATETIME DEFAULT NULL,
+  /* Статус синронизации с сервером. Все возможные значения перечислены в Synchronized.SyncStatus.class */
   `sync_status` varchar(64) DEFAULT NULL,
+  /*TODO: add comment */
   `version` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `mac` (`mac`),
@@ -562,31 +624,28 @@ CREATE TABLE `client` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-/*Table structure for table `deleted_embedded_id`
- This table contains entries which has been removed from any application table.
- This information may be useful at client synchronization and logging. */
+/* Удаленные из других таблиц записи, идентификаторы которых имеют сложное строение. Используется при синхронизации, например. */
 DROP TABLE IF EXISTS `deleted_embedded_id`;
 CREATE TABLE `deleted_embedded_id` (
-  /* Id of removed entry. It may be any type but table contains string value of that type.
-     If id is composite id then what this value will be is up to application. For example,
-     concatenating of compound properties. */
+  /* Идентификатор удаленной записи. */
   `id` VARCHAR(100) NOT NULL,
-  /* The name of entity of removed entry. */
+  /* Наименование удаленной сущности */
   `entity` VARCHAR(100) NOT NULL,
-  /* Timestamp of deleting. */
+  /* Дата удаления */
   `deleted` TIMESTAMP NOT NULL,
   PRIMARY KEY (`id`, `entity`),
     KEY `deleted_embedded_id_deleted_INDEX` (`deleted`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
-/* Table structure for table `deleted_embedded_id`
-   This table contains entries which has been removed from any application table.
-   This information may be useful at client synchronization and logging.*/
+/* Удаленные из других таблиц записи, идентификаторы которых имеют простое строение. Используется при синхронизации, например.*/
 DROP TABLE IF EXISTS `deleted_long_id`;
 CREATE TABLE `deleted_long_id` (
-  `id` bigint(20) NOT NULL, /* Long Id of removed entry.*/
-  `entity` VARCHAR(100) NOT NULL, /* The name of entity of removed entry. */
-  `deleted` TIMESTAMP NOT NULL, /* Time stamp of deleting. */
+  /* Идентификатор удаленной записи. */
+  `id` bigint(20) NOT NULL,
+  /* Наименование удаленной сущности */
+  `entity` VARCHAR(100) NOT NULL,
+  /* Дата удаления */
+  `deleted` TIMESTAMP NOT NULL,
   PRIMARY KEY (`id`, `entity`),
     KEY `deleted_long_id_deleted_INDEX` (`deleted`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
