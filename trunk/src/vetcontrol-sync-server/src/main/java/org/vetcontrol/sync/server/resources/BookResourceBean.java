@@ -7,6 +7,7 @@ import org.vetcontrol.hibernate.util.EntityPersisterUtil;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.sync.Count;
+import org.vetcontrol.sync.SyncProcess;
 import org.vetcontrol.sync.SyncRequestEntity;
 import org.vetcontrol.util.DateUtil;
 
@@ -242,6 +243,16 @@ public class BookResourceBean {
         };
     }
 
+    @POST
+    @Path("/start")
+    public SyncProcess processSyncStart(
+            SyncRequestEntity re,
+            @Context HttpServletRequest r) {
+        getClient(re, r);
+
+        return new SyncProcess(DateUtil.getCurrentDate());
+    }
+
     private String getEqualSymbol(Log.STATUS lastSyncStatus) {
         String equalSymbol = "";
         if (lastSyncStatus == null || lastSyncStatus.equals(Log.STATUS.ERROR)) {
@@ -259,7 +270,8 @@ public class BookResourceBean {
             logBean.error(Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, BookResourceBean.class, Client.class,
                     rb.getString("error.secure_key.check") + "[ip: {0}]", r.getRemoteHost());
 
-            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).entity(rb.getString("error.secure_key.check")).type("text/plain;charset=UTF-8").build());
+            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN)
+                    .entity(rb.getString("error.secure_key.check")).type("text/plain;charset=UTF-8").build());
         }
     }
 
@@ -268,7 +280,12 @@ public class BookResourceBean {
     public Count getEntityCount(@PathParam("entity") String entity, SyncRequestEntity re, @Context HttpServletRequest r) {
         getClient(re, r);
         String equalSymbol = getEqualSymbol(re.getLastSyncStatus());
-        int count = em.createQuery("select count(*) from " + entity + " e where e.updated >" + equalSymbol + " :updated", Long.class).setParameter("updated", re.getUpdated()).getSingleResult().intValue();
+        int count = em.createQuery("select count(*) from " + entity + " e where e.updated >" + equalSymbol + " :updated" +
+                " and e.updated <= :syncStart", Long.class)
+                .setParameter("updated", re.getUpdated())
+                .setParameter("syncStart", re.getSyncStart())
+                .getSingleResult()
+                .intValue();
         return new Count(count);
     }
 
@@ -288,7 +305,9 @@ public class BookResourceBean {
         }
 
         TypedQuery<T> query = em.createQuery("select e from " + entity.getSimpleName()
-                + " e where e.updated >" + equalSymbol + " :updated " + order, entity).setParameter("updated", re.getUpdated());
+                + " e where e.updated >" + equalSymbol + " :updated and e.updated <= :syncStart" + order, entity)
+                .setParameter("updated", re.getUpdated())
+                .setParameter("syncStart", re.getSyncStart());
 
         if (maxResults != null) {
             query.setMaxResults(Integer.parseInt(maxResults));
@@ -330,10 +349,11 @@ public class BookResourceBean {
         }
 
         return new Count(em.createQuery("select count(*) from DeletedEmbeddedId d "
-                + "where d.deleted >" + equalSymbol + " :deleted and entity = :entity", Long.class).
-                setParameter("deleted", re.getUpdated()).
-                setParameter("entity", entityName).
-                getSingleResult().intValue());
+                + "where d.deleted >" + equalSymbol + " :deleted and d.deleted <= :syncStart and entity = :entity", Long.class)
+                .setParameter("deleted", re.getUpdated())
+                .setParameter("syncStart", re.getSyncStart())
+                .setParameter("entity", entityName)
+                .getSingleResult().intValue());
     }
 
     private List<DeletedEmbeddedId> getDeleted(Class entity,
@@ -345,9 +365,11 @@ public class BookResourceBean {
         String equalSymbol = getEqualSymbol(re.getLastSyncStatus());
 
         TypedQuery<DeletedEmbeddedId> query = em.createQuery("select d from DeletedEmbeddedId d "
-                + "where d.deleted >" + equalSymbol + " :deleted and entity = :entity order by d.deleted", DeletedEmbeddedId.class).
-                setParameter("deleted", re.getUpdated()).
-                setParameter("entity", entity.getCanonicalName());
+                + "where d.deleted >" + equalSymbol + " :deleted and d.deleted <= :syncStart and entity = :entity" +
+                " order by d.deleted", DeletedEmbeddedId.class)
+                .setParameter("deleted", re.getUpdated())
+                .setParameter("syncStart", re.getSyncStart())
+                .setParameter("entity", entity.getCanonicalName());
 
         if (maxResults != null) {
             query.setMaxResults(Integer.parseInt(maxResults));

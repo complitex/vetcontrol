@@ -151,16 +151,7 @@ public class SyncBean {
             syncMessages.add(message);
 
             //Синхронизация справочников
-            for (Class book : BookSyncBean.syncBooks) {
-                if (book.equals(CargoModeCargoType.class)) {
-                    bookSyncBean.processDeleted(CargoModeCargoType.class);
-                } else if (book.equals(CargoModeUnitType.class)) {
-                    bookSyncBean.processDeleted(CargoModeUnitType.class);
-                }
-
-                //noinspection unchecked
-                bookSyncBean.processBook(book);
-            }
+            bookSyncBean.process();
 
             //Синхронизация пользователей
             userSyncBean.process();
