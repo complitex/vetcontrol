@@ -10,9 +10,12 @@ import org.vetcontrol.entity.Synchronized;
 import org.vetcontrol.hibernate.util.EntityPersisterUtil;
 import org.vetcontrol.util.DateUtil;
 
+import javax.annotation.Resource;
 import javax.ejb.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.SystemException;
+import javax.transaction.UserTransaction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -27,11 +30,15 @@ import static org.vetcontrol.sync.client.service.ClientFactory.createJSONClient;
  */
 @Singleton(name = "RegistrationBean")
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
+@TransactionManagement(TransactionManagementType.BEAN)
 public class RegistrationBean {
     private static final Logger log = LoggerFactory.getLogger(RegistrationBean.class);
 
     @PersistenceContext
     private EntityManager em;
+
+    @Resource
+    private UserTransaction utx;
 
     @EJB(beanName = "UserSyncBean")
     private UserSyncBean userSyncBean;
@@ -45,6 +52,8 @@ public class RegistrationBean {
     @Asynchronous
     public Future<String> processRegistration(Client client, Locale locale){
         try {
+            utx.begin();
+
             rb = ResourceBundle.getBundle("org.vetcontrol.sync.client.service.RegistrationBean", locale);
 
             processing = true;
@@ -81,7 +90,15 @@ public class RegistrationBean {
 
             processing = false;
             complete = true;
+
+            utx.commit();
         } catch (UniformInterfaceException e) {
+            try {
+                utx.rollback();
+            } catch (SystemException e1) {
+                log.error(e1.getLocalizedMessage(), e1);
+            }
+
             processing = false;
             complete = true;
             error = true;
@@ -97,6 +114,12 @@ public class RegistrationBean {
 
             log.error(message != null ? message : e.getLocalizedMessage(), e);           
         } catch (Exception e){
+            try {
+                utx.rollback();
+            } catch (SystemException e1) {
+                log.error(e1.getLocalizedMessage(), e1);
+            }
+
             processing = false;
             complete = true;
             error = true;

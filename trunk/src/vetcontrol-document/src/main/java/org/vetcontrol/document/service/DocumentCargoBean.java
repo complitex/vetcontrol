@@ -5,6 +5,7 @@ import org.vetcontrol.entity.*;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.util.DateUtil;
+import org.vetcontrol.web.component.MovementTypeChoicePanel;
 import org.vetcontrol.web.component.VehicleTypeChoicePanel;
 import org.vetcontrol.web.security.SecurityRoles;
 
@@ -13,7 +14,6 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.*;
 import java.util.List;
-import org.vetcontrol.web.component.MovementTypeChoicePanel;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -348,7 +348,7 @@ public class DocumentCargoBean {
     }
 
     public boolean validate(Vehicle vehicle) {
-        if (vehicle == null) {
+        if (vehicle == null || vehicle.getVehicleDetails() == null) {
             return false;
         }
 
