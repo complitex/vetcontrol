@@ -23,6 +23,7 @@ import java.util.Date;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Vehicle extends Synchronized implements IUpdated {
+
     @Id
     @GeneratedValue(generator = "EnhancedTableGenerator")
     @GenericGenerator(name = "EnhancedTableGenerator", strategy = "org.vetcontrol.hibernate.id.TableGenerator",
@@ -33,7 +34,7 @@ public class Vehicle extends Synchronized implements IUpdated {
         @Parameter(name = "value_column_name", value = "generatorValue"),
         @Parameter(name = "initial_value", value = "100"),
         @Parameter(name = "increment_size", value = "1"),
-        @Parameter(name = "property", value = "id")})    
+        @Parameter(name = "property", value = "id")})
     @XmlID
     @XmlJavaTypeAdapter(LongAdapter.class)
     private Long id;
@@ -61,7 +62,7 @@ public class Vehicle extends Synchronized implements IUpdated {
     @Column(name = "document_cargo_id")
     private Long documentCargoId;
 
-    @Column(name = "vehicle_details", length = 255)
+    @Column(name = "vehicle_details", length = 255, nullable = false)
     private String vehicleDetails;
 
     @Enumerated(EnumType.STRING)
@@ -161,23 +162,42 @@ public class Vehicle extends Synchronized implements IUpdated {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Vehicle)) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Vehicle)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         Vehicle vehicle = (Vehicle) o;
 
-        if (client != null ? !client.equals(vehicle.client) : vehicle.client != null) return false;
-        if (department != null ? !department.equals(vehicle.department) : vehicle.department != null) return false;
-        if (documentCargo != null ? !documentCargo.equals(vehicle.documentCargo) : vehicle.documentCargo != null)
+        if (client != null ? !client.equals(vehicle.client) : vehicle.client != null) {
             return false;
-        if (documentCargoId != null ? !documentCargoId.equals(vehicle.documentCargoId) : vehicle.documentCargoId != null)
+        }
+        if (department != null ? !department.equals(vehicle.department) : vehicle.department != null) {
             return false;
-        if (id != null ? !id.equals(vehicle.id) : vehicle.id != null) return false;
-        if (updated != null ? !updated.equals(vehicle.updated) : vehicle.updated != null) return false;
-        if (vehicleDetails != null ? !vehicleDetails.equals(vehicle.vehicleDetails) : vehicle.vehicleDetails != null)
+        }
+        if (documentCargo != null ? !documentCargo.equals(vehicle.documentCargo) : vehicle.documentCargo != null) {
             return false;
-        if (vehicleType != vehicle.vehicleType) return false;
+        }
+        if (documentCargoId != null ? !documentCargoId.equals(vehicle.documentCargoId) : vehicle.documentCargoId != null) {
+            return false;
+        }
+        if (id != null ? !id.equals(vehicle.id) : vehicle.id != null) {
+            return false;
+        }
+        if (updated != null ? !updated.equals(vehicle.updated) : vehicle.updated != null) {
+            return false;
+        }
+        if (vehicleDetails != null ? !vehicleDetails.equals(vehicle.vehicleDetails) : vehicle.vehicleDetails != null) {
+            return false;
+        }
+        if (vehicleType != vehicle.vehicleType) {
+            return false;
+        }
 
         return true;
     }

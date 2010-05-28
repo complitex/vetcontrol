@@ -38,6 +38,7 @@ import org.vetcontrol.web.component.list.AjaxRemovableListView;
 
 import javax.ejb.EJB;
 import java.util.*;
+import org.apache.wicket.util.string.Strings;
 
 import static org.vetcontrol.entity.Log.EVENT.CREATE;
 import static org.vetcontrol.entity.Log.EVENT.EDIT;
@@ -554,17 +555,19 @@ public class DocumentCargoEdit extends DocumentEditPage {
         cargoModeContainer.add(cargoModeRadioGroup);
 
         //общий вес груза
-        Label cargoListWeight = new Label("document.cargo.cargo_list.weight", new LoadableDetachableModel<String>(){
+        Label cargoListWeight = new Label("document.cargo.cargo_list.weight", new LoadableDetachableModel<String>() {
+
             @Override
             protected String load() {
-                
+
                 return getCargoListWeight(documentCargoModel.getObject().getCargos());
             }
         });
         cargoListInfoContainer.add(cargoListWeight);
 
         //количества мест партии груза
-        final Label cargoListCount = new Label("document.cargo.cargo_list.count", new LoadableDetachableModel<String>(){
+        final Label cargoListCount = new Label("document.cargo.cargo_list.count", new LoadableDetachableModel<String>() {
+
             @Override
             protected String load() {
                 return String.valueOf(documentCargoModel.getObject().getCargos().size());
@@ -766,7 +769,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
         }
     }
 
-    private void addCargo(ListItem<Cargo> item, IModel<CargoMode> cargoModeModel, UKTZEDField.IUKTZEDFieldListener listener,
+    private void addCargo(final ListItem<Cargo> item, IModel<CargoMode> cargoModeModel, UKTZEDField.IUKTZEDFieldListener listener,
             final Component cargoModeContainer, final Component cargoListInfoContainer, boolean isExists) {
 
         //Единицы измерения        
@@ -804,7 +807,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
         TextField<Double> count = new TextField<Double>("document.cargo.count",
                 new PropertyModel<Double>(item.getModel(), "count"));
         count.add(new MaximumValidator<Double>(99999999999D));
-        count.add( new AjaxFormComponentUpdatingBehavior("onchange") {
+        count.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
@@ -814,9 +817,24 @@ public class DocumentCargoEdit extends DocumentEditPage {
         item.add(count);
 
         //Транспортное средство
+
+        IModel<List<Vehicle>> notEmptyVehiclesModel = new AbstractReadOnlyModel<List<Vehicle>>() {
+
+            @Override
+            public List<Vehicle> getObject() {
+                List<Vehicle> notEmptyVehicles = new ArrayList<Vehicle>();
+                for (Vehicle v : item.getModelObject().getDocumentCargo().getVehicles()) {
+                    if (!Strings.isEmpty(v.getVehicleDetails())) {
+                        notEmptyVehicles.add(v);
+                    }
+                }
+                return notEmptyVehicles;
+            }
+        };
+
         final DropDownChoice<Vehicle> ddcVehicle = new DropDownChoice<Vehicle>("document.cargo.vehicle",
                 new PropertyModel<Vehicle>(item.getModel(), "vehicle"),
-                item.getModelObject().getDocumentCargo().getVehicles(),
+                notEmptyVehiclesModel,
                 new IChoiceRenderer<Vehicle>() {
 
                     @Override
