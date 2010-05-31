@@ -6,8 +6,9 @@ package org.vetcontrol.report.jasper.cargosinday;
 
 import java.util.Date;
 import java.util.Map;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
+import javax.servlet.annotation.HttpConstraint;
+import javax.servlet.annotation.ServletSecurity;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import org.vetcontrol.report.service.dao.CargosInDayReportDAO;
@@ -23,7 +24,7 @@ import org.vetcontrol.web.security.SecurityRoles;
  * @author Artem
  */
 @WebServlet(name = "CargosInDayReportServlet", urlPatterns = {"/CargosInDayReportServlet"})
-@RolesAllowed({SecurityRoles.LOCAL_AND_REGIONAL_REPORT})
+@ServletSecurity(@HttpConstraint(rolesAllowed = {SecurityRoles.LOCAL_AND_REGIONAL_REPORT}))
 public final class CargosInDayReportServlet extends DefaultReportServlet {
 
     @EJB

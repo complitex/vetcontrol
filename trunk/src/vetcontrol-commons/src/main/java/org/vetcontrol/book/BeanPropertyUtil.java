@@ -564,7 +564,7 @@ public class BeanPropertyUtil {
         } else {
             Table tableAnnotation = entityClass.getAnnotation(Table.class);
             if (tableAnnotation == null) {
-                throw new IllegalArgumentException("Entity definition must specify table name.");
+                throw new IllegalArgumentException("Entity definition must specify table name. Entity class: " + entityClass);
             }
             return tableAnnotation.name();
         }
@@ -581,7 +581,7 @@ public class BeanPropertyUtil {
         return isPrimitive;
     }
 
-    public static boolean isNumberType(Class type){
+    public static boolean isNumberType(Class type) {
         boolean isNumberType = false;
         for (Class numberType : NUMBER_TYPES) {
             if (numberType.isAssignableFrom(type)) {
@@ -592,11 +592,11 @@ public class BeanPropertyUtil {
         return isNumberType;
     }
 
-    public static final boolean isBoolType(Class type){
+    public static final boolean isBoolType(Class type) {
         return type.equals(boolean.class) || type.equals(Boolean.class);
     }
 
-    public static final boolean isDateType(Class type){
+    public static final boolean isDateType(Class type) {
         return Date.class.isAssignableFrom(type);
     }
 

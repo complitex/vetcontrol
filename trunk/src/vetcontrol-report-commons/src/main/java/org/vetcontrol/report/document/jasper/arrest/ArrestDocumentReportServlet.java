@@ -5,8 +5,9 @@
 package org.vetcontrol.report.document.jasper.arrest;
 
 import java.util.Map;
-import javax.annotation.security.RolesAllowed;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.HttpConstraint;
+import javax.servlet.annotation.ServletSecurity;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -22,7 +23,7 @@ import static org.vetcontrol.web.security.SecurityRoles.*;
  * @author Artem
  */
 @WebServlet(name = "ArrestDocumentReportServlet", urlPatterns = {"/ArrestDocumentReportServlet"})
-@RolesAllowed({DOCUMENT_CREATE, DOCUMENT_DEP_EDIT, DOCUMENT_DEP_CHILD_EDIT})
+@ServletSecurity(@HttpConstraint(rolesAllowed = {DOCUMENT_CREATE, DOCUMENT_DEP_EDIT, DOCUMENT_DEP_CHILD_EDIT}))
 public final class ArrestDocumentReportServlet extends AbstractReportServlet {
 
     public static final String ARREST_DOCUMENT_KEY = "ARREST_DOCUMENT_KEY";
