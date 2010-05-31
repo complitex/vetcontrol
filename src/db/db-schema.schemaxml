@@ -1,134 +1,648 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemadesigner version="6.5">
 <source>
-<database charset="utf8" collation="utf8_general_ci">project1</database>
+<database charset="utf8" collation="utf8_general_ci">vetcontrol</database>
 </source>
-<canvas zoom="100">
+<canvas zoom="40">
 <tables>
-<table name="book1" view="colnames">
-<left>17</left>
-<top>89</top>
-<width>219</width>
-<height>158</height>
-<sql_create_table>CREATE TABLE `book1` (
-  `key1` int(11) NOT NULL auto_increment,
-  `value1` varchar(20) default NULL,
-  `value2` varchar(20) default NULL,
-  `value3` varchar(100) default NULL,
-  `dateValue` date default NULL,
-  PRIMARY KEY  (`key1`)
+<table name="arrest_reason" view="colnames">
+<left>1400</left>
+<top>264</top>
+<width>132</width>
+<height>72</height>
+<sql_create_table>CREATE TABLE `arrest_reason` (
+  `id` bigint(20) NOT NULL auto_increment,
+  `name` bigint(20) NOT NULL,
+  `updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  `disabled` tinyint(1) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `FK_arrest_reason_name` (`name`),
+  KEY `arrest_reason_updated_INDEX` (`updated`),
+  CONSTRAINT `FK_arrest_reason_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="bad_epizootic_situation" view="colnames">
+<left>1404</left>
+<top>160</top>
+<width>160</width>
+<height>76</height>
+<sql_create_table>CREATE TABLE `bad_epizootic_situation` (
+  `id` bigint(20) NOT NULL auto_increment,
+  `name` bigint(20) NOT NULL,
+  `updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  `disabled` tinyint(1) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `FK_bad_epizootic_situation_name` (`name`),
+  KEY `bad_epizootic_situation_updated_INDEX` (`updated`),
+  CONSTRAINT `FK_bad_epizootic_situation_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
 </table>
-<table name="book2" view="colnames">
-<left>228</left>
-<top>274</top>
-<width>188</width>
-<height>158</height>
-<sql_create_table>CREATE TABLE `book2` (
-  `key1` int(11) NOT NULL auto_increment,
-  `val1` varchar(20) default NULL,
-  `val2` varchar(50) default NULL,
-  `val3` varchar(50) default NULL,
-  `val4` varchar(100) default NULL,
-  PRIMARY KEY  (`key1`)
+<table name="cargo_mode" view="colnames">
+<left>512</left>
+<top>204</top>
+<width>80</width>
+<height>92</height>
+<sql_create_table>CREATE TABLE `cargo_mode` (
+  `id` bigint(20) NOT NULL auto_increment,
+  `name` bigint(20) NOT NULL,
+  `parent_id` bigint(20) default NULL,
+  `updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  `disabled` tinyint(1) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `FK_cargo_mode_name` (`name`),
+  KEY `FK_cargo_mode_parent` (`parent_id`),
+  KEY `cargo_mode_updated_INDEX` (`updated`),
+  CONSTRAINT `FK_cargo_mode_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+  CONSTRAINT `FK_cargo_mode` FOREIGN KEY (`parent_id`) REFERENCES `cargo_mode` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="cargo_mode_cargo_type" view="colnames">
+<left>644</left>
+<top>284</top>
+<width>132</width>
+<height>77</height>
+<sql_create_table>CREATE TABLE `cargo_mode_cargo_type` (
+  `cargo_mode_id` bigint(20) NOT NULL,
+  `cargo_type_id` bigint(20) NOT NULL,
+  `updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  PRIMARY KEY  (`cargo_mode_id`,`cargo_type_id`),
+  KEY `FK_cargo_mode_cargo_type_cargo_mode_id` (`cargo_mode_id`),
+  KEY `FK_cargo_mode_cargo_type_cargo_type_id` (`cargo_type_id`),
+  KEY `cargo_mode_cargo_type_updated_INDEX` (`updated`),
+  CONSTRAINT `FK_cargo_mode_cargo_type_cargo_mode_id` FOREIGN KEY (`cargo_mode_id`) REFERENCES `cargo_mode` (`id`),
+  CONSTRAINT `FK_cargo_mode_cargo_type_cargo_type_id` FOREIGN KEY (`cargo_type_id`) REFERENCES `cargo_type` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
 </table>
-<table name="node" view="colnames">
-<left>494</left>
-<top>309</top>
-<width>107</width>
-<height>107</height>
-<sql_create_table>CREATE TABLE `node` (
-  `nodeId` int(10) unsigned NOT NULL auto_increment,
-  `nodeName` varchar(45) NOT NULL,
-  PRIMARY KEY  (`nodeId`)
+<table name="cargo_mode_unit_type" view="colnames">
+<left>656</left>
+<top>160</top>
+<width>132</width>
+<height>72</height>
+<sql_create_table>CREATE TABLE `cargo_mode_unit_type` (
+  `cargo_mode_id` bigint(20) NOT NULL,
+  `unit_type_id` bigint(20) NOT NULL,
+  `updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  PRIMARY KEY  (`cargo_mode_id`,`unit_type_id`),
+  KEY `FK_cargo_mode_unit_type_cargo_mode_id` (`cargo_mode_id`),
+  KEY `FK_cargo_mode_unit_type_unit_type_id` (`unit_type_id`),
+  KEY `cargo_mode_unit_type_updated_INDEX` (`updated`),
+  CONSTRAINT `FK_cargo_mode_unit_type_cargo_mode_id` FOREIGN KEY (`cargo_mode_id`) REFERENCES `cargo_mode` (`id`),
+  CONSTRAINT `FK_cargo_mode_unit_type_unit_type_id` FOREIGN KEY (`unit_type_id`) REFERENCES `unit_type` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
 </table>
-<table name="role" view="colnames">
-<left>491</left>
-<top>9</top>
-<width>104</width>
-<height>107</height>
-<sql_create_table>CREATE TABLE `role` (
-  `role` varchar(45) NOT NULL,
-  `userName` varchar(45) NOT NULL,
-  PRIMARY KEY  (`role`,`userName`),
-  KEY `roleToUser` (`userName`),
-  CONSTRAINT `roleToRoles` FOREIGN KEY (`role`) REFERENCES `roles` (`name`),
-  CONSTRAINT `roleToUser` FOREIGN KEY (`userName`) REFERENCES `user` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
+<table name="cargo_producer" view="colnames">
+<left>36</left>
+<top>296</top>
+<width>96</width>
+<height>84</height>
+<sql_create_table>CREATE TABLE `cargo_producer` (
+  `id` bigint(20) NOT NULL auto_increment,
+  `name` bigint(20) NOT NULL,
+  `country_id` bigint(20) NOT NULL,
+  `updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  `disabled` tinyint(1) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `FK_cargo_producer_name` (`name`),
+  KEY `FK_cargo_producer_country` (`country_id`),
+  KEY `cargo_producer_updated_INDEX` (`updated`),
+  CONSTRAINT `FK_cargo_producer_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+  CONSTRAINT `FK_cargo_producer_country` FOREIGN KEY (`country_id`) REFERENCES `countrybook` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8</sql_create_table>
 </table>
-<table name="roles" view="colnames">
-<left>278</left>
-<top>11</top>
-<width>78</width>
-<height>90</height>
-<sql_create_table>CREATE TABLE `roles` (
-  `name` varchar(45) NOT NULL,
-  PRIMARY KEY  (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
+<table name="cargo_type" view="colnames">
+<left>368</left>
+<top>288</top>
+<width>96</width>
+<height>92</height>
+<sql_create_table>CREATE TABLE `cargo_type` (
+  `id` bigint(20) NOT NULL auto_increment,
+  `name` bigint(20) NOT NULL,
+  `ukt_zed_code` varchar(10) NOT NULL,
+  `updated` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  `disabled` tinyint(1) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `code` (`ukt_zed_code`),
+  KEY `FK_cargo_type_name` (`name`),
+  KEY `cargo_type_updated_INDEX` (`updated`),
+  CONSTRAINT `FK_cargo_type_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=124 DEFAULT CHARSET=utf8</sql_create_table>
 </table>
-<table name="user" view="colnames">
-<left>743</left>
-<top>101</top>
-<width>124</width>
-<height>158</height>
-<sql_create_table>CREATE TABLE `user` (
-  `name` varchar(45) NOT NULL,
-  `login` varchar(45) default NULL,
-  `password` varchar(45) NOT NULL,
-  `parentNodeId` int(10) unsigned default NULL,
-  `blocked` tinyint(1) NOT NULL default '0',
-  PRIMARY KEY  (`name`),
-  KEY `userToParentNode` (`parentNodeId`),
-  CONSTRAINT `userToParentNode` FOREIGN KEY (`parentNodeId`) REFERENCES `node` (`nodeId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
+<table name="container_validator" view="colnames">
+<left>1368</left>
+<top>36</top>
+<width>120</width>
+<height>88</height>
+<sql_create_table>CREATE TABLE `container_validator` (
+  `id` bigint(20) NOT NULL auto_increment,
+  `prefix` varchar(4) NOT NULL,
+  `carrier_abbr` varchar(50) default NULL,
+  `carrier_name` varchar(100) NOT NULL,
+  `updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  `disabled` tinyint(1) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `container_validator_updated_INDEX` (`updated`)
+) ENGINE=InnoDB AUTO_INCREMENT=413 DEFAULT CHARSET=utf8</sql_create_table>
 </table>
-<table name="registeredproducts" view="colnames">
-<left>57</left>
-<top>574</top>
-<width>240</width>
-<height>192</height>
-<sql_create_table>CREATE TABLE `registeredproducts` (
-  `id` int(11) NOT NULL auto_increment,
-  `name` int(11) NOT NULL,
-  `classificator` int(11) NOT NULL,
-  `vendor` varchar(50) NOT NULL,
-  `country` varchar(2) NOT NULL,
+<table name="countrybook" view="colnames">
+<left>216</left>
+<top>20</top>
+<width>100</width>
+<height>80</height>
+<sql_create_table>CREATE TABLE `countrybook` (
+  `id` bigint(20) NOT NULL auto_increment,
+  `code` varchar(2) NOT NULL,
+  `name` bigint(20) NOT NULL,
+  `updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  `disabled` tinyint(1) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `FK_countrybook_name` (`name`),
+  KEY `countrybook_updated_INDEX` (`updated`),
+  CONSTRAINT `FK_countrybook_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="customs_point" view="colnames">
+<left>1040</left>
+<top>172</top>
+<width>88</width>
+<height>80</height>
+<sql_create_table>CREATE TABLE `customs_point` (
+  `id` bigint(20) NOT NULL auto_increment,
+  `name` bigint(20) NOT NULL,
+  `updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  `disabled` tinyint(1) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `FK_customs_point_name` (`name`),
+  KEY `customs_point_updated_INDEX` (`updated`),
+  CONSTRAINT `FK_customs_point_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="department" view="colnames">
+<left>1200</left>
+<top>256</top>
+<width>136</width>
+<height>100</height>
+<sql_create_table>CREATE TABLE `department` (
+  `id` bigint(20) NOT NULL auto_increment,
+  `name` bigint(20) NOT NULL,
+  `parent_id` bigint(20) default NULL,
+  `custom_point_id` bigint(20) default NULL,
+  `level` int(2) NOT NULL,
+  `updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  `disabled` tinyint(1) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `FK_department_name` (`name`),
+  KEY `FK_department_parent` (`parent_id`),
+  KEY `FK_department_custom_point` (`custom_point_id`),
+  KEY `department_updated_INDEX` (`updated`),
+  CONSTRAINT `FK_department_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+  CONSTRAINT `FK_department_parent` FOREIGN KEY (`parent_id`) REFERENCES `department` (`id`),
+  CONSTRAINT `FK_department_custom_point` FOREIGN KEY (`custom_point_id`) REFERENCES `customs_point` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="job" view="colnames">
+<left>1400</left>
+<top>392</top>
+<width>140</width>
+<height>72</height>
+<sql_create_table>CREATE TABLE `job` (
+  `id` bigint(20) NOT NULL auto_increment,
+  `name` bigint(20) NOT NULL,
+  `updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  `disabled` tinyint(1) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `FK_job_name` (`name`),
+  KEY `job_updated_INDEX` (`updated`),
+  CONSTRAINT `FK_job_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="passing_border_point" view="colnames">
+<left>864</left>
+<top>240</top>
+<width>140</width>
+<height>88</height>
+<sql_create_table>CREATE TABLE `passing_border_point` (
+  `id` bigint(20) NOT NULL auto_increment,
+  `name` varchar(100) NOT NULL,
+  `department_id` bigint(20) NOT NULL,
+  `updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  `disabled` tinyint(1) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `FK_passing_border_point_department` (`department_id`),
+  KEY `passing_border_point_updated_INDEX` (`updated`),
+  CONSTRAINT `FK_passing_border_point_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=91 DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="registered_products" view="colnames">
+<left>0</left>
+<top>112</top>
+<width>136</width>
+<height>130</height>
+<sql_create_table>CREATE TABLE `registered_products` (
+  `id` bigint(20) NOT NULL auto_increment,
+  `name` bigint(20) NOT NULL,
+  `classificator` bigint(20) NOT NULL,
+  `cargo_producer_id` bigint(20) NOT NULL,
   `regnumber` varchar(50) NOT NULL,
   `date` date NOT NULL,
+  `country_id` bigint(20) NOT NULL,
+  `updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  `disabled` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `FK_registeredproducts_name` (`name`),
   KEY `FK_registeredproducts_classificator` (`classificator`),
+  KEY `FK_registeredproducts_country_ref` (`country_id`),
+  KEY `FK_registeredproducts_producer_ref` (`cargo_producer_id`),
+  KEY `registered_products_updated_INDEX` (`updated`),
+  CONSTRAINT `FK_registeredproducts_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
   CONSTRAINT `FK_registeredproducts_classificator` FOREIGN KEY (`classificator`) REFERENCES `stringculture` (`id`),
-  CONSTRAINT `FK_registeredproducts_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8</sql_create_table>
-</table>
-<table name="stringculture" view="colnames">
-<left>795</left>
-<top>580</top>
-<width>211</width>
-<height>193</height>
-<sql_create_table>CREATE TABLE `stringculture` (
-  `id` int(11) NOT NULL,
-  `locale` varchar(2) NOT NULL,
-  `value` varchar(1024) default NULL,
-  PRIMARY KEY  (`id`,`locale`)
+  CONSTRAINT `FK_registeredproducts_country_ref` FOREIGN KEY (`country_id`) REFERENCES `countrybook` (`id`),
+  CONSTRAINT `FK_registeredproducts_producer_ref` FOREIGN KEY (`cargo_producer_id`) REFERENCES `cargo_producer` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
 </table>
-<table name="countrybook" view="colnames">
-<left>146</left>
-<top>837</top>
-<width>194</width>
-<height>124</height>
-<sql_create_table>CREATE TABLE `countrybook` (
-  `id` int(11) NOT NULL auto_increment,
-  `code` varchar(2) NOT NULL,
-  `name` int(11) NOT NULL,
+<table name="unit_type" view="colnames">
+<left>380</left>
+<top>168</top>
+<width>96</width>
+<height>80</height>
+<sql_create_table>CREATE TABLE `unit_type` (
+  `id` bigint(20) NOT NULL auto_increment,
+  `name` bigint(20) NOT NULL,
+  `short_name` bigint(20) NOT NULL,
+  `updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  `disabled` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  KEY `FK_countrybook_name` (`name`),
-  CONSTRAINT `FK_countrybook_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8</sql_create_table>
+  KEY `FK_unit_type_name` (`name`),
+  KEY `FK_unit_type_short_name` (`short_name`),
+  KEY `unit_type_updated_INDEX` (`updated`),
+  CONSTRAINT `FK_unit_type_name` FOREIGN KEY (`name`) REFERENCES `stringculture` (`id`),
+  CONSTRAINT `FK_unit_type_short_name` FOREIGN KEY (`short_name`) REFERENCES `stringculture` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="cargo" view="colnames">
+<left>160</left>
+<top>552</top>
+<width>124</width>
+<height>167</height>
+<sql_create_table>CREATE TABLE `cargo` (
+  `id` bigint(20) NOT NULL,
+  `client_id` bigint(20) NOT NULL,
+  `department_id` bigint(20) NOT NULL,
+  `document_cargo_id` bigint(20) NOT NULL,
+  `cargo_type_id` bigint(20) NOT NULL,
+  `unit_type_id` bigint(20) NOT NULL,
+  `cargo_producer_id` bigint(20) NOT NULL,
+  `vehicle_id` bigint(20) NOT NULL,
+  `count` double(11,2) default NULL,
+  `certificate_date` date NOT NULL,
+  `certificate_details` varchar(255) NOT NULL,
+  `updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  `sync_status` varchar(64) default NULL,
+  PRIMARY KEY  (`id`,`department_id`,`client_id`),
+  KEY `FK_department_1` (`department_id`),
+  KEY `FK_client_1` (`client_id`),
+  KEY `FK_cargo_type` (`cargo_type_id`),
+  KEY `FK_unit_type` (`unit_type_id`),
+  KEY `FK_cargo_producer` (`cargo_producer_id`),
+  KEY `FK_document_cargo` (`document_cargo_id`,`department_id`,`client_id`),
+  KEY `FK_cargo_vehicle` (`vehicle_id`),
+  KEY `cargo_updated_INDEX` (`updated`),
+  CONSTRAINT `FK_department_1` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`),
+  CONSTRAINT `FK_client_1` FOREIGN KEY (`client_id`) REFERENCES `client` (`id`),
+  CONSTRAINT `FK_cargo_type` FOREIGN KEY (`cargo_type_id`) REFERENCES `cargo_type` (`id`),
+  CONSTRAINT `FK_unit_type` FOREIGN KEY (`unit_type_id`) REFERENCES `unit_type` (`id`),
+  CONSTRAINT `FK_cargo_producer` FOREIGN KEY (`cargo_producer_id`) REFERENCES `cargo_producer` (`id`),
+  CONSTRAINT `FK_document_cargo` FOREIGN KEY (`document_cargo_id`, `department_id`, `client_id`) REFERENCES `document_cargo` (`id`, `department_id`, `client_id`),
+  CONSTRAINT `FK_cargo_vehicle` FOREIGN KEY (`vehicle_id`) REFERENCES `vehicle` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="document_cargo" view="colnames">
+<left>444</left>
+<top>532</top>
+<width>164</width>
+<height>199</height>
+<sql_create_table>CREATE TABLE `document_cargo` (
+  `id` bigint(20) NOT NULL,
+  `client_id` bigint(20) NOT NULL,
+  `department_id` bigint(20) NOT NULL,
+  `creator_id` bigint(20) NOT NULL,
+  `created` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  `updated` timestamp NOT NULL default '0000-00-00 00:00:00',
+  `movement_type` varchar(15) NOT NULL,
+  `vehicle_type` varchar(10) NOT NULL,
+  `cargo_mode_id` bigint(20) NOT NULL,
+  `cargo_sender_name` varchar(255) NOT NULL,
+  `cargo_sender_country_id` bigint(20) NOT NULL,
+  `cargo_receiver_name` varchar(255) NOT NULL,
+  `cargo_receiver_address` varchar(255) NOT NULL,
+  `passing_border_point_id` bigint(20) default NULL,
+  `details` varchar(1024) default NULL,
+  `detention_details` varchar(255) default NULL,
+  `sync_status` varchar(64) default NULL,
+  PRIMARY KEY  (`id`,`department_id`,`client_id`),
+  KEY `FK_department_0` (`department_id`),
+  KEY `FK_client_0` (`client_id`),
+  KEY `FK_document_cargo_cargo_sender_country_id` (`cargo_sender_country_id`),
+  KEY `FK_document_cargo_passing_border_point` (`passing_border_point_id`),
+  KEY `FK_document_cargo_cargo_mode_id` (`cargo_mode_id`),
+  KEY `document_cargo_updated_INDEX` (`updated`),
+  CONSTRAINT `FK_department_0` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`),
+  CONSTRAINT `FK_client_0` FOREIGN KEY (`client_id`) REFERENCES `client` (`id`),
+  CONSTRAINT `FK_document_cargo_cargo_sender_country_id` FOREIGN KEY (`cargo_sender_country_id`) REFERENCES `countrybook` (`id`),
+  CONSTRAINT `FK_document_cargo_passing_border_point` FOREIGN KEY (`passing_border_point_id`) REFERENCES `passing_border_point` (`id`),
+  CONSTRAINT `FK_document_cargo_cargo_mode_id` FOREIGN KEY (`cargo_mode_id`) REFERENCES `cargo_mode` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="vehicle" view="colnames">
+<left>668</left>
+<top>764</top>
+<width>120</width>
+<height>121</height>
+<sql_create_table>CREATE TABLE `vehicle` (
+  `id` bigint(20) NOT NULL,
+  `client_id` bigint(20) NOT NULL,
+  `department_id` bigint(20) NOT NULL,
+  `document_cargo_id` bigint(20) NOT NULL,
+  `vehicle_type` varchar(10) NOT NULL,
+  `vehicle_details` varchar(255) NOT NULL,
+  `updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  `sync_status` varchar(64) default NULL,
+  PRIMARY KEY  (`id`,`department_id`,`client_id`),
+  KEY `FK_vehicle_client` (`client_id`),
+  KEY `FK_vehicle_department` (`department_id`),
+  KEY `FK_vehicle_document_cargo` (`document_cargo_id`,`department_id`,`client_id`),
+  KEY `vehicle_updated_INDEX` (`updated`),
+  CONSTRAINT `FK_vehicle_client` FOREIGN KEY (`client_id`) REFERENCES `client` (`id`),
+  CONSTRAINT `FK_vehicle_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`),
+  CONSTRAINT `FK_vehicle_document_cargo` FOREIGN KEY (`document_cargo_id`, `department_id`, `client_id`) REFERENCES `document_cargo` (`id`, `department_id`, `client_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="user" view="colnames">
+<left>1012</left>
+<top>416</top>
+<width>100</width>
+<height>171</height>
+<sql_create_table>CREATE TABLE `user` (
+  `id` bigint(20) NOT NULL auto_increment,
+  `login` varchar(32) NOT NULL,
+  `_password` varchar(32) default NULL,
+  `first_name` varchar(45) default NULL,
+  `middle_name` varchar(45) default NULL,
+  `last_name` varchar(45) default NULL,
+  `job_id` bigint(20) default NULL,
+  `department_id` bigint(20) default NULL,
+  `passing_border_point_id` bigint(20) default NULL,
+  `updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  `locale` varchar(2) default NULL,
+  `page_size` int(3) default NULL,
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `index_login` (`login`),
+  KEY `fk_job` (`job_id`),
+  KEY `fk_user_department` (`department_id`),
+  KEY `fk_border_point` (`passing_border_point_id`),
+  KEY `user_updated_INDEX` (`updated`),
+  CONSTRAINT `fk_job` FOREIGN KEY (`job_id`) REFERENCES `job` (`id`),
+  CONSTRAINT `fk_user_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`),
+  CONSTRAINT `fk_border_point` FOREIGN KEY (`passing_border_point_id`) REFERENCES `passing_border_point` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="usergroup" view="colnames">
+<left>1144</left>
+<top>592</top>
+<width>92</width>
+<height>88</height>
+<sql_create_table>CREATE TABLE `usergroup` (
+  `id` bigint(20) NOT NULL auto_increment,
+  `login` varchar(32) NOT NULL,
+  `usergroup` varchar(32) NOT NULL,
+  `updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `login_usergroup` (`login`,`usergroup`),
+  KEY `usergroup_updated_INDEX` (`updated`),
+  CONSTRAINT `fk_user_login` FOREIGN KEY (`login`) REFERENCES `user` (`login`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="stringculture" view="colnames">
+<left>764</left>
+<top>32</top>
+<width>128</width>
+<height>76</height>
+<sql_create_table>CREATE TABLE `stringculture` (
+  `id` bigint(20) NOT NULL,
+  `locale` varchar(2) NOT NULL,
+  `value` varchar(1024) default NULL,
+  `updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  PRIMARY KEY  (`id`,`locale`),
+  KEY `stringculture_updated_INDEX` (`updated`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="arrest_document" view="colnames">
+<left>1072</left>
+<top>780</top>
+<width>200</width>
+<height>245</height>
+<sql_create_table>CREATE TABLE `arrest_document` (
+  `id` bigint(20) NOT NULL,
+  `client_id` bigint(20) NOT NULL,
+  `department_id` bigint(20) NOT NULL,
+  `creator_id` bigint(20) NOT NULL,
+  `arrest_date` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  `arrest_reason_id` bigint(20) NOT NULL,
+  `arrest_reason_details` varchar(1024) default NULL,
+  `passing_border_point_id` bigint(20) default NULL,
+  `count` double(11,2) default NULL,
+  `cargo_mode_id` bigint(20) NOT NULL,
+  `certificate_date` date NOT NULL,
+  `certificate_details` varchar(255) NOT NULL,
+  `cargo_sender_name` varchar(255) NOT NULL,
+  `cargo_sender_country_id` bigint(20) NOT NULL,
+  `cargo_receiver_name` varchar(255) NOT NULL,
+  `cargo_receiver_address` varchar(255) NOT NULL,
+  `cargo_type_id` bigint(20) NOT NULL,
+  `unit_type_id` bigint(20) default NULL,
+  `vehicle_type` varchar(10) NOT NULL,
+  `vehicle_details` varchar(255) NOT NULL,
+  `document_cargo_created` timestamp NOT NULL default '0000-00-00 00:00:00',
+  `updated` timestamp NOT NULL default '0000-00-00 00:00:00',
+  `sync_status` varchar(64) default NULL,
+  PRIMARY KEY  (`id`,`client_id`,`department_id`),
+  KEY `FK_arrest_client` (`client_id`),
+  KEY `FK_arrest_department` (`department_id`),
+  KEY `FK_arrest_reason` (`arrest_reason_id`),
+  KEY `FK_arrest_passing_border_point` (`passing_border_point_id`),
+  KEY `FK_arrest_cargo_mode` (`cargo_mode_id`),
+  KEY `FK_arrest_cargo_sender_country` (`cargo_sender_country_id`),
+  KEY `FK_arrest_cargo_type` (`cargo_type_id`),
+  KEY `FK_arrest_unit_type` (`unit_type_id`),
+  KEY `arrest_updated_INDEX` (`updated`),
+  CONSTRAINT `FK_arrest_client` FOREIGN KEY (`client_id`) REFERENCES `client` (`id`),
+  CONSTRAINT `FK_arrest_cargo` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`),
+  CONSTRAINT `FK_arrest_reason` FOREIGN KEY (`arrest_reason_id`) REFERENCES `arrest_reason` (`id`),
+  CONSTRAINT `FK_arrest_passing_border_point` FOREIGN KEY (`passing_border_point_id`) REFERENCES `passing_border_point` (`id`),
+  CONSTRAINT `FK_arrest_cargo_mode` FOREIGN KEY (`cargo_mode_id`) REFERENCES `cargo_mode` (`id`),
+  CONSTRAINT `FK_arrest_cargo_sender_country` FOREIGN KEY (`cargo_sender_country_id`) REFERENCES `countrybook` (`id`),
+  CONSTRAINT `FK_arrest_cargo_type` FOREIGN KEY (`cargo_type_id`) REFERENCES `cargo_type` (`id`),
+  CONSTRAINT `FK_arrest_unit_type` FOREIGN KEY (`unit_type_id`) REFERENCES `unit_type` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="cargo_mode_report" view="colnames">
+<left>36</left>
+<top>804</top>
+<width>100</width>
+<height>64</height>
+<sql_create_table>CREATE TABLE `cargo_mode_report` (
+  `cargo_mode_id` bigint(20) NOT NULL,
+  `report_id` varchar(50) NOT NULL,
+  PRIMARY KEY  (`cargo_mode_id`,`report_id`),
+  KEY `FK_cargo_mode_report_cargo_mode` (`cargo_mode_id`),
+  CONSTRAINT `FK_cargo_mode_report_cargo_mode` FOREIGN KEY (`cargo_mode_id`) REFERENCES `cargo_mode` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="client" view="colnames">
+<left>448</left>
+<top>1076</top>
+<width>124</width>
+<height>154</height>
+<sql_create_table>CREATE TABLE `client` (
+  `id` bigint(20) NOT NULL auto_increment,
+  `department_id` bigint(20) NOT NULL,
+  `passing_border_point_id` bigint(20) default NULL,
+  `ip` varchar(64) NOT NULL,
+  `mac` varchar(64) NOT NULL,
+  `secure_key` varchar(64) NOT NULL,
+  `created` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  `updated` timestamp NOT NULL default '0000-00-00 00:00:00',
+  `last_sync` datetime default NULL,
+  `sync_status` varchar(64) default NULL,
+  `version` varchar(64) default NULL,
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `mac` (`mac`),
+  UNIQUE KEY `secure_key` (`secure_key`),
+  KEY `FK_department` (`department_id`),
+  KEY `FK_passing_border_point` (`passing_border_point_id`),
+  KEY `client_updated_INDEX` (`updated`),
+  CONSTRAINT `FK_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`),
+  CONSTRAINT `FK_passing_border_point` FOREIGN KEY (`passing_border_point_id`) REFERENCES `passing_border_point` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="client_update" view="colnames">
+<left>194</left>
+<top>1114</top>
+<width>109</width>
+<height>79</height>
+<sql_create_table>CREATE TABLE `client_update` (
+  `id` bigint(20) NOT NULL auto_increment,
+  `active` bit(1) NOT NULL,
+  `created` datetime NOT NULL,
+  `type` varchar(64) NOT NULL,
+  `version` varchar(64) NOT NULL,
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `version` (`version`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="client_update_item" view="colnames">
+<left>3</left>
+<top>956</top>
+<width>156</width>
+<height>88</height>
+<sql_create_table>CREATE TABLE `client_update_item` (
+  `id` bigint(20) NOT NULL auto_increment,
+  `name` varchar(255) NOT NULL,
+  `update_id` bigint(20) NOT NULL,
+  `created` datetime NOT NULL,
+  `packaging` varchar(64) NOT NULL,
+  `check_sum` varchar(64) NOT NULL,
+  PRIMARY KEY  (`id`),
+  KEY `FK_update_id` (`update_id`),
+  CONSTRAINT `FK_update_id` FOREIGN KEY (`update_id`) REFERENCES `client_update` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="deleted_embedded_id" view="colnames">
+<left>327</left>
+<top>1303</top>
+<width>161</width>
+<height>72</height>
+<sql_create_table>CREATE TABLE `deleted_embedded_id` (
+  `id` varchar(100) NOT NULL,
+  `entity` varchar(100) NOT NULL,
+  `deleted` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  PRIMARY KEY  (`id`,`entity`),
+  KEY `deleted_embedded_id_deleted_INDEX` (`deleted`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="deleted_long_id" view="colnames">
+<left>555</left>
+<top>1299</top>
+<width>142</width>
+<height>74</height>
+<sql_create_table>CREATE TABLE `deleted_long_id` (
+  `id` bigint(20) NOT NULL,
+  `entity` varchar(100) NOT NULL,
+  `deleted` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  PRIMARY KEY  (`id`,`entity`),
+  KEY `deleted_long_id_deleted_INDEX` (`deleted`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="generator" view="colnames">
+<left>768</left>
+<top>1191</top>
+<width>154</width>
+<height>77</height>
+<sql_create_table>CREATE TABLE `generator` (
+  `generatorName` varchar(20) NOT NULL,
+  `generatorValue` bigint(20) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`generatorName`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="locales" view="colnames">
+<left>855</left>
+<top>1301</top>
+<width>124</width>
+<height>72</height>
+<sql_create_table>CREATE TABLE `locales` (
+  `language` varchar(2) NOT NULL,
+  `isSystem` tinyint(1) NOT NULL default '0',
+  PRIMARY KEY  (`language`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="log" view="colnames">
+<left>1239</left>
+<top>1075</top>
+<width>154</width>
+<height>140</height>
+<sql_create_table>CREATE TABLE `log` (
+  `id` bigint(20) NOT NULL auto_increment,
+  `client_id` bigint(20) default NULL,
+  `date` datetime default NULL,
+  `user_id` bigint(20) default NULL,
+  `controller_class` varchar(255) default NULL,
+  `model_class` varchar(255) default NULL,
+  `event` varchar(255) default NULL,
+  `module` varchar(255) default NULL,
+  `status` varchar(255) default NULL,
+  `description` varchar(255) default NULL,
+  PRIMARY KEY  (`id`),
+  KEY `FK_user` (`user_id`),
+  KEY `Index_date` (`date`),
+  KEY `Index_controller_class` (`controller_class`),
+  KEY `Index_model_class` (`model_class`),
+  KEY `Index_event` (`event`),
+  KEY `Index_module` (`module`),
+  KEY `Index_status` (`status`),
+  KEY `Index_description` (`description`),
+  KEY `FK_log_client_id` (`client_id`),
+  CONSTRAINT `FK_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  CONSTRAINT `FK_log_client_id` FOREIGN KEY (`client_id`) REFERENCES `client` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="reports" view="colnames">
+<left>1171</left>
+<top>1267</top>
+<width>126</width>
+<height>59</height>
+<sql_create_table>CREATE TABLE `reports` (
+  `id` varchar(50) NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
 </table>
 </tables>
 </canvas>
