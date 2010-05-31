@@ -7,9 +7,10 @@ package org.vetcontrol.report.jasper.meatinyear;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.HttpConstraint;
+import javax.servlet.annotation.ServletSecurity;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import net.sf.jasperreports.engine.JRDataSource;
@@ -28,7 +29,7 @@ import org.vetcontrol.web.security.SecurityRoles;
  * @author Artem
  */
 @WebServlet(name = "MeatInYearReportServlet", urlPatterns = {"/MeatInYearReportServlet"})
-@RolesAllowed({SecurityRoles.REGIONAL_REPORT})
+@ServletSecurity(@HttpConstraint(rolesAllowed = {SecurityRoles.REGIONAL_REPORT}))
 public final class MeatInYearReportServlet extends AbstractReportServlet {
 
     @EJB

@@ -6,8 +6,9 @@ package org.vetcontrol.report.jasper.arrest;
 
 import java.util.Date;
 import java.util.Map;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
+import javax.servlet.annotation.HttpConstraint;
+import javax.servlet.annotation.ServletSecurity;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import org.vetcontrol.report.commons.util.DateConverter;
@@ -25,7 +26,7 @@ import org.vetcontrol.web.security.SecurityRoles;
  * @author Artem
  */
 @WebServlet(name = "ArrestReportServlet", urlPatterns = {"/ArrestReportServlet"})
-@RolesAllowed({SecurityRoles.REGIONAL_REPORT})
+@ServletSecurity(@HttpConstraint(rolesAllowed = {SecurityRoles.REGIONAL_REPORT}))
 public final class ArrestReportServlet extends DefaultReportServlet {
 
     @EJB

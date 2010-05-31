@@ -133,7 +133,7 @@ public class BookViewDAO implements IBookViewDAO {
                         Class propType = prop.getType();
                         boolean isSuitableType = true;
                         for (Class simpleType : SIMPLE_TYPES) {
-                            if (simpleType.isAssignableFrom(propType)) {
+                            if (simpleType.isAssignableFrom(propType) || propType.isEnum()) {
                                 isSuitableType = false;
                                 break;
                             }

@@ -40,14 +40,22 @@ public abstract class AbstractReportServlet extends HttpServlet {
 
     @EJB
     private LocaleService localeService;
+
     @EJB
     private DepartmentDAO departmentDAO;
+
     private Locale reportLocale;
+
     protected static final String PDF_DIRECTORY = "pdf";
+
     protected static final String TEXT_DIRECTORY = "text";
+
     protected static final String JASPER_FILE_EXTENSION = ".jasper";
+
     protected static final String SEPARATOR = "/";
+
     private static final Logger log = LoggerFactory.getLogger(AbstractReportServlet.class);
+
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(AbstractReportServlet.class.getName());
 
     @Override
@@ -105,10 +113,12 @@ public abstract class AbstractReportServlet extends HttpServlet {
                     log.error("Couldn't close servlet output stream", e);
                 }
             }
-            try {
-                reportStream.close();
-            } catch (Exception e) {
-                log.error("Couldn't close report input stream", e);
+            if (reportStream != null) {
+                try {
+                    reportStream.close();
+                } catch (Exception e) {
+                    log.error("Couldn't close report input stream", e);
+                }
             }
         }
     }
