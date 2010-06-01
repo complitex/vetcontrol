@@ -365,7 +365,6 @@ CREATE TABLE `document_cargo` (
   `cargo_receiver_address` varchar(255) NOT NULL COMMENT 'Адрес получателя',
   `passing_border_point_id` bigint(20) DEFAULT NULL COMMENT 'Пункт пропуска через границу, на котором была оформлена данная карточка',
   `details` varchar(1024) DEFAULT NULL COMMENT 'Замечания',
-  `detention_details` varchar(255) DEFAULT NULL COMMENT 'Детали задержания',
   `sync_status` varchar(64) DEFAULT NULL COMMENT 'Статус синронизации с сервером. Все возможные значения перечислены в Synchronized.SyncStatus.class',
   PRIMARY KEY (`id`,`department_id`,`client_id`),
   KEY `FK_department_0` (`department_id`),

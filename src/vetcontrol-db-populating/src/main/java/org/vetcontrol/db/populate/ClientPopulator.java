@@ -133,7 +133,6 @@ public class ClientPopulator extends AbstractPopulator {
         documentCargo.setPassingBorderPoint(findAny(PassingBorderPoint.class));
         documentCargo.setVehicleType(VEHICLE_TYPE);
         documentCargo.setDetails(GenerateUtil.generateString(255));
-        documentCargo.setDetentionDetails(GenerateUtil.generateString(255));
         documentCargo.setSyncStatus(SyncStatus.NOT_SYNCHRONIZED);
         documentCargo.setReceiverAddress(GenerateUtil.generateString(100));
         documentCargo.setReceiverName(GenerateUtil.generateString(100));

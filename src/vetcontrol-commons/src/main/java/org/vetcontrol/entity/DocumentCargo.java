@@ -93,9 +93,6 @@ public class DocumentCargo extends Synchronized implements IUpdated {
     @XmlIDREF
     private PassingBorderPoint passingBorderPoint;
 
-    @Column(name = "detention_details", length = 255)
-    private String detentionDetails;
-
     @Column(name = "details", length = 255)
     private String details;
 
@@ -223,14 +220,6 @@ public class DocumentCargo extends Synchronized implements IUpdated {
         this.passingBorderPoint = passingBorderPoint;
     }
 
-    public String getDetentionDetails() {
-        return detentionDetails;
-    }
-
-    public void setDetentionDetails(String detentionDetails) {
-        this.detentionDetails = detentionDetails;
-    }
-
     public String getDetails() {
         return details;
     }
@@ -287,9 +276,6 @@ public class DocumentCargo extends Synchronized implements IUpdated {
         if (details != null ? !details.equals(that.details) : that.details != null) {
             return false;
         }
-        if (detentionDetails != null ? !detentionDetails.equals(that.detentionDetails) : that.detentionDetails != null) {
-            return false;
-        }
         if (id != null ? !id.equals(that.id) : that.id != null) {
             return false;
         }
@@ -342,7 +328,6 @@ public class DocumentCargo extends Synchronized implements IUpdated {
         result = 31 * result + (receiverAddress != null ? receiverAddress.hashCode() : 0);
         result = 31 * result + (receiverName != null ? receiverName.hashCode() : 0);
         result = 31 * result + (passingBorderPoint != null ? passingBorderPoint.hashCode() : 0);
-        result = 31 * result + (detentionDetails != null ? detentionDetails.hashCode() : 0);
         result = 31 * result + (details != null ? details.hashCode() : 0);
         result = 31 * result + (cargoMode != null ? cargoMode.hashCode() : 0);
         return result;
