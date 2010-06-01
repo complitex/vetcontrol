@@ -1,0 +1,908 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<database name="vetcontrol" type="MySQL - 5.0.88-community-nt">
+   <tables>
+      <table name="arrest_document" remarks="Таблица задержаний грузов" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="id" nullable="false" remarks="Суррогатный идентификатор" size="19" type="BIGINT"/>
+         <column autoUpdated="false" digits="0" id="1" name="client_id" nullable="false" remarks="Идентификатор удаленного клиента" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_arrest_client" implied="false" onDeleteCascade="false" table="client"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="2" name="department_id" nullable="false" remarks="Подразделение" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_arrest_cargo" implied="false" onDeleteCascade="false" table="department"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="3" name="creator_id" nullable="false" remarks="Идентификатор пользователя, создавшего документ" size="19" type="BIGINT"/>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="4" name="arrest_date" nullable="false" remarks="Дата задержания" size="19" type="TIMESTAMP"/>
+         <column autoUpdated="false" digits="0" id="5" name="arrest_reason_id" nullable="false" remarks="Причина задержания" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_arrest_reason" implied="false" onDeleteCascade="false" table="arrest_reason"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="6" name="arrest_reason_details" nullable="true" remarks="Детали задержания" size="1024" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="7" name="passing_border_point_id" nullable="true" remarks="Пункт пропуска через границу" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_arrest_passing_border_point" implied="false" onDeleteCascade="false" table="passing_border_point"/>
+         </column>
+         <column autoUpdated="false" digits="2" id="8" name="count" nullable="true" remarks="Количество груза" size="11" type="DOUBLE"/>
+         <column autoUpdated="false" digits="0" id="9" name="cargo_mode_id" nullable="false" remarks="Вид груза" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_arrest_cargo_mode" implied="false" onDeleteCascade="false" table="cargo_mode"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="10" name="certificate_date" nullable="false" remarks="Дата сертификации груза" size="10" type="DATE"/>
+         <column autoUpdated="false" digits="0" id="11" name="certificate_details" nullable="false" remarks="Детали сертификации груза" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="12" name="cargo_sender_name" nullable="false" remarks="Наименование отправителя грузов" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="13" name="cargo_sender_country_id" nullable="false" remarks="Страна отправителя" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_arrest_cargo_sender_country" implied="false" onDeleteCascade="false" table="countrybook"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="14" name="cargo_receiver_name" nullable="false" remarks="Наименование получателя" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="15" name="cargo_receiver_address" nullable="false" remarks="Адрес получателя" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="16" name="cargo_type_id" nullable="false" remarks="Категория груза" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_arrest_cargo_type" implied="false" onDeleteCascade="false" table="cargo_type"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="17" name="unit_type_id" nullable="true" remarks="Единица измерения" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_arrest_unit_type" implied="false" onDeleteCascade="false" table="unit_type"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="18" name="vehicle_type" nullable="false" remarks="Тип транспортного средства. Все возможные значения перечислены в VehicleType.class" size="10" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="19" name="vehicle_details" nullable="false" remarks="Детали транспортного средства(например, номер автомобиля)" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" defaultValue="0000-00-00 00:00:00" digits="0" id="20" name="document_cargo_created" nullable="false" remarks="Дата создания карточки на грузы, груз которой был задержан" size="19" type="TIMESTAMP"/>
+         <column autoUpdated="false" defaultValue="0000-00-00 00:00:00" digits="0" id="21" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
+         <column autoUpdated="false" digits="0" id="22" name="sync_status" nullable="true" remarks="Статус синронизации с сервером. Все возможные значения перечислены в Synchronized.SyncStatus.class" size="64" type="VARCHAR"/>
+         <primaryKey column="client_id" sequenceNumberInPK="1"/>
+         <primaryKey column="department_id" sequenceNumberInPK="2"/>
+         <primaryKey column="id" sequenceNumberInPK="3"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+            <column ascending="true" name="client_id"/>
+            <column ascending="true" name="department_id"/>
+         </index>
+         <index name="arrest_updated_INDEX" unique="false">
+            <column ascending="true" name="updated"/>
+         </index>
+         <index name="FK_arrest_cargo_mode" unique="false">
+            <column ascending="true" name="cargo_mode_id"/>
+         </index>
+         <index name="FK_arrest_cargo_sender_country" unique="false">
+            <column ascending="true" name="cargo_sender_country_id"/>
+         </index>
+         <index name="FK_arrest_cargo_type" unique="false">
+            <column ascending="true" name="cargo_type_id"/>
+         </index>
+         <index name="FK_arrest_client" unique="false">
+            <column ascending="true" name="client_id"/>
+         </index>
+         <index name="FK_arrest_department" unique="false">
+            <column ascending="true" name="department_id"/>
+         </index>
+         <index name="FK_arrest_passing_border_point" unique="false">
+            <column ascending="true" name="passing_border_point_id"/>
+         </index>
+         <index name="FK_arrest_reason" unique="false">
+            <column ascending="true" name="arrest_reason_id"/>
+         </index>
+         <index name="FK_arrest_unit_type" unique="false">
+            <column ascending="true" name="unit_type_id"/>
+         </index>
+      </table>
+      <table name="arrest_reason" remarks="Справочник причин задержания грузов" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="19" type="BIGINT">
+            <child column="arrest_reason_id" foreignKey="FK_arrest_reason" implied="false" onDeleteCascade="false" table="arrest_document"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="name" nullable="false" remarks="Наименование причины" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_arrest_reason_name" implied="false" onDeleteCascade="false" table="stringculture"/>
+         </column>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="2" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="3" name="disabled" nullable="false" remarks="Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован" size="0" type="BIT"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="arrest_reason_updated_INDEX" unique="false">
+            <column ascending="true" name="updated"/>
+         </index>
+         <index name="FK_arrest_reason_name" unique="false">
+            <column ascending="true" name="name"/>
+         </index>
+      </table>
+      <table name="bad_epizootic_situation" remarks="Справочник стран с неблагоприятной эпизоотической ситуацией" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="19" type="BIGINT"/>
+         <column autoUpdated="false" digits="0" id="1" name="name" nullable="false" remarks="Название страны" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_bad_epizootic_situation_name" implied="false" onDeleteCascade="false" table="stringculture"/>
+         </column>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="2" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="3" name="disabled" nullable="false" remarks="Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован" size="0" type="BIT"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="bad_epizootic_situation_updated_INDEX" unique="false">
+            <column ascending="true" name="updated"/>
+         </index>
+         <index name="FK_bad_epizootic_situation_name" unique="false">
+            <column ascending="true" name="name"/>
+         </index>
+      </table>
+      <table name="cargo" remarks="Грузы" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="id" nullable="false" remarks="Суррогатный идентификатор" size="19" type="BIGINT"/>
+         <column autoUpdated="false" digits="0" id="1" name="client_id" nullable="false" remarks="Идентификатор удаленного клиента" size="19" type="BIGINT">
+            <parent column="client_id" foreignKey="FK_document_cargo" implied="false" onDeleteCascade="false" table="document_cargo"/>
+            <parent column="id" foreignKey="FK_client_1" implied="false" onDeleteCascade="false" table="client"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="2" name="department_id" nullable="false" remarks="Подразделение" size="19" type="BIGINT">
+            <parent column="department_id" foreignKey="FK_document_cargo" implied="false" onDeleteCascade="false" table="document_cargo"/>
+            <parent column="id" foreignKey="FK_department_1" implied="false" onDeleteCascade="false" table="department"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="3" name="document_cargo_id" nullable="false" remarks="Суррогатный идентификатор карточки на грузы, к которой данный груз принадлежит" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_document_cargo" implied="false" onDeleteCascade="false" table="document_cargo"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="4" name="cargo_type_id" nullable="false" remarks="Категория груза" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_cargo_type" implied="false" onDeleteCascade="false" table="cargo_type"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="5" name="unit_type_id" nullable="false" remarks="Единица измерения" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_unit_type" implied="false" onDeleteCascade="false" table="unit_type"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="6" name="cargo_producer_id" nullable="false" remarks="Производитель груза" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_cargo_producer" implied="false" onDeleteCascade="false" table="cargo_producer"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="7" name="vehicle_id" nullable="false" remarks="Суррогатный идентификатор транспортного средства" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_cargo_vehicle" implied="false" onDeleteCascade="false" table="vehicle"/>
+         </column>
+         <column autoUpdated="false" digits="2" id="8" name="count" nullable="true" remarks="Количество груза" size="11" type="DOUBLE"/>
+         <column autoUpdated="false" digits="0" id="9" name="certificate_date" nullable="false" remarks="Дата сертификации груза" size="10" type="DATE"/>
+         <column autoUpdated="false" digits="0" id="10" name="certificate_details" nullable="false" remarks="Детали сертификации груза" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="11" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
+         <column autoUpdated="false" digits="0" id="12" name="sync_status" nullable="true" remarks="Статус синронизации с сервером. Все возможные значения перечислены в Synchronized.SyncStatus.class" size="64" type="VARCHAR"/>
+         <primaryKey column="client_id" sequenceNumberInPK="1"/>
+         <primaryKey column="department_id" sequenceNumberInPK="2"/>
+         <primaryKey column="id" sequenceNumberInPK="3"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+            <column ascending="true" name="department_id"/>
+            <column ascending="true" name="client_id"/>
+         </index>
+         <index name="cargo_updated_INDEX" unique="false">
+            <column ascending="true" name="updated"/>
+         </index>
+         <index name="FK_cargo_producer" unique="false">
+            <column ascending="true" name="cargo_producer_id"/>
+         </index>
+         <index name="FK_cargo_type" unique="false">
+            <column ascending="true" name="cargo_type_id"/>
+         </index>
+         <index name="FK_cargo_vehicle" unique="false">
+            <column ascending="true" name="vehicle_id"/>
+         </index>
+         <index name="FK_client_1" unique="false">
+            <column ascending="true" name="client_id"/>
+         </index>
+         <index name="FK_department_1" unique="false">
+            <column ascending="true" name="department_id"/>
+         </index>
+         <index name="FK_document_cargo" unique="false">
+            <column ascending="true" name="document_cargo_id"/>
+            <column ascending="true" name="department_id"/>
+            <column ascending="true" name="client_id"/>
+         </index>
+         <index name="FK_unit_type" unique="false">
+            <column ascending="true" name="unit_type_id"/>
+         </index>
+      </table>
+      <table name="cargo_mode" remarks="Справочник видов грузов" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="19" type="BIGINT">
+            <child column="cargo_mode_id" foreignKey="FK_arrest_cargo_mode" implied="false" onDeleteCascade="false" table="arrest_document"/>
+            <child column="parent_id" foreignKey="FK_cargo_mode" implied="false" onDeleteCascade="false" table="cargo_mode"/>
+            <child column="cargo_mode_id" foreignKey="FK_cargo_mode_cargo_type_cargo_mode_id" implied="false" onDeleteCascade="false" table="cargo_mode_cargo_type"/>
+            <child column="cargo_mode_id" foreignKey="FK_cargo_mode_report_cargo_mode" implied="false" onDeleteCascade="false" table="cargo_mode_report"/>
+            <child column="cargo_mode_id" foreignKey="FK_cargo_mode_unit_type_cargo_mode_id" implied="false" onDeleteCascade="false" table="cargo_mode_unit_type"/>
+            <child column="cargo_mode_id" foreignKey="FK_document_cargo_cargo_mode_id" implied="false" onDeleteCascade="false" table="document_cargo"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="name" nullable="false" remarks="Наименование вида грузов" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_cargo_mode_name" implied="false" onDeleteCascade="false" table="stringculture"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="2" name="parent_id" nullable="true" remarks="Идентификатор родителького вида грузов в 2-х уровневой иерархии видов грузов" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_cargo_mode" implied="false" onDeleteCascade="false" table="cargo_mode"/>
+         </column>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="3" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="4" name="disabled" nullable="false" remarks="Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован" size="0" type="BIT"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="cargo_mode_updated_INDEX" unique="false">
+            <column ascending="true" name="updated"/>
+         </index>
+         <index name="FK_cargo_mode_name" unique="false">
+            <column ascending="true" name="name"/>
+         </index>
+         <index name="FK_cargo_mode_parent" unique="false">
+            <column ascending="true" name="parent_id"/>
+         </index>
+      </table>
+      <table name="cargo_mode_cargo_type" remarks="Таблица, связывающая виды грузов и категории грузов" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="cargo_mode_id" nullable="false" remarks="Идентификатор вида грузов" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_cargo_mode_cargo_type_cargo_mode_id" implied="false" onDeleteCascade="false" table="cargo_mode"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="cargo_type_id" nullable="false" remarks="Идентификатор категории(типа) груза" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_cargo_mode_cargo_type_cargo_type_id" implied="false" onDeleteCascade="false" table="cargo_type"/>
+         </column>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="2" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
+         <primaryKey column="cargo_mode_id" sequenceNumberInPK="1"/>
+         <primaryKey column="cargo_type_id" sequenceNumberInPK="2"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="cargo_mode_id"/>
+            <column ascending="true" name="cargo_type_id"/>
+         </index>
+         <index name="cargo_mode_cargo_type_updated_INDEX" unique="false">
+            <column ascending="true" name="updated"/>
+         </index>
+         <index name="FK_cargo_mode_cargo_type_cargo_mode_id" unique="false">
+            <column ascending="true" name="cargo_mode_id"/>
+         </index>
+         <index name="FK_cargo_mode_cargo_type_cargo_type_id" unique="false">
+            <column ascending="true" name="cargo_type_id"/>
+         </index>
+      </table>
+      <table name="cargo_mode_report" remarks="Вспомогательная таблица связывающая таблицу видов грузов и т" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="cargo_mode_id" nullable="false" remarks="Идентификатор вида грузов" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_cargo_mode_report_cargo_mode" implied="false" onDeleteCascade="false" table="cargo_mode"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="report_id" nullable="false" remarks="Идентификатор отчета" size="50" type="VARCHAR"/>
+         <primaryKey column="cargo_mode_id" sequenceNumberInPK="1"/>
+         <primaryKey column="report_id" sequenceNumberInPK="2"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="cargo_mode_id"/>
+            <column ascending="true" name="report_id"/>
+         </index>
+         <index name="FK_cargo_mode_report_cargo_mode" unique="false">
+            <column ascending="true" name="cargo_mode_id"/>
+         </index>
+      </table>
+      <table name="cargo_mode_unit_type" remarks="Таблица, связывающая виды грузов и единицы измерения" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="cargo_mode_id" nullable="false" remarks="Идентификатор вида грузов" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_cargo_mode_unit_type_cargo_mode_id" implied="false" onDeleteCascade="false" table="cargo_mode"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="unit_type_id" nullable="false" remarks="Идентификатор единицы измерения" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_cargo_mode_unit_type_unit_type_id" implied="false" onDeleteCascade="false" table="unit_type"/>
+         </column>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="2" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
+         <primaryKey column="cargo_mode_id" sequenceNumberInPK="1"/>
+         <primaryKey column="unit_type_id" sequenceNumberInPK="2"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="cargo_mode_id"/>
+            <column ascending="true" name="unit_type_id"/>
+         </index>
+         <index name="cargo_mode_unit_type_updated_INDEX" unique="false">
+            <column ascending="true" name="updated"/>
+         </index>
+         <index name="FK_cargo_mode_unit_type_cargo_mode_id" unique="false">
+            <column ascending="true" name="cargo_mode_id"/>
+         </index>
+         <index name="FK_cargo_mode_unit_type_unit_type_id" unique="false">
+            <column ascending="true" name="unit_type_id"/>
+         </index>
+      </table>
+      <table name="cargo_producer" remarks="Справочник производителей" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="19" type="BIGINT">
+            <child column="cargo_producer_id" foreignKey="FK_cargo_producer" implied="false" onDeleteCascade="false" table="cargo"/>
+            <child column="cargo_producer_id" foreignKey="FK_registeredproducts_producer_ref" implied="false" onDeleteCascade="false" table="registered_products"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="name" nullable="false" remarks="Наименование" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_cargo_producer_name" implied="false" onDeleteCascade="false" table="stringculture"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="2" name="country_id" nullable="false" remarks="Страна производителя" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_cargo_producer_country" implied="false" onDeleteCascade="false" table="countrybook"/>
+         </column>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="3" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="4" name="disabled" nullable="false" remarks="Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован" size="0" type="BIT"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="cargo_producer_updated_INDEX" unique="false">
+            <column ascending="true" name="updated"/>
+         </index>
+         <index name="FK_cargo_producer_country" unique="false">
+            <column ascending="true" name="country_id"/>
+         </index>
+         <index name="FK_cargo_producer_name" unique="false">
+            <column ascending="true" name="name"/>
+         </index>
+      </table>
+      <table name="cargo_type" remarks="Справочник категорий(типов) грузов" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="19" type="BIGINT">
+            <child column="cargo_type_id" foreignKey="FK_arrest_cargo_type" implied="false" onDeleteCascade="false" table="arrest_document"/>
+            <child column="cargo_type_id" foreignKey="FK_cargo_type" implied="false" onDeleteCascade="false" table="cargo"/>
+            <child column="cargo_type_id" foreignKey="FK_cargo_mode_cargo_type_cargo_type_id" implied="false" onDeleteCascade="false" table="cargo_mode_cargo_type"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="name" nullable="false" remarks="Наименование категории грузов" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_cargo_type_name" implied="false" onDeleteCascade="false" table="stringculture"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="2" name="ukt_zed_code" nullable="false" remarks="Уникальный УКТ ЗЕД код категории грузов" size="10" type="VARCHAR"/>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="3" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="4" name="disabled" nullable="false" remarks="Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован" size="0" type="BIT"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="cargo_type_updated_INDEX" unique="false">
+            <column ascending="true" name="updated"/>
+         </index>
+         <index name="code" unique="true">
+            <column ascending="true" name="ukt_zed_code"/>
+         </index>
+         <index name="FK_cargo_type_name" unique="false">
+            <column ascending="true" name="name"/>
+         </index>
+      </table>
+      <table name="client" remarks="Объект удаленного клиента" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="19" type="BIGINT">
+            <child column="client_id" foreignKey="FK_arrest_client" implied="false" onDeleteCascade="false" table="arrest_document"/>
+            <child column="client_id" foreignKey="FK_client_1" implied="false" onDeleteCascade="false" table="cargo"/>
+            <child column="client_id" foreignKey="FK_client_0" implied="false" onDeleteCascade="false" table="document_cargo"/>
+            <child column="client_id" foreignKey="FK_log_client_id" implied="false" onDeleteCascade="false" table="log"/>
+            <child column="client_id" foreignKey="FK_vehicle_client" implied="false" onDeleteCascade="false" table="vehicle"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="department_id" nullable="false" remarks="Подразделение" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_department" implied="false" onDeleteCascade="false" table="department"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="2" name="passing_border_point_id" nullable="true" remarks="Пункт пропуска через границу" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_passing_border_point" implied="false" onDeleteCascade="false" table="passing_border_point"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="3" name="ip" nullable="false" remarks="IP адрес клиента" size="64" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="4" name="mac" nullable="false" remarks="MAC адрес клиента" size="64" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="5" name="secure_key" nullable="false" remarks="Защитный ключ" size="64" type="VARCHAR"/>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="6" name="created" nullable="false" remarks="Дата создания клиента" size="19" type="TIMESTAMP"/>
+         <column autoUpdated="false" defaultValue="0000-00-00 00:00:00" digits="0" id="7" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
+         <column autoUpdated="false" digits="0" id="8" name="last_sync" nullable="true" remarks="Дата последней синхронизации с сервером" size="19" type="DATETIME"/>
+         <column autoUpdated="false" digits="0" id="9" name="sync_status" nullable="true" remarks="Статус синронизации с сервером. Все возможные значения перечислены в Synchronized.SyncStatus.class" size="64" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="10" name="version" nullable="true" remarks="TODO: add comment" size="64" type="VARCHAR"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="client_updated_INDEX" unique="false">
+            <column ascending="true" name="updated"/>
+         </index>
+         <index name="FK_department" unique="false">
+            <column ascending="true" name="department_id"/>
+         </index>
+         <index name="FK_passing_border_point" unique="false">
+            <column ascending="true" name="passing_border_point_id"/>
+         </index>
+         <index name="mac" unique="true">
+            <column ascending="true" name="mac"/>
+         </index>
+         <index name="secure_key" unique="true">
+            <column ascending="true" name="secure_key"/>
+         </index>
+      </table>
+      <table name="client_update" remarks="TODO: add comments" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="19" type="BIGINT">
+            <child column="update_id" foreignKey="FK_update_id" implied="false" onDeleteCascade="false" table="client_update_item"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="active" nullable="false" remarks="TODO: add comments" size="1" type="BIT"/>
+         <column autoUpdated="false" digits="0" id="2" name="created" nullable="false" remarks="TODO: add comments" size="19" type="DATETIME"/>
+         <column autoUpdated="false" digits="0" id="3" name="type" nullable="false" remarks="TODO: add comments" size="64" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="4" name="version" nullable="false" remarks="TODO: add comments" size="64" type="VARCHAR"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="version" unique="true">
+            <column ascending="true" name="version"/>
+         </index>
+      </table>
+      <table name="client_update_item" remarks="TODO: add comments" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="19" type="BIGINT"/>
+         <column autoUpdated="false" digits="0" id="1" name="name" nullable="false" remarks="TODO: add comments" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="update_id" nullable="false" remarks="TODO: add comments" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_update_id" implied="false" onDeleteCascade="false" table="client_update"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="3" name="created" nullable="false" remarks="TODO: add comments" size="19" type="DATETIME"/>
+         <column autoUpdated="false" digits="0" id="4" name="packaging" nullable="false" remarks="TODO: add comments" size="64" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="5" name="check_sum" nullable="false" remarks="TODO: add comments" size="64" type="VARCHAR"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="FK_update_id" unique="false">
+            <column ascending="true" name="update_id"/>
+         </index>
+      </table>
+      <table name="container_validator" remarks="Справочник кодов контейнеров" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="19" type="BIGINT"/>
+         <column autoUpdated="false" digits="0" id="1" name="prefix" nullable="false" remarks="Уникальный 4-х значный префикс кода контейнера" size="4" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="carrier_abbr" nullable="true" remarks="Аббравиатура фирмы-производителя контейнера" size="50" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="3" name="carrier_name" nullable="false" remarks="Полное название фирмы-производителя контейнера" size="100" type="VARCHAR"/>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="4" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="5" name="disabled" nullable="false" remarks="Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован" size="0" type="BIT"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="container_validator_updated_INDEX" unique="false">
+            <column ascending="true" name="updated"/>
+         </index>
+      </table>
+      <table name="countrybook" remarks="Справочник стран" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="19" type="BIGINT">
+            <child column="cargo_sender_country_id" foreignKey="FK_arrest_cargo_sender_country" implied="false" onDeleteCascade="false" table="arrest_document"/>
+            <child column="country_id" foreignKey="FK_cargo_producer_country" implied="false" onDeleteCascade="false" table="cargo_producer"/>
+            <child column="cargo_sender_country_id" foreignKey="FK_document_cargo_cargo_sender_country_id" implied="false" onDeleteCascade="false" table="document_cargo"/>
+            <child column="country_id" foreignKey="FK_registeredproducts_country_ref" implied="false" onDeleteCascade="false" table="registered_products"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="code" nullable="false" remarks="ISO 3166 двух-символьный код страны" size="2" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="name" nullable="false" remarks="Название страны" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_countrybook_name" implied="false" onDeleteCascade="false" table="stringculture"/>
+         </column>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="3" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="4" name="disabled" nullable="false" remarks="Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован" size="0" type="BIT"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="countrybook_updated_INDEX" unique="false">
+            <column ascending="true" name="updated"/>
+         </index>
+         <index name="FK_countrybook_name" unique="false">
+            <column ascending="true" name="name"/>
+         </index>
+      </table>
+      <table name="customs_point" remarks="Справочник мест таможенного оформления грузов" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="19" type="BIGINT">
+            <child column="custom_point_id" foreignKey="FK_department_custom_point" implied="false" onDeleteCascade="false" table="department"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="name" nullable="false" remarks="Наименование" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_customs_point_name" implied="false" onDeleteCascade="false" table="stringculture"/>
+         </column>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="2" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="3" name="disabled" nullable="false" remarks="Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован" size="0" type="BIT"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="customs_point_updated_INDEX" unique="false">
+            <column ascending="true" name="updated"/>
+         </index>
+         <index name="FK_customs_point_name" unique="false">
+            <column ascending="true" name="name"/>
+         </index>
+      </table>
+      <table name="deleted_embedded_id" remarks="Удаленные из других таблиц записи, идентификаторы которых им" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="id" nullable="false" remarks="Идентификатор удаленной записи" size="100" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="1" name="entity" nullable="false" remarks="Наименование удаленной сущности" size="100" type="VARCHAR"/>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="2" name="deleted" nullable="false" remarks="Дата удаления" size="19" type="TIMESTAMP"/>
+         <primaryKey column="entity" sequenceNumberInPK="1"/>
+         <primaryKey column="id" sequenceNumberInPK="2"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+            <column ascending="true" name="entity"/>
+         </index>
+         <index name="deleted_embedded_id_deleted_INDEX" unique="false">
+            <column ascending="true" name="deleted"/>
+         </index>
+      </table>
+      <table name="deleted_long_id" remarks="Удаленные из других таблиц записи, идентификаторы которых им" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="id" nullable="false" remarks="Идентификатор удаленной записи" size="19" type="BIGINT"/>
+         <column autoUpdated="false" digits="0" id="1" name="entity" nullable="false" remarks="Наименование удаленной сущности" size="100" type="VARCHAR"/>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="2" name="deleted" nullable="false" remarks="Дата удаления" size="19" type="TIMESTAMP"/>
+         <primaryKey column="entity" sequenceNumberInPK="1"/>
+         <primaryKey column="id" sequenceNumberInPK="2"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+            <column ascending="true" name="entity"/>
+         </index>
+         <index name="deleted_long_id_deleted_INDEX" unique="false">
+            <column ascending="true" name="deleted"/>
+         </index>
+      </table>
+      <table name="department" remarks="Справочник структурных единиц" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="19" type="BIGINT">
+            <child column="department_id" foreignKey="FK_arrest_cargo" implied="false" onDeleteCascade="false" table="arrest_document"/>
+            <child column="department_id" foreignKey="FK_department_1" implied="false" onDeleteCascade="false" table="cargo"/>
+            <child column="department_id" foreignKey="FK_department" implied="false" onDeleteCascade="false" table="client"/>
+            <child column="parent_id" foreignKey="FK_department_parent" implied="false" onDeleteCascade="false" table="department"/>
+            <child column="department_id" foreignKey="FK_department_0" implied="false" onDeleteCascade="false" table="document_cargo"/>
+            <child column="department_id" foreignKey="FK_passing_border_point_department" implied="false" onDeleteCascade="false" table="passing_border_point"/>
+            <child column="department_id" foreignKey="fk_user_department" implied="false" onDeleteCascade="false" table="user"/>
+            <child column="department_id" foreignKey="FK_vehicle_department" implied="false" onDeleteCascade="false" table="vehicle"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="name" nullable="false" remarks="Наименование подразделения" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_department_name" implied="false" onDeleteCascade="false" table="stringculture"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="2" name="parent_id" nullable="true" remarks="Идентификатор вышестоящего подразделения" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_department_parent" implied="false" onDeleteCascade="false" table="department"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="3" name="custom_point_id" nullable="true" remarks="Место таможенного оформления грузов" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_department_custom_point" implied="false" onDeleteCascade="false" table="customs_point"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="4" name="level" nullable="false" remarks="Уровень данного подразделения в 3-х уровневой иерархии" size="10" type="INT"/>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="5" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="6" name="disabled" nullable="false" remarks="Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован" size="0" type="BIT"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="department_updated_INDEX" unique="false">
+            <column ascending="true" name="updated"/>
+         </index>
+         <index name="FK_department_custom_point" unique="false">
+            <column ascending="true" name="custom_point_id"/>
+         </index>
+         <index name="FK_department_name" unique="false">
+            <column ascending="true" name="name"/>
+         </index>
+         <index name="FK_department_parent" unique="false">
+            <column ascending="true" name="parent_id"/>
+         </index>
+      </table>
+      <table name="document_cargo" remarks="Карточка на груз" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="id" nullable="false" remarks="Суррогатный идентификатор" size="19" type="BIGINT">
+            <child column="document_cargo_id" foreignKey="FK_document_cargo" implied="false" onDeleteCascade="false" table="cargo"/>
+            <child column="document_cargo_id" foreignKey="FK_vehicle_document_cargo" implied="false" onDeleteCascade="false" table="vehicle"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="client_id" nullable="false" remarks="Идентификатор удаленного клиента" size="19" type="BIGINT">
+            <child column="client_id" foreignKey="FK_document_cargo" implied="false" onDeleteCascade="false" table="cargo"/>
+            <child column="client_id" foreignKey="FK_vehicle_document_cargo" implied="false" onDeleteCascade="false" table="vehicle"/>
+            <parent column="id" foreignKey="FK_client_0" implied="false" onDeleteCascade="false" table="client"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="2" name="department_id" nullable="false" remarks="Подразделение" size="19" type="BIGINT">
+            <child column="department_id" foreignKey="FK_document_cargo" implied="false" onDeleteCascade="false" table="cargo"/>
+            <child column="department_id" foreignKey="FK_vehicle_document_cargo" implied="false" onDeleteCascade="false" table="vehicle"/>
+            <parent column="id" foreignKey="FK_department_0" implied="false" onDeleteCascade="false" table="department"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="3" name="creator_id" nullable="false" remarks="Идентификатор пользователя, создавшего карточку" size="19" type="BIGINT"/>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="4" name="created" nullable="false" remarks="Дата создания карточки" size="19" type="TIMESTAMP"/>
+         <column autoUpdated="false" defaultValue="0000-00-00 00:00:00" digits="0" id="5" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
+         <column autoUpdated="false" digits="0" id="6" name="movement_type" nullable="false" remarks="Тип передвижения. Все возможные значения перечислены в MovementType.class" size="15" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="7" name="vehicle_type" nullable="false" remarks="Тип транспортного средства. Все возможные значения перечислены в VehicleType.class" size="10" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="8" name="cargo_mode_id" nullable="false" remarks="Вид груза" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_document_cargo_cargo_mode_id" implied="false" onDeleteCascade="false" table="cargo_mode"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="9" name="cargo_sender_name" nullable="false" remarks="Наименование отправителя грузов" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="10" name="cargo_sender_country_id" nullable="false" remarks="Страна отправителя" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_document_cargo_cargo_sender_country_id" implied="false" onDeleteCascade="false" table="countrybook"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="11" name="cargo_receiver_name" nullable="false" remarks="Наименование получателя" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="12" name="cargo_receiver_address" nullable="false" remarks="Адрес получателя" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="13" name="passing_border_point_id" nullable="true" remarks="Пункт пропуска через границу, на котором была оформлена данная карточка" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_document_cargo_passing_border_point" implied="false" onDeleteCascade="false" table="passing_border_point"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="14" name="details" nullable="true" remarks="Замечания" size="1024" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="15" name="detention_details" nullable="true" remarks="Детали задержания" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="16" name="sync_status" nullable="true" remarks="Статус синронизации с сервером. Все возможные значения перечислены в Synchronized.SyncStatus.class" size="64" type="VARCHAR"/>
+         <primaryKey column="client_id" sequenceNumberInPK="1"/>
+         <primaryKey column="department_id" sequenceNumberInPK="2"/>
+         <primaryKey column="id" sequenceNumberInPK="3"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+            <column ascending="true" name="department_id"/>
+            <column ascending="true" name="client_id"/>
+         </index>
+         <index name="document_cargo_updated_INDEX" unique="false">
+            <column ascending="true" name="updated"/>
+         </index>
+         <index name="FK_client_0" unique="false">
+            <column ascending="true" name="client_id"/>
+         </index>
+         <index name="FK_department_0" unique="false">
+            <column ascending="true" name="department_id"/>
+         </index>
+         <index name="FK_document_cargo_cargo_mode_id" unique="false">
+            <column ascending="true" name="cargo_mode_id"/>
+         </index>
+         <index name="FK_document_cargo_cargo_sender_country_id" unique="false">
+            <column ascending="true" name="cargo_sender_country_id"/>
+         </index>
+         <index name="FK_document_cargo_passing_border_point" unique="false">
+            <column ascending="true" name="passing_border_point_id"/>
+         </index>
+      </table>
+      <table name="generator" remarks="Вспомогательная таблица для хранения значений, генерируемых" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="generatorName" nullable="false" remarks="Наименование генератора" size="20" type="VARCHAR"/>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="1" name="generatorValue" nullable="false" remarks="Значение генератора" size="20" type="BIGINT UNSIGNED"/>
+         <primaryKey column="generatorName" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="generatorName"/>
+         </index>
+      </table>
+      <table name="job" remarks="Справочник должностей" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="19" type="BIGINT">
+            <child column="job_id" foreignKey="fk_job" implied="false" onDeleteCascade="false" table="user"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="name" nullable="false" remarks="Название должности" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_job_name" implied="false" onDeleteCascade="false" table="stringculture"/>
+         </column>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="2" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="3" name="disabled" nullable="false" remarks="Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован" size="0" type="BIT"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="FK_job_name" unique="false">
+            <column ascending="true" name="name"/>
+         </index>
+         <index name="job_updated_INDEX" unique="false">
+            <column ascending="true" name="updated"/>
+         </index>
+      </table>
+      <table name="locales" remarks="Таблица поддерживаемых системой языков" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="language" nullable="false" remarks="ISO 639 код языка" size="2" type="VARCHAR"/>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="1" name="isSystem" nullable="false" remarks="Показывает является ли данный язык системным. Системный язык является языком по умолчанию для системы" size="0" type="BIT"/>
+         <primaryKey column="language" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="language"/>
+         </index>
+      </table>
+      <table name="log" remarks="Журнал логов приложения" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="19" type="BIGINT"/>
+         <column autoUpdated="false" digits="0" id="1" name="client_id" nullable="true" remarks="Идентификатор удаленного клиента" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_log_client_id" implied="false" onDeleteCascade="false" table="client"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="2" name="date" nullable="true" remarks="Дата" size="19" type="DATETIME"/>
+         <column autoUpdated="false" digits="0" id="3" name="user_id" nullable="true" remarks="Пользователь, инициировавший логирование некоторой операции" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_user" implied="false" onDeleteCascade="false" table="user"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="4" name="controller_class" nullable="true" remarks="Класс страницы(или другого объекта), в котором произошла некая операция, подлежащая логированию" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="5" name="model_class" nullable="true" remarks="Класс объекта, над которым произошла операция" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="6" name="event" nullable="true" remarks="Тип операции. Все возможные значения перечислены в Log.EVENT.class" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="7" name="module" nullable="true" remarks="Модуль, в котором произошла операция. Все возможные значения перечислены в Log.MODULE.class" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="8" name="status" nullable="true" remarks="Успешность завершения операции. Все возможные значения перечислены в Log.STATUS.class" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="9" name="description" nullable="true" remarks="Дополнительное описание" size="255" type="VARCHAR"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="FK_log_client_id" unique="false">
+            <column ascending="true" name="client_id"/>
+         </index>
+         <index name="FK_user" unique="false">
+            <column ascending="true" name="user_id"/>
+         </index>
+         <index name="Index_controller_class" unique="false">
+            <column ascending="true" name="controller_class"/>
+         </index>
+         <index name="Index_date" unique="false">
+            <column ascending="true" name="date"/>
+         </index>
+         <index name="Index_description" unique="false">
+            <column ascending="true" name="description"/>
+         </index>
+         <index name="Index_event" unique="false">
+            <column ascending="true" name="event"/>
+         </index>
+         <index name="Index_model_class" unique="false">
+            <column ascending="true" name="model_class"/>
+         </index>
+         <index name="Index_module" unique="false">
+            <column ascending="true" name="module"/>
+         </index>
+         <index name="Index_status" unique="false">
+            <column ascending="true" name="status"/>
+         </index>
+      </table>
+      <table name="passing_border_point" remarks="Справочник пунктов пропуска через границу" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="19" type="BIGINT">
+            <child column="passing_border_point_id" foreignKey="FK_arrest_passing_border_point" implied="false" onDeleteCascade="false" table="arrest_document"/>
+            <child column="passing_border_point_id" foreignKey="FK_passing_border_point" implied="false" onDeleteCascade="false" table="client"/>
+            <child column="passing_border_point_id" foreignKey="FK_document_cargo_passing_border_point" implied="false" onDeleteCascade="false" table="document_cargo"/>
+            <child column="passing_border_point_id" foreignKey="fk_border_point" implied="false" onDeleteCascade="false" table="user"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="name" nullable="false" remarks="Название пункта" size="100" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="department_id" nullable="false" remarks="Подразделение, к которому относится данный пункт пропуска" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_passing_border_point_department" implied="false" onDeleteCascade="false" table="department"/>
+         </column>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="3" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="4" name="disabled" nullable="false" remarks="Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован" size="0" type="BIT"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="FK_passing_border_point_department" unique="false">
+            <column ascending="true" name="department_id"/>
+         </index>
+         <index name="passing_border_point_updated_INDEX" unique="false">
+            <column ascending="true" name="updated"/>
+         </index>
+      </table>
+      <table name="registered_products" remarks="Справочник перечня препаратов, зарегистрированных в Украине" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="19" type="BIGINT"/>
+         <column autoUpdated="false" digits="0" id="1" name="name" nullable="false" remarks="Наименование препарата" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_registeredproducts_name" implied="false" onDeleteCascade="false" table="stringculture"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="2" name="classificator" nullable="false" remarks="Классификатор" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_registeredproducts_classificator" implied="false" onDeleteCascade="false" table="stringculture"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="3" name="cargo_producer_id" nullable="false" remarks="Производитель" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_registeredproducts_producer_ref" implied="false" onDeleteCascade="false" table="cargo_producer"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="4" name="regnumber" nullable="false" remarks="Регистрационный номер" size="50" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="5" name="date" nullable="false" remarks="Дата регистрации" size="10" type="DATE"/>
+         <column autoUpdated="false" digits="0" id="6" name="country_id" nullable="false" remarks="Страна производителя" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_registeredproducts_country_ref" implied="false" onDeleteCascade="false" table="countrybook"/>
+         </column>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="7" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="8" name="disabled" nullable="false" remarks="Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован" size="0" type="BIT"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="FK_registeredproducts_classificator" unique="false">
+            <column ascending="true" name="classificator"/>
+         </index>
+         <index name="FK_registeredproducts_country_ref" unique="false">
+            <column ascending="true" name="country_id"/>
+         </index>
+         <index name="FK_registeredproducts_name" unique="false">
+            <column ascending="true" name="name"/>
+         </index>
+         <index name="FK_registeredproducts_producer_ref" unique="false">
+            <column ascending="true" name="cargo_producer_id"/>
+         </index>
+         <index name="registered_products_updated_INDEX" unique="false">
+            <column ascending="true" name="updated"/>
+         </index>
+      </table>
+      <table name="reports" remarks="Таблица, перечисляющая все отчеты в системе. Используется на" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="id" nullable="false" remarks="Уникальный идентификатор отчета" size="50" type="VARCHAR"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
+      <table name="stringculture" remarks="Таблица для хранения локализованных строк в справочниках" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="id" nullable="false" remarks="" size="19" type="BIGINT">
+            <child column="name" foreignKey="FK_arrest_reason_name" implied="false" onDeleteCascade="false" table="arrest_reason"/>
+            <child column="name" foreignKey="FK_bad_epizootic_situation_name" implied="false" onDeleteCascade="false" table="bad_epizootic_situation"/>
+            <child column="name" foreignKey="FK_cargo_mode_name" implied="false" onDeleteCascade="false" table="cargo_mode"/>
+            <child column="name" foreignKey="FK_cargo_producer_name" implied="false" onDeleteCascade="false" table="cargo_producer"/>
+            <child column="name" foreignKey="FK_cargo_type_name" implied="false" onDeleteCascade="false" table="cargo_type"/>
+            <child column="name" foreignKey="FK_countrybook_name" implied="false" onDeleteCascade="false" table="countrybook"/>
+            <child column="name" foreignKey="FK_customs_point_name" implied="false" onDeleteCascade="false" table="customs_point"/>
+            <child column="name" foreignKey="FK_department_name" implied="false" onDeleteCascade="false" table="department"/>
+            <child column="name" foreignKey="FK_job_name" implied="false" onDeleteCascade="false" table="job"/>
+            <child column="classificator" foreignKey="FK_registeredproducts_classificator" implied="false" onDeleteCascade="false" table="registered_products"/>
+            <child column="name" foreignKey="FK_registeredproducts_name" implied="false" onDeleteCascade="false" table="registered_products"/>
+            <child column="name" foreignKey="FK_unit_type_name" implied="false" onDeleteCascade="false" table="unit_type"/>
+            <child column="short_name" foreignKey="FK_unit_type_short_name" implied="false" onDeleteCascade="false" table="unit_type"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="locale" nullable="false" remarks="Код языка" size="2" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="value" nullable="true" remarks="Локализованное значение" size="1024" type="VARCHAR"/>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="3" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <primaryKey column="locale" sequenceNumberInPK="2"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+            <column ascending="true" name="locale"/>
+         </index>
+         <index name="stringculture_updated_INDEX" unique="false">
+            <column ascending="true" name="updated"/>
+         </index>
+      </table>
+      <table name="unit_type" remarks="Справочник единиц измерения" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="19" type="BIGINT">
+            <child column="unit_type_id" foreignKey="FK_arrest_unit_type" implied="false" onDeleteCascade="false" table="arrest_document"/>
+            <child column="unit_type_id" foreignKey="FK_unit_type" implied="false" onDeleteCascade="false" table="cargo"/>
+            <child column="unit_type_id" foreignKey="FK_cargo_mode_unit_type_unit_type_id" implied="false" onDeleteCascade="false" table="cargo_mode_unit_type"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="name" nullable="false" remarks="Наименование единицы измерения" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_unit_type_name" implied="false" onDeleteCascade="false" table="stringculture"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="2" name="short_name" nullable="false" remarks="Сокращенное название единицы измерения" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_unit_type_short_name" implied="false" onDeleteCascade="false" table="stringculture"/>
+         </column>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="3" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="4" name="disabled" nullable="false" remarks="Состояние объекта. Если значение равно 1, то объект деактивирован, если 0 - то активирован" size="0" type="BIT"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="FK_unit_type_name" unique="false">
+            <column ascending="true" name="name"/>
+         </index>
+         <index name="FK_unit_type_short_name" unique="false">
+            <column ascending="true" name="short_name"/>
+         </index>
+         <index name="unit_type_updated_INDEX" unique="false">
+            <column ascending="true" name="updated"/>
+         </index>
+      </table>
+      <table name="user" remarks="Таблица пользователей системы" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="Идентификатор пользователя" size="19" type="BIGINT">
+            <child column="user_id" foreignKey="FK_user" implied="false" onDeleteCascade="false" table="log"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="login" nullable="false" remarks="Логин" size="32" type="VARCHAR">
+            <child column="login" foreignKey="fk_user_login" implied="false" onDeleteCascade="false" table="usergroup"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="2" name="_password" nullable="true" remarks="Пароль" size="32" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="3" name="first_name" nullable="true" remarks="Имя" size="45" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="4" name="middle_name" nullable="true" remarks="Отчество" size="45" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="5" name="last_name" nullable="true" remarks="Фамилия" size="45" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="6" name="job_id" nullable="true" remarks="Должность пользователя" size="19" type="BIGINT">
+            <parent column="id" foreignKey="fk_job" implied="false" onDeleteCascade="false" table="job"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="7" name="department_id" nullable="true" remarks="Подразделение, в котором работает пользователь" size="19" type="BIGINT">
+            <parent column="id" foreignKey="fk_user_department" implied="false" onDeleteCascade="false" table="department"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="8" name="passing_border_point_id" nullable="true" remarks="Пункт пропуска через границу, к которому принадлежит пользователь" size="19" type="BIGINT">
+            <parent column="id" foreignKey="fk_border_point" implied="false" onDeleteCascade="false" table="passing_border_point"/>
+         </column>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="9" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
+         <column autoUpdated="false" digits="0" id="10" name="locale" nullable="true" remarks="Язык, на котором пользователь предпочитает работать с системой" size="2" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="11" name="page_size" nullable="true" remarks="Количество записей на страницу, которое пользователь предпочитает использовать на страницах просмотра списка сущностей" size="10" type="INT"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="fk_border_point" unique="false">
+            <column ascending="true" name="passing_border_point_id"/>
+         </index>
+         <index name="fk_job" unique="false">
+            <column ascending="true" name="job_id"/>
+         </index>
+         <index name="fk_user_department" unique="false">
+            <column ascending="true" name="department_id"/>
+         </index>
+         <index name="index_login" unique="true">
+            <column ascending="true" name="login"/>
+         </index>
+         <index name="user_updated_INDEX" unique="false">
+            <column ascending="true" name="updated"/>
+         </index>
+      </table>
+      <table name="usergroup" remarks="Таблица ролей пользователей" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="19" type="BIGINT"/>
+         <column autoUpdated="false" digits="0" id="1" name="login" nullable="false" remarks="Логин пользователя" size="32" type="VARCHAR">
+            <parent column="login" foreignKey="fk_user_login" implied="false" onDeleteCascade="false" table="user"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="2" name="usergroup" nullable="false" remarks="Роль пользователя" size="32" type="VARCHAR"/>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="3" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="login_usergroup" unique="true">
+            <column ascending="true" name="login"/>
+            <column ascending="true" name="usergroup"/>
+         </index>
+         <index name="usergroup_updated_INDEX" unique="false">
+            <column ascending="true" name="updated"/>
+         </index>
+      </table>
+      <table name="vehicle" remarks="Таблица транспортных средств" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="id" nullable="false" remarks="Суррогатный идентификатор" size="19" type="BIGINT">
+            <child column="vehicle_id" foreignKey="FK_cargo_vehicle" implied="false" onDeleteCascade="false" table="cargo"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="client_id" nullable="false" remarks="Идентификатор удаленного клиента" size="19" type="BIGINT">
+            <parent column="client_id" foreignKey="FK_vehicle_document_cargo" implied="false" onDeleteCascade="false" table="document_cargo"/>
+            <parent column="id" foreignKey="FK_vehicle_client" implied="false" onDeleteCascade="false" table="client"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="2" name="department_id" nullable="false" remarks="Подразделение" size="19" type="BIGINT">
+            <parent column="department_id" foreignKey="FK_vehicle_document_cargo" implied="false" onDeleteCascade="false" table="document_cargo"/>
+            <parent column="id" foreignKey="FK_vehicle_department" implied="false" onDeleteCascade="false" table="department"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="3" name="document_cargo_id" nullable="false" remarks="Суррогатный идентификатор карточки на грузы, которой данное транспортное средство принадлежит" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_vehicle_document_cargo" implied="false" onDeleteCascade="false" table="document_cargo"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="4" name="vehicle_type" nullable="false" remarks="Тип транспортного средства. Все возможные значения перечислены в VehicleType.class" size="10" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="5" name="vehicle_details" nullable="false" remarks="Детали транспортного средства(например, номер автомобиля)" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="6" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
+         <column autoUpdated="false" digits="0" id="7" name="sync_status" nullable="true" remarks="Статус синронизации с сервером. Все возможные значения перечислены в Synchronized.SyncStatus.class" size="64" type="VARCHAR"/>
+         <primaryKey column="client_id" sequenceNumberInPK="1"/>
+         <primaryKey column="department_id" sequenceNumberInPK="2"/>
+         <primaryKey column="id" sequenceNumberInPK="3"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+            <column ascending="true" name="department_id"/>
+            <column ascending="true" name="client_id"/>
+         </index>
+         <index name="FK_vehicle_client" unique="false">
+            <column ascending="true" name="client_id"/>
+         </index>
+         <index name="FK_vehicle_department" unique="false">
+            <column ascending="true" name="department_id"/>
+         </index>
+         <index name="FK_vehicle_document_cargo" unique="false">
+            <column ascending="true" name="document_cargo_id"/>
+            <column ascending="true" name="department_id"/>
+            <column ascending="true" name="client_id"/>
+         </index>
+         <index name="vehicle_updated_INDEX" unique="false">
+            <column ascending="true" name="updated"/>
+         </index>
+      </table>
+   </tables>
+</database>
