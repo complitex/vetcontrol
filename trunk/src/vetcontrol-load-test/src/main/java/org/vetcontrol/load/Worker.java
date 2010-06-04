@@ -42,7 +42,7 @@ public abstract class Worker<T> implements Runnable {
     public void run() {
         log.info("Work started. Client id : {}", client.getId());
         try {
-            UniformInterface uniformInterface = ClientFactory.createJSONClient(serverPath);
+            
             Id id = new Id(startId, endId);
             List<T> documents = new ArrayList<T>(networkBatchCount);
 
@@ -50,11 +50,11 @@ public abstract class Worker<T> implements Runnable {
                 T document = newDocument(id.getAndIncrement());
                 documents.add(document);
                 if (documents.size() % networkBatchCount == 0) {
-                    postDocuments(uniformInterface, documents);
+                    postDocuments(documents);
                 }
             }
             if (!documents.isEmpty()) {
-                postDocuments(uniformInterface, documents);
+                postDocuments(documents);
             }
         } catch (Exception e) {
             log.error("Fatal unexpected problem. Client id : " + client.getId(), e);
@@ -62,7 +62,8 @@ public abstract class Worker<T> implements Runnable {
         log.info("Work finished. Client id : {}", client.getId());
     }
 
-    protected void postDocuments(UniformInterface uniformInterface, List<T> documents) {
+    protected void postDocuments(List<T> documents) {
+        UniformInterface uniformInterface = ClientFactory.createJSONClient(serverPath);
         long startTime = System.currentTimeMillis();
         try {
             uniformInterface.put(newRequestEntity(documents));
