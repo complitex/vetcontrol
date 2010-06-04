@@ -31,9 +31,9 @@ public class DocumentCargoLoadTester {
 
     private static final Long START_ID = 2000L;
 
-    private static final int CLIENT_COUNT = 300;
+    private static final int CLIENT_COUNT = 500;
 
-    private static final long DOCUMENTS_PER_CLIENT = 300L;
+    private static final long DOCUMENTS_PER_CLIENT = 500L;
 
     private static final int NETWORK_BATCH = 100;
 
