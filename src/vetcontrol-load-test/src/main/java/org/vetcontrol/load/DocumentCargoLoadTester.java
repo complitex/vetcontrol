@@ -6,6 +6,8 @@ package org.vetcontrol.load;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.slf4j.Logger;
@@ -29,21 +31,37 @@ public class DocumentCargoLoadTester {
 
     private static final String PATH = "/document/document_cargo";
 
-    private static final Long START_ID = 2000L;
+    private static final long START_ID = Settings.getDocumentCargoStartId();
 
-    private static final int CLIENT_COUNT = 500;
+    private static final int CLIENT_COUNT = Settings.getClientCount();
 
-    private static final long DOCUMENTS_PER_CLIENT = 500L;
+    private static final long DOCUMENTS_PER_CLIENT = Settings.getDocumentCargosPerClient();
 
-    private static final int NETWORK_BATCH = 100;
+    private static final int NETWORK_BATCH = Settings.getNetworkBatch();
 
     public void test() {
-        Client[] clients = Util.initClients(CLIENT_COUNT);
+        final Client[] clients = Util.initClients(CLIENT_COUNT);
+
+        final Statistics statistics = new Statistics(CLIENT_COUNT);
 
         long startId = START_ID;
         ExecutorService executorService = Executors.newFixedThreadPool(CLIENT_COUNT);
+        CyclicBarrier barrier = new CyclicBarrier(CLIENT_COUNT, new Runnable() {
+
+            @Override
+            public void run() {
+                log.info("Statistics : \n");
+                log.info("Maximum request time: {}", statistics.getMaxRequestTime());
+                Map<Long, Float> clientSyncTime = statistics.getClientSyncTime();
+                for (Client client : clients) {
+                    Long clientId = client.getId();
+                    log.info("Synchronization time for client {} is {}", clientId, clientSyncTime.get(clientId));
+                }
+            }
+        });
         for (int i = 0; i < CLIENT_COUNT; i++) {
-            executorService.execute(new Worker<DocumentCargo>(clients[i], startId, startId + DOCUMENTS_PER_CLIENT, log, NETWORK_BATCH, PATH) {
+            executorService.execute(new Worker<DocumentCargo>(clients[i], startId, startId + DOCUMENTS_PER_CLIENT, log,
+                    NETWORK_BATCH, PATH, statistics, barrier) {
 
                 @Override
                 protected SyncRequestEntity newRequestEntity(List<DocumentCargo> documents) {
@@ -57,7 +75,7 @@ public class DocumentCargoLoadTester {
             });
             startId = startId + DOCUMENTS_PER_CLIENT;
         }
-        executorService.shutdownNow();
+        executorService.shutdown();
     }
 
     private DocumentCargo newDocumentCargo(Long id, Client client) {

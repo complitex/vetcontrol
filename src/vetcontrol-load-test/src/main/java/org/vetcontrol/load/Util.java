@@ -67,7 +67,7 @@ public final class Util {
 
     public static User newCreator() {
         User creator = new User();
-        creator.setId(1L);
+        creator.setId(2L);
         return creator;
     }
 

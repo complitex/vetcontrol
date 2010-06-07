@@ -9,7 +9,6 @@ import com.sun.jersey.api.client.UniformInterface;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.api.client.filter.LoggingFilter;
 import javax.ws.rs.core.MediaType;
 import org.vetcontrol.sync.JSONResolver;
 
@@ -24,9 +23,12 @@ public class ClientFactory {
         clientConfig.getClasses().add(JSONResolver.JAXBContextResolver.class);
         clientConfig.getClasses().add(JSONResolver.UnmarshallerContextResolver.class);
 
-        String syncServerUrl = "http://localhost:8080/server/sync";
+        String syncServerUrl = Settings.getSyncServerUrl();
 
-        WebResource webResource = Client.create(clientConfig).resource(syncServerUrl + path);
+        Client client = Client.create(clientConfig);
+        client.setConnectTimeout(180000);
+        client.setReadTimeout(180000);
+        WebResource webResource = client.resource(syncServerUrl + path);
 //        webResource.addFilter(new LoggingFilter());
         return webResource.accept(MediaType.APPLICATION_JSON).type(MediaType.APPLICATION_JSON_TYPE);
 

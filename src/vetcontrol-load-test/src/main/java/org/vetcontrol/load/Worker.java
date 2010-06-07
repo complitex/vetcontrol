@@ -7,6 +7,7 @@ package org.vetcontrol.load;
 import com.sun.jersey.api.client.UniformInterface;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CyclicBarrier;
 import org.slf4j.Logger;
 import org.vetcontrol.entity.Client;
 import org.vetcontrol.sync.SyncRequestEntity;
@@ -29,20 +30,26 @@ public abstract class Worker<T> implements Runnable {
 
     private String serverPath;
 
-    public Worker(Client client, Long startId, Long endId, Logger log, int networkBatchCount, String serverPath) {
+    private Statistics statistics;
+
+    private CyclicBarrier barrier;
+
+    public Worker(Client client, Long startId, Long endId, Logger log, int networkBatchCount, String serverPath,
+            Statistics statistics, CyclicBarrier barrier) {
         this.startId = startId;
         this.endId = endId;
         this.client = client;
         this.log = log;
         this.networkBatchCount = networkBatchCount;
         this.serverPath = serverPath;
+        this.statistics = statistics;
+        this.barrier = barrier;
     }
 
     @Override
     public void run() {
         log.info("Work started. Client id : {}", client.getId());
         try {
-            
             Id id = new Id(startId, endId);
             List<T> documents = new ArrayList<T>(networkBatchCount);
 
@@ -60,6 +67,11 @@ public abstract class Worker<T> implements Runnable {
             log.error("Fatal unexpected problem. Client id : " + client.getId(), e);
         }
         log.info("Work finished. Client id : {}", client.getId());
+        try {
+            barrier.await();
+        } catch (Exception e) {
+            log.error("Barrier error. Client id : " + client.getId(), e);
+        }
     }
 
     protected void postDocuments(List<T> documents) {
@@ -67,15 +79,19 @@ public abstract class Worker<T> implements Runnable {
         long startTime = System.currentTimeMillis();
         try {
             uniformInterface.put(newRequestEntity(documents));
-            log.info("Successful posting of document cargos took {} sec. Client id : {}", getTimeDifference(startTime) / 1000.0, client.getId());
-            documents.clear();
+            float requestTime = getTimeDifference(startTime) / 1000.0F;
+            statistics.addStatistica(new Statistica(requestTime, client));
+            log.info("Successful posting of document cargos took {} sec. Client id : {}", requestTime, client.getId());
         } catch (Exception e) {
-            log.error("Unsuccessful posting of document cargos took " + getTimeDifference(startTime) / 1000.0
+            float requestTime = getTimeDifference(startTime) / 1000.0F;
+            statistics.addStatistica(new Statistica(requestTime, client, e));
+            log.error("Unsuccessful posting of document cargos took " + requestTime
                     + " sec. Could not to post document cargo to server. Client id : " + client.getId(), e);
         }
+        documents.clear();
     }
 
-    protected Client getClient(){
+    protected Client getClient() {
         return client;
     }
 
