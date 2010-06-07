@@ -58,6 +58,7 @@ public abstract class Worker<T> implements Runnable {
                 documents.add(document);
                 if (documents.size() % networkBatchCount == 0) {
                     postDocuments(documents);
+                    Thread.sleep(1000L);
                 }
             }
             if (!documents.isEmpty()) {
