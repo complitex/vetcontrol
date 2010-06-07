@@ -17,6 +17,14 @@ public class Settings {
 
     private static final Logger log = LoggerFactory.getLogger(Settings.class);
 
+    //jersey Client API related settings
+    private static int clientTimeout;
+
+    private static boolean useApacheHttpClient;
+
+    private static boolean useLoggingFilter;
+
+    // common settings
     private static String syncServerUrl;
 
     private static int clientCount;
@@ -38,6 +46,11 @@ public class Settings {
             inputStream = Settings.class.getResourceAsStream("settings.properties");
             Properties properties = new Properties();
             properties.load(inputStream);
+
+            clientTimeout = Integer.valueOf(properties.getProperty("jersey_client_timeout"));
+            useApacheHttpClient = Boolean.valueOf(properties.getProperty("use_apache_http_client"));
+            useLoggingFilter = Boolean.valueOf(properties.getProperty("use_logging_filter"));
+
             syncServerUrl = properties.getProperty("sync_server_url");
             clientCount = Integer.valueOf(properties.getProperty("client_count"));
             networkBatch = Integer.valueOf(properties.getProperty("network_batch"));
@@ -75,5 +88,17 @@ public class Settings {
 
     public static String getSyncServerUrl() {
         return syncServerUrl;
+    }
+
+    public static int getClientTimeout() {
+        return clientTimeout;
+    }
+
+    public static boolean isUseApacheHttpClient() {
+        return useApacheHttpClient;
+    }
+
+    public static boolean isUseLoggingFilter() {
+        return useLoggingFilter;
     }
 }

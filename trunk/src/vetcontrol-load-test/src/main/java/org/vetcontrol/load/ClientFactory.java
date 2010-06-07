@@ -9,6 +9,8 @@ import com.sun.jersey.api.client.UniformInterface;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.sun.jersey.api.client.filter.LoggingFilter;
+import com.sun.jersey.client.apache.ApacheHttpClient;
 import javax.ws.rs.core.MediaType;
 import org.vetcontrol.sync.JSONResolver;
 
@@ -25,12 +27,14 @@ public class ClientFactory {
 
         String syncServerUrl = Settings.getSyncServerUrl();
 
-        Client client = Client.create(clientConfig);
-        client.setConnectTimeout(180000);
-        client.setReadTimeout(180000);
-        WebResource webResource = client.resource(syncServerUrl + path);
-//        webResource.addFilter(new LoggingFilter());
-        return webResource.accept(MediaType.APPLICATION_JSON).type(MediaType.APPLICATION_JSON_TYPE);
+        Client client = Settings.isUseApacheHttpClient() ? ApacheHttpClient.create(clientConfig) : Client.create(clientConfig);
 
+        client.setConnectTimeout(Settings.getClientTimeout());
+        client.setReadTimeout(Settings.getClientTimeout());
+        WebResource webResource = client.resource(syncServerUrl + path);
+        if (Settings.isUseLoggingFilter()) {
+            webResource.addFilter(new LoggingFilter());
+        }
+        return webResource.accept(MediaType.APPLICATION_JSON).type(MediaType.APPLICATION_JSON_TYPE);
     }
 }
