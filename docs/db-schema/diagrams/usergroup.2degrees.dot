@@ -19,6 +19,9 @@ digraph "twoDegreesRelationshipsDiagram" {
   edge [
     arrowsize="0.8"
   ];
+  "document_cargo":"elipses":w -> "user":"id":e [arrowhead=none arrowtail=crowodot];
+  "document_cargo":"elipses":w -> "department":"elipses":e [arrowhead=none arrowtail=crowodot];
+  "document_cargo":"elipses":w -> "passing_border_point":"elipses":e [arrowhead=none arrowtail=crowodot];
   "log":"elipses":w -> "user":"id":e [arrowhead=none arrowtail=crowodot];
   "passing_border_point":"elipses":w -> "department":"elipses":e [arrowhead=none arrowtail=crowodot];
   "user":"department_id":w -> "department":"elipses":e [arrowhead=none arrowtail=crowodot];
@@ -34,6 +37,16 @@ digraph "twoDegreesRelationshipsDiagram" {
     </TABLE>>
     URL="department.html"
     tooltip="department"
+  ];
+  "document_cargo" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">document_cargo</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 6</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
+    </TABLE>>
+    URL="document_cargo.html"
+    tooltip="document_cargo"
   ];
   "job" [
     label=<
@@ -81,7 +94,7 @@ digraph "twoDegreesRelationshipsDiagram" {
       <TR><TD PORT="updated" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">updated</TD></TR>
       <TR><TD PORT="locale" COLSPAN="3" ALIGN="LEFT">locale</TD></TR>
       <TR><TD PORT="page_size" COLSPAN="3" ALIGN="LEFT">page_size</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 &gt;</TD></TR>
     </TABLE>>
     URL="user.html"
     tooltip="user"

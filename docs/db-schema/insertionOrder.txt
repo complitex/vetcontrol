@@ -7,11 +7,11 @@ department
 cargo_mode
 passing_border_point
 client
+user
 document_cargo
 cargo_type
 unit_type
 cargo_producer
-user
 arrest_reason
 vehicle
 bad_epizootic_situation

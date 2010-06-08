@@ -36,7 +36,7 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="updated" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">updated</TD></TR>
       <TR><TD PORT="locale" COLSPAN="3" ALIGN="LEFT">locale</TD></TR>
       <TR><TD PORT="page_size" COLSPAN="3" ALIGN="LEFT">page_size</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 &gt;</TD></TR>
     </TABLE>>
     URL="user.html"
     tooltip="user"
