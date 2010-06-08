@@ -33,7 +33,9 @@ import java.util.ResourceBundle;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class DocumentResourceBean {
+
     private static final Logger log = LoggerFactory.getLogger(DocumentResourceBean.class);
+
     private static final ResourceBundle rb = ResourceBundle.getBundle("org.vetcontrol.sync.server.resources.ResourceBeans");
 
     private static final int DB_BATCH_SIZE = 50;
@@ -67,13 +69,10 @@ public class DocumentResourceBean {
 
                     EntityPersisterUtil.insert(em, documentCargo);
 
-                    if (index++ % DB_BATCH_SIZE == 0){
+                    if (index++ % DB_BATCH_SIZE == 0) {
                         EntityPersisterUtil.executeBatch(em);
                     }
                 }
-
-                EntityPersisterUtil.executeBatch(em);
-
                 logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, DocumentCargo.class,
                         rb.getString("info.sync.processed"), size, r.getRemoteHost(), client.getIp());
 
@@ -83,6 +82,8 @@ public class DocumentResourceBean {
                 //Client Last Sync
                 client.setLastSync(DateUtil.getCurrentDate());
                 EntityPersisterUtil.update(em, client);
+
+                EntityPersisterUtil.executeBatch(em);
             } catch (WebApplicationException e) {
                 throw e;
             } catch (Exception e) {
@@ -121,13 +122,10 @@ public class DocumentResourceBean {
 
                     EntityPersisterUtil.insert(em, cargo);
 
-                    if (index++ % DB_BATCH_SIZE == 0){
+                    if (index++ % DB_BATCH_SIZE == 0) {
                         EntityPersisterUtil.executeBatch(em);
                     }
                 }
-
-                EntityPersisterUtil.executeBatch(em);
-
                 logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Cargo.class,
                         rb.getString("info.sync.processed"), size,
                         r.getRemoteHost(), client.getIp());
@@ -138,6 +136,8 @@ public class DocumentResourceBean {
                 //Client Last Sync
                 client.setLastSync(DateUtil.getCurrentDate());
                 EntityPersisterUtil.update(em, client);
+
+                EntityPersisterUtil.executeBatch(em);
             } catch (Exception e) {
                 logBean.error(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Cargo.class,
                         rb.getString("info.sync.processed"), size, r.getRemoteHost(), client.getIp());
@@ -174,13 +174,10 @@ public class DocumentResourceBean {
 
                     EntityPersisterUtil.insert(em, vehicle);
 
-                    if (index++ % DB_BATCH_SIZE == 0){
+                    if (index++ % DB_BATCH_SIZE == 0) {
                         EntityPersisterUtil.executeBatch(em);
                     }
                 }
-
-                EntityPersisterUtil.executeBatch(em);
-
                 logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Vehicle.class,
                         rb.getString("info.sync.processed"), size,
                         r.getRemoteHost(), client.getIp());
@@ -191,6 +188,8 @@ public class DocumentResourceBean {
                 //Client Last Sync
                 client.setLastSync(DateUtil.getCurrentDate());
                 EntityPersisterUtil.update(em, client);
+
+                EntityPersisterUtil.executeBatch(em);
             } catch (Exception e) {
                 logBean.error(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Vehicle.class,
                         rb.getString("info.sync.processed"), size, r.getRemoteHost(), client.getIp());
@@ -199,10 +198,7 @@ public class DocumentResourceBean {
                         new Object[]{client.getId(), size, r.getRemoteHost(), client.getIp()});
                 log.error(e.getLocalizedMessage(), e);
 
-                throw new WebApplicationException(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .entity(rb.getString("error.db.internal_server_error"))
-                        .type("text/plain;charset=UTF-8")
-                        .build());
+                throw new WebApplicationException(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(rb.getString("error.db.internal_server_error")).type("text/plain;charset=UTF-8").build());
             }
         }
     }
@@ -227,13 +223,10 @@ public class DocumentResourceBean {
 
                     EntityPersisterUtil.insert(em, arrestDocument);
 
-                    if (index++ % DB_BATCH_SIZE == 0){
+                    if (index++ % DB_BATCH_SIZE == 0) {
                         EntityPersisterUtil.executeBatch(em);
                     }
                 }
-
-                EntityPersisterUtil.executeBatch(em);
-
                 logBean.info(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, ArrestDocument.class,
                         rb.getString("info.sync.processed"), size,
                         r.getRemoteHost(), client.getIp());
@@ -244,6 +237,8 @@ public class DocumentResourceBean {
                 //Client Last Sync
                 client.setLastSync(DateUtil.getCurrentDate());
                 EntityPersisterUtil.executeUpdate(em, client);
+
+                EntityPersisterUtil.executeBatch(em);
             } catch (Exception e) {
                 logBean.error(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, ArrestDocument.class,
                         rb.getString("info.sync.processed"), size, r.getRemoteHost(), client.getIp());
@@ -252,10 +247,7 @@ public class DocumentResourceBean {
                         new Object[]{client.getId(), size, r.getRemoteHost(), client.getIp()});
                 log.error(e.getLocalizedMessage(), e);
 
-                throw new WebApplicationException(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .entity(rb.getString("error.db.internal_server_error"))
-                        .type("text/plain;charset=UTF-8")
-                        .build());
+                throw new WebApplicationException(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(rb.getString("error.db.internal_server_error")).type("text/plain;charset=UTF-8").build());
             }
         }
     }
@@ -269,13 +261,9 @@ public class DocumentResourceBean {
             logBean.error(Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, Client.class,
                     rb.getString("error.secure_key.check") + "[ip: {0}]", r.getRemoteHost());
 
-            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN)
-                    .entity(rb.getString("error.secure_key.check"))
-                    .type("text/plain;charset=UTF-8")
-                    .build());
+            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).entity(rb.getString("error.secure_key.check")).type("text/plain;charset=UTF-8").build());
         }
     }
-
 
     private void securityCheck(Client client, Class entity, Client entityClient, HttpServletRequest r) {
         if (!entityClient.getId().equals(client.getId())) {
@@ -284,10 +272,7 @@ public class DocumentResourceBean {
             logBean.error(client, Log.MODULE.SYNC_SERVER, Log.EVENT.SYNC, DocumentResourceBean.class, entity,
                     rb.getString("error.document.check") + "[ip: {0}]", r.getRemoteHost());
 
-            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN)
-                    .entity(rb.getString("error.document.check"))
-                    .type("text/plain;charset=UTF-8")
-                    .build());
+            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).entity(rb.getString("error.document.check")).type("text/plain;charset=UTF-8").build());
         }
     }
 }

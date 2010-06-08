@@ -25,7 +25,7 @@
         <module>vetcontrol-client</module>
         <module>vetcontrol-configuration</module>
         <module>vetcontrol-report-commons</module>
-    </modules>
+  </modules>
 
     <dependencyManagement>
         <dependencies>
@@ -210,12 +210,12 @@
             <dependency>
                 <groupId>com.sun.jersey</groupId>
                 <artifactId>jersey-json</artifactId>
-                <version>1.1.5</version>
+                <version>1.2</version>
             </dependency>
             <dependency>
                 <groupId>com.sun.jersey</groupId>
                 <artifactId>jersey-client</artifactId>
-                <version>1.1.5</version>
+                <version>1.2</version>
             </dependency>
 
             <!-- mysql connector -->
