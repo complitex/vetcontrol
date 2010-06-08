@@ -356,8 +356,8 @@ CREATE TABLE `document_cargo` (
   `creator_id` bigint(20) NOT NULL COMMENT 'Идентификатор пользователя, создавшего карточку',
   `created` timestamp NOT NULL COMMENT 'Дата создания карточки',
   `updated` timestamp NOT NULL COMMENT 'Дата последней модификации(создание/обновление) записи',
-  `movement_type` VARCHAR(15) NOT NULL COMMENT 'Тип передвижения. Все возможные значения перечислены в MovementType.class',
-  `vehicle_type` varchar(10) NOT NULL COMMENT 'Тип транспортного средства. Все возможные значения перечислены в VehicleType.class',
+  `movement_type` VARCHAR(15) NOT NULL COMMENT 'Тип передвижения. Все возможные значения - \'IMPORT\'(импорт), \'EXPORT\'(экпорт), \'TRANSIT\'(транзит), \'IMPORT_TRANSIT\'(импортный транзит) - перечислены в MovementType.class',
+  `vehicle_type` varchar(10) NOT NULL COMMENT 'Тип транспортного средства. Все возможные значения - \'CAR\'(автомобиль), \'SHIP\'(корабль), \'CONTAINER\'(контейнер), \'CARRIAGE\'(вагон), \'AIRCRAFT\'(самолет) - перечислены в VehicleType.class',
   `cargo_mode_id` bigint(20) NOT NULL COMMENT 'Вид груза',
   `cargo_sender_name` varchar(255) NOT NULL COMMENT 'Наименование отправителя грузов',
   `cargo_sender_country_id` bigint(20) NOT NULL COMMENT 'Страна отправителя',
@@ -365,7 +365,7 @@ CREATE TABLE `document_cargo` (
   `cargo_receiver_address` varchar(255) NOT NULL COMMENT 'Адрес получателя',
   `passing_border_point_id` bigint(20) DEFAULT NULL COMMENT 'Пункт пропуска через границу, на котором была оформлена данная карточка',
   `details` varchar(1024) DEFAULT NULL COMMENT 'Замечания',
-  `sync_status` varchar(64) DEFAULT NULL COMMENT 'Статус синронизации с сервером. Все возможные значения перечислены в Synchronized.SyncStatus.class',
+  `sync_status` varchar(64) DEFAULT NULL COMMENT 'Статус синронизации с сервером. Все возможные значения - \'SYNCHRONIZED\'(синхронизировано), \'NOT_SYNCHRONIZED\'(не синхронизировано), \'PROCESSING\'(в процессе синхронизации) - перечислены в Synchronized.SyncStatus.class',
   PRIMARY KEY (`id`,`department_id`,`client_id`),
   KEY `FK_department_0` (`department_id`),
   KEY `FK_client_0` (`client_id`),
@@ -397,7 +397,7 @@ CREATE TABLE  `cargo` (
   `certificate_date` date NOT NULL COMMENT 'Дата сертификации груза',
   `certificate_details` varchar(255) NOT NULL COMMENT 'Детали сертификации груза',
   `updated` timestamp DEFAULT NOW() COMMENT 'Дата последней модификации(создание/обновление) записи',
-  `sync_status` varchar(64) DEFAULT NULL COMMENT 'Статус синронизации с сервером. Все возможные значения перечислены в Synchronized.SyncStatus.class',
+  `sync_status` varchar(64) DEFAULT NULL COMMENT 'Статус синронизации с сервером. Все возможные значения - \'SYNCHRONIZED\'(синхронизировано), \'NOT_SYNCHRONIZED\'(не синхронизировано), \'PROCESSING\'(в процессе синхронизации) - перечислены в Synchronized.SyncStatus.class',
   PRIMARY KEY (`id`,`department_id`,`client_id`),
   KEY `FK_department_1` (`department_id`),
   KEY `FK_client_1` (`client_id`),
@@ -423,10 +423,10 @@ CREATE TABLE  `vehicle` (
     `client_id` bigint(20) NOT NULL COMMENT 'Идентификатор удаленного клиента',
     `department_id` bigint(20) NOT NULL COMMENT 'Подразделение',
     `document_cargo_id` bigint(20) NOT NULL COMMENT 'Суррогатный идентификатор карточки на грузы, которой данное транспортное средство принадлежит',
-    `vehicle_type` varchar(10) NOT NULL COMMENT 'Тип транспортного средства. Все возможные значения перечислены в VehicleType.class',
+    `vehicle_type` varchar(10) NOT NULL COMMENT 'Тип транспортного средства. Все возможные значения - \'CAR\'(автомобиль), \'SHIP\'(корабль), \'CONTAINER\'(контейнер), \'CARRIAGE\'(вагон), \'AIRCRAFT\'(самолет) - перечислены в VehicleType.class',
     `vehicle_details` varchar(255) NOT NULL COMMENT 'Детали транспортного средства(например, номер автомобиля)',
     `updated` timestamp DEFAULT NOW() COMMENT 'Дата последней модификации(создание/обновление) записи',
-    `sync_status` varchar(64) DEFAULT NULL COMMENT 'Статус синронизации с сервером. Все возможные значения перечислены в Synchronized.SyncStatus.class',
+    `sync_status` varchar(64) DEFAULT NULL COMMENT 'Статус синронизации с сервером. Все возможные значения - \'SYNCHRONIZED\'(синхронизировано), \'NOT_SYNCHRONIZED\'(не синхронизировано), \'PROCESSING\'(в процессе синхронизации) - перечислены в Synchronized.SyncStatus.class',
     PRIMARY KEY (`id`,`department_id`,`client_id`),
     KEY `FK_vehicle_client` (`client_id`),
     KEY `FK_vehicle_department` (`department_id`),
@@ -446,9 +446,9 @@ CREATE TABLE  `log` (
   `user_id` bigint(20) DEFAULT NULL COMMENT 'Пользователь, инициировавший логирование некоторой операции',
   `controller_class` varchar(255) DEFAULT NULL COMMENT 'Класс страницы(или другого объекта), в котором произошла некая операция, подлежащая логированию',
   `model_class` varchar(255) DEFAULT NULL COMMENT 'Класс объекта, над которым произошла операция',
-  `event` varchar(255) DEFAULT NULL COMMENT 'Тип операции. Все возможные значения перечислены в Log.EVENT.class',
-  `module` varchar(255) DEFAULT NULL COMMENT 'Модуль, в котором произошла операция. Все возможные значения перечислены в Log.MODULE.class',
-  `status` varchar(255) DEFAULT NULL COMMENT 'Успешность завершения операции. Все возможные значения перечислены в Log.STATUS.class',
+  `event` varchar(255) DEFAULT NULL COMMENT 'Тип операции. Все возможные значения - \'SYSTEM_START\', \'SYSTEM_STOP\', \'USER_LOGIN\', \'USER_LOGOUT\', \'LIST\', \'VIEW\', \'EDIT\', \'CREATE_AS_NEW\', \'REMOVE\', \'SYNC\', \'SYNC_COMMIT\', \'DISABLE\', \'ENABLE\', \'SYNC_UPDATED\', \'SYNC_DELETED\' - перечислены в Log.EVENT.class',
+  `module` varchar(255) DEFAULT NULL COMMENT 'Модуль, в котором произошла операция. Все возможные значения - \'COMMONS\'(ядро), \'USER\'(пользователи), \'DOCUMENT\'(документы), \'INFORMATION\'(справочники), \'REPORT\'(отчеты), \'SYNC_CLIENT\'(клиент), \'SYNC_SERVER\'(сервер) - перечислены в Log.MODULE.class',
+  `status` varchar(255) DEFAULT NULL COMMENT 'Успешность завершения операции. Все возможные значения - \'OK\'(успешно), \'ERROR\'(ошибка) - перечислены в Log.STATUS.class',
   `description` varchar(255) DEFAULT NULL COMMENT 'Дополнительное описание',
   PRIMARY KEY (`id`),
   KEY `FK_user` (`user_id`),
@@ -476,8 +476,8 @@ CREATE TABLE `client` (
   `created` timestamp NOT NULL COMMENT 'Дата создания клиента',
   `updated` timestamp NOT NULL COMMENT 'Дата последней модификации(создание/обновление) записи',
   `last_sync` DATETIME DEFAULT NULL COMMENT 'Дата последней синхронизации с сервером',
-  `sync_status` varchar(64) DEFAULT NULL COMMENT 'Статус синронизации с сервером. Все возможные значения перечислены в Synchronized.SyncStatus.class',
-  `version` varchar(64) DEFAULT NULL COMMENT 'TODO: add comment',
+  `sync_status` varchar(64) DEFAULT NULL COMMENT 'Статус синронизации с сервером. Все возможные значения - \'SYNCHRONIZED\'(синхронизировано), \'NOT_SYNCHRONIZED\'(не синхронизировано), \'PROCESSING\'(в процессе синхронизации) - перечислены в Synchronized.SyncStatus.class',
+  `version` varchar(64) DEFAULT NULL COMMENT 'Версия клиента',
   PRIMARY KEY (`id`),
   UNIQUE KEY `mac` (`mac`),
   UNIQUE KEY `secure_key` (`secure_key`),
@@ -509,31 +509,31 @@ CREATE TABLE `deleted_long_id` (
     KEY `deleted_long_id_deleted_INDEX` (`deleted`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='Удаленные из других таблиц записи, идентификаторы которых имеют простое строение. Используется при синхронизации, например.';
 
-/*TODO: add comments */
+/* Обновление клиента */
 DROP TABLE IF EXISTS `client_update`;
 CREATE TABLE  `client_update` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `active` bit(1) NOT NULL COMMENT 'TODO: add comments',
-  `created` datetime NOT NULL COMMENT 'TODO: add comments',
-  `type` varchar(64) NOT NULL COMMENT 'TODO: add comments',
-  `version` varchar(64) NOT NULL COMMENT 'TODO: add comments',
+  `active` bit(1) NOT NULL COMMENT 'Является ли активным обновление',
+  `created` datetime NOT NULL COMMENT 'Дата обновления',
+  `type` varchar(64) NOT NULL COMMENT 'Критичность обновления. Все возможные значения - \'CRITICAL\'(критичное), \'NOT_CRITICAL\'(не критичное) - перечислены в Update.TYPE.class',
+  `version` varchar(64) NOT NULL COMMENT 'Версия обновления',
   PRIMARY KEY (`id`),
   UNIQUE KEY `version` (`version`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='TODO: add comments';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Обновление клиента';
 
-/*TODO: add comments */
+/* Отдельный файл обновления */
 DROP TABLE IF EXISTS `client_update_item`;
 CREATE TABLE  `client_update_item` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL COMMENT 'TODO: add comments',
-  `update_id` bigint(20) NOT NULL COMMENT 'TODO: add comments',
-  `created` datetime NOT NULL COMMENT 'TODO: add comments',
-  `packaging` varchar(64) NOT NULL COMMENT 'TODO: add comments',
-  `check_sum` varchar(64) NOT NULL COMMENT 'TODO: add comments',
+  `name` varchar(255) NOT NULL COMMENT 'Наименование',
+  `update_id` bigint(20) NOT NULL COMMENT 'Идентификатор обновления',
+  `created` datetime NOT NULL COMMENT 'Дата обновления',
+  `packaging` varchar(64) NOT NULL COMMENT 'Тип файла с обновлениями. Все возможные значения - \'WAR\'(war файл), \'JAR\'(jar файл), \'SQL\'(sql скрипт), \'SQL_ZIP\'(архивированный sql скрипт) - перечислены в UpdateItem.PACKAGING.class',
+  `check_sum` varchar(64) NOT NULL COMMENT 'Контрольная сумма файла обновления',
   PRIMARY KEY (`id`),
   KEY `FK_update_id` (`update_id`),
   CONSTRAINT `FK_update_id` FOREIGN KEY (`update_id`) REFERENCES `client_update` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='TODO: add comments';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Отдельный файл обновления';
 
 /* Таблица задержаний грузов */
 DROP TABLE IF EXISTS `arrest_document`;
@@ -556,11 +556,11 @@ CREATE TABLE `arrest_document` (
     `cargo_receiver_address` VARCHAR(255) NOT NULL COMMENT 'Адрес получателя',
     `cargo_type_id` bigint(20) NOT NULL COMMENT 'Категория груза',
     `unit_type_id` bigint(20) DEFAULT NULL COMMENT 'Единица измерения',
-    `vehicle_type` VARCHAR(10) NOT NULL COMMENT 'Тип транспортного средства. Все возможные значения перечислены в VehicleType.class',
+    `vehicle_type` VARCHAR(10) NOT NULL COMMENT 'Тип транспортного средства. Все возможные значения - \'CAR\'(автомобиль), \'SHIP\'(корабль), \'CONTAINER\'(контейнер), \'CARRIAGE\'(вагон), \'AIRCRAFT\'(самолет) - перечислены в VehicleType.class',
     `vehicle_details` VARCHAR(255) NOT NULL COMMENT 'Детали транспортного средства(например, номер автомобиля)',
     `document_cargo_created` TIMESTAMP NOT NULL COMMENT 'Дата создания карточки на грузы, груз которой был задержан',
     `updated` TIMESTAMP NOT NULL COMMENT 'Дата последней модификации(создание/обновление) записи',
-    `sync_status` VARCHAR(64) DEFAULT NULL COMMENT 'Статус синронизации с сервером. Все возможные значения перечислены в Synchronized.SyncStatus.class',
+    `sync_status` VARCHAR(64) DEFAULT NULL COMMENT 'Статус синронизации с сервером. Все возможные значения - \'SYNCHRONIZED\'(синхронизировано), \'NOT_SYNCHRONIZED\'(не синхронизировано), \'PROCESSING\'(в процессе синхронизации) - перечислены в Synchronized.SyncStatus.class',
     PRIMARY KEY (`id`, `client_id`, `department_id`),
     KEY `FK_arrest_client` (`client_id`),
     CONSTRAINT `FK_arrest_client` FOREIGN KEY (`client_id`) REFERENCES `client` (`id`),
