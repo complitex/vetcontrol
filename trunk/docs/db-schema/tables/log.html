@@ -188,7 +188,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail' align='right'>null</td>
  <td class='detail'></td>
  <td class='detail'> </td>
- <td class='comment detail'>Тип операции. Все возможные значения перечислены в Log.EVENT.class</td>
+ <td class='comment detail'>Тип операции. Все возможные значения - 'SYSTEM_START', 'SYSTEM_STOP', 'USER_LOGIN', 'USER_LOGOUT', 'LIST', 'VIEW', 'EDIT', 'CREATE_AS_NEW', 'REMOVE', 'SYNC', 'SYNC_COMMIT', 'DISABLE', 'ENABLE', 'SYNC_UPDATED', 'SYNC_DELETED' - перечислены в Log.EVENT.clas</td>
 </tr>
 <tr>
  <td class='indexedColumn' title='Indexed'>module</td>
@@ -199,7 +199,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail' align='right'>null</td>
  <td class='detail'></td>
  <td class='detail'> </td>
- <td class='comment detail'>Модуль, в котором произошла операция. Все возможные значения перечислены в Log.MODULE.class</td>
+ <td class='comment detail'>Модуль, в котором произошла операция. Все возможные значения - 'COMMONS'(ядро), 'USER'(пользователи), 'DOCUMENT'(документы), 'INFORMATION'(справочники), 'REPORT'(отчеты), 'SYNC_CLIENT'(клиент), 'SYNC_SERVER'(сервер) - перечислены в Log.MODULE.class</td>
 </tr>
 <tr>
  <td class='indexedColumn' title='Indexed'>status</td>
@@ -210,7 +210,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail' align='right'>null</td>
  <td class='detail'></td>
  <td class='detail'> </td>
- <td class='comment detail'>Успешность завершения операции. Все возможные значения перечислены в Log.STATUS.class</td>
+ <td class='comment detail'>Успешность завершения операции. Все возможные значения - 'OK'(успешно), 'ERROR'(ошибка) - перечислены в Log.STATUS.class</td>
 </tr>
 <tr>
  <td class='indexedColumn' title='Indexed'>description</td>
@@ -224,7 +224,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='comment detail'>Дополнительное описание</td>
 </tr>
 </table>
-<p>Analyzed at Вт июн 01 12:57 NOVST 2010
+<p>Analyzed at Вт июн 08 10:14 NOVST 2010
 </td></tr></table>
 <div class='indent'>
 <b>Indexes:</b>
@@ -310,17 +310,17 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 </map>
   <a name='diagram'><img id='oneDegreeImg' src='../diagrams/log.1degree.png' usemap='#oneDegreeRelationshipsDiagram' class='diagram' border='0' alt='' align='left'></a>
 <map id="twoDegreesRelationshipsDiagram" name="twoDegreesRelationshipsDiagram">
-<area shape="rect" id="node1" href="arrest_document.html" title="arrest_document" alt="" coords="659,559,800,639">
-<area shape="rect" id="node3" href="client.html" title="client" alt="" coords="380,187,569,494">
-<area shape="rect" id="node5" href="department.html" title="department" alt="" coords="5,186,115,266">
-<area shape="rect" id="node7" href="passing_border_point.html" title="passing_border_point" alt="" coords="160,254,333,334">
-<area shape="rect" id="node8" href="cargo.html" title="cargo" alt="" coords="1035,133,1120,213">
-<area shape="rect" id="node11" href="document_cargo.html" title="document_cargo" alt="" coords="659,121,800,201">
-<area shape="rect" id="node16" href="vehicle.html" title="vehicle" alt="" coords="889,51,988,131">
-<area shape="rect" id="node22" href="log.html" title="log" alt="" coords="615,253,844,543">
-<area shape="rect" id="node25" href="user.html" title="user" alt="" coords="380,547,569,876">
-<area shape="rect" id="node29" href="job.html" title="job" alt="" coords="197,641,296,721">
-<area shape="rect" id="node31" href="usergroup.html" title="usergroup" alt="" coords="679,657,780,737">
+<area shape="rect" id="node1" href="arrest_document.html" title="arrest_document" alt="" coords="659,125,800,205">
+<area shape="rect" id="node3" href="client.html" title="client" alt="" coords="380,211,569,518">
+<area shape="rect" id="node5" href="department.html" title="department" alt="" coords="5,453,115,533">
+<area shape="rect" id="node7" href="passing_border_point.html" title="passing_border_point" alt="" coords="160,453,333,533">
+<area shape="rect" id="node8" href="cargo.html" title="cargo" alt="" coords="1035,599,1120,679">
+<area shape="rect" id="node11" href="document_cargo.html" title="document_cargo" alt="" coords="659,599,800,679">
+<area shape="rect" id="node16" href="vehicle.html" title="vehicle" alt="" coords="889,518,988,598">
+<area shape="rect" id="node21" href="user.html" title="user" alt="" coords="380,571,569,900">
+<area shape="rect" id="node30" href="job.html" title="job" alt="" coords="197,665,296,745">
+<area shape="rect" id="node24" href="log.html" title="log" alt="" coords="615,293,844,583">
+<area shape="rect" id="node32" href="usergroup.html" title="usergroup" alt="" coords="679,697,780,777">
 </map>
 
   <a name='diagram'><img id='twoDegreesImg' src='../diagrams/log.2degrees.png' usemap='#twoDegreesRelationshipsDiagram' class='diagram' border='0' alt='' align='left'></a>

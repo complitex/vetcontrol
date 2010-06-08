@@ -186,14 +186,22 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='comment detail'>Подразделение</td>
 </tr>
 <tr>
- <td class='detail'>creator_id</td>
+ <td class='indexedColumn' title='Indexed'>creator_id</td>
  <td class='detail'>bigint</td>
  <td class='detail' align='right'>19</td>
  <td class='detail' align='center'></td>
  <td class='detail' align='center'></td>
  <td class='detail'></td>
  <td class='detail'></td>
- <td class='detail'> </td>
+ <td class='detail'>
+  <table border='0' width='100%' cellspacing='0' cellpadding='0'>
+   <tr class='relative' valign='top'>
+    <td class='relatedTable' title="document_cargo.creator_id refs user.id via FK_creator_id"><a href='user.html'>user</a><span class='relatedKey'>.id</span>
+    </td>
+    <td class='constraint'>FK_creator_id</td>
+   </tr>
+  </table>
+ </td>
  <td class='comment detail'>Идентификатор пользователя, создавшего карточку</td>
 </tr>
 <tr>
@@ -227,7 +235,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'></td>
  <td class='detail'></td>
  <td class='detail'> </td>
- <td class='comment detail'>Тип передвижения. Все возможные значения перечислены в MovementType.class</td>
+ <td class='comment detail'>Тип передвижения. Все возможные значения - 'IMPORT'(импорт), 'EXPORT'(экпорт), 'TRANSIT'(транзит), 'IMPORT_TRANSIT'(импортный транзит) - перечислены в MovementType.class</td>
 </tr>
 <tr>
  <td class='detail'>vehicle_type</td>
@@ -238,7 +246,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'></td>
  <td class='detail'></td>
  <td class='detail'> </td>
- <td class='comment detail'>Тип транспортного средства. Все возможные значения перечислены в VehicleType.class</td>
+ <td class='comment detail'>Тип транспортного средства. Все возможные значения - 'CAR'(автомобиль), 'SHIP'(корабль), 'CONTAINER'(контейнер), 'CARRIAGE'(вагон), 'AIRCRAFT'(самолет) - перечислены в VehicleType.class</td>
 </tr>
 <tr>
  <td class='indexedColumn' title='Indexed'>cargo_mode_id</td>
@@ -342,17 +350,6 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='comment detail'>Замечания</td>
 </tr>
 <tr>
- <td class='detail'>detention_details</td>
- <td class='detail'>varchar</td>
- <td class='detail' align='right'>255</td>
- <td class='detail' align='center' title='nullable'>&nbsp;&radic;&nbsp;</td>
- <td class='detail' align='center'></td>
- <td class='detail' align='right'>null</td>
- <td class='detail'></td>
- <td class='detail'> </td>
- <td class='comment detail'>Детали задержания</td>
-</tr>
-<tr>
  <td class='detail'>sync_status</td>
  <td class='detail'>varchar</td>
  <td class='detail' align='right'>64</td>
@@ -361,10 +358,10 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail' align='right'>null</td>
  <td class='detail'></td>
  <td class='detail'> </td>
- <td class='comment detail'>Статус синронизации с сервером. Все возможные значения перечислены в Synchronized.SyncStatus.class</td>
+ <td class='comment detail'>Статус синронизации с сервером. Все возможные значения - 'SYNCHRONIZED'(синхронизировано), 'NOT_SYNCHRONIZED'(не синхронизировано), 'PROCESSING'(в процессе синхронизации) - перечислены в Synchronized.SyncStatus.class</td>
 </tr>
 </table>
-<p>Analyzed at Вт июн 01 12:57 NOVST 2010
+<p>Analyzed at Вт июн 08 10:14 NOVST 2010
 </td></tr></table>
 <div class='indent'>
 <b>Indexes:</b>
@@ -397,6 +394,12 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
   <td class='constraint' style='text-align:left;'>FK_client_0</td>
  </tr>
  <tr>
+  <td class='indexedColumn'>creator_id</td>
+  <td class='detail'>Performance</td>
+  <td class='detail' style='text-align:left;'><span title='Ascending'>Asc</span></td>
+  <td class='constraint' style='text-align:left;'>FK_creator_id</td>
+ </tr>
+ <tr>
   <td class='indexedColumn'>department_id</td>
   <td class='detail'>Performance</td>
   <td class='detail' style='text-align:left;'><span title='Ascending'>Asc</span></td>
@@ -426,37 +429,40 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 <br><form action='get'><b>Close relationships</b><span class='degrees' id='degrees' title='Detail diminishes with increased separation from document_cargo'>
 &nbsp;within <label for='oneDegree'><input type='radio' name='degrees' id='oneDegree' checked>one</label>  <label for='twoDegrees'><input type='radio' name='degrees' id='twoDegrees'>two degrees</label> of separation</span><b>:</b></form>
 <map id="oneDegreeRelationshipsDiagram" name="oneDegreeRelationshipsDiagram">
-<area shape="rect" id="node1" href="cargo.html" title="cargo" alt="" coords="1199,11,1361,363">
+<area shape="rect" id="node1" href="cargo.html" title="cargo" alt="" coords="1199,103,1361,455">
 <area shape="rect" id="node3" href="client.html" title="client" alt="" coords="409,32,599,339">
-<area shape="rect" id="node5" href="document_cargo.html" title="document_cargo" alt="" coords="645,207,947,655">
-<area shape="rect" id="node7" href="department.html" title="department" alt="" coords="5,192,144,408">
-<area shape="rect" id="node11" href="vehicle.html" title="vehicle" alt="" coords="992,176,1155,414">
-<area shape="rect" id="node14" href="passing_border_point.html" title="passing_border_point" alt="" coords="189,146,363,316">
-<area shape="rect" id="node16" href="cargo_mode.html" title="cargo_mode" alt="" coords="447,392,561,563">
-<area shape="rect" id="node18" href="countrybook.html" title="countrybook" alt="" coords="449,580,559,751">
+<area shape="rect" id="node5" href="document_cargo.html" title="document_cargo" alt="" coords="645,298,947,723">
+<area shape="rect" id="node7" href="department.html" title="department" alt="" coords="5,353,144,569">
+<area shape="rect" id="node11" href="vehicle.html" title="vehicle" alt="" coords="992,267,1155,506">
+<area shape="rect" id="node14" href="passing_border_point.html" title="passing_border_point" alt="" coords="189,548,363,719">
+<area shape="rect" id="node16" href="cargo_mode.html" title="cargo_mode" alt="" coords="447,737,561,908">
+<area shape="rect" id="node18" href="countrybook.html" title="countrybook" alt="" coords="449,925,559,1096">
+<area shape="rect" id="node21" href="user.html" title="user" alt="" coords="409,391,599,721">
 </map>
   <a name='diagram'><img id='oneDegreeImg' src='../diagrams/document_cargo.1degree.png' usemap='#oneDegreeRelationshipsDiagram' class='diagram' border='0' alt='' align='left'></a>
 <map id="twoDegreesRelationshipsDiagram" name="twoDegreesRelationshipsDiagram">
-<area shape="rect" id="node1" href="arrest_document.html" title="arrest_document" alt="" coords="1067,454,1208,534">
-<area shape="rect" id="node3" href="cargo_mode.html" title="cargo_mode" alt="" coords="788,194,903,365">
-<area shape="rect" id="node5" href="countrybook.html" title="countrybook" alt="" coords="183,1014,292,1185">
-<area shape="rect" id="node7" href="cargo_type.html" title="cargo_type" alt="" coords="791,97,900,177">
-<area shape="rect" id="node9" href="client.html" title="client" alt="" coords="751,685,940,991">
-<area shape="rect" id="node11" href="department.html" title="department" alt="" coords="347,666,485,882">
-<area shape="rect" id="node13" href="passing_border_point.html" title="passing_border_point" alt="" coords="531,619,704,790">
-<area shape="rect" id="node15" href="unit_type.html" title="unit_type" alt="" coords="793,382,897,462">
-<area shape="rect" id="node30" href="stringculture.html" title="stringculture" alt="" coords="7,711,127,791">
-<area shape="rect" id="node45" href="customs_point.html" title="customs_point" alt="" coords="172,745,303,825">
-<area shape="rect" id="node16" href="cargo.html" title="cargo" alt="" coords="1540,329,1703,681">
-<area shape="rect" id="node18" href="cargo_producer.html" title="cargo_producer" alt="" coords="349,1175,483,1255">
-<area shape="rect" id="node22" href="document_cargo.html" title="document_cargo" alt="" coords="987,721,1288,1169">
-<area shape="rect" id="node28" href="vehicle.html" title="vehicle" alt="" coords="1333,643,1496,881">
-<area shape="rect" id="node31" href="cargo_mode_cargo_type.html" title="cargo_mode_cargo_type" alt="" coords="1040,126,1235,206">
-<area shape="rect" id="node34" href="cargo_mode_report.html" title="cargo_mode_report" alt="" coords="1056,223,1219,303">
-<area shape="rect" id="node36" href="cargo_mode_unit_type.html" title="cargo_mode_unit_type" alt="" coords="1047,321,1228,401">
-<area shape="rect" id="node54" href="log.html" title="log" alt="" coords="1095,551,1180,631">
-<area shape="rect" id="node57" href="user.html" title="user" alt="" coords="796,551,895,631">
-<area shape="rect" id="node59" href="registered_products.html" title="registered_products" alt="" coords="536,1258,699,1338">
+<area shape="rect" id="node1" href="arrest_document.html" title="arrest_document" alt="" coords="1067,393,1208,473">
+<area shape="rect" id="node3" href="cargo_mode.html" title="cargo_mode" alt="" coords="788,103,903,273">
+<area shape="rect" id="node5" href="countrybook.html" title="countrybook" alt="" coords="183,897,292,1068">
+<area shape="rect" id="node7" href="cargo_type.html" title="cargo_type" alt="" coords="791,5,900,85">
+<area shape="rect" id="node9" href="client.html" title="client" alt="" coords="751,532,940,839">
+<area shape="rect" id="node11" href="department.html" title="department" alt="" coords="347,695,485,911">
+<area shape="rect" id="node13" href="passing_border_point.html" title="passing_border_point" alt="" coords="531,648,704,819">
+<area shape="rect" id="node15" href="unit_type.html" title="unit_type" alt="" coords="793,291,897,371">
+<area shape="rect" id="node30" href="stringculture.html" title="stringculture" alt="" coords="7,784,127,864">
+<area shape="rect" id="node45" href="customs_point.html" title="customs_point" alt="" coords="172,784,303,864">
+<area shape="rect" id="node16" href="cargo.html" title="cargo" alt="" coords="1540,421,1703,773">
+<area shape="rect" id="node18" href="cargo_producer.html" title="cargo_producer" alt="" coords="349,1076,483,1156">
+<area shape="rect" id="node22" href="document_cargo.html" title="document_cargo" alt="" coords="987,598,1288,1023">
+<area shape="rect" id="node28" href="vehicle.html" title="vehicle" alt="" coords="1333,601,1496,839">
+<area shape="rect" id="node53" href="user.html" title="user" alt="" coords="751,963,940,1293">
+<area shape="rect" id="node31" href="cargo_mode_cargo_type.html" title="cargo_mode_cargo_type" alt="" coords="1040,65,1235,145">
+<area shape="rect" id="node34" href="cargo_mode_report.html" title="cargo_mode_report" alt="" coords="1056,163,1219,243">
+<area shape="rect" id="node36" href="cargo_mode_unit_type.html" title="cargo_mode_unit_type" alt="" coords="1047,260,1228,340">
+<area shape="rect" id="node56" href="job.html" title="job" alt="" coords="367,1317,465,1397">
+<area shape="rect" id="node58" href="log.html" title="log" alt="" coords="1095,1040,1180,1120">
+<area shape="rect" id="node62" href="registered_products.html" title="registered_products" alt="" coords="536,1373,699,1453">
+<area shape="rect" id="node72" href="usergroup.html" title="usergroup" alt="" coords="1087,1137,1188,1217">
 </map>
 
   <a name='diagram'><img id='twoDegreesImg' src='../diagrams/document_cargo.2degrees.png' usemap='#twoDegreesRelationshipsDiagram' class='diagram' border='0' alt='' align='left'></a>

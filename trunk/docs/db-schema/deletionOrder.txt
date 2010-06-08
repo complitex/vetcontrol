@@ -16,11 +16,11 @@ cargo_mode_report
 bad_epizootic_situation
 vehicle
 arrest_reason
-user
 cargo_producer
 unit_type
 cargo_type
 document_cargo
+user
 client
 passing_border_point
 cargo_mode

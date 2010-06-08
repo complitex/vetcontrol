@@ -36,11 +36,11 @@
          <column autoUpdated="false" digits="0" id="17" name="unit_type_id" nullable="true" remarks="Единица измерения" size="19" type="BIGINT">
             <parent column="id" foreignKey="FK_arrest_unit_type" implied="false" onDeleteCascade="false" table="unit_type"/>
          </column>
-         <column autoUpdated="false" digits="0" id="18" name="vehicle_type" nullable="false" remarks="Тип транспортного средства. Все возможные значения перечислены в VehicleType.class" size="10" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="18" name="vehicle_type" nullable="false" remarks="Тип транспортного средства. Все возможные значения - 'CAR'(автомобиль), 'SHIP'(корабль), 'CONTAINER'(контейнер), 'CARRIAGE'(вагон), 'AIRCRAFT'(самолет) - перечислены в VehicleType.class" size="10" type="VARCHAR"/>
          <column autoUpdated="false" digits="0" id="19" name="vehicle_details" nullable="false" remarks="Детали транспортного средства(например, номер автомобиля)" size="255" type="VARCHAR"/>
          <column autoUpdated="false" defaultValue="0000-00-00 00:00:00" digits="0" id="20" name="document_cargo_created" nullable="false" remarks="Дата создания карточки на грузы, груз которой был задержан" size="19" type="TIMESTAMP"/>
          <column autoUpdated="false" defaultValue="0000-00-00 00:00:00" digits="0" id="21" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
-         <column autoUpdated="false" digits="0" id="22" name="sync_status" nullable="true" remarks="Статус синронизации с сервером. Все возможные значения перечислены в Synchronized.SyncStatus.class" size="64" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="22" name="sync_status" nullable="true" remarks="Статус синронизации с сервером. Все возможные значения - 'SYNCHRONIZED'(синхронизировано), 'NOT_SYNCHRONIZED'(не синхронизировано), 'PROCESSING'(в процессе синхронизации) - перечислены в Synchronized.SyncStatus.class" size="64" type="VARCHAR"/>
          <primaryKey column="client_id" sequenceNumberInPK="1"/>
          <primaryKey column="department_id" sequenceNumberInPK="2"/>
          <primaryKey column="id" sequenceNumberInPK="3"/>
@@ -118,8 +118,8 @@
       <table name="cargo" remarks="Грузы" type="TABLE">
          <column autoUpdated="false" digits="0" id="0" name="id" nullable="false" remarks="Суррогатный идентификатор" size="19" type="BIGINT"/>
          <column autoUpdated="false" digits="0" id="1" name="client_id" nullable="false" remarks="Идентификатор удаленного клиента" size="19" type="BIGINT">
-            <parent column="client_id" foreignKey="FK_document_cargo" implied="false" onDeleteCascade="false" table="document_cargo"/>
             <parent column="id" foreignKey="FK_client_1" implied="false" onDeleteCascade="false" table="client"/>
+            <parent column="client_id" foreignKey="FK_document_cargo" implied="false" onDeleteCascade="false" table="document_cargo"/>
          </column>
          <column autoUpdated="false" digits="0" id="2" name="department_id" nullable="false" remarks="Подразделение" size="19" type="BIGINT">
             <parent column="department_id" foreignKey="FK_document_cargo" implied="false" onDeleteCascade="false" table="document_cargo"/>
@@ -144,7 +144,7 @@
          <column autoUpdated="false" digits="0" id="9" name="certificate_date" nullable="false" remarks="Дата сертификации груза" size="10" type="DATE"/>
          <column autoUpdated="false" digits="0" id="10" name="certificate_details" nullable="false" remarks="Детали сертификации груза" size="255" type="VARCHAR"/>
          <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="11" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
-         <column autoUpdated="false" digits="0" id="12" name="sync_status" nullable="true" remarks="Статус синронизации с сервером. Все возможные значения перечислены в Synchronized.SyncStatus.class" size="64" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="12" name="sync_status" nullable="true" remarks="Статус синронизации с сервером. Все возможные значения - 'SYNCHRONIZED'(синхронизировано), 'NOT_SYNCHRONIZED'(не синхронизировано), 'PROCESSING'(в процессе синхронизации) - перечислены в Synchronized.SyncStatus.class" size="64" type="VARCHAR"/>
          <primaryKey column="client_id" sequenceNumberInPK="1"/>
          <primaryKey column="department_id" sequenceNumberInPK="2"/>
          <primaryKey column="id" sequenceNumberInPK="3"/>
@@ -347,8 +347,8 @@
          <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="6" name="created" nullable="false" remarks="Дата создания клиента" size="19" type="TIMESTAMP"/>
          <column autoUpdated="false" defaultValue="0000-00-00 00:00:00" digits="0" id="7" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
          <column autoUpdated="false" digits="0" id="8" name="last_sync" nullable="true" remarks="Дата последней синхронизации с сервером" size="19" type="DATETIME"/>
-         <column autoUpdated="false" digits="0" id="9" name="sync_status" nullable="true" remarks="Статус синронизации с сервером. Все возможные значения перечислены в Synchronized.SyncStatus.class" size="64" type="VARCHAR"/>
-         <column autoUpdated="false" digits="0" id="10" name="version" nullable="true" remarks="TODO: add comment" size="64" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="9" name="sync_status" nullable="true" remarks="Статус синронизации с сервером. Все возможные значения - 'SYNCHRONIZED'(синхронизировано), 'NOT_SYNCHRONIZED'(не синхронизировано), 'PROCESSING'(в процессе синхронизации) - перечислены в Synchronized.SyncStatus.class" size="64" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="10" name="version" nullable="true" remarks="Версия клиента" size="64" type="VARCHAR"/>
          <primaryKey column="id" sequenceNumberInPK="1"/>
          <index name="PRIMARY" unique="true">
             <column ascending="true" name="id"/>
@@ -369,14 +369,14 @@
             <column ascending="true" name="secure_key"/>
          </index>
       </table>
-      <table name="client_update" remarks="TODO: add comments" type="TABLE">
+      <table name="client_update" remarks="Обновление клиента" type="TABLE">
          <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="19" type="BIGINT">
             <child column="update_id" foreignKey="FK_update_id" implied="false" onDeleteCascade="false" table="client_update_item"/>
          </column>
-         <column autoUpdated="false" digits="0" id="1" name="active" nullable="false" remarks="TODO: add comments" size="1" type="BIT"/>
-         <column autoUpdated="false" digits="0" id="2" name="created" nullable="false" remarks="TODO: add comments" size="19" type="DATETIME"/>
-         <column autoUpdated="false" digits="0" id="3" name="type" nullable="false" remarks="TODO: add comments" size="64" type="VARCHAR"/>
-         <column autoUpdated="false" digits="0" id="4" name="version" nullable="false" remarks="TODO: add comments" size="64" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="1" name="active" nullable="false" remarks="Является ли активным обновление" size="1" type="BIT"/>
+         <column autoUpdated="false" digits="0" id="2" name="created" nullable="false" remarks="Дата обновления" size="19" type="DATETIME"/>
+         <column autoUpdated="false" digits="0" id="3" name="type" nullable="false" remarks="Критичность обновления. Все возможные значения - 'CRITICAL'(критичное), 'NOT_CRITICAL'(не критичное) - перечислены в Update.TYPE.class" size="64" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="4" name="version" nullable="false" remarks="Версия обновления" size="64" type="VARCHAR"/>
          <primaryKey column="id" sequenceNumberInPK="1"/>
          <index name="PRIMARY" unique="true">
             <column ascending="true" name="id"/>
@@ -385,15 +385,15 @@
             <column ascending="true" name="version"/>
          </index>
       </table>
-      <table name="client_update_item" remarks="TODO: add comments" type="TABLE">
+      <table name="client_update_item" remarks="Отдельный файл обновления" type="TABLE">
          <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="19" type="BIGINT"/>
-         <column autoUpdated="false" digits="0" id="1" name="name" nullable="false" remarks="TODO: add comments" size="255" type="VARCHAR"/>
-         <column autoUpdated="false" digits="0" id="2" name="update_id" nullable="false" remarks="TODO: add comments" size="19" type="BIGINT">
+         <column autoUpdated="false" digits="0" id="1" name="name" nullable="false" remarks="Наименование" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="update_id" nullable="false" remarks="Идентификатор обновления" size="19" type="BIGINT">
             <parent column="id" foreignKey="FK_update_id" implied="false" onDeleteCascade="false" table="client_update"/>
          </column>
-         <column autoUpdated="false" digits="0" id="3" name="created" nullable="false" remarks="TODO: add comments" size="19" type="DATETIME"/>
-         <column autoUpdated="false" digits="0" id="4" name="packaging" nullable="false" remarks="TODO: add comments" size="64" type="VARCHAR"/>
-         <column autoUpdated="false" digits="0" id="5" name="check_sum" nullable="false" remarks="TODO: add comments" size="64" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="3" name="created" nullable="false" remarks="Дата обновления" size="19" type="DATETIME"/>
+         <column autoUpdated="false" digits="0" id="4" name="packaging" nullable="false" remarks="Тип файла с обновлениями. Все возможные значения - 'WAR'(war файл), 'JAR'(jar файл), 'SQL'(sql скрипт), 'SQL_ZIP'(архивированный sql скрипт) - перечислены в UpdateItem.PACKAGING.class" size="64" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="5" name="check_sum" nullable="false" remarks="Контрольная сумма файла обновления" size="64" type="VARCHAR"/>
          <primaryKey column="id" sequenceNumberInPK="1"/>
          <index name="PRIMARY" unique="true">
             <column ascending="true" name="id"/>
@@ -544,11 +544,13 @@
             <child column="department_id" foreignKey="FK_vehicle_document_cargo" implied="false" onDeleteCascade="false" table="vehicle"/>
             <parent column="id" foreignKey="FK_department_0" implied="false" onDeleteCascade="false" table="department"/>
          </column>
-         <column autoUpdated="false" digits="0" id="3" name="creator_id" nullable="false" remarks="Идентификатор пользователя, создавшего карточку" size="19" type="BIGINT"/>
+         <column autoUpdated="false" digits="0" id="3" name="creator_id" nullable="false" remarks="Идентификатор пользователя, создавшего карточку" size="19" type="BIGINT">
+            <parent column="id" foreignKey="FK_creator_id" implied="false" onDeleteCascade="false" table="user"/>
+         </column>
          <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="4" name="created" nullable="false" remarks="Дата создания карточки" size="19" type="TIMESTAMP"/>
          <column autoUpdated="false" defaultValue="0000-00-00 00:00:00" digits="0" id="5" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
-         <column autoUpdated="false" digits="0" id="6" name="movement_type" nullable="false" remarks="Тип передвижения. Все возможные значения перечислены в MovementType.class" size="15" type="VARCHAR"/>
-         <column autoUpdated="false" digits="0" id="7" name="vehicle_type" nullable="false" remarks="Тип транспортного средства. Все возможные значения перечислены в VehicleType.class" size="10" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="6" name="movement_type" nullable="false" remarks="Тип передвижения. Все возможные значения - 'IMPORT'(импорт), 'EXPORT'(экпорт), 'TRANSIT'(транзит), 'IMPORT_TRANSIT'(импортный транзит) - перечислены в MovementType.class" size="15" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="7" name="vehicle_type" nullable="false" remarks="Тип транспортного средства. Все возможные значения - 'CAR'(автомобиль), 'SHIP'(корабль), 'CONTAINER'(контейнер), 'CARRIAGE'(вагон), 'AIRCRAFT'(самолет) - перечислены в VehicleType.class" size="10" type="VARCHAR"/>
          <column autoUpdated="false" digits="0" id="8" name="cargo_mode_id" nullable="false" remarks="Вид груза" size="19" type="BIGINT">
             <parent column="id" foreignKey="FK_document_cargo_cargo_mode_id" implied="false" onDeleteCascade="false" table="cargo_mode"/>
          </column>
@@ -562,8 +564,7 @@
             <parent column="id" foreignKey="FK_document_cargo_passing_border_point" implied="false" onDeleteCascade="false" table="passing_border_point"/>
          </column>
          <column autoUpdated="false" digits="0" id="14" name="details" nullable="true" remarks="Замечания" size="1024" type="VARCHAR"/>
-         <column autoUpdated="false" digits="0" id="15" name="detention_details" nullable="true" remarks="Детали задержания" size="255" type="VARCHAR"/>
-         <column autoUpdated="false" digits="0" id="16" name="sync_status" nullable="true" remarks="Статус синронизации с сервером. Все возможные значения перечислены в Synchronized.SyncStatus.class" size="64" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="15" name="sync_status" nullable="true" remarks="Статус синронизации с сервером. Все возможные значения - 'SYNCHRONIZED'(синхронизировано), 'NOT_SYNCHRONIZED'(не синхронизировано), 'PROCESSING'(в процессе синхронизации) - перечислены в Synchronized.SyncStatus.class" size="64" type="VARCHAR"/>
          <primaryKey column="client_id" sequenceNumberInPK="1"/>
          <primaryKey column="department_id" sequenceNumberInPK="2"/>
          <primaryKey column="id" sequenceNumberInPK="3"/>
@@ -577,6 +578,9 @@
          </index>
          <index name="FK_client_0" unique="false">
             <column ascending="true" name="client_id"/>
+         </index>
+         <index name="FK_creator_id" unique="false">
+            <column ascending="true" name="creator_id"/>
          </index>
          <index name="FK_department_0" unique="false">
             <column ascending="true" name="department_id"/>
@@ -638,9 +642,9 @@
          </column>
          <column autoUpdated="false" digits="0" id="4" name="controller_class" nullable="true" remarks="Класс страницы(или другого объекта), в котором произошла некая операция, подлежащая логированию" size="255" type="VARCHAR"/>
          <column autoUpdated="false" digits="0" id="5" name="model_class" nullable="true" remarks="Класс объекта, над которым произошла операция" size="255" type="VARCHAR"/>
-         <column autoUpdated="false" digits="0" id="6" name="event" nullable="true" remarks="Тип операции. Все возможные значения перечислены в Log.EVENT.class" size="255" type="VARCHAR"/>
-         <column autoUpdated="false" digits="0" id="7" name="module" nullable="true" remarks="Модуль, в котором произошла операция. Все возможные значения перечислены в Log.MODULE.class" size="255" type="VARCHAR"/>
-         <column autoUpdated="false" digits="0" id="8" name="status" nullable="true" remarks="Успешность завершения операции. Все возможные значения перечислены в Log.STATUS.class" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="6" name="event" nullable="true" remarks="Тип операции. Все возможные значения - 'SYSTEM_START', 'SYSTEM_STOP', 'USER_LOGIN', 'USER_LOGOUT', 'LIST', 'VIEW', 'EDIT', 'CREATE_AS_NEW', 'REMOVE', 'SYNC', 'SYNC_COMMIT', 'DISABLE', 'ENABLE', 'SYNC_UPDATED', 'SYNC_DELETED' - перечислены в Log.EVENT.clas" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="7" name="module" nullable="true" remarks="Модуль, в котором произошла операция. Все возможные значения - 'COMMONS'(ядро), 'USER'(пользователи), 'DOCUMENT'(документы), 'INFORMATION'(справочники), 'REPORT'(отчеты), 'SYNC_CLIENT'(клиент), 'SYNC_SERVER'(сервер) - перечислены в Log.MODULE.class" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="8" name="status" nullable="true" remarks="Успешность завершения операции. Все возможные значения - 'OK'(успешно), 'ERROR'(ошибка) - перечислены в Log.STATUS.class" size="255" type="VARCHAR"/>
          <column autoUpdated="false" digits="0" id="9" name="description" nullable="true" remarks="Дополнительное описание" size="255" type="VARCHAR"/>
          <primaryKey column="id" sequenceNumberInPK="1"/>
          <index name="PRIMARY" unique="true">
@@ -802,6 +806,7 @@
       </table>
       <table name="user" remarks="Таблица пользователей системы" type="TABLE">
          <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="Идентификатор пользователя" size="19" type="BIGINT">
+            <child column="creator_id" foreignKey="FK_creator_id" implied="false" onDeleteCascade="false" table="document_cargo"/>
             <child column="user_id" foreignKey="FK_user" implied="false" onDeleteCascade="false" table="log"/>
          </column>
          <column autoUpdated="false" digits="0" id="1" name="login" nullable="false" remarks="Логин" size="32" type="VARCHAR">
@@ -867,8 +872,8 @@
             <child column="vehicle_id" foreignKey="FK_cargo_vehicle" implied="false" onDeleteCascade="false" table="cargo"/>
          </column>
          <column autoUpdated="false" digits="0" id="1" name="client_id" nullable="false" remarks="Идентификатор удаленного клиента" size="19" type="BIGINT">
-            <parent column="client_id" foreignKey="FK_vehicle_document_cargo" implied="false" onDeleteCascade="false" table="document_cargo"/>
             <parent column="id" foreignKey="FK_vehicle_client" implied="false" onDeleteCascade="false" table="client"/>
+            <parent column="client_id" foreignKey="FK_vehicle_document_cargo" implied="false" onDeleteCascade="false" table="document_cargo"/>
          </column>
          <column autoUpdated="false" digits="0" id="2" name="department_id" nullable="false" remarks="Подразделение" size="19" type="BIGINT">
             <parent column="department_id" foreignKey="FK_vehicle_document_cargo" implied="false" onDeleteCascade="false" table="document_cargo"/>
@@ -877,10 +882,10 @@
          <column autoUpdated="false" digits="0" id="3" name="document_cargo_id" nullable="false" remarks="Суррогатный идентификатор карточки на грузы, которой данное транспортное средство принадлежит" size="19" type="BIGINT">
             <parent column="id" foreignKey="FK_vehicle_document_cargo" implied="false" onDeleteCascade="false" table="document_cargo"/>
          </column>
-         <column autoUpdated="false" digits="0" id="4" name="vehicle_type" nullable="false" remarks="Тип транспортного средства. Все возможные значения перечислены в VehicleType.class" size="10" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="4" name="vehicle_type" nullable="false" remarks="Тип транспортного средства. Все возможные значения - 'CAR'(автомобиль), 'SHIP'(корабль), 'CONTAINER'(контейнер), 'CARRIAGE'(вагон), 'AIRCRAFT'(самолет) - перечислены в VehicleType.class" size="10" type="VARCHAR"/>
          <column autoUpdated="false" digits="0" id="5" name="vehicle_details" nullable="false" remarks="Детали транспортного средства(например, номер автомобиля)" size="255" type="VARCHAR"/>
          <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="6" name="updated" nullable="false" remarks="Дата последней модификации(создание/обновление) записи" size="19" type="TIMESTAMP"/>
-         <column autoUpdated="false" digits="0" id="7" name="sync_status" nullable="true" remarks="Статус синронизации с сервером. Все возможные значения перечислены в Synchronized.SyncStatus.class" size="64" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="7" name="sync_status" nullable="true" remarks="Статус синронизации с сервером. Все возможные значения - 'SYNCHRONIZED'(синхронизировано), 'NOT_SYNCHRONIZED'(не синхронизировано), 'PROCESSING'(в процессе синхронизации) - перечислены в Synchronized.SyncStatus.class" size="64" type="VARCHAR"/>
          <primaryKey column="client_id" sequenceNumberInPK="1"/>
          <primaryKey column="department_id" sequenceNumberInPK="2"/>
          <primaryKey column="id" sequenceNumberInPK="3"/>
