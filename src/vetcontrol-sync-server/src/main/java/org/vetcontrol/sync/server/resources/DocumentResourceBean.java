@@ -236,7 +236,7 @@ public class DocumentResourceBean {
 
                 //Client Last Sync
                 client.setLastSync(DateUtil.getCurrentDate());
-                EntityPersisterUtil.executeUpdate(em, client);
+                EntityPersisterUtil.update(em, client);
 
                 EntityPersisterUtil.executeBatch(em);
             } catch (Exception e) {

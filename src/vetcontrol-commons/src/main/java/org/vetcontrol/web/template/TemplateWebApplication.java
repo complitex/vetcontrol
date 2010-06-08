@@ -25,7 +25,9 @@ import org.vetcontrol.util.template.loader.TemplateLoader;
 public abstract class TemplateWebApplication extends ServeltAuthWebApplication {
 
     private static final Logger log = LoggerFactory.getLogger(TemplateWebApplication.class);
+
     private static final String TEMPLATE_CONFIG_FILE_NAME = "vetcontrol-template.xml";
+
     private List<Class<ITemplateMenu>> menuClasses;
 
     @Override
@@ -53,12 +55,12 @@ public abstract class TemplateWebApplication extends ServeltAuthWebApplication {
             List<String> menuClassNames = templateLoader.getMenuClassNames();
 
             menuClasses = new ArrayList<Class<ITemplateMenu>>();
-            for (String className : menuClassNames) {
+            for (String menuClassName : menuClassNames) {
                 try {
-                    Class menuClass = getApplicationSettings().getClassResolver().resolveClass(className);
+                    Class menuClass = getApplicationSettings().getClassResolver().resolveClass(menuClassName);
                     menuClasses.add(menuClass);
                 } catch (Exception e) {
-                    log.warn("Меню не найдено [{}]", e.getLocalizedMessage());
+                    log.warn("Меню не найдено : {}", menuClassName);
                 }
             }
         } catch (Exception e) {
