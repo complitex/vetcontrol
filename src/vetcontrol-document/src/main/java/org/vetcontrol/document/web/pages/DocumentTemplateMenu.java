@@ -64,7 +64,7 @@ public class DocumentTemplateMenu extends ResourceTemplateMenu {
 
             @Override
             public String getTagId() {
-                return "DocumentCargoList_0";
+                return "ArrestDocumentList";
             }
         });
 

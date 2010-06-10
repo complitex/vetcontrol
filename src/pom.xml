@@ -127,6 +127,8 @@
                 <groupId>org.wicketstuff</groupId>
                 <artifactId>wicket-contrib-javaee</artifactId>
                 <version>1.1</version>
+                <scope>system</scope>
+                <systemPath>${project.basedir}/../lib/wicket-contrib-javaee-1.1.jar</systemPath>
             </dependency>
             <dependency>
                 <groupId>org.apache.wicket</groupId>
@@ -137,6 +139,8 @@
                 <groupId>org.wiquery</groupId>
                 <artifactId>wiquery</artifactId>
                 <version>1.0</version>
+                <scope>system</scope>
+                <systemPath>${project.basedir}/../lib/wiquery-1.0.jar</systemPath>
             </dependency>
 
             <!-- Java EE API -->
@@ -264,6 +268,13 @@
             <version>4.7</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.seleniumhq.selenium.client-drivers</groupId>
+            <artifactId>selenium-java-client-driver</artifactId>
+            <version>1.0.1</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -373,6 +384,10 @@
         <repository>
             <id>jasperReports</id>
             <url>http://jasperreports.sourceforge.net/maven2</url>
+        </repository>
+        <repository>
+            <id>openqa</id>
+            <url>http://maven.openqa.org</url>
         </repository>
     </repositories>
 </project>
