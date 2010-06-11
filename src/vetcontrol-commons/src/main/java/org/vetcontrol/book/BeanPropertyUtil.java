@@ -35,7 +35,10 @@ import org.vetcontrol.book.annotation.ViewLength;
  *
  * @author Artem
  */
-public class BeanPropertyUtil {
+public final class BeanPropertyUtil {
+
+    private BeanPropertyUtil() {
+    }
 
     public static final Class[] SIMPLE_TYPES = {
         int.class, byte.class, short.class, long.class, double.class, float.class, boolean.class,
@@ -335,11 +338,7 @@ public class BeanPropertyUtil {
                 Object referencedBook = propertyValue;
                 String referencedField = property.getReferencedField();
                 Object value = null;
-                try {
-                    value = getPropertyValue(referencedBook, referencedField);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+                value = getPropertyValue(referencedBook, referencedField);
                 return getPropertyAsString(value, getPropertyByName(referencedBook.getClass(), referencedField), systemLocale);
 //                }
 
@@ -581,7 +580,7 @@ public class BeanPropertyUtil {
         return isPrimitive;
     }
 
-    public static boolean isNumberType(Class type) {
+    public static boolean isNumericType(Class type) {
         boolean isNumberType = false;
         for (Class numberType : NUMBER_TYPES) {
             if (numberType.isAssignableFrom(type)) {
@@ -592,11 +591,11 @@ public class BeanPropertyUtil {
         return isNumberType;
     }
 
-    public static final boolean isBoolType(Class type) {
+    public static boolean isBoolType(Class type) {
         return type.equals(boolean.class) || type.equals(Boolean.class);
     }
 
-    public static final boolean isDateType(Class type) {
+    public static boolean isDateType(Class type) {
         return Date.class.isAssignableFrom(type);
     }
 

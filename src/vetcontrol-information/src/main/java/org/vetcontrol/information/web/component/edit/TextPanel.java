@@ -22,7 +22,7 @@ public class TextPanel extends Panel {
     public TextPanel(String id, IModel model, Property prop, boolean enabled) {
         super(id);
 
-        IModel labelModel = new DisplayPropertyLocalizableModel(prop, this);
+        IModel labelModel = new DisplayPropertyLocalizableModel(prop);
         Class propertyType = determineFieldType(prop);
 
         TextField textField = new TextField("textField", model);

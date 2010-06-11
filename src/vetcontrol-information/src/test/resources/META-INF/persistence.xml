@@ -25,6 +25,7 @@
         <class>org.vetcontrol.entity.Client</class>
         <class>org.vetcontrol.entity.CargoReceiver</class>
         <class>org.vetcontrol.entity.CargoSender</class>
+        <class>org.vetcontrol.entity.Log</class>
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>

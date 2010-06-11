@@ -4,10 +4,12 @@
  */
 package org.vetcontrol.entity;
 
+import java.io.Serializable;
+
 /**
  * Marker intarface. Represents book entity.
  *
  * @author Artem
  */
-public interface IBook {
+public interface IBook extends Serializable{
 }

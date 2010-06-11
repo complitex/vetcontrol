@@ -464,6 +464,23 @@ CREATE TABLE  `log` (
   CONSTRAINT `FK_log_client_id` FOREIGN KEY (`client_id`) REFERENCES `client` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Журнал логов приложения';
 
+/* Детали изменений сущности */
+DROP TABLE IF EXISTS `change_detail`;
+CREATE TABLE `change_detail` (
+    `change_detail_id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `log_id` bigint(20) NOT NULL,
+    `collection_object_id` VARCHAR(500) NULL,
+    `property_name` VARCHAR(50) NULL,
+    `collection_property` VARCHAR(50) NULL,
+    `old_value` VARCHAR(500) NULL,
+    `new_value` VARCHAR(500) NULL,
+    `locale` VARCHAR(10) NULL,
+    `collection_modification_status` VARCHAR(15) NULL,
+    PRIMARY KEY (`change_detail_id`),
+    KEY `FK_change_detail_log` (`log_id`),
+    CONSTRAINT `FK_change_detail_log`FOREIGN KEY (`log_id`) REFERENCES `log` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Детали изменений сущности';
+
 /* Объект удаленного клиента */
 DROP TABLE IF EXISTS `client`;
 CREATE TABLE `client` (

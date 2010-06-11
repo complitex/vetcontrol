@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import javax.ejb.EJB;
 import org.apache.wicket.Response;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -55,10 +56,13 @@ import org.vetcontrol.service.LogBean;
 import org.vetcontrol.service.dao.ILocaleDAO;
 import static org.vetcontrol.book.BeanPropertyUtil.*;
 import org.vetcontrol.book.BookHash;
+import org.vetcontrol.entity.Change;
 import org.vetcontrol.information.web.component.edit.GoToListPagePanel;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
+import org.vetcontrol.information.web.util.CloneUtil;
 import org.vetcontrol.information.web.util.CommonResourceKeys;
 import org.vetcontrol.information.web.util.PageManager;
+import org.vetcontrol.information.web.util.change.BookChangeManager;
 import org.vetcontrol.service.dao.IBookViewDAO;
 import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.component.book.IDisableAwareChoiceRenderer;
@@ -307,6 +311,8 @@ public final class CargoModeEdit extends FormTemplatePage {
 
     private Model<CargoMode> cargoModeModel;
 
+    private CargoMode oldCargoMode;
+
     public CargoModeEdit() {
         init();
     }
@@ -321,6 +327,8 @@ public final class CargoModeEdit extends FormTemplatePage {
         }
         bookViewDAO.addLocalizationSupport(cargoMode);
         addLocalization(cargoMode, allLocales);
+
+        oldCargoMode = CloneUtil.cloneObject(cargoMode);
 
         //calculate initial hash code for book entry in order to increment version of the book entry if necessary later.
         final BookHash initial = hash(cargoMode);
@@ -341,7 +349,7 @@ public final class CargoModeEdit extends FormTemplatePage {
         add(form);
 
         //cargo mode name
-        form.add(new Label("nameLabel", new DisplayPropertyLocalizableModel(getPropertyByName(CargoMode.class, "names"), this)));
+        form.add(new Label("nameLabel", new DisplayPropertyLocalizableModel(getPropertyByName(CargoMode.class, "names"))));
 
         form.add(new LocalizableTextPanel("name",
                 new PropertyModel(cargoModeModel, "names"),
@@ -351,7 +359,7 @@ public final class CargoModeEdit extends FormTemplatePage {
 
         //cargo mode parent
         WebMarkupContainer parentZone = new WebMarkupContainer("parentZone");
-        parentZone.add(new Label("parentNameLabel", new DisplayPropertyLocalizableModel(getPropertyByName(CargoMode.class, "parent"), this)));
+        parentZone.add(new Label("parentNameLabel", new DisplayPropertyLocalizableModel(getPropertyByName(CargoMode.class, "parent"))));
 
         parentZone.setVisible(isNewBook(cargoModeModel.getObject()) || !isRootCargoMode(cargoModeModel.getObject()));
         form.add(parentZone);
@@ -467,7 +475,7 @@ public final class CargoModeEdit extends FormTemplatePage {
 
             @Override
             public void update() {
-                saveOrUpdate(cargoModeModel, initial);
+                saveOrUpdate(initial);
                 goToListPage();
             }
 
@@ -488,7 +496,7 @@ public final class CargoModeEdit extends FormTemplatePage {
                 if (validate()) {
                     if (isNewBook(cargoModeModel.getObject())) {
                         //new entry
-                        saveOrUpdate(cargoModeModel, initial);
+                        saveOrUpdate(initial);
                         goToListPage();
                     } else {
                         confirmationDialog.open(target);
@@ -558,8 +566,24 @@ public final class CargoModeEdit extends FormTemplatePage {
         form.add(new Spacer("spacer"));
     }
 
-    private void saveOrUpdate(IModel<CargoMode> cargoModeModel, BookHash initial) {
+    private void saveOrUpdate(BookHash initial) {
         Log.EVENT event = isNewBook(cargoModeModel.getObject()) ? Log.EVENT.CREATE : Log.EVENT.EDIT;
+
+        Set<Change> changes = null;
+        if (event == Log.EVENT.EDIT) {
+            try {
+                changes = BookChangeManager.getChanges(oldCargoMode, cargoModeModel.getObject(), getSystemLocale());
+
+                if (log.isDebugEnabled()) {
+                    for (Change change : changes) {
+                        log.debug(change.toString());
+                    }
+                }
+            } catch (Exception e) {
+                log.error("Error with getting changes for " + CargoMode.class.getName() + " book entry.", e);
+            }
+        }
+
         Long oldId = cargoModeModel.getObject().getId();
 
         //update version of book and its localizable strings if necessary.

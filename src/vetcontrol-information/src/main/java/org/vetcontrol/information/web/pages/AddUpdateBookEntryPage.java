@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -47,7 +48,10 @@ import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 import org.vetcontrol.book.BookHash;
 import org.vetcontrol.book.Property;
 import org.vetcontrol.book.ShowBooksMode;
+import org.vetcontrol.entity.Change;
 import org.vetcontrol.information.web.component.edit.GoToListPagePanel;
+import org.vetcontrol.information.web.util.change.BookChangeManager;
+import org.vetcontrol.information.web.util.CloneUtil;
 import org.vetcontrol.information.web.util.CommonResourceKeys;
 import org.vetcontrol.information.web.util.PageManager;
 import org.vetcontrol.web.component.Spacer;
@@ -73,6 +77,8 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
     private LogBean logBean;
 
     private Serializable bookEntry;
+
+    private Serializable oldBookEntry;
 
     public AddUpdateBookEntryPage() {
         init();
@@ -101,6 +107,9 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
         add(form);
 
         BeanPropertyUtil.addLocalization(bookEntry, allLocales);
+
+        oldBookEntry = CloneUtil.cloneObject(bookEntry);
+
         //calculate initial hash code for book entry in order to increment version of the book entry if necessary later.
         final BookHash initial = BeanPropertyUtil.hash(bookEntry);
 
@@ -111,7 +120,7 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
             protected void populateItem(ListItem<Property> item) {
                 Property prop = item.getModelObject();
 
-                item.add(new Label("bookFieldDesc", new DisplayPropertyLocalizableModel(prop, this)));
+                item.add(new Label("bookFieldDesc", new DisplayPropertyLocalizableModel(prop)));
 
                 WebMarkupContainer requiredContainer = new WebMarkupContainer("bookFieldRequired");
                 item.add(requiredContainer);
@@ -123,7 +132,7 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
                 boolean isAutoComplete = false;
                 boolean isBoolean = false;
 
-                if (prop.getType().equals(String.class) || BeanPropertyUtil.isNumberType(prop.getType())) {
+                if (prop.getType().equals(String.class) || BeanPropertyUtil.isNumericType(prop.getType())) {
                     isSimpleText = true;
                 } else if (BeanPropertyUtil.isDateType(prop.getType())) {
                     isDate = true;
@@ -223,6 +232,22 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
 
     private void saveOrUpdate(BookHash initial) {
         Log.EVENT event = BeanPropertyUtil.isNewBook(bookEntry) ? Log.EVENT.CREATE : Log.EVENT.EDIT;
+
+        Set<Change> changes = null;
+        if (event == Log.EVENT.EDIT) {
+            try {
+                changes = BookChangeManager.getChanges(oldBookEntry, bookEntry, getSystemLocale());
+
+                if (log.isDebugEnabled()) {
+                    for (Change change : changes) {
+                        log.debug(change.toString());
+                    }
+                }
+            } catch (Exception e) {
+                log.error("Error with getting changes for " + bookEntry.getClass().getName() + " book entry.", e);
+            }
+        }
+
         Long oldId = BeanPropertyUtil.getId(bookEntry);
 
         //update version of book and its localizable strings if necessary.
@@ -232,7 +257,7 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
             bookDAO.saveOrUpdate(bookEntry);
             Long newId = BeanPropertyUtil.getId(bookEntry);
             String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_UPDATE_KEY, this, null, new Object[]{newId}).getObject();
-            logBean.info(Log.MODULE.INFORMATION, event, AddUpdateBookEntryPage.class, bookEntry.getClass(), message);
+            logBean.info(Log.MODULE.INFORMATION, event, AddUpdateBookEntryPage.class, bookEntry.getClass(), message, changes);
         } catch (Exception e) {
             log.error("Ошибка сохранения справочника", e);
             String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_UPDATE_KEY, this, null, new Object[]{oldId}).getObject();

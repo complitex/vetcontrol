@@ -18,7 +18,7 @@ public final class BooleanPanel extends Panel {
     public BooleanPanel(String id, IModel model, Property prop, boolean enabled) {
         super (id);
 
-        IModel labelModel = new DisplayPropertyLocalizableModel(prop, this);
+        IModel labelModel = new DisplayPropertyLocalizableModel(prop);
 
         CheckBox checkBox = new CheckBox("checkbox", model);
         checkBox.setLabel(labelModel).setEnabled(enabled);

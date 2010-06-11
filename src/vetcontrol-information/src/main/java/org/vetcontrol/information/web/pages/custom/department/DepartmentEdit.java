@@ -7,6 +7,7 @@ package org.vetcontrol.information.web.pages.custom.department;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import javax.ejb.EJB;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -48,8 +49,11 @@ import org.vetcontrol.service.dao.ILocaleDAO;
 import static org.vetcontrol.book.BeanPropertyUtil.*;
 import org.vetcontrol.book.BookHash;
 import org.vetcontrol.book.Property;
+import org.vetcontrol.entity.Change;
 import org.vetcontrol.information.web.component.edit.GoToListPagePanel;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
+import org.vetcontrol.information.web.util.change.BookChangeManager;
+import org.vetcontrol.information.web.util.CloneUtil;
 import org.vetcontrol.information.web.util.CommonResourceKeys;
 import org.vetcontrol.information.web.util.PageManager;
 import org.vetcontrol.service.dao.IBookViewDAO;
@@ -85,6 +89,8 @@ public final class DepartmentEdit extends FormTemplatePage {
 
     private Department department;
 
+    private Department oldDepartment;
+
     public DepartmentEdit() {
         init();
     }
@@ -100,6 +106,8 @@ public final class DepartmentEdit extends FormTemplatePage {
         bookViewDAO.addLocalizationSupport(department);
         addLocalization(department, allLocales);
         departmentDAO.loadPassingBorderPoints(department);
+
+        oldDepartment = CloneUtil.cloneObject(department);
 
         //calculate initial hash code for book entry in order to increment version of the book entry if necessary later.
         final BookHash initial = hash(department);
@@ -118,7 +126,7 @@ public final class DepartmentEdit extends FormTemplatePage {
         add(form);
 
         //department name
-        form.add(new Label("nameLabel", new DisplayPropertyLocalizableModel(getPropertyByName(Department.class, "names"), this)));
+        form.add(new Label("nameLabel", new DisplayPropertyLocalizableModel(getPropertyByName(Department.class, "names"))));
 
         form.add(new LocalizableTextPanel("name",
                 new PropertyModel(department, "names"),
@@ -126,7 +134,7 @@ public final class DepartmentEdit extends FormTemplatePage {
                 systemLocale, CanEditUtil.canEdit(department)));
 
         //parent department
-        form.add(new Label("parentLabel", new DisplayPropertyLocalizableModel(getPropertyByName(Department.class, "parent"), this)));
+        form.add(new Label("parentLabel", new DisplayPropertyLocalizableModel(getPropertyByName(Department.class, "parent"))));
 
         IModel<List<Department>> parentDepartmentsModel = new LoadableDetachableModel<List<Department>>() {
 
@@ -169,7 +177,7 @@ public final class DepartmentEdit extends FormTemplatePage {
         //customs point
         final WebMarkupContainer customsPointMessageZone = new WebMarkupContainer("customsPointMessageZone");
         customsPointMessageZone.add(new Label("customsPointLabel",
-                new DisplayPropertyLocalizableModel(getPropertyByName(Department.class, "customsPoint"), this)));
+                new DisplayPropertyLocalizableModel(getPropertyByName(Department.class, "customsPoint"))));
         final WebMarkupContainer customsPointSelectZone = new WebMarkupContainer("customsPointSelectZone");
 
         final WebMarkupContainer customsPointZone = new WebMarkupContainer("customsPointZone") {
@@ -206,6 +214,9 @@ public final class DepartmentEdit extends FormTemplatePage {
         //passing border points
         final WebMarkupContainer passingBorderPointsSection = new WebMarkupContainer("passingBorderPointsSection");
         passingBorderPointsSection.setOutputMarkupId(true);
+
+        passingBorderPointsSection.add(new Label("passingBorderPointNameLabel",
+                new DisplayPropertyLocalizableModel(getPropertyByName(PassingBorderPoint.class, "name"))));
 
         final AjaxLink addPassingBorderPoint = new AjaxLink("addPassingBorderPoint") {
 
@@ -338,6 +349,22 @@ public final class DepartmentEdit extends FormTemplatePage {
 
     private void saveOrUpdate(BookHash initial) {
         Log.EVENT event = isNewBook(department) ? Log.EVENT.CREATE : Log.EVENT.EDIT;
+
+        Set<Change> changes = null;
+        if (event == Log.EVENT.EDIT) {
+            try {
+                changes = BookChangeManager.getChanges(oldDepartment, department, getSystemLocale());
+
+                if (log.isDebugEnabled()) {
+                    for (Change change : changes) {
+                        log.debug(change.toString());
+                    }
+                }
+            } catch (Exception e) {
+                log.error("Error with getting changes for " + Department.class.getName() + " book entry.", e);
+            }
+        }
+
         Long oldId = department.getId();
 
         //update version of book and its localizable strings if necessary.
@@ -348,7 +375,7 @@ public final class DepartmentEdit extends FormTemplatePage {
             departmentDAO.saveOrUpdate(department, null);
             Long newId = department.getId();
             String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_UPDATE_KEY, this, null, new Object[]{newId}).getObject();
-            logBean.info(Log.MODULE.INFORMATION, event, DepartmentEdit.class, Department.class, message);
+            logBean.info(Log.MODULE.INFORMATION, event, DepartmentEdit.class, Department.class, message, changes);
         } catch (Exception e) {
             log.error("Ошибка сохранения справочника", e);
             String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_UPDATE_KEY, this, null, new Object[]{oldId}).getObject();

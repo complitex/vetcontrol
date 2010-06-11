@@ -12,7 +12,9 @@ import javax.ejb.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.Date;
+import org.vetcontrol.entity.Change;
 
 import static org.vetcontrol.entity.Log.*;
 
@@ -25,10 +27,13 @@ import static org.vetcontrol.entity.Log.*;
 public class LogBean {
 
     private static final Logger logger = LoggerFactory.getLogger(LogBean.class);
+
     @PersistenceContext
     private EntityManager entityManager;
+
     @Resource
     private SessionContext sctx;
+
     @EJB(beanName = "ClientBean")
     private ClientBean clientBean;
 
@@ -43,63 +48,68 @@ public class LogBean {
      */
     public void info(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description, Object... args) {
         log(module, event, controllerClass, modelClass, STATUS.OK, MessageFormat.format(description, args), DateUtil.getCurrentDate(),
-                getCurrentUser(), getCurrentClient());
+                getCurrentUser(), getCurrentClient(), null);
+    }
+
+    public void info(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description, Collection<Change> changeDetails) {
+        log(module, event, controllerClass, modelClass, STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser(),
+                getCurrentClient(), changeDetails);
     }
 
     public void info(Client client, MODULE module, EVENT event, Class controllerClass, Class modelClass, String description, Object... args) {
         log(module, event, controllerClass, modelClass, STATUS.OK, MessageFormat.format(description, args), DateUtil.getCurrentDate(),
-                getCurrentUser(), client);
+                getCurrentUser(), client, null);
     }
 
     public void error(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description, Object... args) {
         log(module, event, controllerClass, modelClass, STATUS.ERROR, MessageFormat.format(description, args), DateUtil.getCurrentDate(),
-                getCurrentUser(), getCurrentClient());
+                getCurrentUser(), getCurrentClient(), null);
     }
 
     public void error(Client client, MODULE module, EVENT event, Class controllerClass, Class modelClass, String description, Object... args) {
         log(module, event, controllerClass, modelClass, STATUS.ERROR, MessageFormat.format(description, args), DateUtil.getCurrentDate(),
-                getCurrentUser(), client);
+                getCurrentUser(), client, null);
     }
 
     public void info(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description) {
-        log(module, event, controllerClass, modelClass, STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser(), getCurrentClient());
+        log(module, event, controllerClass, modelClass, STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser(), getCurrentClient(), null);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void infoTxRequired(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description) {
-        log(module, event, controllerClass, modelClass, STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser(), getCurrentClient());
+        log(module, event, controllerClass, modelClass, STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser(), getCurrentClient(), null);
     }
 
     public void error(MODULE module, EVENT event, Class controllerClass, Class modelClass, String description) {
-        log(module, event, controllerClass, modelClass, STATUS.ERROR, description, DateUtil.getCurrentDate(), getCurrentUser(), getCurrentClient());
+        log(module, event, controllerClass, modelClass, STATUS.ERROR, description, DateUtil.getCurrentDate(), getCurrentUser(), getCurrentClient(), null);
     }
 
     public void info(MODULE module, EVENT event, Class controllerClass, String description) {
-        log(module, event, controllerClass, null, STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser(), getCurrentClient());
+        log(module, event, controllerClass, null, STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser(), getCurrentClient(), null);
     }
 
     public void error(MODULE module, EVENT event, Class controllerClass, String description) {
-        log(module, event, controllerClass, null, STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser(), getCurrentClient());
+        log(module, event, controllerClass, null, STATUS.OK, description, DateUtil.getCurrentDate(), getCurrentUser(), getCurrentClient(), null);
     }
 
     public void info(String login, MODULE module, EVENT event, Class controllerClass, Class modelClass, String description) {
-        log(module, event, controllerClass, modelClass, STATUS.OK, description, DateUtil.getCurrentDate(), getUser(login), getCurrentClient());
+        log(module, event, controllerClass, modelClass, STATUS.OK, description, DateUtil.getCurrentDate(), getUser(login), getCurrentClient(), null);
     }
 
     public void error(String login, MODULE module, EVENT event, Class controllerClass, Class modelClass, String description) {
-        log(module, event, controllerClass, modelClass, STATUS.ERROR, description, DateUtil.getCurrentDate(), getUser(login), getCurrentClient());
+        log(module, event, controllerClass, modelClass, STATUS.ERROR, description, DateUtil.getCurrentDate(), getUser(login), getCurrentClient(), null);
     }
 
     public void info(String login, MODULE module, EVENT event, Class controllerClass, String description) {
-        log(module, event, controllerClass, null, STATUS.OK, description, DateUtil.getCurrentDate(), getUser(login), getCurrentClient());
+        log(module, event, controllerClass, null, STATUS.OK, description, DateUtil.getCurrentDate(), getUser(login), getCurrentClient(), null);
     }
 
     public void error(String login, MODULE module, EVENT event, Class controllerClass, String description) {
-        log(module, event, controllerClass, null, STATUS.ERROR, description, DateUtil.getCurrentDate(), getUser(login), getCurrentClient());
+        log(module, event, controllerClass, null, STATUS.ERROR, description, DateUtil.getCurrentDate(), getUser(login), getCurrentClient(), null);
     }
 
     private void log(MODULE module, EVENT event, Class controllerClass, Class modelClass, Log.STATUS status,
-            String description, Date date, User user, Client client) {
+            String description, Date date, User user, Client client, Collection<Change> changeDetails) {
         Log log = new Log();
 
         log.setDate(date);
@@ -115,6 +125,10 @@ public class LogBean {
         log.setEvent(event);
         log.setStatus(status);
         log.setDescription(description);
+
+        if (changeDetails != null && !changeDetails.isEmpty()) {
+            log.setChangeDetails(changeDetails);
+        }
 
         try {
             entityManager.persist(log);
@@ -142,11 +156,7 @@ public class LogBean {
     public Date getLastDate(MODULE module, EVENT event, STATUS status) {
         try {
             return entityManager.createQuery("select max(l.date) from Log l where l.module = :module "
-                    + "and l.event = :event and l.status = :status", Date.class)
-                    .setParameter("module", module)
-                    .setParameter("event", event)
-                    .setParameter("status", status)
-                    .getSingleResult();
+                    + "and l.event = :event and l.status = :status", Date.class).setParameter("module", module).setParameter("event", event).setParameter("status", status).getSingleResult();
         } catch (Exception e) {
             return null;
         }
@@ -155,12 +165,7 @@ public class LogBean {
     public Date getLastDate(Client client, MODULE module, EVENT event, STATUS status) {
         try {
             return entityManager.createQuery("select max(l.date) from Log l where l.client = :client"
-                    + " and l.module = :module  and l.event = :event and l.status = :status", Date.class)
-                    .setParameter("client", client)
-                    .setParameter("module", module)
-                    .setParameter("event", event)
-                    .setParameter("status", status)
-                    .getSingleResult();
+                    + " and l.module = :module  and l.event = :event and l.status = :status", Date.class).setParameter("client", client).setParameter("module", module).setParameter("event", event).setParameter("status", status).getSingleResult();
         } catch (Exception e) {
             return null;
         }

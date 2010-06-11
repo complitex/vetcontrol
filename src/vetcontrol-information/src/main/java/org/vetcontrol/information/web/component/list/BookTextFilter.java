@@ -18,6 +18,6 @@ public class BookTextFilter extends TextFilter<Object> {
 
     public BookTextFilter(String id, IModel model, FilterForm filterForm, Property property) {
         super(id, model, filterForm);
-        getFilter().setLabel(new DisplayPropertyLocalizableModel(property, this));
+        getFilter().setLabel(new DisplayPropertyLocalizableModel(property));
     }
 }

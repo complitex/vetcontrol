@@ -157,7 +157,7 @@ public class AutoCompleteSelectPanel<T> extends Panel {
                     target.addComponent(autoCompleteTextField);
                 }
             });
-            autoCompleteTextField.setLabel(new DisplayPropertyLocalizableModel(property, this));
+            autoCompleteTextField.setLabel(new DisplayPropertyLocalizableModel(property));
             autoCompleteTextField.setRequired(!property.isNullable());
             autoCompleteTextField.setOutputMarkupId(true);
 
@@ -167,7 +167,7 @@ public class AutoCompleteSelectPanel<T> extends Panel {
                 @Override
                 protected void onValidate(IValidatable validatable) {
                     if (autoCompleteTextField.findChoice() == null) {
-                        String localizableProperty = new DisplayPropertyLocalizableModel(property, AutoCompleteSelectPanel.this).getObject();
+                        String localizableProperty = new DisplayPropertyLocalizableModel(property).getObject();
                         Map<String, Object> params = new MicroMap<String, Object>(ERROR_PROPERTY_PARAMETER, localizableProperty);
 //                        error(validatable, SUCH_REFERENCE_IS_NOT_EXIST_ERROR_KEY, params);
 

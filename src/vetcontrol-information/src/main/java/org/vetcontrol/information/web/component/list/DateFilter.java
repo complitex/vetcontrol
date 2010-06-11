@@ -30,7 +30,7 @@ public class DateFilter extends AbstractFilter {
                 return CommonResourceKeys.FILTER_COMPONENT_PREFIX;
             }
         };
-        filter.setLabel(new DisplayPropertyLocalizableModel(property, this));
+        filter.setLabel(new DisplayPropertyLocalizableModel(property));
         filter.setShowOn(DatePicker.ShowOnEnum.FOCUS);
         enableFocusTracking(filter);
         add(filter);
