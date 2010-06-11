@@ -41,7 +41,7 @@ public class DatePicker<T> extends org.odlabs.wiquery.ui.datepicker.DatePicker<T
 
     protected void init() {
         setButtonImage(IMAGE_SRC);
-        setShowOn(ShowOnEnum.BOTH);
+        setShowOn(ShowOnEnum.BUTTON);
         setButtonImageOnly(true);
         setDateFormat("dd.mm.yy");
 

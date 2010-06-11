@@ -19,6 +19,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.*;
+import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.validation.validator.MaximumValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.slf4j.Logger;
@@ -38,7 +39,6 @@ import org.vetcontrol.web.component.list.AjaxRemovableListView;
 
 import javax.ejb.EJB;
 import java.util.*;
-import org.apache.wicket.util.string.Strings;
 
 import static org.vetcontrol.entity.Log.EVENT.CREATE;
 import static org.vetcontrol.entity.Log.EVENT.EDIT;
@@ -109,9 +109,15 @@ public class DocumentCargoEdit extends DocumentEditPage {
             dc.setDepartment(currentUser.getDepartment());
             dc.setPassingBorderPoint(currentUser.getPassingBorderPoint());
 
+            //  груз по умолчанию
             Cargo cargo = new Cargo();
             cargo.setDocumentCargo(dc);
             dc.getCargos().add(cargo);
+
+            //  транспортное средство по умолчанию
+            Vehicle vehicle = new Vehicle();
+            vehicle.setDocumentCargo(dc);
+            dc.getVehicles().add(vehicle);
         }
 
         if (id == null && !hasAnyRole(DOCUMENT_CREATE)) {

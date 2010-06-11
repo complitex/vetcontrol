@@ -3,7 +3,6 @@ package org.vetcontrol.document.test;
 import com.thoughtworks.selenium.SeleneseTestCase;
 import org.vetcontrol.entity.MovementType;
 
-import java.util.Arrays;
 import java.util.Random;
 import java.util.UUID;
 
@@ -17,7 +16,7 @@ public class DocumentCargoTest extends SeleneseTestCase {
     private Random random = new Random();
 
     public void setUp() throws Exception {
-        setUp(SERVER_URL, "*firefox F:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe");
+        setUp(SERVER_URL, "*firefox3");        
         selenium.setTimeout("60000");
     }
 
@@ -71,57 +70,111 @@ public class DocumentCargoTest extends SeleneseTestCase {
         selenium.type("name=document.cargo.cargo_sender_name", "sender_name::" + getRandomString());
 
         selenium.type("name=document.cargo.cargo_receiver_name", "receiver_name::" + getRandomString());
+        waitForAjaxUpdate();
         selenium.type("name=document.cargo.cargo_receiver_address", "receiver_address::" + getRandomString());
 
         selenium.type("name=document.cargo.details", "cargo.details::" + getRandomString());
-
-        //selenium.waitForCondition("selenium.isElementPresent(\""+ "LoginTextBox" +"\")", "10000");
-              
+                            
         //  Транспортное средство
         int vehicleCount = getRandomInt(9) + 1;
         for (int i = 0; i< vehicleCount; ++i){
-            selenium.click("xpath=//a[contains(@id,'document_cargo_vehicle_add')]");
-
-            String detailsLocator = "name=document.cargo.vehicle_container:document.cargo.vehicle_list:"+ i +":document.cargo.vehicle.details";
-            selenium.waitForCondition("selenium.isElementPresent('" + detailsLocator + "')", "60000");
-            selenium.type(detailsLocator, "vehicle.details::" + i + "::" + getRandomString());
+            addVehicle(i);
         }
 
         //Грузы
         int cargoCount = getRandomInt(9) + 1;
 
-        addCargo(0);
-        String cargoModeLocator = "name=document.cargo.cargo_mode_container:document.cargo.cargo_mode_parent_radio_group";
-        selenium.waitForCondition("selenium.isElementPresent('" + cargoModeLocator + "')", "60000");
-        selenium.click(cargoModeLocator + " index=0");
-
         for (int i=0; i < cargoCount; ++i){
-            selenium.click("xpath=//a[contains(@id,'document_cargo_cargo_add')]");
+            if (i > 0) {
+                selenium.click("xpath=//a[contains(@id,'document_cargo_cargo_add')]");
 
-            String cargoLocator = "name=document.cargo.cargo_container:document.cargo.cargo_list:" + i + ":document.cargo.cargo_type:uktzed";
+                String cargoLocator = "name=document.cargo.cargo_container:document.cargo.cargo_list:" + i + ":document.cargo.cargo_type:uktzed";
+                selenium.waitForCondition("selenium.isElementPresent('" + cargoLocator + "')", "60000");
+            }
 
-            selenium.waitForCondition("selenium.isElementPresent('" + cargoLocator + "')", "60000");
             addCargo(i);
         }
 
-        Thread.sleep(30000);
+        selenium.click("xpath=//input[@type='submit' and @value='Сохранить']");
     }
 
-    private void addCargo(int index){
-        selenium.type("name=document.cargo.cargo_container:document.cargo.cargo_list:" + index + ":document.cargo.cargo_type:uktzed",
-                "2602000000");
-        selenium.type("name=document.cargo.cargo_container:document.cargo.cargo_list:" + index + ":document.cargo.count",
-                String.valueOf(getRandomDouble()*1000));
+    private void addVehicle(int index){
+        if (index > 0){
+            selenium.click("xpath=//a[contains(@id,'document_cargo_vehicle_add')]");
+        }        
 
-//        selectRandom("name=document.cargo.cargo_container:document.cargo.cargo_list:" + index + ":document.cargo.unit_type");
+        String detailsLocator = "name=document.cargo.vehicle_container:document.cargo.vehicle_list:"+ index +":document.cargo.vehicle.details";
+        selenium.waitForCondition("selenium.isElementPresent('" + detailsLocator + "')", "60000");
+        selenium.type(detailsLocator, "vehicle.details::" + index + "::" + getRandomString());
+    }
+
+    private void addCargo(int index) throws InterruptedException {
+        //  тип груза
+        String typeLocator = "name=document.cargo.cargo_container:document.cargo.cargo_list:" + index + ":document.cargo.cargo_type:uktzed";
+        selenium.type(typeLocator, "2602000000");
+
+        if (index == 1) {
+            waitForAjaxUpdate();
+
+            //  выбор вида груза
+            String cargoModeLocator = "name=document.cargo.cargo_mode_container:document.cargo.cargo_mode_parent_radio_group";
+            selenium.waitForCondition("selenium.isElementPresent('" + cargoModeLocator + "')", "60000");
+            selenium.click(cargoModeLocator + " index=0");
+
+            //  выбор единицы измерения для первого груза
+            String unitTypeLocator = "name=document.cargo.cargo_container:document.cargo.cargo_list:" + 0 + ":document.cargo.unit_type";
+            waitForSelectAjaxUpdate(unitTypeLocator);
+            selectRandom(unitTypeLocator);
+        }
+
+        //  количество
+        selenium.type("name=document.cargo.cargo_container:document.cargo.cargo_list:" + index + ":document.cargo.count",
+                String.valueOf(getRandomDouble()*1000).replace('.',','));
+
+        //  единицы измерения
+        if (index > 0){
+            selectRandom("name=document.cargo.cargo_container:document.cargo.cargo_list:" + index + ":document.cargo.unit_type");
+        }
+
+        // транспорт
         selectRandom("name=document.cargo.cargo_container:document.cargo.cargo_list:" + index + ":document.cargo.vehicle");
+
+        //  производитель
+        String producerLocator = "name=document.cargo.cargo_container:document.cargo.cargo_list:"+index+":document.cargo.producer_name";
+        if (index == 0){
+            selectRandom("name=document.cargo.cargo_container:document.cargo.cargo_list:"+index+":document.cargo.producer_country");
+            waitForSelectAjaxUpdate(producerLocator);
+        }
+        selectRandom(producerLocator);
+
+        //  сертификат
+        selenium.type("name=document.cargo.cargo_container:document.cargo.cargo_list:"+index+":document.cargo.certificate_detail",
+               "certificate_detail"+getRandomString());
+        selenium.type("name=document.cargo.cargo_container:document.cargo.cargo_list:"+index+":document.cargo.certificate_date",
+                "11.06.2010");
+
+        selenium.click(typeLocator);
     }
 
     private void selectRandom(String selectLocator){
         String[] options = selenium.getSelectOptions(selectLocator);
 
-        System.out.println(Arrays.toString(options));
-
+        assertTrue(options.length > 1);        
         selenium.select(selectLocator, "label=" + options[getRandomInt(options.length-1)+1]);
+    }
+
+    private void waitForSelectAjaxUpdate(String selectLocator) throws InterruptedException {
+        for (int i=0; i<60; ++i){
+            String[] s = selenium.getSelectOptions(selectLocator);
+            if (s.length < 2){
+                Thread.sleep(1000);
+            }else{
+                break;
+            }
+        }
+    }
+
+    private void waitForAjaxUpdate() throws InterruptedException {
+        Thread.sleep(1000);
     }
 }
