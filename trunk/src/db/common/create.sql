@@ -373,6 +373,8 @@ CREATE TABLE `document_cargo` (
   KEY `FK_document_cargo_cargo_sender_country_id` (`cargo_sender_country_id`),
   KEY `FK_document_cargo_passing_border_point` (`passing_border_point_id`),
   KEY `FK_document_cargo_cargo_mode_id` (`cargo_mode_id`),
+  KEY `INDEX_cargo_receiver_name` (`cargo_receiver_name`),
+  KEY `INDEX_cargo_receiver_address` (`cargo_receiver_address`),
   CONSTRAINT `FK_department_0` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`),
   CONSTRAINT `FK_client_0` FOREIGN KEY (`client_id`) REFERENCES `client` (`id`),
   CONSTRAINT `FK_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `user` (`id`),
