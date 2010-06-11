@@ -183,7 +183,7 @@ public class BookPage extends ListTemplatePage {
 
         List<IColumn<? extends Serializable>> columns = new ArrayList<IColumn<? extends Serializable>>();
         for (Property prop : BeanPropertyUtil.getProperties(bookClass)) {
-            columns.add(newColumn(this, new DisplayPropertyLocalizableModel(prop, this), prop));
+            columns.add(newColumn(this, new DisplayPropertyLocalizableModel(prop), prop));
         }
         columns.add(new ModifyColumn(bookClass, dataProvider) {
 

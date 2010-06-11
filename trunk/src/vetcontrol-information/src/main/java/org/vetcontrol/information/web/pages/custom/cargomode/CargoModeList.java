@@ -182,10 +182,10 @@ public class CargoModeList extends ListTemplatePage {
             filterForm.add(cargoModes);
 
             addOrderByBorder(filterForm, "parentNameHeader", "parentNameLabel",
-                    new DisplayPropertyLocalizableModel(getPropertyByName(CargoMode.class, "parent"), this),
+                    new DisplayPropertyLocalizableModel(getPropertyByName(CargoMode.class, "parent")),
                     OrderBy.PARENT_NAME.getPropertyName(), dataProvider, cargoModes);
             addOrderByBorder(filterForm, "nameHeader", "nameLabel",
-                    new DisplayPropertyLocalizableModel(getPropertyByName(CargoMode.class, "names"), this),
+                    new DisplayPropertyLocalizableModel(getPropertyByName(CargoMode.class, "names")),
                     OrderBy.NAME.getPropertyName(), dataProvider, cargoModes);
             addOrderByBorder(filterForm, "uktzedHeader", "uktzedLabel", new ResourceModel("cargoMode.list.uktzed.header"),
                     OrderBy.UKTZED.getPropertyName(), dataProvider, cargoModes);

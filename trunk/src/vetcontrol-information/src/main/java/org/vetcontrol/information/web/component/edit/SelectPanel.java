@@ -27,7 +27,7 @@ public final class SelectPanel extends Panel {
         BookChoiceRenderer choiceRenderer = new BookChoiceRenderer(property, systemLocale, TruncateUtil.TRUNCATE_SELECT_VALUE_IN_EDIT_PAGE);
         DropDownChoice dropDownChoice = new DisableAwareDropDownChoice("select", model, books, choiceRenderer);
         dropDownChoice.setEnabled(enabled);
-        dropDownChoice.setLabel(new DisplayPropertyLocalizableModel(property, this));
+        dropDownChoice.setLabel(new DisplayPropertyLocalizableModel(property));
         if (property.isNullable()) {
             dropDownChoice.setNullValid(true);
         }

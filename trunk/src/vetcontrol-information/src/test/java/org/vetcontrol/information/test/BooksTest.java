@@ -27,7 +27,9 @@ import javax.persistence.Persistence;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -72,7 +74,7 @@ public class BooksTest {
     public void tearDown() throws Exception {
     }
 
-    @Test
+//    @Test
     public void simpleSaveTest() throws SQLException {
 
         EntityManager entityManager = managerFactory.createEntityManager();
@@ -695,6 +697,43 @@ public class BooksTest {
         transaction.commit();
         entityManager.close();
 
+    }
+
+//    @Test
+    public void saveLogChangeDetailsTest() {
+        EntityManager entityManager = managerFactory.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+
+        Log log = new Log();
+        log.setDate(new Date());
+        log.setDescription("Change details test.");
+
+        Collection<Change> changes = new HashSet<Change>();
+        Change c = new Change();
+        c.setPropertyName("propName");
+        c.setOldValue("oldValue");
+        c.setNewValue("newValue");
+        c.setLocale(Locale.ENGLISH);
+        c.setCollectionProperty("collectionProperty");
+        c.setCollectionObjectId("collectionObjectId");
+        c.setCollectionModificationStatus(Change.CollectionModificationStatus.MODIFICATION);
+        changes.add(c);
+        c = new Change();
+        c.setPropertyName("propName2");
+        c.setOldValue("oldValue2");
+        c.setNewValue("newValue2");
+        c.setLocale(new Locale("ru"));
+        c.setCollectionProperty("collectionProperty2");
+        c.setCollectionObjectId("collectionObjectId2");
+        c.setCollectionModificationStatus(Change.CollectionModificationStatus.ADDITION);
+        changes.add(c);
+        log.setChangeDetails(changes);
+
+        entityManager.persist(log);
+
+        transaction.commit();
+        entityManager.close();
     }
 //    @Test
 //    public void cloneTest() {

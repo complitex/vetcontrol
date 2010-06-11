@@ -3,6 +3,7 @@ INSERT INTO `generator`(`generatorName`, `generatorValue`) VALUES ('arrest_docum
 INSERT INTO `generator`(`generatorName`, `generatorValue`) VALUES ('cargo', 0);
 INSERT INTO `generator`(`generatorName`, `generatorValue`) VALUES ('document_cargo', 0);
 INSERT INTO `generator`(`generatorName`, `generatorValue`) VALUES ('vehicle', 0);
+INSERT INTO `generator`(`generatorName`, `generatorValue`) VALUES ('change_detail', 0);
 
 INSERT INTO `locales`(`language`, isSystem) VALUES ('ru', 1);
 INSERT INTO `locales`(`language`) VALUES ('en');
