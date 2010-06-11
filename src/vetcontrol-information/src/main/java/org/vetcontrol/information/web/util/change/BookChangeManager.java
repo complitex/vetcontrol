@@ -38,46 +38,4 @@ public final class BookChangeManager {
         AbstractEntityComparator<CargoMode> cargoModeComparator = new CargoModeComparator(systemLocale);
         return cargoModeComparator.compare(oldCargoMode, newCargoMode);
     }
-//    private static Set<Change> interpolateDepartmentChanges(Set<Change> changes) {
-//        return ChangeUtil.interpolate(Department.class, changes, new IResourceInterpolator() {
-//
-//            @Override
-//            public Change interpolate(Class rootObjectClass, Change change) {
-//                if (change.getCollectionModificationStatus() == Change.CollectionModificationStatus.MODIFICATION) {
-//                    //departments have only one collection property - passingBorderPoints list
-//                    String lozalizedPropertyName = ResourceUtil.getString(DepartmentEdit.class.getName(),
-//                            "passingBorderPoints", Session.get().getLocale(), true);
-//                    change.setCollectionProperty(lozalizedPropertyName);
-//
-//                    if (!Strings.isEmpty(change.getPropertyName())) {
-//                        String localizedBorderPointNameProp =
-//                                new DisplayPropertyLocalizableModel(getPropertyByName(PassingBorderPoint.class, change.getPropertyName())).getObject();
-//                        change.setPropertyName(localizedBorderPointNameProp);
-//                    }
-//                } else {
-//                    if (!Strings.isEmpty(change.getPropertyName())) {
-//                        String lozalizedPropertyName =
-//                                new DisplayPropertyLocalizableModel(getPropertyByName(rootObjectClass, change.getPropertyName())).getObject();
-//                        change.setPropertyName(lozalizedPropertyName);
-//                    }
-//                }
-//                return change;
-//            }
-//        });
-//    }
-//
-//    private static Set<Change> interpolateBookChanges(Class rootObjectClass, Set<Change> changes) {
-//        return ChangeUtil.interpolate(rootObjectClass, changes, new IResourceInterpolator() {
-//
-//            @Override
-//            public Change interpolate(Class rootObjectClass, Change change) {
-//                if (!Strings.isEmpty(change.getPropertyName())) {
-//                    String lozalizedPropertyName =
-//                            new DisplayPropertyLocalizableModel(getPropertyByName(rootObjectClass, change.getPropertyName())).getObject();
-//                    change.setPropertyName(lozalizedPropertyName);
-//                }
-//                return change;
-//            }
-//        });
-//    }
 }
