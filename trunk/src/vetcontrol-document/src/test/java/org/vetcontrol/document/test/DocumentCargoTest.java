@@ -1,8 +1,10 @@
 package org.vetcontrol.document.test;
 
 import com.thoughtworks.selenium.SeleneseTestCase;
+import org.vetcontrol.entity.DocumentCargo;
 import org.vetcontrol.entity.MovementType;
 
+import javax.persistence.EntityManager;
 import java.util.Random;
 import java.util.UUID;
 
@@ -11,12 +13,15 @@ import java.util.UUID;
  *         Date: 10.06.2010 13:22:16
  */
 public class DocumentCargoTest extends SeleneseTestCase {
+
     protected static String SERVER_URL = "http://localhost:8080/server/";
     protected static String WAIT_FOR_PAGE_TO_LOAD = "15000";
+
+    private EntityManager em;
     private Random random = new Random();
 
     public void setUp() throws Exception {
-        setUp(SERVER_URL, "*firefox3");        
+        setUp(SERVER_URL, "*firefox3");
         selenium.setTimeout("60000");
     }
 
@@ -45,7 +50,8 @@ public class DocumentCargoTest extends SeleneseTestCase {
     }
 
     public void testDocumentCargoCreate() throws Exception {
-
+        DocumentCargo documentCargo = new DocumentCargo();
+                
         //Авторизация
         login("login_2", "login_2");
 
