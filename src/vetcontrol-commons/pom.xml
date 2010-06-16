@@ -45,10 +45,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.wiquery</groupId>
+            <groupId>org.odlabs.wiquery</groupId>
             <artifactId>wiquery</artifactId>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../../lib/wiquery-1.0.jar</systemPath>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -79,10 +78,10 @@
                 </exclusion>
             </exclusions>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-json</artifactId>
             <scope>provided</scope>
-        </dependency>  
+        </dependency>
     </dependencies>
 </project>

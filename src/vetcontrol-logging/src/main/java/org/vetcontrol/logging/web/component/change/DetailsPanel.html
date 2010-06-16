@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns:wicket>
+    <body>
+        <wicket:panel>
+            <div class="logging_DetailsPanel">
+                <div wicket:id="simplePropsSection" class="block">
+                    <div><wicket:message key="modifiedProps"/></div>
+                    <table cellpadding="0" cellspacing="0" border="0">
+                        <thead>
+                            <tr>
+                                <th><wicket:message key="prop"/></th>
+                                <th><wicket:message key="old_value"/></th>
+                                <th><wicket:message key="new_value"/></th>
+                                <th><wicket:message key="locale"/></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr wicket:id="rootSimpleProps">
+                                <td>
+                                    <span wicket:id="propName">
+                                    </span>
+                                </td>
+                                <td>
+                                    <span wicket:id="oldValue">
+                                    </span>
+                                </td>
+                                <td>
+                                    <span wicket:id="newValue">
+                                    </span>
+                                </td>
+                                <td>
+                                    <span wicket:id="locale">
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div wicket:id="collectionProps">
+                    <div>
+                        <wicket:message key="modifiedCollection">
+                            <span wicket:id="collectionPropName" class="bold"></span>
+                        </wicket:message>
+                    </div>
+                    <div class="collection_prop">
+                        <div wicket:id="modifiedItems">
+                            <div class="block">
+                                <div>
+                                    <wicket:message key="modifiedItem">
+                                        <span wicket:id="item" class="bold"></span>
+                                    </wicket:message>
+                                </div>
+                                <table cellpadding="0" cellspacing="0" border="0">
+                                    <thead>
+                                        <tr>
+                                            <th><wicket:message key="prop"/></th>
+                                            <th><wicket:message key="old_value"/></th>
+                                            <th><wicket:message key="new_value"/></th>
+                                            <th><wicket:message key="locale"/></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr wicket:id="itemProps">
+                                            <td>
+                                                <span wicket:id="propName">
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span wicket:id="oldValue">
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span wicket:id="newValue">
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span wicket:id="locale">
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div wicket:id="addedItemsSection" class="block">
+                            <div><wicket:message key="addedItems"/></div>
+                            <ul wicket:id="addedItems">
+                                <li>
+                                    <span wicket:id="item"></span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div wicket:id="removedItemsSection" class="block">
+                            <div><wicket:message key="removedItems"/></div>
+                            <ul wicket:id="removedItems">
+                                <li>
+                                    <span wicket:id="item"></span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div wicket:id="enabledItemsSection" class="block">
+                            <div><wicket:message key="enabledItems"/></div>
+                            <ul wicket:id="enabledItems">
+                                <li>
+                                    <span wicket:id="item"></span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div wicket:id="disabledItemsSection" class="block">
+                            <div><wicket:message key="disabledItems"/></div>
+                            <ul wicket:id="disabledItems">
+                                <li>
+                                    <span wicket:id="item"></span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </wicket:panel>
+    </body>
+</html>

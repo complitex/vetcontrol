@@ -34,6 +34,9 @@ import javax.ejb.EJB;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.vetcontrol.logging.web.component.change.DetailsPanel;
+import org.vetcontrol.logging.web.component.change.DetailsLink;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -43,9 +46,13 @@ import java.util.Iterator;
 public class LogList extends ListTemplatePage {
 
     private static final String PAGE_NUMBER_KEY = LogList.class.getSimpleName() + "_PAGE_NUMBER";
+
     private static final String SORT_PROPERTY_KEY = LogList.class.getSimpleName() + "_SORT_PROPERTY";
+
     private static final String SORT_ORDER_KEY = LogList.class.getSimpleName() + "_SORT_ORDER";
+
     private static final String FILTER_KEY = LogList.class.getSimpleName() + "_FILTER";
+
     @EJB(name = "LogListBean")
     private LogListBean logListBean;
 
@@ -215,7 +222,15 @@ public class LogList extends ListTemplatePage {
                 item.add(new Label("module", getStringOrKey(log.getModule().name())));
                 item.add(new Label("event", getStringOrKey(log.getEvent().name())));
                 item.add(new Label("status", getStringOrKey(log.getStatus().name())));
-                item.add(new Label("description", log.getDescription()));
+
+
+                if (log.getChangeDetails().isEmpty()) {
+                    item.add(new Label("description", log.getDescription()));
+                    item.add(new EmptyPanel("changeDetailsPanel"));
+                } else {
+                    item.add(new DetailsLink("description"));
+                    item.add(new DetailsPanel("changeDetailsPanel", log.getChangeDetails()));
+                }
             }
         };
         filterForm.add(dataView);
@@ -233,7 +248,7 @@ public class LogList extends ListTemplatePage {
 
         //Панель ссылок для постраничной навигации
         filterForm.add(new PagingNavigator("navigator", dataView, "itemsPerPage", preferences, PAGE_NUMBER_KEY));
-    }   
+    }
 
     private String getClientAsString(Client client) {
         if (client == null) {

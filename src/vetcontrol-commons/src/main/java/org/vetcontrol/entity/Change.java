@@ -13,7 +13,7 @@ public class Change implements Serializable {
 
     public static enum CollectionModificationStatus {
 
-        MODIFICATION, ADDITION, REMOVAL, ENABLING, DISABLING
+        MODIFICATION, ADDITION, REMOVAL, ENABLE, DISABLE;
     }
 
     @Parent

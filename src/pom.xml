@@ -25,7 +25,7 @@
         <module>vetcontrol-client</module>
         <module>vetcontrol-configuration</module>
         <module>vetcontrol-report-commons</module>
-  </modules>
+    </modules>
 
     <dependencyManagement>
         <dependencies>
@@ -136,11 +136,15 @@
                 <version>1.4.7</version>
             </dependency>
             <dependency>
-                <groupId>org.wiquery</groupId>
+                <groupId>org.odlabs.wiquery</groupId>
                 <artifactId>wiquery</artifactId>
-                <version>1.0</version>
-                <scope>system</scope>
-                <systemPath>${project.basedir}/../lib/wiquery-1.0.jar</systemPath>
+                <version>1.0.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- Java EE API -->
@@ -191,6 +195,40 @@
                 <groupId>jasperreports</groupId>
                 <artifactId>jasperreports</artifactId>
                 <version>3.7.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>jfree</groupId>
+                        <artifactId>jcommon</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jfree</groupId>
+                        <artifactId>jfreechart</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>eclipse</groupId>
+                        <artifactId>jdtcore</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>bouncycastle</groupId>
+                        <artifactId>bcmail-jdk14</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcmail-jdk14</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>bouncycastle</groupId>
+                        <artifactId>bcprov-jdk14</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcprov-jdk14</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>bouncycastle</groupId>
+                        <artifactId>bctsp-jdk14</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -389,5 +427,12 @@
             <id>openqa</id>
             <url>http://maven.openqa.org</url>
         </repository>
+        <repository>
+            <id>wiquery repository</id>
+            <name>wiQuery repository</name>
+            <url>http://wiquery.googlecode.com/svn/repo/</url>
+            <layout>default</layout>
+        </repository>
+
     </repositories>
 </project>

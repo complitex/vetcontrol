@@ -594,11 +594,11 @@ public final class CargoModeEdit extends FormTemplatePage {
             cargoModeDAO.saveOrUpdate(cargoModeModel.getObject(), null);
             Long newId = cargoModeModel.getObject().getId();
             String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_UPDATE_KEY, this, null, new Object[]{newId}).getObject();
-            logBean.info(Log.MODULE.INFORMATION, event, CargoModeEdit.class, CargoMode.class, message);
+            logBean.info(Log.MODULE.INFORMATION, event, CargoModeEdit.class, CargoMode.class, message, changes);
         } catch (Exception e) {
             log.error("Ошибка сохранения справочника", e);
             String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_UPDATE_KEY, this, null, new Object[]{oldId}).getObject();
-            logBean.error(Log.MODULE.INFORMATION, event, CargoModeEdit.class, CargoMode.class, message);
+            logBean.error(Log.MODULE.INFORMATION, event, CargoModeEdit.class, CargoMode.class, message, changes);
         }
     }
 

@@ -89,40 +89,6 @@
         <dependency>
             <groupId>jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>jfree</groupId>
-                    <artifactId>jcommon</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>jfree</groupId>
-                    <artifactId>jfreechart</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>eclipse</groupId>
-                    <artifactId>jdtcore</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>bouncycastle</groupId>
-                    <artifactId>bcmail-jdk14</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.bouncycastle</groupId>
-                    <artifactId>bcmail-jdk14</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>bouncycastle</groupId>
-                    <artifactId>bcprov-jdk14</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.bouncycastle</groupId>
-                    <artifactId>bcprov-jdk14</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>bouncycastle</groupId>
-                    <artifactId>bctsp-jdk14</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -133,11 +99,10 @@
             <artifactId>spring-beans</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.wiquery</groupId>
+         <dependency>
+            <groupId>org.odlabs.wiquery</groupId>
             <artifactId>wiquery</artifactId>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../vetcontrol-web/src/main/webapp/WEB-INF/lib/wiquery-1.0.jar</systemPath>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.wicketstuff</groupId>
