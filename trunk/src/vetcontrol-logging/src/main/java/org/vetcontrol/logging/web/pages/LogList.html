@@ -11,7 +11,7 @@
             <div>
                 <h1 wicket:id="header"></h1>
                 <div id="messages" wicket:id="messages"></div>
-                
+
                 <form id="filter_form" action="#" wicket:id="filter_form">
                     <table  border="0" cellspacing="0" cellpadding="0" class="tbColor table_input">
                         <thead>
@@ -50,17 +50,28 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr wicket:id="logs">
-                                <td><span wicket:id="date"></span></td>
-                                <td><span wicket:id="login"></span></td>
-                                <td class="center"><span wicket:id="client"></span></td>
-                                <td><span wicket:id="controllerClass"></span></td>
-                                <td><span wicket:id="modelClass"></span></td>
-                                <td><span wicket:id="module"></span></td>
-                                <td><span wicket:id="event"></span></td>
-                                <td><span wicket:id="status"></span></td>
-                                <td colspan="2"><span wicket:id="description"></span></td>
-                            </tr>
+                            <wicket:container wicket:id="logs">
+                                <tr>
+                                    <td><span wicket:id="date"></span></td>
+                                    <td><span wicket:id="login"></span></td>
+                                    <td class="center"><span wicket:id="client"></span></td>
+                                    <td><span wicket:id="controllerClass"></span></td>
+                                    <td><span wicket:id="modelClass"></span></td>
+                                    <td><span wicket:id="module"></span></td>
+                                    <td><span wicket:id="event"></span></td>
+                                    <td><span wicket:id="status"></span></td>
+                                    <td colspan="2">
+                                        <span wicket:id="description">
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="10" style="border-bottom-width: 0px;">
+                                        <span wicket:id="changeDetailsPanel">
+                                        </span>
+                                    </td>
+                                </tr>
+                            </wicket:container>
                         </tbody>
                     </table>
 

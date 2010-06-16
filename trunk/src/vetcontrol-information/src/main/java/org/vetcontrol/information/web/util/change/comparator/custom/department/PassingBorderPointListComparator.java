@@ -12,6 +12,7 @@ import org.apache.wicket.util.string.Strings;
 import static org.vetcontrol.book.BeanPropertyUtil.*;
 import org.vetcontrol.entity.PassingBorderPoint;
 import org.vetcontrol.entity.Change;
+import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 import static org.vetcontrol.entity.Change.CollectionModificationStatus.*;
 import org.vetcontrol.util.change.comparator.PropertyComparator;
 
@@ -63,10 +64,10 @@ public class PassingBorderPointListComparator extends PropertyComparator<List<Pa
                         Change change = new Change();
                         change.setCollectionProperty(getPropertyName());
                         if (oldBorderPoint.isDisabled()) {
-                            change.setCollectionModificationStatus(ENABLING);
+                            change.setCollectionModificationStatus(ENABLE);
                             change.setCollectionObjectId(newBorderPoint.getName());
                         } else {
-                            change.setCollectionModificationStatus(DISABLING);
+                            change.setCollectionModificationStatus(DISABLE);
                             change.setCollectionObjectId(oldBorderPoint.getName());
                         }
                         changes.add(change);
@@ -77,7 +78,9 @@ public class PassingBorderPointListComparator extends PropertyComparator<List<Pa
                         change.setCollectionModificationStatus(MODIFICATION);
                         change.setCollectionProperty(getPropertyName());
                         change.setCollectionObjectId(newBorderPoint.getName());
-                        change.setPropertyName(PASSING_BORDER_POINT_NAME_PROP);
+                        change.setPropertyName(
+                                new DisplayPropertyLocalizableModel(
+                                getPropertyByName(PassingBorderPoint.class, PASSING_BORDER_POINT_NAME_PROP)).getObject());
                         change.setNewValue(newBorderPoint.getName());
                         change.setOldValue(oldBorderPoint.getName());
                         changes.add(change);

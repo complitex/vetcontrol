@@ -1,0 +1,15 @@
+.logging_DetailsPanel .collection_prop {
+    margin-left: 20px;
+}
+.logging_DetailsPanel .collection_prop ul {
+    padding: 5px 0 0 30px;
+}
+
+.logging_DetailsPanel .collection_prop .block {
+    margin-bottom: 10px;
+}
+
+.logging_DetailsPanel .bold {
+    font-weight: bold;
+}
+

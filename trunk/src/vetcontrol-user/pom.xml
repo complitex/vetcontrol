@@ -47,11 +47,10 @@
              <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.wiquery</groupId>
+         <dependency>
+            <groupId>org.odlabs.wiquery</groupId>
             <artifactId>wiquery</artifactId>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../../lib/wiquery-1.0.jar</systemPath>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
