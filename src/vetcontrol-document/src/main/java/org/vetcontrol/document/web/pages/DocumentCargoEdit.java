@@ -526,7 +526,12 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
                     @Override
                     protected void populateItem(final ListItem<CargoMode> childItem) {
-                        childItem.add(new Radio<CargoMode>("document.cargo.cargo_mode_child_radio", childItem.getModel()));
+                        childItem.add(new Radio<CargoMode>("document.cargo.cargo_mode_child_radio", childItem.getModel()){
+                            @Override
+                            public String getValue() {
+                                return childItem.getModelObject().getId().toString();
+                            }
+                        });
                         childItem.add(new Label("document.cargo.cargo_mode_child_label",
                                 childItem.getModelObject().getDisplayName(getLocale(), getSystemLocale())));
                     }
