@@ -53,6 +53,8 @@ public class DocumentCargoFactory {
             cargo.setCargoProducer(getRandomCargoProducer());
             cargo.setCertificateDetails(getRandomString("certificate_details"));
             cargo.setCertificateDate(new Date((long) (new Date().getTime()-random.nextDouble()*31536000000L)));
+
+            dc.getCargos().add(cargo);
         }
 
         return dc;
@@ -79,28 +81,34 @@ public class DocumentCargoFactory {
     }
 
     public static CargoMode getRandomCargoMode(){
-        return getRandomElement(entityManager.createQuery("select cm from CargoMode  cm " +
+        return getRandomElement(getEntityManager().createQuery("select cm from CargoMode  cm " +
                 "where cm.cargoModeCargoTypes is not empty and cm.cargoModeUnitTypes is not empty and cm.disabled = false", CargoMode.class)
                 .setMaxResults(500)
                 .getResultList());
     }
 
     public static CargoType getRandomCargoType(CargoMode cargoMode){
-        return getRandomElement(entityManager.createQuery("select t.cargoType from CargoModeCargoType t " +
+        return getRandomElement(getEntityManager().createQuery("select t.cargoType from CargoModeCargoType t " +
                 "where t.cargoMode = :cargoMode and t.cargoType.disabled = false", CargoType.class)
                 .setParameter("cargoMode", cargoMode)
                 .getResultList());
     }
 
     public static UnitType getRandomUnitType(CargoMode cargoMode){
-        return getRandomElement(entityManager.createQuery("select t.unitType from CargoModeUnitType t " +
+        return getRandomElement(getEntityManager().createQuery("select t.unitType from CargoModeUnitType t " +
                 "where t.cargoMode = :cargoMode and t.unitType.disabled = false", UnitType.class)
                 .setParameter("cargoMode", cargoMode)
                 .getResultList());
     }
 
     public static CargoProducer getRandomCargoProducer(){
-        return getRandomElement(entityManager.createQuery("select cp from CargoProducer cp where cp.disabled = false", CargoProducer.class)
+        return getRandomElement(getEntityManager().createQuery("select cp from CargoProducer cp where cp.disabled = false", CargoProducer.class)
                 .getResultList());
+    }
+
+    public static DocumentCargo getDocumentCargo(String detail){
+        return getEntityManager().createQuery("select dc from DocumentCargo dc where dc.details = :details", DocumentCargo.class)
+                .setParameter("detail", detail)
+                .getSingleResult();
     }
 }
