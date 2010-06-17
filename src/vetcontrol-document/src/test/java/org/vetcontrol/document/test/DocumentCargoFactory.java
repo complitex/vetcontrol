@@ -34,9 +34,8 @@ public class DocumentCargoFactory {
         dc.setPassingBorderPoint(passingBorderPoint);
 
         dc.setMovementType(random.nextBoolean() ? MovementType.IMPORT : MovementType.TRANSIT);
-//        dc.setVehicleType(VehicleType.values()[random.nextInt(VehicleType.values().length)]);
-        dc.setVehicleType(VehicleType.CONTAINER);
-        
+        dc.setVehicleType(VehicleType.values()[random.nextInt(VehicleType.values().length)]);
+                
         dc.setSenderCountry(getRandomElement(getCountryBooks()));
         dc.setSenderName(getRandomString("cargo_sender_name"));
         dc.setReceiverAddress(getRandomString("cargo_receiver_address"));
