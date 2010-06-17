@@ -5,6 +5,7 @@
 package org.vetcontrol.information.web.pages.custom.department;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -87,7 +88,7 @@ public final class DepartmentEdit extends FormTemplatePage {
     @EJB(name = "DepartmentBookDAO")
     private DepartmentBookDAO departmentDAO;
 
-    private Department department;
+    private Department newDepartment;
 
     private Department oldDepartment;
 
@@ -99,18 +100,20 @@ public final class DepartmentEdit extends FormTemplatePage {
         final Locale systemLocale = getSystemLocale();
         final List<Locale> allLocales = localeDAO.all();
 
-        department = (Department) getSession().getMetaData(BookPage.SELECTED_BOOK_ENTRY);
-        if (department == null) {
+        newDepartment = (Department) getSession().getMetaData(BookPage.SELECTED_BOOK_ENTRY);
+        if (newDepartment == null) {
             throw new IllegalArgumentException("selected book entry may not be null");
         }
-        bookViewDAO.addLocalizationSupport(department);
-        addLocalization(department, allLocales);
-        departmentDAO.loadPassingBorderPoints(department);
+        bookViewDAO.addLocalizationSupport(newDepartment);
+        addLocalization(newDepartment, allLocales);
+        departmentDAO.loadPassingBorderPoints(newDepartment);
 
-        oldDepartment = CloneUtil.cloneObject(department);
+        if (!isNewBook(newDepartment)) {
+            oldDepartment = CloneUtil.cloneObject(newDepartment);
+        }
 
         //calculate initial hash code for book entry in order to increment version of the book entry if necessary later.
-        final BookHash initial = hash(department);
+        final BookHash initial = hash(newDepartment);
 
         //title
         add(new Label("title", new ResourceModel("page.title")));
@@ -129,9 +132,9 @@ public final class DepartmentEdit extends FormTemplatePage {
         form.add(new Label("nameLabel", new DisplayPropertyLocalizableModel(getPropertyByName(Department.class, "names"))));
 
         form.add(new LocalizableTextPanel("name",
-                new PropertyModel(department, "names"),
+                new PropertyModel(newDepartment, "names"),
                 getPropertyByName(Department.class, "names"),
-                systemLocale, CanEditUtil.canEdit(department)));
+                systemLocale, CanEditUtil.canEdit(newDepartment)));
 
         //parent department
         form.add(new Label("parentLabel", new DisplayPropertyLocalizableModel(getPropertyByName(Department.class, "parent"))));
@@ -140,23 +143,23 @@ public final class DepartmentEdit extends FormTemplatePage {
 
             @Override
             protected List<Department> load() {
-                return departmentDAO.getAvailableDepartments(department.getId());
+                return departmentDAO.getAvailableDepartments(newDepartment.getId());
             }
         };
         IModel<Department> parentModel = new IModel<Department>() {
 
             @Override
             public Department getObject() {
-                return department.getParent();
+                return newDepartment.getParent();
             }
 
             @Override
             public void setObject(Department parent) {
                 if (parent != null) {
-                    department.setParent(parent);
-                    department.setLevel(parent.getLevel() + 1);
+                    newDepartment.setParent(parent);
+                    newDepartment.setLevel(parent.getLevel() + 1);
                 } else {
-                    department.setLevel(1);
+                    newDepartment.setLevel(1);
                 }
             }
 
@@ -171,7 +174,7 @@ public final class DepartmentEdit extends FormTemplatePage {
                 parentDepartmentsModel,
                 parentRenderer);
         parent.setOutputMarkupId(true);
-        parent.setEnabled(isNewBook(department) && CanEditUtil.canEdit(department));
+        parent.setEnabled(isNewBook(newDepartment) && CanEditUtil.canEdit(newDepartment));
         form.add(parent);
 
         //customs point
@@ -184,7 +187,7 @@ public final class DepartmentEdit extends FormTemplatePage {
 
             @Override
             protected void onBeforeRender() {
-                boolean isVisible = department.getLevel() != null && department.getLevel() == 2;
+                boolean isVisible = newDepartment.getLevel() != null && newDepartment.getLevel() == 2;
                 customsPointMessageZone.setVisible(isVisible);
                 customsPointSelectZone.setVisible(isVisible);
                 super.onBeforeRender();
@@ -205,10 +208,10 @@ public final class DepartmentEdit extends FormTemplatePage {
         BookChoiceRenderer customsPointRenderer = new BookChoiceRenderer(getPropertyByName(Department.class, "customsPoint"),
                 systemLocale, TruncateUtil.TRUNCATE_SELECT_VALUE_IN_EDIT_PAGE);
         final DropDownChoice<CustomsPoint> customsPoint = new DisableAwareDropDownChoice<CustomsPoint>("customsPoint",
-                new PropertyModel(department, "customsPoint"),
+                new PropertyModel(newDepartment, "customsPoint"),
                 customsPointModel,
                 customsPointRenderer);
-        customsPoint.setEnabled(CanEditUtil.canEdit(department));
+        customsPoint.setEnabled(CanEditUtil.canEdit(newDepartment));
         customsPointSelectZone.add(customsPoint);
 
         //passing border points
@@ -222,7 +225,7 @@ public final class DepartmentEdit extends FormTemplatePage {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                department.addPassingBorderPoint(new PassingBorderPoint());
+                newDepartment.addPassingBorderPoint(new PassingBorderPoint());
                 target.addComponent(passingBorderPointsSection);
 
                 String setFocusOnNewBorderPoint = "newBorderPointInputId = $('#passingBorderPoints tbody tr:last input[type=\"text\"]:first').attr('id');"
@@ -230,12 +233,12 @@ public final class DepartmentEdit extends FormTemplatePage {
                 target.appendJavascript(setFocusOnNewBorderPoint);
             }
         };
-        addPassingBorderPoint.setVisible(CanEditUtil.canEdit(department));
+        addPassingBorderPoint.setVisible(CanEditUtil.canEdit(newDepartment));
         passingBorderPointsSection.add(addPassingBorderPoint);
 
         //passing border points list view
         ListView<PassingBorderPoint> passingBorderPoints = new ListView<PassingBorderPoint>("passingBorderPoints",
-                department.getPassingBorderPoints()) {
+                newDepartment.getPassingBorderPoints()) {
 
             @Override
             protected void populateItem(ListItem<PassingBorderPoint> item) {
@@ -258,7 +261,7 @@ public final class DepartmentEdit extends FormTemplatePage {
 
             @Override
             protected void onBeforeRender() {
-                boolean isVisible = department.getLevel() != null && department.getLevel() == 3;
+                boolean isVisible = newDepartment.getLevel() != null && newDepartment.getLevel() == 3;
                 passingBorderPointsSection.setVisible(isVisible);
                 super.onBeforeRender();
             }
@@ -271,7 +274,7 @@ public final class DepartmentEdit extends FormTemplatePage {
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
-                if (department.getParent() != null) {
+                if (newDepartment.getParent() != null) {
                     parent.setEnabled(false);
                 }
                 target.addComponent(parent);
@@ -303,7 +306,7 @@ public final class DepartmentEdit extends FormTemplatePage {
             @Override
             public void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 if (validate()) {
-                    if (isNewBook(department)) {
+                    if (isNewBook(newDepartment)) {
                         //new entry
                         saveOrUpdate(initial);
                         goToListPage();
@@ -326,7 +329,7 @@ public final class DepartmentEdit extends FormTemplatePage {
             private boolean validate() {
                 if (!validated) {
                     validated = true;
-                    for (PassingBorderPoint borderPoint : department.getPassingBorderPoints()) {
+                    for (PassingBorderPoint borderPoint : newDepartment.getPassingBorderPoints()) {
                         if (Strings.isEmpty(borderPoint.getName())) {
                             error(getString(PASSING_BORDER_POINT_NAME_REQUIRED));
                             return false;
@@ -337,9 +340,9 @@ public final class DepartmentEdit extends FormTemplatePage {
                 return false;
             }
         };
-        save.setVisible(CanEditUtil.canEdit(department));
+        save.setVisible(CanEditUtil.canEdit(newDepartment));
         form.add(save);
-        form.add(new GoToListPagePanel("goToListPagePanel", department));
+        form.add(new GoToListPagePanel("goToListPagePanel", newDepartment));
         form.add(new Spacer("spacer"));
     }
 
@@ -348,32 +351,19 @@ public final class DepartmentEdit extends FormTemplatePage {
     }
 
     private void saveOrUpdate(BookHash initial) {
-        Log.EVENT event = isNewBook(department) ? Log.EVENT.CREATE : Log.EVENT.EDIT;
+        Log.EVENT event = isNewBook(newDepartment) ? Log.EVENT.CREATE : Log.EVENT.EDIT;
 
-        Set<Change> changes = null;
-        if (event == Log.EVENT.EDIT) {
-            try {
-                changes = BookChangeManager.getChanges(oldDepartment, department, getSystemLocale());
+        Set<Change> changes = getChanges();
 
-                if (log.isDebugEnabled()) {
-                    for (Change change : changes) {
-                        log.debug(change.toString());
-                    }
-                }
-            } catch (Exception e) {
-                log.error("Error with getting changes for " + Department.class.getName() + " book entry.", e);
-            }
-        }
-
-        Long oldId = department.getId();
+        Long oldId = newDepartment.getId();
 
         //update version of book and its localizable strings if necessary.
-        updateVersionIfNecessary(department, initial);
-        departmentDAO.updateReferences(department);
+        updateVersionIfNecessary(newDepartment, initial);
+        departmentDAO.updateReferences(newDepartment);
 
         try {
-            departmentDAO.saveOrUpdate(department, null);
-            Long newId = department.getId();
+            departmentDAO.saveOrUpdate(newDepartment, null);
+            Long newId = newDepartment.getId();
             String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_UPDATE_KEY, this, null, new Object[]{newId}).getObject();
             logBean.info(Log.MODULE.INFORMATION, event, DepartmentEdit.class, Department.class, message, changes);
         } catch (Exception e) {
@@ -384,12 +374,15 @@ public final class DepartmentEdit extends FormTemplatePage {
     }
 
     private void saveAsNew() {
-        Long oldId = department.getId();
+        Set<Change> changes = getChanges();
+
+        Long oldId = newDepartment.getId();
+
         try {
-            departmentDAO.saveAsNew(department);
-            Long newId = department.getId();
+            departmentDAO.saveAsNew(newDepartment);
+            Long newId = newDepartment.getId();
             String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_AS_NEW_KEY, this, null, new Object[]{oldId, newId}).getObject();
-            logBean.info(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, DepartmentEdit.class, Department.class, message);
+            logBean.info(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, DepartmentEdit.class, Department.class, message, changes);
         } catch (Exception e) {
             log.error("Error with saving the book.", e);
             String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_AS_NEW_KEY, this, null, new Object[]{oldId, null}).getObject();
@@ -416,13 +409,13 @@ public final class DepartmentEdit extends FormTemplatePage {
 
             @Override
             protected void onClick() {
-                disableDepartment(department.getId());
+                disableDepartment(newDepartment.getId());
                 goToListPage();
             }
 
             @Override
             protected void onBeforeRender() {
-                if (isNewBook(department) || !CanEditUtil.canEdit(department)) {
+                if (isNewBook(newDepartment) || !CanEditUtil.canEdit(newDepartment)) {
                     setVisible(false);
                 }
                 super.onBeforeRender();
@@ -432,13 +425,13 @@ public final class DepartmentEdit extends FormTemplatePage {
 
             @Override
             protected void onClick() {
-                enableDepartment(department.getId());
+                enableDepartment(newDepartment.getId());
                 goToListPage();
             }
 
             @Override
             protected void onBeforeRender() {
-                if (isNewBook(department) || !CanEditUtil.canEditDisabled(department)) {
+                if (isNewBook(newDepartment) || !CanEditUtil.canEditDisabled(newDepartment)) {
                     setVisible(false);
                 }
                 super.onBeforeRender();
@@ -488,7 +481,7 @@ public final class DepartmentEdit extends FormTemplatePage {
 
                 @Override
                 public boolean isEnabled() {
-                    return CanEditUtil.canEdit(department) && !PassingBorderPointListItem.this.getModelObject().isDisabled();
+                    return CanEditUtil.canEdit(newDepartment) && !PassingBorderPointListItem.this.getModelObject().isDisabled();
                 }
             };
             Property nameProperty = getPropertyByName(PassingBorderPoint.class, "name");
@@ -517,7 +510,7 @@ public final class DepartmentEdit extends FormTemplatePage {
                     return PassingBorderPointListItem.this.getModelObject().isDisabled();
                 }
             };
-            activate.setVisible(CanEditUtil.canEdit(department));
+            activate.setVisible(CanEditUtil.canEdit(newDepartment));
             add(activate);
 
             //deactivate link
@@ -535,9 +528,27 @@ public final class DepartmentEdit extends FormTemplatePage {
                     return !PassingBorderPointListItem.this.getModelObject().isDisabled();
                 }
             };
-            deactivate.setVisible(CanEditUtil.canEdit(department));
+            deactivate.setVisible(CanEditUtil.canEdit(newDepartment));
             add(deactivate);
         }
+    }
+
+    private Set<Change> getChanges() {
+        if (oldDepartment != null) {
+            try {
+                Set<Change> changes = BookChangeManager.getChanges(oldDepartment, newDepartment, getSystemLocale());
+
+                if (log.isDebugEnabled()) {
+                    for (Change change : changes) {
+                        log.debug(change.toString());
+                    }
+                }
+                return changes;
+            } catch (Exception e) {
+                log.error("Error with getting changes for " + Department.class.getName() + " book entry.", e);
+            }
+        }
+        return Collections.emptySet();
     }
 
     private static boolean areStringsEqual(String string1, String string2) {

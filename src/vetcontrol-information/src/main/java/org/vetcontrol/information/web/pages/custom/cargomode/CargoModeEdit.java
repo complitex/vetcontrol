@@ -328,7 +328,9 @@ public final class CargoModeEdit extends FormTemplatePage {
         bookViewDAO.addLocalizationSupport(cargoMode);
         addLocalization(cargoMode, allLocales);
 
-        oldCargoMode = CloneUtil.cloneObject(cargoMode);
+        if (!isNewBook(cargoMode)) {
+            oldCargoMode = CloneUtil.cloneObject(cargoMode);
+        }
 
         //calculate initial hash code for book entry in order to increment version of the book entry if necessary later.
         final BookHash initial = hash(cargoMode);
@@ -569,20 +571,7 @@ public final class CargoModeEdit extends FormTemplatePage {
     private void saveOrUpdate(BookHash initial) {
         Log.EVENT event = isNewBook(cargoModeModel.getObject()) ? Log.EVENT.CREATE : Log.EVENT.EDIT;
 
-        Set<Change> changes = null;
-        if (event == Log.EVENT.EDIT) {
-            try {
-                changes = BookChangeManager.getChanges(oldCargoMode, cargoModeModel.getObject(), getSystemLocale());
-
-                if (log.isDebugEnabled()) {
-                    for (Change change : changes) {
-                        log.debug(change.toString());
-                    }
-                }
-            } catch (Exception e) {
-                log.error("Error with getting changes for " + CargoMode.class.getName() + " book entry.", e);
-            }
-        }
+        Set<Change> changes = getChanges();
 
         Long oldId = cargoModeModel.getObject().getId();
 
@@ -603,13 +592,15 @@ public final class CargoModeEdit extends FormTemplatePage {
     }
 
     private void saveAsNew() {
+        Set<Change> changes = getChanges();
+
         Long oldId = cargoModeModel.getObject().getId();
 
         try {
             cargoModeDAO.saveAsNew(cargoModeModel.getObject());
             Long newId = cargoModeModel.getObject().getId();
             String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_AS_NEW_KEY, this, null, new Object[]{oldId, newId}).getObject();
-            logBean.info(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, CargoModeEdit.class, CargoMode.class, message);
+            logBean.info(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, CargoModeEdit.class, CargoMode.class, message, changes);
         } catch (Exception e) {
             log.error("Error with saving the book.", e);
             String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_AS_NEW_KEY, this, null, new Object[]{oldId, null}).getObject();
@@ -627,6 +618,24 @@ public final class CargoModeEdit extends FormTemplatePage {
         cargoModeDAO.enable(cargoModeId);
         String message = new StringResourceModel(CommonResourceKeys.LOG_ENABLE_DISABLE_KEY, this, null, new Object[]{cargoModeId}).getObject();
         logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, CargoModeEdit.class, CargoMode.class, message);
+    }
+
+    private Set<Change> getChanges() {
+        if (oldCargoMode != null) {
+            try {
+                Set<Change> changes = BookChangeManager.getChanges(oldCargoMode, cargoModeModel.getObject(), getSystemLocale());
+
+                if (log.isDebugEnabled()) {
+                    for (Change change : changes) {
+                        log.debug(change.toString());
+                    }
+                }
+                return changes;
+            } catch (Exception e) {
+                log.error("Error with getting changes for " + CargoMode.class.getName() + " book entry.", e);
+            }
+        }
+        return Collections.emptySet();
     }
 
     @Override

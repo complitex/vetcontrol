@@ -20,6 +20,7 @@ import org.vetcontrol.web.template.FormTemplatePage;
 import javax.ejb.EJB;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -76,7 +77,7 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
     @EJB(name = "LogBean")
     private LogBean logBean;
 
-    private Serializable bookEntry;
+    private Serializable newBookEntry;
 
     private Serializable oldBookEntry;
 
@@ -85,8 +86,8 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
     }
 
     public void init() {
-        bookEntry = getSession().getMetaData(BookPage.SELECTED_BOOK_ENTRY);
-        if (bookEntry == null) {
+        newBookEntry = getSession().getMetaData(BookPage.SELECTED_BOOK_ENTRY);
+        if (newBookEntry == null) {
             throw new IllegalArgumentException("selected book entry may not be null");
         }
 
@@ -106,14 +107,16 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
         form.setOutputMarkupId(true);
         add(form);
 
-        BeanPropertyUtil.addLocalization(bookEntry, allLocales);
+        BeanPropertyUtil.addLocalization(newBookEntry, allLocales);
 
-        oldBookEntry = CloneUtil.cloneObject(bookEntry);
+        if (!BeanPropertyUtil.isNewBook(newBookEntry)) {
+            oldBookEntry = CloneUtil.cloneObject(newBookEntry);
+        }
 
         //calculate initial hash code for book entry in order to increment version of the book entry if necessary later.
-        final BookHash initial = BeanPropertyUtil.hash(bookEntry);
+        final BookHash initial = BeanPropertyUtil.hash(newBookEntry);
 
-        List<Property> filtered = new ArrayList(BeanPropertyUtil.getProperties(bookEntry.getClass()));
+        List<Property> filtered = new ArrayList(BeanPropertyUtil.getProperties(newBookEntry.getClass()));
         ListView<Property> fields = new ListView<Property>("bookFields", filtered) {
 
             @Override
@@ -153,7 +156,7 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
 
                 requiredContainer.setVisible(isLocalizableText ? false : !prop.isNullable());
 
-                IModel m = new PropertyModel(bookEntry, prop.getName());
+                IModel m = new PropertyModel(newBookEntry, prop.getName());
 
                 Panel datePanel = new EmptyPanel("datePanel");
                 Panel textPanel = new EmptyPanel("textPanel");
@@ -165,19 +168,19 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
 
                 //choose what panel is editable:
                 if (isSimpleText) {
-                    textPanel = new TextPanel("textPanel", m, prop, CanEditUtil.canEdit(bookEntry));
+                    textPanel = new TextPanel("textPanel", m, prop, CanEditUtil.canEdit(newBookEntry));
                 } else if (isLocalizableText) {
-                    localizableTextPanel = new LocalizableTextPanel("localizableTextPanel", m, prop, systemLocale, CanEditUtil.canEdit(bookEntry));
+                    localizableTextPanel = new LocalizableTextPanel("localizableTextPanel", m, prop, systemLocale, CanEditUtil.canEdit(newBookEntry));
                 } else if (isDate) {
-                    datePanel = new DatePanel("datePanel", m, prop, CanEditUtil.canEdit(bookEntry));
+                    datePanel = new DatePanel("datePanel", m, prop, CanEditUtil.canEdit(newBookEntry));
                 } else if (isSelectable) {
                     selectablePanel = new SelectPanel("selectablePanel", m, prop, bookDAO.getContent(prop.getType(), ShowBooksMode.ALL),
-                            systemLocale, CanEditUtil.canEdit(bookEntry));
+                            systemLocale, CanEditUtil.canEdit(newBookEntry));
                 } else if (isAutoComplete) {
-                    autoCompleteSelectPanel = new AutoCompleteSelectPanel("autoCompleteSelectPanel", m, prop, CanEditUtil.canEdit(bookEntry),
+                    autoCompleteSelectPanel = new AutoCompleteSelectPanel("autoCompleteSelectPanel", m, prop, CanEditUtil.canEdit(newBookEntry),
                             systemLocale);
                 } else if (isBoolean) {
-                    booleanPanel = new BooleanPanel("booleanPanel", m, prop, CanEditUtil.canEdit(bookEntry));
+                    booleanPanel = new BooleanPanel("booleanPanel", m, prop, CanEditUtil.canEdit(newBookEntry));
                 }
 
                 item.add(datePanel);
@@ -211,7 +214,7 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
 
             @Override
             public void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                if (BeanPropertyUtil.isNewBook(bookEntry)) {
+                if (BeanPropertyUtil.isNewBook(newBookEntry)) {
                     saveOrUpdate(initial);
                     goToBooksPage();
                 } else {
@@ -224,75 +227,83 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
                 target.addComponent(messages);
             }
         };
-        saveOrUpdateBook.setVisible(CanEditUtil.canEdit(bookEntry));
+        saveOrUpdateBook.setVisible(CanEditUtil.canEdit(newBookEntry));
         form.add(saveOrUpdateBook);
-        form.add(new GoToListPagePanel("goToListPagePanel", bookEntry));
+        form.add(new GoToListPagePanel("goToListPagePanel", newBookEntry));
         form.add(new Spacer("spacer"));
     }
 
     private void saveOrUpdate(BookHash initial) {
-        Log.EVENT event = BeanPropertyUtil.isNewBook(bookEntry) ? Log.EVENT.CREATE : Log.EVENT.EDIT;
+        Log.EVENT event = BeanPropertyUtil.isNewBook(newBookEntry) ? Log.EVENT.CREATE : Log.EVENT.EDIT;
 
-        Set<Change> changes = null;
-        if (event == Log.EVENT.EDIT) {
+        Set<Change> changes = getChanges();
+
+        Long oldId = BeanPropertyUtil.getId(newBookEntry);
+
+        //update version of book and its localizable strings if necessary.
+        BeanPropertyUtil.updateVersionIfNecessary(newBookEntry, initial);
+
+        try {
+            bookDAO.saveOrUpdate(newBookEntry);
+            Long newId = BeanPropertyUtil.getId(newBookEntry);
+            String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_UPDATE_KEY, this, null, new Object[]{newId}).getObject();
+            logBean.info(Log.MODULE.INFORMATION, event, AddUpdateBookEntryPage.class, newBookEntry.getClass(), message, changes);
+        } catch (Exception e) {
+            log.error("Error with saving the book.", e);
+            String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_UPDATE_KEY, this, null, new Object[]{oldId}).getObject();
+            logBean.error(Log.MODULE.INFORMATION, event, AddUpdateBookEntryPage.class, newBookEntry.getClass(), message);
+        }
+    }
+
+    private void saveAsNew() {
+        Set<Change> changes = getChanges();
+
+        Long oldId = BeanPropertyUtil.getId(newBookEntry);
+
+        try {
+            bookDAO.saveAsNew(newBookEntry);
+            Long newId = BeanPropertyUtil.getId(newBookEntry);
+            String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_AS_NEW_KEY, this, null, new Object[]{oldId, newId}).getObject();
+            logBean.info(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, AddUpdateBookEntryPage.class, newBookEntry.getClass(), message, changes);
+        } catch (Exception e) {
+            log.error("Error with saving the book.", e);
+            String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_AS_NEW_KEY, this, null, new Object[]{oldId, null}).getObject();
+            logBean.error(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, AddUpdateBookEntryPage.class, newBookEntry.getClass(), message);
+        }
+    }
+
+    private void disableBook(Long id) {
+        bookDAO.disable(id, newBookEntry.getClass());
+        String message = new StringResourceModel(CommonResourceKeys.LOG_ENABLE_DISABLE_KEY, this, null, new Object[]{id}).getObject();
+        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, AddUpdateBookEntryPage.class, newBookEntry.getClass(), message);
+    }
+
+    private void enableBook(Long id) {
+        bookDAO.enable(id, newBookEntry.getClass());
+        String message = new StringResourceModel(CommonResourceKeys.LOG_ENABLE_DISABLE_KEY, this, null, new Object[]{id}).getObject();
+        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, AddUpdateBookEntryPage.class, newBookEntry.getClass(), message);
+    }
+
+    private void goToBooksPage() {
+        PageManager.goToListPage(this, newBookEntry.getClass());
+    }
+
+    private Set<Change> getChanges() {
+        if (oldBookEntry != null) {
             try {
-                changes = BookChangeManager.getChanges(oldBookEntry, bookEntry, getSystemLocale());
+                Set<Change> changes = BookChangeManager.getChanges(oldBookEntry, newBookEntry, getSystemLocale());
 
                 if (log.isDebugEnabled()) {
                     for (Change change : changes) {
                         log.debug(change.toString());
                     }
                 }
+                return changes;
             } catch (Exception e) {
-                log.error("Error with getting changes for " + bookEntry.getClass().getName() + " book entry.", e);
+                log.error("Error with getting changes for " + oldBookEntry.getClass().getName() + " book entry.", e);
             }
         }
-
-        Long oldId = BeanPropertyUtil.getId(bookEntry);
-
-        //update version of book and its localizable strings if necessary.
-        BeanPropertyUtil.updateVersionIfNecessary(bookEntry, initial);
-
-        try {
-            bookDAO.saveOrUpdate(bookEntry);
-            Long newId = BeanPropertyUtil.getId(bookEntry);
-            String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_UPDATE_KEY, this, null, new Object[]{newId}).getObject();
-            logBean.info(Log.MODULE.INFORMATION, event, AddUpdateBookEntryPage.class, bookEntry.getClass(), message, changes);
-        } catch (Exception e) {
-            log.error("Error with saving the book.", e);
-            String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_UPDATE_KEY, this, null, new Object[]{oldId}).getObject();
-            logBean.error(Log.MODULE.INFORMATION, event, AddUpdateBookEntryPage.class, bookEntry.getClass(), message);
-        }
-    }
-
-    private void saveAsNew() {
-        Long oldId = BeanPropertyUtil.getId(bookEntry);
-        try {
-            bookDAO.saveAsNew(bookEntry);
-            Long newId = BeanPropertyUtil.getId(bookEntry);
-            String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_AS_NEW_KEY, this, null, new Object[]{oldId, newId}).getObject();
-            logBean.info(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, AddUpdateBookEntryPage.class, bookEntry.getClass(), message);
-        } catch (Exception e) {
-            log.error("Error with saving the book.", e);
-            String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_AS_NEW_KEY, this, null, new Object[]{oldId, null}).getObject();
-            logBean.error(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, AddUpdateBookEntryPage.class, bookEntry.getClass(), message);
-        }
-    }
-
-    private void disableBook(Long id) {
-        bookDAO.disable(id, bookEntry.getClass());
-        String message = new StringResourceModel(CommonResourceKeys.LOG_ENABLE_DISABLE_KEY, this, null, new Object[]{id}).getObject();
-        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, AddUpdateBookEntryPage.class, bookEntry.getClass(), message);
-    }
-
-    private void enableBook(Long id) {
-        bookDAO.enable(id, bookEntry.getClass());
-        String message = new StringResourceModel(CommonResourceKeys.LOG_ENABLE_DISABLE_KEY, this, null, new Object[]{id}).getObject();
-        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, AddUpdateBookEntryPage.class, bookEntry.getClass(), message);
-    }
-
-    private void goToBooksPage() {
-        PageManager.goToListPage(this, bookEntry.getClass());
+        return Collections.emptySet();
     }
 
     @Override
@@ -302,13 +313,13 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
 
             @Override
             protected void onClick() {
-                disableBook(BeanPropertyUtil.getId(bookEntry));
+                disableBook(BeanPropertyUtil.getId(newBookEntry));
                 goToBooksPage();
             }
 
             @Override
             protected void onBeforeRender() {
-                if (BeanPropertyUtil.isNewBook(bookEntry) || !CanEditUtil.canEdit(bookEntry)) {
+                if (BeanPropertyUtil.isNewBook(newBookEntry) || !CanEditUtil.canEdit(newBookEntry)) {
                     setVisible(false);
                 }
                 super.onBeforeRender();
@@ -318,13 +329,13 @@ public class AddUpdateBookEntryPage extends FormTemplatePage {
 
             @Override
             protected void onClick() {
-                enableBook(BeanPropertyUtil.getId(bookEntry));
+                enableBook(BeanPropertyUtil.getId(newBookEntry));
                 goToBooksPage();
             }
 
             @Override
             protected void onBeforeRender() {
-                if (BeanPropertyUtil.isNewBook(bookEntry) || !CanEditUtil.canEditDisabled(bookEntry)) {
+                if (BeanPropertyUtil.isNewBook(newBookEntry) || !CanEditUtil.canEditDisabled(newBookEntry)) {
                     setVisible(false);
                 }
                 super.onBeforeRender();

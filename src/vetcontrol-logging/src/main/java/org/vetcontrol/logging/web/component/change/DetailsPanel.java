@@ -7,6 +7,7 @@ package org.vetcontrol.logging.web.component.change;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,13 +25,29 @@ import org.vetcontrol.entity.Change;
  */
 public final class DetailsPanel extends Panel {
 
+    private static final Comparator<Change> PROPERTY_COMPARATOR = new Comparator<Change>() {
+
+        @Override
+        public int compare(Change o1, Change o2) {
+            if (o1.getLocale() != null) {
+                if (o2.getLocale() != null) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            } else {
+                return -1;
+            }
+        }
+    };
+
     public DetailsPanel(String id, Collection<Change> changes) {
         super(id);
         init(changes);
     }
 
     private void init(Collection<Change> changes) {
-        add(CSSPackageResource.getHeaderContribution(DetailsPanel.class, DetailsPanel.class.getSimpleName()+".css"));
+        add(CSSPackageResource.getHeaderContribution(DetailsPanel.class, DetailsPanel.class.getSimpleName() + ".css"));
 
         //simple root properties
         WebMarkupContainer simplePropsSection = new WebMarkupContainer("simplePropsSection");
@@ -41,6 +58,8 @@ public final class DetailsPanel extends Panel {
                 rootSimpleProperties.add(change);
             }
         }
+        Collections.sort(rootSimpleProperties, PROPERTY_COMPARATOR);
+
         ListView<Change> rootSimpleProps = new ListView<Change>("rootSimpleProps", rootSimpleProperties) {
 
             @Override
@@ -106,6 +125,8 @@ public final class DetailsPanel extends Panel {
                         if (itemPropChanges == null) {
                             itemPropChanges = Collections.emptyList();
                         }
+                        Collections.sort(itemPropChanges, PROPERTY_COMPARATOR);
+
                         ListView<Change> itemProps = new ListView<Change>("itemProps", itemPropChanges) {
 
                             @Override
