@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.vetcontrol.document.util.change.comparator;
+package org.vetcontrol.util.change.comparator;
 
 import java.util.Collections;
 import java.util.Set;
