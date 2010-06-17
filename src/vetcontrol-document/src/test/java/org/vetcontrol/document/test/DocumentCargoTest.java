@@ -3,6 +3,7 @@ package org.vetcontrol.document.test;
 import com.thoughtworks.selenium.SeleneseTestCase;
 import org.vetcontrol.entity.Cargo;
 import org.vetcontrol.entity.DocumentCargo;
+import org.vetcontrol.entity.Vehicle;
 
 import java.text.SimpleDateFormat;
 
@@ -13,8 +14,11 @@ import java.text.SimpleDateFormat;
 public class DocumentCargoTest extends SeleneseTestCase {
 
     protected static String SERVER_URL = "http://localhost:8080/server/";
+    protected static String LOGIN = "login_2";
+    protected static String PASSWORD = "login_2";
+
     protected static String WAIT_FOR_PAGE_TO_LOAD = "15000";
-    protected static int AJAX_WAIT = 1000;
+    protected static int AJAX_WAIT = 3000;
        
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
@@ -32,10 +36,10 @@ public class DocumentCargoTest extends SeleneseTestCase {
     }
 
     public void testDocumentCargoCreate() throws Exception {
-        DocumentCargo documentCargo = DocumentCargoFactory.createRandomDocument();
+        DocumentCargo documentCargo = DocumentCargoFactory.createRandomDocument(LOGIN);
 
         //Авторизация
-        login("login_2", "login_2");
+        login(LOGIN, PASSWORD);
 
         //Страница списка карточек на груз
         selenium.click("id=DocumentCargoList");
@@ -51,8 +55,9 @@ public class DocumentCargoTest extends SeleneseTestCase {
         selenium.select("name=document.cargo.movement_type:select", "value=" + documentCargo.getMovementType().name());
         selenium.select("name=document.cargo.vehicle_type", "value=" + documentCargo.getVehicleType().name());
         selenium.select("name=document.cargo.cargo_sender_country", "value=" + documentCargo.getSenderCountry().getId());
-        selenium.type("name=document.cargo.cargo_sender_name", documentCargo.getSenderName());
+        selenium.type("name=document.cargo.cargo_sender_name", documentCargo.getSenderName());        
         selenium.type("name=document.cargo.cargo_receiver_name", documentCargo.getReceiverName());
+        waitForAjaxUpdate();
         selenium.type("name=document.cargo.cargo_receiver_address", documentCargo.getReceiverAddress());
         selenium.type("name=document.cargo.details", documentCargo.getDetails());
 
@@ -102,6 +107,7 @@ public class DocumentCargoTest extends SeleneseTestCase {
             selenium.type(countLocator, String.valueOf(cargo.getCount()).replace('.',','));
 
             //  единицы измерения
+            waitForAjaxUpdate();
             selenium.select(unitTypeLocator, "value=" + cargo.getUnitType().getId());
 
             // транспорт
@@ -134,10 +140,35 @@ public class DocumentCargoTest extends SeleneseTestCase {
         DocumentCargo savedDocumentCargo = DocumentCargoFactory.getDocumentCargo(documentCargo.getDetails());
 
         //Проверка идентичности
+        documentCargo.setId(savedDocumentCargo.getId());
+        documentCargo.setCreated(savedDocumentCargo.getCreated());
+        documentCargo.setUpdated(savedDocumentCargo.getUpdated());
 
+        for (Vehicle vehicle : documentCargo.getVehicles()){
+            for (Vehicle saved : savedDocumentCargo.getVehicles()){
+                if (vehicle.getVehicleDetails().equals(saved.getVehicleDetails())){
+                    vehicle.setId(saved.getId());
+                    vehicle.setDocumentCargoId(saved.getDocumentCargoId());
+                    vehicle.setDocumentCargo(saved.getDocumentCargo()); //avoid cyclic equal check
+                    vehicle.setVehicleType(saved.getVehicleType());
+                    vehicle.setUpdated(saved.getUpdated());
+                }
+            }
+        }
+
+        for (Cargo cargo : documentCargo.getCargos()){
+            for (Cargo saved : savedDocumentCargo.getCargos()){
+                if (cargo.getCertificateDetails().equals(saved.getCertificateDetails())){
+                    cargo.setId(saved.getId());
+                    cargo.setDocumentCargoId(saved.getDocumentCargoId());
+                    cargo.setVehicleId(saved.getVehicleId());
+                    cargo.setDocumentCargo(saved.getDocumentCargo()); //avoid cyclic equal check
+                    cargo.setUpdated(saved.getUpdated());                    
+                }
+            }
+        }
 
         assertTrue("documents equals", documentCargo.equals(savedDocumentCargo));
-
     }
 
     private void waitForSelectAjaxUpdate(String selectLocator) throws InterruptedException {
@@ -156,6 +187,6 @@ public class DocumentCargoTest extends SeleneseTestCase {
     }
 
     private void waitForElementPresent(String locator){
-        selenium.waitForCondition("selenium.isElementPresent('" + locator + "')", String.valueOf(AJAX_WAIT));
+        selenium.waitForCondition("selenium.isElementPresent('" + locator + "')", "60000");
     }
 }

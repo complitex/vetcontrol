@@ -15,27 +15,53 @@ import java.util.UUID;
  */
 public class DocumentCargoFactory {
     private static final String PERSISTENCE_UNIT_NAME = "vetcontroldb";
+    private static final String SERVER_SECURE_KEY = "b2627dab45b9455e947f9755861aea10";
 
     private static Random random = new Random();
     private static EntityManager entityManager;
 
-    public static DocumentCargo createRandomDocument(){
+    public static DocumentCargo createRandomDocument(String login){
+        User user = getUser(login);
+        Client client = getClient(SERVER_SECURE_KEY);
+        Department department = user.getDepartment();
+        PassingBorderPoint passingBorderPoint = user.getPassingBorderPoint();
+
         DocumentCargo dc = new DocumentCargo();
 
+        dc.setCreator(user);
+        dc.setDepartment(department);
+        dc.setClient(client);
+        dc.setPassingBorderPoint(passingBorderPoint);
+
         dc.setMovementType(random.nextBoolean() ? MovementType.IMPORT : MovementType.TRANSIT);
-        dc.setVehicleType(VehicleType.values()[random.nextInt(VehicleType.values().length)]);
+//        dc.setVehicleType(VehicleType.values()[random.nextInt(VehicleType.values().length)]);
+        dc.setVehicleType(VehicleType.CONTAINER);
+        
         dc.setSenderCountry(getRandomElement(getCountryBooks()));
         dc.setSenderName(getRandomString("cargo_sender_name"));
         dc.setReceiverAddress(getRandomString("cargo_receiver_address"));
         dc.setReceiverName(getRandomString("cargo_receiver_name"));
         dc.setDetails(getRandomString("details"));
 
-        int vehicleCount = dc.getVehicleType().isCompound() ? random.nextInt(10) : 1;
+        int vehicleCount = dc.getVehicleType().isCompound() ? random.nextInt(10)+1 : 1;
         for (int i = 0; i < vehicleCount; ++i){
             Vehicle vehicle = new Vehicle();
-            vehicle.setVehicleDetails(getRandomString("vehicle_details"));
+
+            vehicle.setDepartment(department);
+            vehicle.setClient(client);
+
             vehicle.setDocumentCargo(dc);
             vehicle.setVehicleType(dc.getVehicleType());
+            //Контейнер            
+            if (dc.getVehicleType().equals(VehicleType.CONTAINER)){
+                String details = getRandomContainerPrefix(); //XXXX999999-9
+                for (int k=0; k < 6; ++k) details += random.nextInt(10);
+                details += "-" + random.nextInt(10);
+
+                vehicle.setVehicleDetails(details);
+            }else{
+                vehicle.setVehicleDetails(getRandomString("vehicle_details"));
+            }
 
             dc.getVehicles().add(vehicle);
         }
@@ -45,10 +71,13 @@ public class DocumentCargoFactory {
         int cargoCount = random.nextInt(20) + 1;
         for (int i=0; i < cargoCount; ++i){
             Cargo cargo = new Cargo();
+
+            cargo.setDepartment(department);
+            cargo.setClient(client);
             cargo.setDocumentCargo(dc);
             cargo.setCargoType(getRandomCargoType(dc.getCargoMode()));
             cargo.setUnitType(getRandomUnitType(dc.getCargoMode()));
-            cargo.setCount(random.nextDouble()*500);
+            cargo.setCount(((double)random.nextInt(100000))/100);
             cargo.setVehicle(getRandomElement(dc.getVehicles()));
             cargo.setCargoProducer(getRandomCargoProducer());
             cargo.setCertificateDetails(getRandomString("certificate_details"));
@@ -106,9 +135,26 @@ public class DocumentCargoFactory {
                 .getResultList());
     }
 
-    public static DocumentCargo getDocumentCargo(String detail){
+    public static DocumentCargo getDocumentCargo(String details){
         return getEntityManager().createQuery("select dc from DocumentCargo dc where dc.details = :details", DocumentCargo.class)
-                .setParameter("detail", detail)
+                .setParameter("details", details)
                 .getSingleResult();
+    }
+
+    public static User getUser(String login){
+        return getEntityManager().createQuery("select u from User u where u.login = :login", User.class)
+                .setParameter("login", login)
+                .getSingleResult();
+    }
+
+    public static Client getClient(String secureKey){
+        return getEntityManager().createQuery("select c from Client c where c.secureKey = :secureKey", Client.class)
+                .setParameter("secureKey", secureKey)
+                .getSingleResult();
+    }
+    public static String getRandomContainerPrefix(){
+        return getRandomElement(getEntityManager().createQuery("select cv.prefix from ContainerValidator cv where cv.disabled =false", String.class)
+                .setMaxResults(500)
+                .getResultList());
     }
 }
