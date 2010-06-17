@@ -49,20 +49,12 @@ public class SimpleComparator<T> extends PropertyComparator<T> {
         String newValueAsString = displayPropertyValue(newValue);
         if (oldValue == null || newValue == null) {
             //property value was changed
-            Change change = new Change();
-            change.setPropertyName(getPropertyName());
-            change.setOldValue(oldValueAsString);
-            change.setNewValue(newValueAsString);
-            return Collections.singleton(change);
+            return Collections.singleton(newChange(getPropertyName(), oldValueAsString, newValueAsString));
         }
 
         //the both old value and new value are not null.
         if (!isEqual(oldValue, newValue)) {
-            Change change = new Change();
-            change.setPropertyName(getPropertyName());
-            change.setOldValue(oldValueAsString);
-            change.setNewValue(newValueAsString);
-            return Collections.singleton(change);
+            return Collections.singleton(newChange(getPropertyName(), oldValueAsString, newValueAsString));
         }
 
         return Collections.emptySet();

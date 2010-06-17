@@ -10,7 +10,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.Filte
 import org.apache.wicket.model.IModel;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 import org.vetcontrol.book.Property;
-import org.vetcontrol.information.web.util.CommonResourceKeys;
+import org.vetcontrol.information.util.resource.CommonResourceKeys;
 import org.vetcontrol.web.component.DatePicker;
 
 /**

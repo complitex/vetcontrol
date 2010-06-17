@@ -7,7 +7,7 @@ package org.vetcontrol.information.web.pages;
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.vetcontrol.information.web.util.ResourceUtil;
+import org.vetcontrol.information.util.resource.ResourceUtil;
 import org.vetcontrol.information.web.model.DisplayBookClassModel;
 import org.vetcontrol.book.BookTypes;
 import org.vetcontrol.web.security.SecurityRoles;

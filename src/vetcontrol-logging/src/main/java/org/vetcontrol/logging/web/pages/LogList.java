@@ -222,13 +222,13 @@ public class LogList extends ListTemplatePage {
                 item.add(new Label("module", getStringOrKey(log.getModule().name())));
                 item.add(new Label("event", getStringOrKey(log.getEvent().name())));
                 item.add(new Label("status", getStringOrKey(log.getStatus().name())));
-
+                item.add(new Label("description", log.getDescription()));
 
                 if (log.getChangeDetails().isEmpty()) {
-                    item.add(new Label("description", log.getDescription()));
+                    item.add(new EmptyPanel("detailsLinkPanel"));
                     item.add(new EmptyPanel("changeDetailsPanel"));
                 } else {
-                    item.add(new DetailsLink("description"));
+                    item.add(new DetailsLink("detailsLinkPanel"));
                     item.add(new DetailsPanel("changeDetailsPanel", log.getChangeDetails()));
                 }
             }

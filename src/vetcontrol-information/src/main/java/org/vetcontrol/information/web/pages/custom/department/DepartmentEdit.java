@@ -52,9 +52,9 @@ import org.vetcontrol.book.Property;
 import org.vetcontrol.entity.Change;
 import org.vetcontrol.information.web.component.edit.GoToListPagePanel;
 import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
-import org.vetcontrol.information.web.util.change.BookChangeManager;
-import org.vetcontrol.information.web.util.CloneUtil;
-import org.vetcontrol.information.web.util.CommonResourceKeys;
+import org.vetcontrol.information.util.change.BookChangeManager;
+import org.vetcontrol.util.CloneUtil;
+import org.vetcontrol.information.util.resource.CommonResourceKeys;
 import org.vetcontrol.information.web.util.PageManager;
 import org.vetcontrol.service.dao.IBookViewDAO;
 import org.vetcontrol.web.component.Spacer;
@@ -377,7 +377,7 @@ public final class DepartmentEdit extends FormTemplatePage {
             String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_UPDATE_KEY, this, null, new Object[]{newId}).getObject();
             logBean.info(Log.MODULE.INFORMATION, event, DepartmentEdit.class, Department.class, message, changes);
         } catch (Exception e) {
-            log.error("Ошибка сохранения справочника", e);
+            log.error("Error with saving the book.", e);
             String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_UPDATE_KEY, this, null, new Object[]{oldId}).getObject();
             logBean.error(Log.MODULE.INFORMATION, event, DepartmentEdit.class, Department.class, message);
         }
@@ -391,7 +391,7 @@ public final class DepartmentEdit extends FormTemplatePage {
             String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_AS_NEW_KEY, this, null, new Object[]{oldId, newId}).getObject();
             logBean.info(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, DepartmentEdit.class, Department.class, message);
         } catch (Exception e) {
-            log.error("Ошибка сохранения справочника", e);
+            log.error("Error with saving the book.", e);
             String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_AS_NEW_KEY, this, null, new Object[]{oldId, null}).getObject();
             logBean.error(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, DepartmentEdit.class, Department.class, message);
         }

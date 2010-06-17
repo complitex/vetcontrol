@@ -18,7 +18,8 @@ import java.util.Date;
 @IdClass(ClientEntityId.class)
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Cargo extends Synchronized implements IUpdated{
+public class Cargo extends Synchronized implements IUpdated {
+
     @Id
     @GeneratedValue(generator = "EnhancedTableGenerator")
     @GenericGenerator(name = "EnhancedTableGenerator", strategy = "org.vetcontrol.hibernate.id.TableGenerator",
@@ -47,9 +48,9 @@ public class Cargo extends Synchronized implements IUpdated{
 
     @ManyToOne
     @JoinColumns({
-            @JoinColumn(name = "document_cargo_id", referencedColumnName = "id", insertable = false, updatable = false),
-            @JoinColumn(name = "department_id", referencedColumnName = "department_id", insertable = false, updatable = false),
-            @JoinColumn(name = "client_id", referencedColumnName = "client_id", insertable = false, updatable = false)})
+        @JoinColumn(name = "document_cargo_id", referencedColumnName = "id", insertable = false, updatable = false),
+        @JoinColumn(name = "department_id", referencedColumnName = "department_id", insertable = false, updatable = false),
+        @JoinColumn(name = "client_id", referencedColumnName = "client_id", insertable = false, updatable = false)})
     @XmlTransient
     private DocumentCargo documentCargo;
 
@@ -71,14 +72,14 @@ public class Cargo extends Synchronized implements IUpdated{
 
     @ManyToOne
     @JoinColumns({
-            @JoinColumn(name="vehicle_id", referencedColumnName = "id", insertable = false, updatable = false),
-            @JoinColumn(name="department_id", referencedColumnName = "department_id", insertable = false, updatable = false),
-            @JoinColumn(name="client_id", referencedColumnName = "client_id", insertable = false, updatable = false)
+        @JoinColumn(name = "vehicle_id", referencedColumnName = "id", insertable = false, updatable = false),
+        @JoinColumn(name = "department_id", referencedColumnName = "department_id", insertable = false, updatable = false),
+        @JoinColumn(name = "client_id", referencedColumnName = "client_id", insertable = false, updatable = false)
     })
     @XmlIDREF
     private Vehicle vehicle;
 
-    @Column(name = "vehicle_id", nullable=false)
+    @Column(name = "vehicle_id", nullable = false)
     private Long vehicleId;
 
     @ManyToOne
@@ -96,9 +97,10 @@ public class Cargo extends Synchronized implements IUpdated{
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
 
-    @PrePersist @PreUpdate
-    protected void preUpdate(){
-        if (documentCargo != null){
+    @PrePersist
+    @PreUpdate
+    protected void preUpdate() {
+        if (documentCargo != null) {
             documentCargoId = documentCargo.getId();
             vehicleId = vehicle != null ? vehicle.getId() : null;
             client = documentCargo.getClient();
@@ -107,7 +109,6 @@ public class Cargo extends Synchronized implements IUpdated{
     }
 
     // AUTO GENERATED Getter and Setter
-
     public Long getId() {
         return id;
     }
@@ -221,29 +222,62 @@ public class Cargo extends Synchronized implements IUpdated{
     }
 
     // AUTO GENERATED Equal and HashCode
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Cargo)) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Cargo)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         Cargo cargo = (Cargo) o;
 
-        if (cargoProducer != null ? !cargoProducer.equals(cargo.cargoProducer) : cargo.cargoProducer != null) return false;
-        if (cargoType != null ? !cargoType.equals(cargo.cargoType) : cargo.cargoType != null) return false;
-        if (certificateDate != null ? !certificateDate.equals(cargo.certificateDate) : cargo.certificateDate != null) return false;
-        if (certificateDetails != null ? !certificateDetails.equals(cargo.certificateDetails) : cargo.certificateDetails != null) return false;
-        if (client != null ? !client.equals(cargo.client) : cargo.client != null) return false;
-        if (count != null ? !count.equals(cargo.count) : cargo.count != null) return false;
-        if (department != null ? !department.equals(cargo.department) : cargo.department != null) return false;
-        if (documentCargo != null ? !documentCargo.equals(cargo.documentCargo) : cargo.documentCargo != null) return false;
-        if (documentCargoId != null ? !documentCargoId.equals(cargo.documentCargoId) : cargo.documentCargoId != null) return false;
-        if (id != null ? !id.equals(cargo.id) : cargo.id != null) return false;
-        if (unitType != null ? !unitType.equals(cargo.unitType) : cargo.unitType != null) return false;
-        if (updated != null ? !updated.equals(cargo.updated) : cargo.updated != null) return false;
-        if (vehicle != null ? !vehicle.equals(cargo.vehicle) : cargo.vehicle != null) return false;
-        if (vehicleId != null ? !vehicleId.equals(cargo.vehicleId) : cargo.vehicleId != null) return false;
+        if (cargoProducer != null ? !cargoProducer.equals(cargo.cargoProducer) : cargo.cargoProducer != null) {
+            return false;
+        }
+        if (cargoType != null ? !cargoType.equals(cargo.cargoType) : cargo.cargoType != null) {
+            return false;
+        }
+        if (certificateDate != null ? !certificateDate.equals(cargo.certificateDate) : cargo.certificateDate != null) {
+            return false;
+        }
+        if (certificateDetails != null ? !certificateDetails.equals(cargo.certificateDetails) : cargo.certificateDetails != null) {
+            return false;
+        }
+        if (client != null ? !client.equals(cargo.client) : cargo.client != null) {
+            return false;
+        }
+        if (count != null ? !count.equals(cargo.count) : cargo.count != null) {
+            return false;
+        }
+        if (department != null ? !department.equals(cargo.department) : cargo.department != null) {
+            return false;
+        }
+        if (documentCargo != null ? !documentCargo.equals(cargo.documentCargo) : cargo.documentCargo != null) {
+            return false;
+        }
+        if (documentCargoId != null ? !documentCargoId.equals(cargo.documentCargoId) : cargo.documentCargoId != null) {
+            return false;
+        }
+        if (id != null ? !id.equals(cargo.id) : cargo.id != null) {
+            return false;
+        }
+        if (unitType != null ? !unitType.equals(cargo.unitType) : cargo.unitType != null) {
+            return false;
+        }
+        if (updated != null ? !updated.equals(cargo.updated) : cargo.updated != null) {
+            return false;
+        }
+        if (vehicle != null ? !vehicle.equals(cargo.vehicle) : cargo.vehicle != null) {
+            return false;
+        }
+        if (vehicleId != null ? !vehicleId.equals(cargo.vehicleId) : cargo.vehicleId != null) {
+            return false;
+        }
 
         return true;
     }
@@ -266,6 +300,18 @@ public class Cargo extends Synchronized implements IUpdated{
         result = 31 * result + (certificateDate != null ? certificateDate.hashCode() : 0);
         result = 31 * result + (updated != null ? updated.hashCode() : 0);
         return result;
+    }
+
+    public String display(java.util.Locale currentLocale, java.util.Locale systemLocale) {
+        String display = null;
+        if (getId() == null) {
+            display = new StringBuilder().append(getCargoType().getCode()).
+                    append(", ").append(getUnitType().getDisplayName(currentLocale, systemLocale)).
+                    toString();
+        } else {
+            display = String.valueOf(getId());
+        }
+        return display;
     }
 }
 
