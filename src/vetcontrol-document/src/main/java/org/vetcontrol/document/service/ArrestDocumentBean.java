@@ -32,12 +32,6 @@ public class ArrestDocumentBean {
     @PersistenceContext
     private EntityManager em;
 
-    @EJB(beanName = "UserProfileBean")
-    private UserProfileBean userProfileBean;
-
-    @EJB(beanName = "ClientBean")
-    private ClientBean clientBean;
-
     public <T> List<T> getList(Class<T> _class) {
         return em.createQuery("from " + _class.getSimpleName(), _class).getResultList();
     }
