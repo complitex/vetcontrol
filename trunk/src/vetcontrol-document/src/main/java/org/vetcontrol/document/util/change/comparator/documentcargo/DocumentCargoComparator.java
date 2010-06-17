@@ -9,7 +9,7 @@ import java.util.Locale;
 import java.util.Map;
 import org.vetcontrol.document.web.pages.DocumentCargoEdit;
 import org.vetcontrol.document.util.change.comparator.DocumentComparator;
-import org.vetcontrol.document.util.change.comparator.PassingBorderPointComparator;
+import org.vetcontrol.util.change.comparator.PassingBorderPointComparator;
 import org.vetcontrol.entity.DocumentCargo;
 import org.vetcontrol.entity.MovementType;
 import org.vetcontrol.entity.VehicleType;
