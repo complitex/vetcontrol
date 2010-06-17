@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.vetcontrol.information.web.util;
+package org.vetcontrol.information.util.resource;
 
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ResourceUtil {
 
-    public static final String COMMON_RESOURCES_BUNDLE = "org.vetcontrol.information.web.pages.CommonResources";
+    public static final String COMMON_RESOURCES_BUNDLE = "org.vetcontrol.information.resource.CommonResources";
 
     private static final Logger log = LoggerFactory.getLogger(ResourceUtil.class);
 

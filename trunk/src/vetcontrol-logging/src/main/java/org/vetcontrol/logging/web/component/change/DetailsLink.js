@@ -10,7 +10,7 @@ if(typeof(logging.DetailsLink) == "undefined"){
             var isHidden = detailsRow.hasClass("change_details_collapsed");
             //            alert("display : "+detailsRow.css("display")+", is hidden : "+isHidden);
 
-            details.slideToggle(600, function(){
+            details.slideToggle("fast", function(){
                 if(isHidden){
                     detailsRow.find("td").css("border-bottom-width", "1px");
                     detailsRow.removeClass("change_details_collapsed");

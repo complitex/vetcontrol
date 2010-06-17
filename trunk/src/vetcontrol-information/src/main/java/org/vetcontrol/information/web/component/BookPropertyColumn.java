@@ -22,7 +22,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.lang.PropertyResolver;
 import org.apache.wicket.util.string.Strings;
 import static org.vetcontrol.book.BeanPropertyUtil.*;
-import org.vetcontrol.information.web.util.ResourceUtil;
+import org.vetcontrol.information.util.resource.ResourceUtil;
 import org.vetcontrol.information.web.util.TruncateUtil;
 import org.vetcontrol.information.web.component.list.DateFilter;
 import org.vetcontrol.information.web.component.list.BookTextFilter;

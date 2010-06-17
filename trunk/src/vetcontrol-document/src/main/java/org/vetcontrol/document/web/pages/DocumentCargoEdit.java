@@ -39,6 +39,8 @@ import org.vetcontrol.web.component.list.AjaxRemovableListView;
 
 import javax.ejb.EJB;
 import java.util.*;
+import org.vetcontrol.document.util.change.DocumentChangeManager;
+import org.vetcontrol.util.CloneUtil;
 
 import static org.vetcontrol.entity.Log.EVENT.CREATE;
 import static org.vetcontrol.entity.Log.EVENT.EDIT;
@@ -99,6 +101,14 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
             setResponsePage(DocumentCargoList.class);
             return;
+        }
+
+        final DocumentCargo oldCopy;
+        if (id != null) {
+            //editing
+            oldCopy = CloneUtil.cloneObject(dc);
+        } else {
+            oldCopy = null;
         }
 
         //Проверка доступа к данным
@@ -214,6 +224,9 @@ public class DocumentCargoEdit extends DocumentEditPage {
                 try {
                     setResponsePage(DocumentCargoList.class);
 
+                    //get changes
+                    Set<Change> changes = getChanges(oldCopy, getModelObject());
+
                     documentCargoBean.save(getModelObject());
 
                     if (id == null) {
@@ -225,7 +238,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
                     }
 
                     logBean.info(DOCUMENT, id == null ? CREATE : EDIT, DocumentCargoEdit.class, DocumentCargo.class,
-                            "ID: " + getModelObject().getDisplayId());
+                            "ID: " + getModelObject().getDisplayId(), changes);
                 } catch (Exception e) {
                     getSession().error(new StringResourceModel("document.cargo.edit.message.save.error", this, null,
                             new Object[]{id}).getString());
@@ -526,7 +539,8 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
                     @Override
                     protected void populateItem(final ListItem<CargoMode> childItem) {
-                        childItem.add(new Radio<CargoMode>("document.cargo.cargo_mode_child_radio", childItem.getModel()){
+                        childItem.add(new Radio<CargoMode>("document.cargo.cargo_mode_child_radio", childItem.getModel()) {
+
                             @Override
                             public String getValue() {
                                 return childItem.getModelObject().getId().toString();
@@ -904,5 +918,23 @@ public class DocumentCargoEdit extends DocumentEditPage {
                 new PropertyModel<Date>(item.getModel(), "certificateDate"));
         certificateDate.setRequired(true);
         item.add(certificateDate);
+    }
+
+    private Set<Change> getChanges(DocumentCargo oldDocumentCargo, DocumentCargo newDocumentCargo) {
+        if (oldDocumentCargo != null) {
+            try {
+                Set<Change> changes = DocumentChangeManager.getChanges(oldDocumentCargo, newDocumentCargo, getSystemLocale());
+
+                if (log.isDebugEnabled()) {
+                    for (Change change : changes) {
+                        log.debug(change.toString());
+                    }
+                }
+                return changes;
+            } catch (Exception e) {
+                log.error("Error with getting changes for document cargo.", e);
+            }
+        }
+        return Collections.emptySet();
     }
 }
