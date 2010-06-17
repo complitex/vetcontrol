@@ -222,11 +222,6 @@ public class ArrestDocumentEdit extends DocumentEditPage {
         final Form form = new Form<ArrestDocument>("arrest_document_edit_form", arrestDocumentModel) {
 
             @Override
-            protected void onValidate() {
-                super.onValidate();
-            }
-
-            @Override
             protected void onSubmit() {
                 try {
                     arrestDocumentBean.save(getModelObject(), cargoId);
@@ -242,16 +237,18 @@ public class ArrestDocumentEdit extends DocumentEditPage {
                         setResponsePage(ArrestDocumentList.class);
                     }
 
+                    String message = null;
                     if (arrestDocumentId == null) {
-                        getSession().info(new StringResourceModel("arrest.document.edit.message.added", this, null,
-                                new Object[]{getModelObject().getDisplayId()}).getString());
+                        message = new StringResourceModel("arrest.document.edit.message.added", this, null,
+                                new Object[]{getModelObject().getDisplayId()}).getString();
                     } else {
-                        getSession().info(new StringResourceModel("arrest.document.edit.message.saved", this, null,
-                                new Object[]{arrestDocumentId}).getString());
+                        message = new StringResourceModel("arrest.document.edit.message.saved", this, null,
+                                new Object[]{arrestDocumentId}).getString();
                     }
 
+                    getSession().info(message);
                     logBean.info(DOCUMENT, arrestDocumentId == null ? CREATE : EDIT, ArrestDocumentEdit.class,
-                            ArrestDocument.class, "ID: " + getModelObject().getDisplayId());
+                            ArrestDocument.class, message + " (ID : " + getModelObject().getId() + ")");
                 } catch (Exception e) {
                     getSession().error(new StringResourceModel("arrest.document.edit.message.save.error", this, null,
                             new Object[]{arrestDocumentId}).getString());

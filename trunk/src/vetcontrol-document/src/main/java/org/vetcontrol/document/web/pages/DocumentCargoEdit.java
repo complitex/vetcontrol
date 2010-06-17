@@ -229,16 +229,17 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
                     documentCargoBean.save(getModelObject());
 
+                    String message = null;
                     if (id == null) {
-                        getSession().info(new StringResourceModel("document.cargo.edit.message.added", this, null,
-                                new Object[]{getModelObject().getDisplayId()}).getString());
+                        message = new StringResourceModel("document.cargo.edit.message.added", this, null,
+                                new Object[]{getModelObject().getDisplayId()}).getString();
                     } else {
-                        getSession().info(new StringResourceModel("document.cargo.edit.message.saved", this, null,
-                                new Object[]{id}).getString());
+                        message = new StringResourceModel("document.cargo.edit.message.saved", this, null,
+                                new Object[]{id}).getString();
                     }
-
+                    getSession().info(message);
                     logBean.info(DOCUMENT, id == null ? CREATE : EDIT, DocumentCargoEdit.class, DocumentCargo.class,
-                            "ID: " + getModelObject().getDisplayId(), changes);
+                            message + " (ID : " + getModelObject().getId() + ")", changes);
                 } catch (Exception e) {
                     getSession().error(new StringResourceModel("document.cargo.edit.message.save.error", this, null,
                             new Object[]{id}).getString());
