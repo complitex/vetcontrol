@@ -2,6 +2,7 @@ package org.vetcontrol.entity;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.vetcontrol.util.DateUtil;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
@@ -242,7 +243,7 @@ public class Cargo extends Synchronized implements IUpdated {
         if (cargoType != null ? !cargoType.equals(cargo.cargoType) : cargo.cargoType != null) {
             return false;
         }
-        if (certificateDate != null ? !certificateDate.equals(cargo.certificateDate) : cargo.certificateDate != null) {
+        if (certificateDate != null ? !DateUtil.isTheSameDay(certificateDate, cargo.certificateDate) : cargo.certificateDate != null) {
             return false;
         }
         if (certificateDetails != null ? !certificateDetails.equals(cargo.certificateDetails) : cargo.certificateDetails != null) {

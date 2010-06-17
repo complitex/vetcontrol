@@ -86,6 +86,12 @@ public class DateUtil {
     }
 
     public static boolean isTheSameDay(Date date1, Date date2){
+        if (date1 == null && date2 == null){
+            return true;
+        }else if (date1 == null || date2 == null){
+            return false;           
+        }
+
         Calendar c1 = Calendar.getInstance();
         c1.setTime(date1);
 

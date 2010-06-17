@@ -162,42 +162,21 @@ public class Vehicle extends Synchronized implements IUpdated {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Vehicle)) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (!(o instanceof Vehicle)) return false;
+        if (!super.equals(o)) return false;
 
         Vehicle vehicle = (Vehicle) o;
 
-        if (client != null ? !client.equals(vehicle.client) : vehicle.client != null) {
-            return false;
-        }
-        if (department != null ? !department.equals(vehicle.department) : vehicle.department != null) {
-            return false;
-        }
-        if (documentCargo != null ? !documentCargo.equals(vehicle.documentCargo) : vehicle.documentCargo != null) {
-            return false;
-        }
-        if (documentCargoId != null ? !documentCargoId.equals(vehicle.documentCargoId) : vehicle.documentCargoId != null) {
-            return false;
-        }
-        if (id != null ? !id.equals(vehicle.id) : vehicle.id != null) {
-            return false;
-        }
-        if (updated != null ? !updated.equals(vehicle.updated) : vehicle.updated != null) {
-            return false;
-        }
-        if (vehicleDetails != null ? !vehicleDetails.equals(vehicle.vehicleDetails) : vehicle.vehicleDetails != null) {
-            return false;
-        }
-        if (vehicleType != vehicle.vehicleType) {
-            return false;
-        }
+        if (client != null ? !client.equals(vehicle.client) : vehicle.client != null) return false;
+        if (department != null ? !department.equals(vehicle.department) : vehicle.department != null) return false;
+        if (documentCargo != null ? !documentCargo.equals(vehicle.documentCargo) : vehicle.documentCargo != null) return false;
+        if (documentCargoId != null ? !documentCargoId.equals(vehicle.documentCargoId) : vehicle.documentCargoId != null) return false;
+        if (id != null ? !id.equals(vehicle.id) : vehicle.id != null) return false;
+        if (name != null ? !name.equals(vehicle.name) : vehicle.name != null) return false;
+        if (updated != null ? !updated.equals(vehicle.updated) : vehicle.updated != null) return false;
+        if (vehicleDetails != null ? !vehicleDetails.equals(vehicle.vehicleDetails) : vehicle.vehicleDetails != null) return false;
+        if (vehicleType != vehicle.vehicleType) return false;
 
         return true;
     }
@@ -213,6 +192,7 @@ public class Vehicle extends Synchronized implements IUpdated {
         result = 31 * result + (vehicleDetails != null ? vehicleDetails.hashCode() : 0);
         result = 31 * result + (vehicleType != null ? vehicleType.hashCode() : 0);
         result = 31 * result + (updated != null ? updated.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
     }
 }
