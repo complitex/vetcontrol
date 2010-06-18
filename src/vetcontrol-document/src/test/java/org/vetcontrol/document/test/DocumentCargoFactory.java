@@ -122,6 +122,12 @@ public class DocumentCargoFactory {
                 .getResultList());
     }
 
+    public static long getCargoModeCount(CargoType cargoType){
+        return getEntityManager().createQuery("select count(*) from CargoModeCargoType t where t.cargoType = :cargoType", Long.class)
+                .setParameter("cargoType", cargoType)
+                .getSingleResult();
+    }
+
     public static UnitType getRandomUnitType(CargoMode cargoMode){
         return getRandomElement(getEntityManager().createQuery("select t.unitType from CargoModeUnitType t " +
                 "where t.cargoMode = :cargoMode and t.unitType.disabled = false", UnitType.class)

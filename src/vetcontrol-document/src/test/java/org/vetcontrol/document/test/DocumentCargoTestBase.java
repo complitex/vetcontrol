@@ -16,7 +16,7 @@ public class DocumentCargoTestBase {
     protected static final String LOGIN = "login_2";
     protected static final String PASSWORD = "login_2";
     protected static final String WAIT_FOR_PAGE_TO_LOAD = "15000";
-    protected static final int AJAX_WAIT = 3000;
+    protected static final int AJAX_WAIT = 2000;
     protected SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
     @BeforeMethod(alwaysRun = true)

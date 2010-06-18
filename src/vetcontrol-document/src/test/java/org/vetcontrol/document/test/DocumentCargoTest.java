@@ -13,7 +13,7 @@ import static com.thoughtworks.selenium.grid.tools.ThreadSafeSeleniumSessionStor
  */
 public class DocumentCargoTest extends DocumentCargoTestBase {
 
-    @Test(threadPoolSize = 10, invocationCount = 10)
+    @Test(threadPoolSize = 2, invocationCount = 10)
     public void testDocumentCargoCreate() throws Exception {
         DocumentCargo documentCargo = DocumentCargoFactory.createRandomDocument(LOGIN);
 
@@ -70,8 +70,8 @@ public class DocumentCargoTest extends DocumentCargoTestBase {
             String unitTypeLocator = "name=document.cargo.cargo_container:document.cargo.cargo_list:" + i + ":document.cargo.unit_type";
 
             //  выбор вида груза
-            if (i == 0) {
-                waitForAjaxUpdate();
+            if (i == 0 && DocumentCargoFactory.getCargoModeCount(cargo.getCargoType()) > 1) {
+                waitForAjaxUpdate();                
 
                 String cargoModeLocator = "name=document.cargo.cargo_mode_container:document.cargo.cargo_mode_parent_radio_group";
                 waitForElementPresent(cargoModeLocator);
@@ -80,6 +80,8 @@ public class DocumentCargoTest extends DocumentCargoTestBase {
 
                 waitForSelectAjaxUpdate(unitTypeLocator);
             }
+
+            waitForAjaxUpdate();
 
             //  количество
             String countLocator = "name=document.cargo.cargo_container:document.cargo.cargo_list:" + i + ":document.cargo.count";
