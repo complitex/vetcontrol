@@ -25,10 +25,15 @@ import org.vetcontrol.web.component.VehicleTypeChoicePanel;
  */
 public class DocumentCargoComparator extends DocumentComparator<DocumentCargo> {
 
-    private static final String RESOURCES = DocumentCargoEdit.class.getName();
+    private static final String RESOURCE_BUNDLE = DocumentCargoEdit.class.getName();
 
     public DocumentCargoComparator(Locale systemLocale) {
-        super(DocumentCargo.class, systemLocale, RESOURCES);
+        super(DocumentCargo.class, systemLocale);
+    }
+
+    @Override
+    protected String getResourceBundle() {
+        return RESOURCE_BUNDLE;
     }
 
     @Override

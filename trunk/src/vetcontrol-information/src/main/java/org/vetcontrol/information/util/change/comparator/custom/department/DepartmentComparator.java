@@ -28,8 +28,7 @@ public class DepartmentComparator extends BookComparator<Department> {
     public Map<String, Comparator> getPropertyComparators() {
         Map<String, Comparator> propertyComparators = super.getPropertyComparators();
 
-        String localizedPassingBorderPointProp = ResourceUtil.getString(DepartmentEdit.class.getName(),
-                "passingBorderPoints", getSystemLocale(), true);
+        String localizedPassingBorderPointProp = ResourceUtil.getString(DepartmentEdit.class.getName(), "passingBorderPoints", getSystemLocale(), true);
         propertyComparators.put(PASSING_BORDER_POINTS_PROP, new PassingBorderPointListComparator(localizedPassingBorderPointProp));
         return propertyComparators;
     }

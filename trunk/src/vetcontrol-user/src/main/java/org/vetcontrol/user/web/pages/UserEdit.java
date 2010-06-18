@@ -24,9 +24,13 @@ import org.vetcontrol.web.template.FormTemplatePage;
 import javax.ejb.EJB;
 import javax.servlet.http.HttpSession;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import org.vetcontrol.user.util.change.UserChangeManager;
+import org.vetcontrol.util.CloneUtil;
 
 import static org.vetcontrol.entity.Log.EVENT.CREATE;
 import static org.vetcontrol.entity.Log.EVENT.EDIT;
@@ -69,6 +73,8 @@ public class UserEdit extends FormTemplatePage {
 
         add(new FeedbackPanel("messages"));
 
+        boolean isNewUser = id == null;
+
         //Модель данных
         final LoadableDetachableModel<User> userModel = new LoadableDetachableModel<User>() {
 
@@ -84,6 +90,13 @@ public class UserEdit extends FormTemplatePage {
                 return null;
             }
         };
+
+        final User oldUser;
+        if(!isNewUser){
+            oldUser = CloneUtil.cloneObject(userModel.getObject());
+        } else{
+            oldUser = null;
+        }
 
         //Форма
         Form form = new Form<User>("user_edit_form", userModel);
@@ -112,11 +125,13 @@ public class UserEdit extends FormTemplatePage {
                     boolean toLogout = !userProfileBean.getCurrentUser().getId().equals(user.getId())
                             && userBean.isUserAuthChanged(user);
 
+                    Set<Change> changes = getChanges(oldUser, user);
+
                     userBean.save(user);
 
                     log.info("Пользователь сохранен: " + user);
                     getSession().info(getString("user.info.saved"));
-                    logBean.info(USER, id == null ? CREATE : EDIT, UserEdit.class, User.class, "ID: " + user.getId());
+                    logBean.info(USER, id == null ? CREATE : EDIT, UserEdit.class, User.class, "ID: " + user.getId(), changes);
 
                     if (toLogout) {
                         if (logout(user.getLogin())) {
@@ -281,6 +296,24 @@ public class UserEdit extends FormTemplatePage {
 
         form.add(usergroups);
         form.add(new Spacer("spacer"));
+    }
+
+    private Set<Change> getChanges(User oldUser, User newUser) {
+        if (oldUser != null) {
+            try {
+                Set<Change> changes = UserChangeManager.getChanges(oldUser, newUser, getSystemLocale());
+
+                if (log.isDebugEnabled()) {
+                    for (Change change : changes) {
+                        log.debug(change.toString());
+                    }
+                }
+                return changes;
+            } catch (Exception e) {
+                log.error("Error with getting changes for " + User.class.getName() + " book entry.", e);
+            }
+        }
+        return Collections.emptySet();
     }
 
     /**

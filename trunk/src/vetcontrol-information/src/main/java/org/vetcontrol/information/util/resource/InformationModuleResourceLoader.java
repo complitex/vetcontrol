@@ -53,7 +53,7 @@ public class InformationModuleResourceLoader implements IStringResourceLoader {
         if (pageOfComponent != null) {
             Class pageClass = pageOfComponent.getClass();
             if (INFORMATION_MODULE_PAGES.contains(pageClass)) {
-                String value = ResourceUtil.getString(ResourceUtil.COMMON_RESOURCES_BUNDLE, key, Session.get().getLocale(), false);
+                String value = ResourceUtil.getString(ResourceUtil.COMMON_RESOURCE_BUNDLE, key, Session.get().getLocale(), false);
                 if (value != null) {
                     return value;
                 }
