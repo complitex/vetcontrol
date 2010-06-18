@@ -1,0 +1,42 @@
+<project name="Parallel Document Module Test" basedir="../lib/selenium-grid" default="run">
+    <target name="run" description="">       
+        <echo>Run parallel document module test</echo>
+        
+        <parallel>
+            <ant antfile="build.xml" target="launch-hub"/>
+
+
+
+            <ant antfile="build.xml" target="launch-remote-control">
+                <property name="port" value="5551"/>
+            </ant>
+            <ant antfile="build.xml" target="launch-remote-control">
+                <property name="port" value="5552"/>
+            </ant>
+             <ant antfile="build.xml" target="launch-remote-control">
+                <property name="port" value="5553"/>
+            </ant> 
+             <ant antfile="build.xml" target="launch-remote-control">
+                <property name="port" value="5554"/>
+            </ant> 
+             <ant antfile="build.xml" target="launch-remote-control">
+                <property name="port" value="5555"/>
+            </ant> 
+             <ant antfile="build.xml" target="launch-remote-control">
+                <property name="port" value="5556"/>
+            </ant> 
+             <ant antfile="build.xml" target="launch-remote-control">
+                <property name="port" value="5557"/>
+            </ant> 
+             <ant antfile="build.xml" target="launch-remote-control">
+                <property name="port" value="5558"/>
+            </ant> 
+             <ant antfile="build.xml" target="launch-remote-control">
+                <property name="port" value="5559"/>
+            </ant> 
+             <ant antfile="build.xml" target="launch-remote-control">
+                <property name="port" value="5560"/>
+            </ant>            
+        </parallel>
+    </target>
+</project>
