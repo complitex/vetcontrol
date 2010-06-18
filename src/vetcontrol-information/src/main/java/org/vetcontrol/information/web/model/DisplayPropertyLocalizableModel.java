@@ -49,6 +49,6 @@ public class DisplayPropertyLocalizableModel extends AbstractReadOnlyModel<Strin
     }
 
     private String attempt(String key) {
-        return ResourceUtil.getString(ResourceUtil.COMMON_RESOURCES_BUNDLE, key, Session.get().getLocale(), false);
+        return ResourceUtil.getString(ResourceUtil.COMMON_RESOURCE_BUNDLE, key, Session.get().getLocale(), false);
     }
 }

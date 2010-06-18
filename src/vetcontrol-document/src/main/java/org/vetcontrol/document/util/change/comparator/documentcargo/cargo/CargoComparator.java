@@ -26,10 +26,15 @@ import org.vetcontrol.util.change.comparator.LocalizableBookReferenceComparator;
  */
 public class CargoComparator extends DocumentComparator<Cargo> {
 
-    private static final String RESOURCES = DocumentCargoEdit.class.getName();
+    private static final String RESOURCE_BUNDLE = DocumentCargoEdit.class.getName();
 
     public CargoComparator(Locale systemLocale) {
-        super(Cargo.class, systemLocale, RESOURCES);
+        super(Cargo.class, systemLocale);
+    }
+
+    @Override
+    protected String getResourceBundle() {
+       return RESOURCE_BUNDLE;
     }
 
     @Override
