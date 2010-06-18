@@ -1,0 +1,1 @@
+start  ant -f selenium-grid.xml
