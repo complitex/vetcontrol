@@ -12,11 +12,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.odlabs.wiquery.ui.core.CoreUIJavaScriptResourceReference;
 import org.vetcontrol.entity.Change;
 
 /**
@@ -48,6 +50,7 @@ public final class DetailsPanel extends Panel {
 
     private void init(Collection<Change> changes) {
         add(CSSPackageResource.getHeaderContribution(DetailsPanel.class, DetailsPanel.class.getSimpleName() + ".css"));
+        add(JavascriptPackageResource.getHeaderContribution(DetailsPanel.class, DetailsPanel.class.getSimpleName() + ".js"));
 
         //simple root properties
         WebMarkupContainer simplePropsSection = new WebMarkupContainer("simplePropsSection");
