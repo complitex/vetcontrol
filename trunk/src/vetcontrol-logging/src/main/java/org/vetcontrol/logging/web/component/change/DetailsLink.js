@@ -3,52 +3,70 @@ if(typeof(logging) == "undefined"){
 }
 if(typeof(logging.DetailsLink) == "undefined"){
     logging.DetailsLink = {
+
+        EXPANDED_CLASS: "change_details_expanded",
+
         details: function(event){
             var detailsRow = logging.DetailsLink.getDetailsRow($(event.target));
             var details = logging.DetailsLink.getDetailsSection(detailsRow);
 
-            var isHidden = detailsRow.hasClass("change_details_collapsed");
-            //            alert("display : "+detailsRow.css("display")+", is hidden : "+isHidden);
+            var isHidden = logging.DetailsLink.isHidden(detailsRow);
+            logging.DetailsLink.log("display : "+detailsRow.css("display")+", is hidden : "+isHidden);
 
-            details.slideToggle("fast", function(){
-                if(isHidden){
-                    detailsRow.find("td").css("border-bottom-width", "1px");
-                    detailsRow.removeClass("change_details_collapsed");
-                    detailsRow.addClass("change_details_expanded");
-                } else {
-                    detailsRow.find("td").css("border-bottom-width", "0px");
-                    detailsRow.removeClass("change_details_expanded");
-                    detailsRow.addClass("change_details_collapsed");
-                }
-            });
+            if(isHidden){
+                detailsRow.show();
+                logging.DetailsLink.switchVisibility(detailsRow);
+                details.toggle('drop', {}, 1000);
+            } else {
+                details.toggle('drop', {}, 1000, function(){
+                    logging.DetailsLink.switchVisibility(detailsRow);
+                    detailsRow.hide();
+                });
+            }
             return false;
         },
 
+        isHidden: function(detailsRow){
+            return !$(detailsRow).hasClass(logging.DetailsLink.EXPANDED_CLASS);
+        },
+
+        switchVisibility: function(detailsRow){
+            $(detailsRow).toggleClass(logging.DetailsLink.EXPANDED_CLASS);
+        },
+
         hide: function(detailsRow){
-            var details = logging.DetailsLink.getDetailsSection(detailsRow);
-            details.hide();
+            logging.DetailsLink.getDetailsSection(detailsRow).hide();
         },
         
         getDetailsSection: function(detailsRow){
-            return $(detailsRow).find("span");
+            return $(detailsRow).find(".logging_DetailsPanel");
         },
         
         getDetailsRow: function(detailsLink){
             return $(detailsLink).closest('tr').next();
+        },
+        
+        isDebugEnabled: false,
+
+        log: function(message){
+            if(logging.DetailsLink.isDebugEnabled){
+                if(typeof(console) != "undefined"){
+                    console.log(message);
+                } else {
+                    alert(message);
+                }
+            }
+        },
+
+        init: function(){
+            $(document).ready(function(){
+                $(".logging_DetailsLink").each(function(index, detailsLink){
+                    logging.DetailsLink.hide(logging.DetailsLink.getDetailsRow(detailsLink));
+                });
+                $(".logging_DetailsLink").click(logging.DetailsLink.details);
+            });
         }
     }
 }
 
-$(document).ready(function(){
-//    $(".change_details").each(function(index, detailsRow){
-//        logging.DetailsLink.hide(detailsRow);
-//    });
-
-    $(".logging_DetailsLink").each(function(index, detailsLink){
-        var detailsRow = logging.DetailsLink.getDetailsRow(detailsLink);
-        detailsRow.addClass("change_details_collapsed");
-        logging.DetailsLink.hide(detailsRow);
-    })
-    
-    $(".logging_DetailsLink").click(logging.DetailsLink.details);
-});
+logging.DetailsLink.init();
