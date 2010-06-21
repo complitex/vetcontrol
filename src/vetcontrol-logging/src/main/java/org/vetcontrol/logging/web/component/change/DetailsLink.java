@@ -7,7 +7,6 @@ package org.vetcontrol.logging.web.component.change;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.odlabs.wiquery.ui.effects.BlindEffectJavaScriptResourceReference;
 import org.odlabs.wiquery.ui.effects.CoreEffectJavaScriptResourceReference;
 import org.odlabs.wiquery.ui.effects.DropEffectJavaScriptResourceReference;
 
