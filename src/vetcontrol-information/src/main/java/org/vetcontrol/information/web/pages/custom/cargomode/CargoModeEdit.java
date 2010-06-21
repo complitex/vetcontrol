@@ -63,6 +63,7 @@ import org.vetcontrol.util.CloneUtil;
 import org.vetcontrol.information.util.resource.CommonResourceKeys;
 import org.vetcontrol.information.web.util.PageManager;
 import org.vetcontrol.information.util.change.BookChangeManager;
+import org.vetcontrol.information.web.pages.AddUpdateBookEntryPage;
 import org.vetcontrol.service.dao.IBookViewDAO;
 import org.vetcontrol.web.component.Spacer;
 import org.vetcontrol.web.component.book.IDisableAwareChoiceRenderer;
@@ -583,11 +584,11 @@ public final class CargoModeEdit extends FormTemplatePage {
             cargoModeDAO.saveOrUpdate(cargoModeModel.getObject(), null);
             Long newId = cargoModeModel.getObject().getId();
             String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_UPDATE_KEY, this, null, new Object[]{newId}).getObject();
-            logBean.info(Log.MODULE.INFORMATION, event, CargoModeEdit.class, CargoMode.class, message, changes);
+            logBean.info(Log.MODULE.INFORMATION, event, AddUpdateBookEntryPage.class, CargoMode.class, message, changes);
         } catch (Exception e) {
             log.error("Error with saving the book.", e);
             String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_UPDATE_KEY, this, null, new Object[]{oldId}).getObject();
-            logBean.error(Log.MODULE.INFORMATION, event, CargoModeEdit.class, CargoMode.class, message, changes);
+            logBean.error(Log.MODULE.INFORMATION, event, AddUpdateBookEntryPage.class, CargoMode.class, message, changes);
         }
     }
 
@@ -600,24 +601,24 @@ public final class CargoModeEdit extends FormTemplatePage {
             cargoModeDAO.saveAsNew(cargoModeModel.getObject());
             Long newId = cargoModeModel.getObject().getId();
             String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_AS_NEW_KEY, this, null, new Object[]{oldId, newId}).getObject();
-            logBean.info(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, CargoModeEdit.class, CargoMode.class, message, changes);
+            logBean.info(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, AddUpdateBookEntryPage.class, CargoMode.class, message, changes);
         } catch (Exception e) {
             log.error("Error with saving the book.", e);
             String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_AS_NEW_KEY, this, null, new Object[]{oldId, null}).getObject();
-            logBean.error(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, CargoModeEdit.class, CargoMode.class, message);
+            logBean.error(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, AddUpdateBookEntryPage.class, CargoMode.class, message);
         }
     }
 
     private void disableCargoMode(Long cargoModeId) {
         cargoModeDAO.disable(cargoModeId);
         String message = new StringResourceModel(CommonResourceKeys.LOG_ENABLE_DISABLE_KEY, this, null, new Object[]{cargoModeId}).getObject();
-        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, CargoModeEdit.class, CargoMode.class, message);
+        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, AddUpdateBookEntryPage.class, CargoMode.class, message);
     }
 
     private void enableCargoMode(Long cargoModeId) {
         cargoModeDAO.enable(cargoModeId);
         String message = new StringResourceModel(CommonResourceKeys.LOG_ENABLE_DISABLE_KEY, this, null, new Object[]{cargoModeId}).getObject();
-        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, CargoModeEdit.class, CargoMode.class, message);
+        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, AddUpdateBookEntryPage.class, CargoMode.class, message);
     }
 
     private Set<Change> getChanges() {
