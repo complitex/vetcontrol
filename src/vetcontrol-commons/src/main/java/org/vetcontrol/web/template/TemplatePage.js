@@ -13,7 +13,7 @@ menuLoad = function(){
             if(t == 0){
                 //collapsed
                 var element = $(this).find("h2");
-                $(element).parent().find(".bottom").toggle("fast");
+                $(element).parent().find(".bottom").toggle();
                 $(element).removeClass(expandedMenuClassName).addClass(collapsedMenuClassName);
             } else{
         //expanded
@@ -78,7 +78,7 @@ mainPanelLoad = function(){
     if(t){
         if(t == 0){
             //collapsed
-            $("#LeftPanel").toggle("fast");
+            $("#LeftPanel").toggle();
             $("#TopPanel #ButtonMain").removeClass(expandedMainMenuClassName).addClass(collapsedMainMenuClassName);
             $("#Content").removeClass(collapsedContentClassName).addClass(expandedContentClassName);
         } else{
