@@ -4,7 +4,12 @@
     <body>
         <wicket:panel>
             <a class="logging_DetailsLink" href="#" wicket:id="detailsLink">
-                <wicket:message key="details"/>
+                <span class="message">
+                    <wicket:message key="details"/>
+                </span>
+                <span class="message" style="display: none;">
+                    <wicket:message key="hide"/>
+                </span>
             </a>
         </wicket:panel>
     </body>
