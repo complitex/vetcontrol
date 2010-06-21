@@ -56,6 +56,7 @@ import org.vetcontrol.information.web.model.DisplayPropertyLocalizableModel;
 import org.vetcontrol.information.util.change.BookChangeManager;
 import org.vetcontrol.util.CloneUtil;
 import org.vetcontrol.information.util.resource.CommonResourceKeys;
+import org.vetcontrol.information.web.pages.AddUpdateBookEntryPage;
 import org.vetcontrol.information.web.util.PageManager;
 import org.vetcontrol.service.dao.IBookViewDAO;
 import org.vetcontrol.web.component.Spacer;
@@ -365,11 +366,11 @@ public final class DepartmentEdit extends FormTemplatePage {
             departmentDAO.saveOrUpdate(newDepartment, null);
             Long newId = newDepartment.getId();
             String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_UPDATE_KEY, this, null, new Object[]{newId}).getObject();
-            logBean.info(Log.MODULE.INFORMATION, event, DepartmentEdit.class, Department.class, message, changes);
+            logBean.info(Log.MODULE.INFORMATION, event, AddUpdateBookEntryPage.class, Department.class, message, changes);
         } catch (Exception e) {
             log.error("Error with saving the book.", e);
             String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_UPDATE_KEY, this, null, new Object[]{oldId}).getObject();
-            logBean.error(Log.MODULE.INFORMATION, event, DepartmentEdit.class, Department.class, message);
+            logBean.error(Log.MODULE.INFORMATION, event, AddUpdateBookEntryPage.class, Department.class, message);
         }
     }
 
@@ -382,24 +383,24 @@ public final class DepartmentEdit extends FormTemplatePage {
             departmentDAO.saveAsNew(newDepartment);
             Long newId = newDepartment.getId();
             String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_AS_NEW_KEY, this, null, new Object[]{oldId, newId}).getObject();
-            logBean.info(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, DepartmentEdit.class, Department.class, message, changes);
+            logBean.info(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, AddUpdateBookEntryPage.class, Department.class, message, changes);
         } catch (Exception e) {
             log.error("Error with saving the book.", e);
             String message = new StringResourceModel(CommonResourceKeys.LOG_SAVE_AS_NEW_KEY, this, null, new Object[]{oldId, null}).getObject();
-            logBean.error(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, DepartmentEdit.class, Department.class, message);
+            logBean.error(Log.MODULE.INFORMATION, Log.EVENT.CREATE_AS_NEW, AddUpdateBookEntryPage.class, Department.class, message);
         }
     }
 
     private void disableDepartment(Long departmentId) {
         departmentDAO.disable(departmentId);
         String message = new StringResourceModel(CommonResourceKeys.LOG_ENABLE_DISABLE_KEY, this, null, new Object[]{departmentId}).getObject();
-        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, DepartmentEdit.class, Department.class, message);
+        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.DISABLE, AddUpdateBookEntryPage.class, Department.class, message);
     }
 
     private void enableDepartment(Long departmentId) {
         departmentDAO.enable(departmentId);
         String message = new StringResourceModel(CommonResourceKeys.LOG_ENABLE_DISABLE_KEY, this, null, new Object[]{departmentId}).getObject();
-        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, DepartmentEdit.class, Department.class, message);
+        logBean.info(Log.MODULE.INFORMATION, Log.EVENT.ENABLE, AddUpdateBookEntryPage.class, Department.class, message);
     }
 
     @Override
