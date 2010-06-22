@@ -34,9 +34,11 @@ import javax.ejb.EJB;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
+import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.vetcontrol.logging.web.component.change.DetailsPanel;
 import org.vetcontrol.logging.web.component.change.DetailsLink;
+import org.vetcontrol.web.resource.WebCommonResourceInitializer;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -57,7 +59,7 @@ public class LogList extends ListTemplatePage {
     private LogListBean logListBean;
 
     public LogList() {
-        super();
+        add(JavascriptPackageResource.getHeaderContribution(WebCommonResourceInitializer.IE_SELECT_FIX_RESOURCE_NAME_JS));
 
         add(new Label("title", new ResourceModel("logging.log.list.title")));
         add(new Label("header", new ResourceModel("logging.log.list.title")));

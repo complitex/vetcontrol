@@ -27,11 +27,16 @@ public final class WebCommonResourceInitializer implements IInitializer {
     public static final String COMMON_RESOURCE_NAME = "js/common.js";
     public static final ResourceReference COMMON_JS = getResourceReference(COMMON_RESOURCE_NAME);
 
+    private static final String IE_SELECT_FIX_RELATED_PATH = "js/ie_select_fix.js";
+    public static final String IE_SELECT_FIX_RESOURCE_NAME = "js/ie_select_fix.js";
+    public static final ResourceReference IE_SELECT_FIX_RESOURCE_NAME_JS = getResourceReference(IE_SELECT_FIX_RESOURCE_NAME);
+
     @Override
     public void init(Application application) {
         SharedResources sharedResources = application.getSharedResources();
         sharedResources.add(STYLE_RESOURCE_NAME, CSSPackageResource.get(getClass(), STYLE_RELATED_PATH));
         sharedResources.add(COMMON_RESOURCE_NAME, JavascriptPackageResource.get(getClass(), COMMON_RELATED_PATH));
+        sharedResources.add(IE_SELECT_FIX_RESOURCE_NAME, JavascriptPackageResource.get(getClass(), IE_SELECT_FIX_RELATED_PATH));
     }
 
     private static ResourceReference getResourceReference(String resourceName) {
