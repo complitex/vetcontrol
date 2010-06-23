@@ -7,7 +7,7 @@ package org.vetcontrol.entity;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
-import org.vetcontrol.sync.LongAdapter;
+import org.vetcontrol.sync.adapter.LongAdapter;
 import org.vetcontrol.book.annotation.BookReference;
 import org.vetcontrol.book.annotation.ValidProperty;
 

@@ -6,9 +6,15 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.hibernate.annotations.Parent;
+import org.vetcontrol.sync.adapter.LocaleAdapter;
 
 @Embeddable
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Change implements Serializable {
 
     public static enum CollectionModificationStatus {
@@ -17,6 +23,7 @@ public class Change implements Serializable {
     }
 
     @Parent
+    @XmlIDREF
     private Log log;
 
     /**
@@ -41,6 +48,7 @@ public class Change implements Serializable {
     private String newValue;
 
     @Column(name = "locale", nullable = true, length = 10)
+    @XmlJavaTypeAdapter(LocaleAdapter.class)
     private Locale locale;
 
     /**

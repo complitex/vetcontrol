@@ -6,7 +6,7 @@ package org.vetcontrol.entity;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.vetcontrol.sync.LongAdapter;
+import org.vetcontrol.sync.adapter.LongAdapter;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
