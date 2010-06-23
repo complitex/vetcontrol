@@ -54,7 +54,7 @@ import static org.vetcontrol.web.security.SecurityRoles.*;
 @AuthorizeInstantiation({DOCUMENT_CREATE, DOCUMENT_DEP_EDIT, DOCUMENT_DEP_CHILD_EDIT})
 public class ArrestDocumentEdit extends DocumentEditPage {
 
-    private static final Logger log = LoggerFactory.getLogger(DocumentCargoEdit.class);
+    private static final Logger log = LoggerFactory.getLogger(ArrestDocumentEdit.class);
 
     @EJB(name = "DocumentBean")
     private CommonDocumentBean commonDocumentBean;
