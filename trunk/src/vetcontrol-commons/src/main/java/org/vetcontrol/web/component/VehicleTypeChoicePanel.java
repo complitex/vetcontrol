@@ -10,7 +10,9 @@ import java.util.ResourceBundle;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.EnumChoiceRenderer;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.string.Strings;
 import org.vetcontrol.entity.VehicleType;
 
 /**
@@ -19,16 +21,29 @@ import org.vetcontrol.entity.VehicleType;
  */
 public final class VehicleTypeChoicePanel extends Panel {
 
-    public VehicleTypeChoicePanel(String id, IModel<VehicleType> model, boolean required) {
+    public VehicleTypeChoicePanel(String id, IModel<VehicleType> model, boolean required, String labelId) {
         super(id);
-        init(model, required);
+        init(model, required, labelId);
     }
 
-    private void init(IModel<VehicleType> model, boolean required) {
+    private void init(IModel<VehicleType> model, boolean required, final String labelId) {
         DropDownChoice<VehicleType> select = new DropDownChoice<VehicleType>("select", model, Arrays.asList(VehicleType.values()),
                 new EnumChoiceRenderer<VehicleType>(this));
         select.setRequired(required);
+        if (!Strings.isEmpty(labelId)) {
+            select.setLabel(new AbstractReadOnlyModel<String>() {
+
+                @Override
+                public String getObject() {
+                    return getPage().getString(labelId);
+                }
+            });
+        }
         add(select);
+    }
+
+    public DropDownChoice<VehicleType> getDropDownComponent() {
+        return (DropDownChoice<VehicleType>) get("select");
     }
 
     public static final String getDysplayName(VehicleType vehicleType, Locale locale) {

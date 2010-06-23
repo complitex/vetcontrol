@@ -102,7 +102,7 @@ public class ArrestDocumentList extends ListTemplatePage {
         filterForm.add(new TextField<String>("count"));
         filterForm.add(new DropDownChoice<UnitType>("unitType", arrestDocumentBean.getList(UnitType.class),
                 new BookChoiceRenderer<UnitType>(getSystemLocale())));
-        filterForm.add(new VehicleTypeChoicePanel("vehicleType", new PropertyModel<VehicleType>(filter, "vehicleType"), false));
+        filterForm.add(new VehicleTypeChoicePanel("vehicleType", new PropertyModel<VehicleType>(filter, "vehicleType"), false, null));
         filterForm.add(new DropDownChoice<CountryBook>("senderCountry", arrestDocumentBean.getList(CountryBook.class),
                 new BookChoiceRenderer<CountryBook>(getSystemLocale())));
         filterForm.add(new TextField<String>("senderName"));

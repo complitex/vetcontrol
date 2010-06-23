@@ -41,6 +41,7 @@ import javax.ejb.EJB;
 import java.util.*;
 import org.vetcontrol.document.util.change.DocumentChangeManager;
 import org.vetcontrol.util.CloneUtil;
+import org.vetcontrol.web.component.VehicleTypeChoicePanel;
 
 import static org.vetcontrol.entity.Log.EVENT.CREATE;
 import static org.vetcontrol.entity.Log.EVENT.EDIT;
@@ -271,14 +272,9 @@ public class DocumentCargoEdit extends DocumentEditPage {
         form.add(movementType);
 
         //Тип транспортного средства
-        final DropDownChoice<VehicleType> ddcVehicleType = new DropDownChoice<VehicleType>("document.cargo.vehicle_type",
-                new PropertyModel<VehicleType>(documentCargoModel, "vehicleType"),
-                Arrays.asList(VehicleType.values()),
-                new EnumChoiceRenderer<VehicleType>(this));
-        ddcVehicleType.setRequired(true);
-        ddcVehicleType.setOutputMarkupId(true);
-        form.add(ddcVehicleType);
-
+        final VehicleTypeChoicePanel vehicleTypeChoicePanel = new VehicleTypeChoicePanel("document.cargo.vehicle_type",
+                new PropertyModel<VehicleType>(documentCargoModel, "vehicleType"), true, "document.cargo.vehicle_type");
+        final DropDownChoice<VehicleType> ddcVehicleType = vehicleTypeChoicePanel.getDropDownComponent();
         ddcVehicleType.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
             @Override
@@ -288,6 +284,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
                 }
             }
         });
+        form.add(vehicleTypeChoicePanel);
 
         final boolean isExists = id != null;
 

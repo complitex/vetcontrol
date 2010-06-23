@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.vetcontrol.web.component.VehicleTypeChoicePanel;
 
 import static org.vetcontrol.web.security.SecurityRoles.*;
 
@@ -98,7 +99,7 @@ public class DocumentCargoView extends TemplatePage {
         add(new Label("header", title));
 
         add(new Label("document.cargo.movement_type", MovementTypeChoicePanel.getDysplayName(dc.getMovementType(), getLocale())));
-        add(new Label("document.cargo.vehicle_type", getString(dc.getVehicleType().name())));
+        add(new Label("document.cargo.vehicle_type", VehicleTypeChoicePanel.getDysplayName(dc.getVehicleType(), getLocale())));
         add(new Label("document.cargo.cargo_sender_country", dc.getSenderCountry().getDisplayName(getLocale(), getSystemLocale())));
         add(new Label("document.cargo.cargo_sender_name", dc.getSenderName()));
         add(new Label("document.cargo.cargo_receiver_name", dc.getReceiverName()));
