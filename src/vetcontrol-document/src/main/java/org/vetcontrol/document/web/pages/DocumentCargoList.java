@@ -102,7 +102,7 @@ public class DocumentCargoList extends ListTemplatePage {
 
         filterForm.add(new MovementTypeChoicePanel("movementType", new PropertyModel<MovementType>(filter, "movementType"),
                 AvailableMovementTypes.get(DocumentCargo.class), false, null));
-        filterForm.add(new VehicleTypeChoicePanel("vehicleType", new PropertyModel<VehicleType>(filter, "vehicleType"), false));
+        filterForm.add(new VehicleTypeChoicePanel("vehicleType", new PropertyModel<VehicleType>(filter, "vehicleType"), false, null));
         filterForm.add(new TextField<String>("receiverName"));
         filterForm.add(new TextField<String>("receiverAddress"));
         filterForm.add(new TextField<String>("senderName"));

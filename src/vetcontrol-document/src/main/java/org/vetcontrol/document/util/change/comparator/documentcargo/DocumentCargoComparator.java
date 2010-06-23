@@ -63,6 +63,7 @@ public class DocumentCargoComparator extends DocumentComparator<DocumentCargo> {
         propertyComparators.put("passingBorderPoint", new PassingBorderPointComparator(getString("document.cargo.passingBorderPoint")));
         propertyComparators.put("department", new LocalizableBookReferenceComparator(getString("document.cargo.department"), getSystemLocale()));
         propertyComparators.put("cargos", new CargoListComparator(getString("document.cargo.cargo_list"), getSystemLocale()));
+        propertyComparators.put("vehicles", new VehicleListComparator(getString("document.cargo.vehicle_list"), getSystemLocale()));
 
         return propertyComparators;
     }

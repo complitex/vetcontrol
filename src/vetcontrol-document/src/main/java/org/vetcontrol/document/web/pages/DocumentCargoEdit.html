@@ -53,7 +53,7 @@
                 </tr>
                 <tr>
                     <th><label for="vehicle_type"><wicket:message key="document.cargo.vehicle_type"/><b class="blue">*</b>:</label></th>
-                    <td><select id="vehicle_type" wicket:id="document.cargo.vehicle_type"></select></td>
+                    <td><span id="vehicle_type" wicket:id="document.cargo.vehicle_type"></span></td>
                 </tr>
                 <tr>
                     <th><label for="cargo_sender_country"><wicket:message key="document.cargo.cargo_sender_country"/><b class="blue">*</b>:</label></th>
@@ -101,7 +101,9 @@
             </table>
         </fieldset>
         <fieldset style="margin-bottom:10px">
-            <legend>Транспортные средства</legend>
+            <legend>
+                <wicket:message key="document.cargo.vehicle_list"/>
+            </legend>
             <div wicket:id="document.cargo.vehicle_container">
                 <table id="vehicles" border="0" cellspacing="2" cellpadding="2" class="table_input">
                     <tbody>
@@ -118,7 +120,9 @@
             <a class="addVehicle" href="#" wicket:id="document.cargo.vehicle.add"><wicket:message key="document.cargo.vehicle.add"/></a>
         </fieldset>
         <fieldset style="margin-bottom:10px">
-            <legend>Грузы</legend>
+            <legend>
+                <wicket:message key="document.cargo.cargo_list"/>
+            </legend>
             <div wicket:id="document.cargo.cargo_mode_container">
                 <span wicket:id="document.cargo.cargo_mode.feedback"></span>
                 

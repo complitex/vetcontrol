@@ -51,7 +51,8 @@ public class CargoComparator extends DocumentComparator<Cargo> {
 
             @Override
             public Set<Change> compare(Vehicle oldValue, Vehicle newValue) {
-                //Cargo.vehicle association can not be null. Therefore the both oldValue and newValue are not null.
+                // Cargo.vehicle association can not be null. Therefore the both oldValue and newValue are not null.
+                // Moreover old vehicle's id is not null due to old vehicle retrieved from db.
                 if (!oldValue.getId().equals(newValue.getId())) {
                     String oldValueAsString = oldValue.getVehicleDetails();
                     String newValueAsString = newValue.getVehicleDetails();
