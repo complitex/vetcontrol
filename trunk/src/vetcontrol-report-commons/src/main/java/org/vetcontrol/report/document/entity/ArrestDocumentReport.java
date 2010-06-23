@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.Locale;
 import org.vetcontrol.entity.ArrestDocument;
 import static org.vetcontrol.book.BeanPropertyUtil.*;
-import static org.vetcontrol.web.component.VehicleTypeChoicePanel.getDysplayName;
+import static org.vetcontrol.web.component.VehicleTypeChoicePanel.getDisplayName;
 
 /**
  *
@@ -187,7 +187,7 @@ public class ArrestDocumentReport implements Serializable {
         setPassingBorderPointName(arrestDocument.getPassingBorderPoint().getName());
         setCount(arrestDocument.getCount());
         setUnitTypeName(getLocalizablePropertyAsStringInLocale(arrestDocument.getUnitType().getShortNames(), reportLocale));
-        setVehicleType(getDysplayName(arrestDocument.getVehicleType(), reportLocale));
+        setVehicleType(getDisplayName(arrestDocument.getVehicleType(), reportLocale));
         setVehicleDetails(arrestDocument.getVehicleDetails());
         setCertificateDate(arrestDocument.getCertificateDate());
         setCertificateDetails(arrestDocument.getCertificateDetails());

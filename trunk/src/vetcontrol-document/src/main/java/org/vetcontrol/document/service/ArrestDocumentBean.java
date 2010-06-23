@@ -94,7 +94,7 @@ public class ArrestDocumentBean {
             case VEHICLE_TYPE:
                 order += " (CASE ad.vehicleType ";
                 for (VehicleType vehicleType : VehicleType.values()) {
-                    order += "WHEN '" + vehicleType.name() + "' THEN '" + VehicleTypeChoicePanel.getDysplayName(vehicleType, Session.get().getLocale()) + "' ";
+                    order += "WHEN '" + vehicleType.name() + "' THEN '" + VehicleTypeChoicePanel.getDisplayName(vehicleType, Session.get().getLocale()) + "' ";
                 }
                 order += "END)";
                 break;

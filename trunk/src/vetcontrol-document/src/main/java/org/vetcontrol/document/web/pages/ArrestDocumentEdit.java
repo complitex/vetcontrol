@@ -1,7 +1,6 @@
 package org.vetcontrol.document.web.pages;
 
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;
 import org.apache.wicket.authorization.UnauthorizedInstantiationException;
@@ -13,7 +12,6 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.*;
-import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +34,13 @@ import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import org.vetcontrol.document.util.change.DocumentChangeManager;
+import org.vetcontrol.util.CloneUtil;
+import org.vetcontrol.web.component.VehicleTypeChoicePanel;
 
 import static org.vetcontrol.entity.Log.EVENT.CREATE;
 import static org.vetcontrol.entity.Log.EVENT.EDIT;
@@ -107,7 +109,12 @@ public class ArrestDocumentEdit extends DocumentEditPage {
         final boolean isNewDocument = (arrestDocumentId == null) && (cargoId == null);
 
         //редактирование
-        if (arrestDocumentId != null) {
+        final boolean isEditDocument = arrestDocumentId != null;
+
+        //создание из карточки на груз
+        final boolean isCreateFromDocumentCargo = cargoId != null;
+
+        if (isEditDocument) {
             try {
                 ad = arrestDocumentBean.loadArrestDocument(arrestDocumentId);
 
@@ -127,8 +134,7 @@ public class ArrestDocumentEdit extends DocumentEditPage {
 
         final IModel<Cargo> cargoModel = new Model<Cargo>();
 
-        //создание из карточки на груз
-        if (cargoId != null) {
+        if (isCreateFromDocumentCargo) {
             Cargo cargo = arrestDocumentBean.loadCargo(cargoId);
             cargoModel.setObject(cargo);
 
@@ -158,7 +164,7 @@ public class ArrestDocumentEdit extends DocumentEditPage {
         final User currentUser = userProfileBean.getCurrentUser();
 
         //новый акт
-        if (arrestDocumentId == null && cargoId == null) {
+        if (isNewDocument) {
             ad = new ArrestDocument();
             ad.setDepartment(currentUser.getDepartment());
             ad.setPassingBorderPoint(currentUser.getPassingBorderPoint());
@@ -167,13 +173,13 @@ public class ArrestDocumentEdit extends DocumentEditPage {
         }
 
         //Проверка доступа к данным
-        if (arrestDocumentId == null && cargoId == null && !hasAnyRole(DOCUMENT_CREATE)) {
+        if (isNewDocument && !hasAnyRole(DOCUMENT_CREATE)) {
             log.error("Пользователю запрещен доступ на создание акта задержания груза: " + currentUser.toString());
             logBean.error(DOCUMENT, CREATE, ArrestDocumentEdit.class, ArrestDocument.class, "Доступ запрещен");
             throw new UnauthorizedInstantiationException(ArrestDocumentEdit.class);
         }
 
-        if (arrestDocumentId != null) {
+        if (isEditDocument) {
             boolean authorized = hasAnyRole(DOCUMENT_EDIT) && currentUser.getId().equals(ad.getCreator().getId());
 
             if (!authorized && hasAnyRole(DOCUMENT_DEP_EDIT)) {
@@ -198,12 +204,20 @@ public class ArrestDocumentEdit extends DocumentEditPage {
             }
         }
 
+        final ArrestDocument oldCopy;
+        if (isEditDocument) {
+            //editing
+            oldCopy = CloneUtil.cloneObject(ad);
+        } else {
+            oldCopy = null;
+        }
+
         //Заголовок
         IModel title = new AbstractReadOnlyModel<String>() {
 
             @Override
             public String getObject() {
-                return (arrestDocumentId != null)
+                return (isEditDocument)
                         ? getString("arrest.document.edit.title.edit") + " " + arrestDocumentId
                         : getString("arrest.document.edit.title.create");
             }
@@ -224,9 +238,12 @@ public class ArrestDocumentEdit extends DocumentEditPage {
             @Override
             protected void onSubmit() {
                 try {
+                    //get changes
+                    Set<Change> changes = getChanges(oldCopy, getModelObject());
+
                     arrestDocumentBean.save(getModelObject(), cargoId);
 
-                    if (cargoId != null) {
+                    if (isCreateFromDocumentCargo) {
                         DocumentCargo dc = cargoModel.getObject().getDocumentCargo();
 
                         setResponsePage(DocumentCargoEdit.class,
@@ -248,7 +265,7 @@ public class ArrestDocumentEdit extends DocumentEditPage {
 
                     getSession().info(message);
                     logBean.info(DOCUMENT, arrestDocumentId == null ? CREATE : EDIT, ArrestDocumentEdit.class,
-                            ArrestDocument.class, message + " (ID : " + getModelObject().getId() + ")");
+                            ArrestDocument.class, message + " (ID : " + getModelObject().getId() + ")", changes);
                 } catch (Exception e) {
                     getSession().error(new StringResourceModel("arrest.document.edit.message.save.error", this, null,
                             new Object[]{arrestDocumentId}).getString());
@@ -267,7 +284,7 @@ public class ArrestDocumentEdit extends DocumentEditPage {
 
             @Override
             public void onSubmit() {
-                if (cargoId != null) {
+                if (isCreateFromDocumentCargo) {
                     DocumentCargo dc = cargoModel.getObject().getDocumentCargo();
 
                     setResponsePage(DocumentCargoEdit.class,
@@ -411,12 +428,11 @@ public class ArrestDocumentEdit extends DocumentEditPage {
         form.add(count);
 
         //Тип транспортного средства
-        final DropDownChoice<VehicleType> ddcVehicleType = new DropDownChoice<VehicleType>("arrest.document.vehicle_type",
+        VehicleTypeChoicePanel vehicleTypeChoicePanel = new VehicleTypeChoicePanel("arrest.document.vehicle_type",
                 new PropertyModel<VehicleType>(arrestDocumentModel, "vehicleType"),
-                Arrays.asList(VehicleType.values()),
-                new EnumChoiceRenderer<VehicleType>(this));
-        ddcVehicleType.setRequired(true);
-        form.add(ddcVehicleType);
+                true,
+                "arrest.document.vehicle_type");
+        form.add(vehicleTypeChoicePanel);
 
         //Реквизиты транспортного средства
         TextField<String> vehicleDetails = new TextField<String>("arrest.document.vehicle_details",
@@ -454,7 +470,7 @@ public class ArrestDocumentEdit extends DocumentEditPage {
         certificateDate.setRequired(true);
         form.add(certificateDate);
 
-        boolean visible = arrestDocumentId != null;
+        boolean visible = isEditDocument;
 
         //Автор
         Label l_creator = new Label("l_creator", new ResourceModel("arrest.document.creator"));
@@ -484,8 +500,7 @@ public class ArrestDocumentEdit extends DocumentEditPage {
     }
 
     private void storeArrestDocument(ArrestDocument ad) {
-        WebRequestCycle webRequestCycle = (WebRequestCycle) RequestCycle.get();
-        HttpServletRequest servletRequest = webRequestCycle.getWebRequest().getHttpServletRequest();
+        HttpServletRequest servletRequest = getWebRequestCycle().getWebRequest().getHttpServletRequest();
         HttpSession session = servletRequest.getSession(false);
         if (session != null) {
             session.setAttribute(ArrestDocumentReportServlet.ARREST_DOCUMENT_KEY, ad);
@@ -494,6 +509,24 @@ public class ArrestDocumentEdit extends DocumentEditPage {
 
     private void loadDependencies(ArrestDocument ad) {
         bookViewDAO.addLocalizationSupport(ad);
+    }
+
+    private Set<Change> getChanges(ArrestDocument oldArrestDocument, ArrestDocument newArrestDocument) {
+        if (oldArrestDocument != null) {
+            try {
+                Set<Change> changes = DocumentChangeManager.getChanges(oldArrestDocument, newArrestDocument, getSystemLocale());
+
+                if (log.isDebugEnabled()) {
+                    for (Change change : changes) {
+                        log.debug(change.toString());
+                    }
+                }
+                return changes;
+            } catch (Exception e) {
+                log.error("Error with getting changes for arrest document.", e);
+            }
+        }
+        return Collections.emptySet();
     }
 
     @Override

@@ -20,6 +20,7 @@ import org.vetcontrol.web.template.TemplatePage;
 import javax.ejb.EJB;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.apache.wicket.RequestCycle;
@@ -28,6 +29,7 @@ import org.vetcontrol.report.commons.jasper.ExportType;
 import org.vetcontrol.report.commons.web.components.PrintButton;
 import org.vetcontrol.report.document.jasper.arrest.ArrestDocumentReportServlet;
 import org.vetcontrol.service.dao.IBookViewDAO;
+import org.vetcontrol.web.component.VehicleTypeChoicePanel;
 import org.vetcontrol.web.component.toolbar.ToolbarButton;
 
 import static org.vetcontrol.web.security.SecurityRoles.*;
@@ -40,10 +42,13 @@ import static org.vetcontrol.web.security.SecurityRoles.*;
 public class ArrestDocumentView extends TemplatePage {
 
     private static final Logger log = LoggerFactory.getLogger(ArrestDocumentView.class);
+
     @EJB(name = "UserProfileBean")
     private UserProfileBean userProfileBean;
+
     @EJB(name = "ArrestDocumentBean")
     private ArrestDocumentBean arrestDocumentBean;
+
     @EJB(name = "BookViewDAO")
     private IBookViewDAO bookViewDAO;
 
@@ -121,7 +126,8 @@ public class ArrestDocumentView extends TemplatePage {
         add(new Label("arrest.document.unit_type", getString(ad.getUnitType())));
 
         //Тип транспортного средства
-        add(new Label("arrest.document.vehicle_type", getStringOrKey(ad.getVehicleType() != null ? ad.getVehicleType().name() : "")));
+        add(new Label("arrest.document.vehicle_type", ad.getVehicleType() != null
+                ? VehicleTypeChoicePanel.getDisplayName(ad.getVehicleType(), getLocale()) : ""));
 
         //Реквизиты транспортного средства
         add(new Label("arrest.document.vehicle_details", ad.getVehicleDetails()));

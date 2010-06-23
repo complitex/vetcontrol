@@ -182,14 +182,14 @@ public class DocumentCargoBean {
             case MOVEMENT_TYPE:
                 order += " (CASE dc.movementType ";
                 for (MovementType movementType : MovementType.values()) {
-                    order += "WHEN '" + movementType.name() + "' THEN '" + MovementTypeChoicePanel.getDysplayName(movementType, Session.get().getLocale()) + "' ";
+                    order += "WHEN '" + movementType.name() + "' THEN '" + MovementTypeChoicePanel.getDisplayName(movementType, Session.get().getLocale()) + "' ";
                 }
                 order += "END)";
                 break;
             case VEHICLE_TYPE:
                 order += " (CASE dc.vehicleType ";
                 for (VehicleType vehicleType : VehicleType.values()) {
-                    order += "WHEN '" + vehicleType.name() + "' THEN '" + VehicleTypeChoicePanel.getDysplayName(vehicleType, Session.get().getLocale()) + "' ";
+                    order += "WHEN '" + vehicleType.name() + "' THEN '" + VehicleTypeChoicePanel.getDisplayName(vehicleType, Session.get().getLocale()) + "' ";
                 }
                 order += "END)";
                 break;
