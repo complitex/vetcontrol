@@ -98,8 +98,8 @@ public class DocumentCargoView extends TemplatePage {
         add(new Label("title", title));
         add(new Label("header", title));
 
-        add(new Label("document.cargo.movement_type", MovementTypeChoicePanel.getDysplayName(dc.getMovementType(), getLocale())));
-        add(new Label("document.cargo.vehicle_type", VehicleTypeChoicePanel.getDysplayName(dc.getVehicleType(), getLocale())));
+        add(new Label("document.cargo.movement_type", MovementTypeChoicePanel.getDisplayName(dc.getMovementType(), getLocale())));
+        add(new Label("document.cargo.vehicle_type", VehicleTypeChoicePanel.getDisplayName(dc.getVehicleType(), getLocale())));
         add(new Label("document.cargo.cargo_sender_country", dc.getSenderCountry().getDisplayName(getLocale(), getSystemLocale())));
         add(new Label("document.cargo.cargo_sender_name", dc.getSenderName()));
         add(new Label("document.cargo.cargo_receiver_name", dc.getReceiverName()));

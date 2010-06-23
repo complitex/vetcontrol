@@ -178,7 +178,7 @@ public class ArrestDocumentList extends ListTemplatePage {
                 item.add(new Label("cargoMode", ad.getCargoMode() != null ? ad.getCargoMode().getDisplayName(getLocale(), getSystemLocale()) : ""));
                 item.add(new Label("count", ad.getCount() + ""));
                 item.add(new Label("unitType", ad.getUnitType() != null ? ad.getUnitType().getDisplayName(getLocale(), getSystemLocale()) : ""));
-                item.add(new Label("vehicleType", VehicleTypeChoicePanel.getDysplayName(ad.getVehicleType(), getLocale())));
+                item.add(new Label("vehicleType", VehicleTypeChoicePanel.getDisplayName(ad.getVehicleType(), getLocale())));
                 item.add(new Label("senderCountry", ad.getSenderCountry().getDisplayName(getLocale(), getSystemLocale())));
                 item.add(new Label("senderName", ad.getSenderName()));
                 item.add(new Label("receiverAddress", ad.getReceiverAddress()));

@@ -45,6 +45,6 @@ public final class Formatter {
     }
 
     public static String formatMovementType(String fromDb, Locale locale) {
-        return MovementTypeChoicePanel.getDysplayName(MovementType.valueOf(fromDb), locale);
+        return MovementTypeChoicePanel.getDisplayName(MovementType.valueOf(fromDb), locale);
     }
 }

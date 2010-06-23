@@ -172,8 +172,8 @@ public class DocumentCargoList extends ListTemplatePage {
 
                 item.add(new BookmarkablePageLinkPanel<DocumentCargo>("id", dc.getDisplayId(),
                         DocumentCargoView.class, pageParameters));
-                item.add(new Label("movementType", MovementTypeChoicePanel.getDysplayName(dc.getMovementType(), getLocale())));
-                item.add(new Label("vehicleType", VehicleTypeChoicePanel.getDysplayName(dc.getVehicleType(), getLocale())));
+                item.add(new Label("movementType", MovementTypeChoicePanel.getDisplayName(dc.getMovementType(), getLocale())));
+                item.add(new Label("vehicleType", VehicleTypeChoicePanel.getDisplayName(dc.getVehicleType(), getLocale())));
                 item.add(new Label("receiverName", dc.getReceiverName()));
                 item.add(new Label("receiverAddress", dc.getReceiverAddress()));
                 item.add(new Label("senderName", dc.getSenderName()));

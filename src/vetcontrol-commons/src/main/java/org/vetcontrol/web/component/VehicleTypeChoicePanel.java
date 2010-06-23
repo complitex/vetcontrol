@@ -46,7 +46,7 @@ public final class VehicleTypeChoicePanel extends Panel {
         return (DropDownChoice<VehicleType>) get("select");
     }
 
-    public static final String getDysplayName(VehicleType vehicleType, Locale locale) {
+    public static final String getDisplayName(VehicleType vehicleType, Locale locale) {
         return ResourceBundle.getBundle(VehicleTypeChoicePanel.class.getName(), locale).
                 getString(VehicleType.class.getSimpleName() + "." + vehicleType.name());
     }

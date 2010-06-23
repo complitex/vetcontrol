@@ -64,7 +64,7 @@ public class ArrestReportDAO extends AbstractReportDAO<ExtendedArrestReport> {
             orderByBuilder.append("WHEN '").
                     append(vehicleType.name()).
                     append("' THEN '").
-                    append(VehicleTypeChoicePanel.getDysplayName(vehicleType, locale)).
+                    append(VehicleTypeChoicePanel.getDisplayName(vehicleType, locale)).
                     append("' ");
         }
         orderByBuilder.append("END)");

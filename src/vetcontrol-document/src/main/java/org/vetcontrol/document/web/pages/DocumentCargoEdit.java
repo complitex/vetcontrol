@@ -272,7 +272,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
         form.add(movementType);
 
         //Тип транспортного средства
-        final VehicleTypeChoicePanel vehicleTypeChoicePanel = new VehicleTypeChoicePanel("document.cargo.vehicle_type",
+        VehicleTypeChoicePanel vehicleTypeChoicePanel = new VehicleTypeChoicePanel("document.cargo.vehicle_type",
                 new PropertyModel<VehicleType>(documentCargoModel, "vehicleType"), true, "document.cargo.vehicle_type");
         final DropDownChoice<VehicleType> ddcVehicleType = vehicleTypeChoicePanel.getDropDownComponent();
         ddcVehicleType.add(new AjaxFormComponentUpdatingBehavior("onchange") {

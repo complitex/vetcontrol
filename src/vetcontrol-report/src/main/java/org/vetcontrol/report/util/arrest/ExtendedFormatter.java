@@ -24,7 +24,7 @@ public final class ExtendedFormatter {
     }
 
     public static String formatVehicleType(String fromDb, Locale locale) {
-        return VehicleTypeChoicePanel.getDysplayName(VehicleType.valueOf(fromDb), locale);
+        return VehicleTypeChoicePanel.getDisplayName(VehicleType.valueOf(fromDb), locale);
     }
 
     public static String formatReportTitleDate(Date date, Locale locale) {

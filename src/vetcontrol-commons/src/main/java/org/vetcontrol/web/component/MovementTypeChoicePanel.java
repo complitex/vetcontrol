@@ -43,7 +43,7 @@ public final class MovementTypeChoicePanel extends Panel {
         add(select);
     }
 
-    public static final String getDysplayName(MovementType movementType, Locale locale) {
+    public static final String getDisplayName(MovementType movementType, Locale locale) {
         return ResourceBundle.getBundle(MovementTypeChoicePanel.class.getName(), locale).
                 getString(MovementType.class.getSimpleName() + "." + movementType.name());
     }

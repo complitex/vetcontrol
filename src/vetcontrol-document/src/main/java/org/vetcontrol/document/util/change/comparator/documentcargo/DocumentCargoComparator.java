@@ -44,14 +44,14 @@ public class DocumentCargoComparator extends DocumentComparator<DocumentCargo> {
 
             @Override
             protected String displayPropertyValue(MovementType value) {
-                return MovementTypeChoicePanel.getDysplayName(value, getSystemLocale());
+                return MovementTypeChoicePanel.getDisplayName(value, getSystemLocale());
             }
         });
         propertyComparators.put("vehicleType", new SimpleComparator<VehicleType>(getString("document.cargo.vehicle_type")) {
 
             @Override
             protected String displayPropertyValue(VehicleType value) {
-                return VehicleTypeChoicePanel.getDysplayName(value, getSystemLocale());
+                return VehicleTypeChoicePanel.getDisplayName(value, getSystemLocale());
             }
         });
         propertyComparators.put("senderCountry", new LocalizableBookReferenceComparator(getString("document.cargo.cargo_sender_country"),
