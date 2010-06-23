@@ -24,9 +24,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.hibernate.annotations.CollectionId;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.vetcontrol.sync.adapter.LongAdapter;
 
 /**
  * @author Anatoly A. Ivanov java@inheaven.ru
@@ -55,6 +59,8 @@ public class Log implements Serializable {
     }
 
     @Id
+    @XmlID
+    @XmlJavaTypeAdapter(LongAdapter.class)
     @GeneratedValue(generator = "EnhancedIdentityGenerator")
     @GenericGenerator(name = "EnhancedIdentityGenerator", strategy = "org.vetcontrol.hibernate.id.IdentityGenerator")
     private Long id;
