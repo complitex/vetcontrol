@@ -17,17 +17,20 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.*;
+import org.vetcontrol.book.ShowBooksMode;
+import org.vetcontrol.document.service.AvailableMovementTypes;
 import org.vetcontrol.document.service.CommonDocumentBean;
 import org.vetcontrol.document.service.DocumentCargoBean;
 import org.vetcontrol.document.service.DocumentCargoFilter;
-import org.vetcontrol.web.component.book.BookChoiceRenderer;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.UIPreferences;
 import org.vetcontrol.service.UserProfileBean;
 import org.vetcontrol.web.component.BookmarkablePageLinkPanel;
 import org.vetcontrol.web.component.DatePicker;
+import org.vetcontrol.web.component.MovementTypeChoicePanel;
 import org.vetcontrol.web.component.VehicleTypeChoicePanel;
+import org.vetcontrol.web.component.book.BookChoiceRenderer;
 import org.vetcontrol.web.component.datatable.ArrowOrderByBorder;
 import org.vetcontrol.web.component.paging.PagingNavigator;
 import org.vetcontrol.web.component.toolbar.AddDocumentButton;
@@ -39,9 +42,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import org.vetcontrol.book.ShowBooksMode;
-import org.vetcontrol.document.service.AvailableMovementTypes;
-import org.vetcontrol.web.component.MovementTypeChoicePanel;
 
 import static org.vetcontrol.document.service.DocumentCargoBean.OrderBy;
 import static org.vetcontrol.web.security.SecurityRoles.*;
@@ -157,7 +157,7 @@ public class DocumentCargoList extends ListTemplatePage {
         String sortPropertyFromPreferences = preferences.getPreference(UIPreferences.PreferenceType.SORT_PROPERTY, SORT_PROPERTY_KEY, String.class);
         Boolean sortOrderFromPreferences = preferences.getPreference(UIPreferences.PreferenceType.SORT_ORDER, SORT_ORDER_KEY, Boolean.class);
         String sortProp = sortPropertyFromPreferences != null ? sortPropertyFromPreferences : OrderBy.CREATED.name();
-        boolean asc = sortOrderFromPreferences != null ? sortOrderFromPreferences : true;
+        boolean asc = sortOrderFromPreferences != null ? sortOrderFromPreferences : false;
         dataProvider.setSort(sortProp, asc);
 
         //Таблица документов
@@ -185,7 +185,7 @@ public class DocumentCargoList extends ListTemplatePage {
                 item.add(syncStatus);
                 if ((server || !dc.getSyncStatus().equals(Synchronized.SyncStatus.SYNCHRONIZED)) && canEdit(dc)) {
                     item.add(new BookmarkablePageLinkPanel<DocumentCargo>("action", getString("document.cargo.list.edit"),
-                            DocumentCargoEdit.class, pageParameters));
+                            "edit:"+item.getId(), DocumentCargoEdit.class, pageParameters));
                 } else {
                     item.add(new BookmarkablePageLinkPanel<DocumentCargo>("action", getString("document.cargo.list.view"),
                             DocumentCargoView.class, pageParameters));

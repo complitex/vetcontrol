@@ -16,11 +16,13 @@ import java.util.UUID;
 public class DocumentCargoFactory {
     private static final String PERSISTENCE_UNIT_NAME = "vetcontroldb";
     private static final String SERVER_SECURE_KEY = "b2627dab45b9455e947f9755861aea10";
+    public static final int MAX_CARGO = 20;
+    public static final int MAX_VEHICLE = 10;
 
     private static Random random = new Random();
     private static EntityManager entityManager;
 
-    public static DocumentCargo createRandomDocument(String login){
+    public static DocumentCargo createRandomDocument(String login, String prefix){
         User user = getUser(login);
         Client client = getClient(SERVER_SECURE_KEY);
         Department department = user.getDepartment();
@@ -37,12 +39,12 @@ public class DocumentCargoFactory {
         dc.setVehicleType(VehicleType.values()[random.nextInt(VehicleType.values().length)]);
                 
         dc.setSenderCountry(getRandomElement(getCountryBooks()));
-        dc.setSenderName(getRandomString("cargo_sender_name"));
-        dc.setReceiverAddress(getRandomString("cargo_receiver_address"));
-        dc.setReceiverName(getRandomString("cargo_receiver_name"));
-        dc.setDetails(getRandomString("details"));
+        dc.setSenderName(getRandomString(prefix, "cargo_sender_name"));
+        dc.setReceiverAddress(getRandomString(prefix, "cargo_receiver_address"));
+        dc.setReceiverName(getRandomString(prefix, "cargo_receiver_name"));
+        dc.setDetails(getRandomString(prefix, "details"));
 
-        int vehicleCount = dc.getVehicleType().isCompound() ? random.nextInt(10)+1 : 1;
+        int vehicleCount = dc.getVehicleType().isCompound() ? random.nextInt(MAX_VEHICLE-1)+1 : 1;
         for (int i = 0; i < vehicleCount; ++i){
             Vehicle vehicle = new Vehicle();
 
@@ -59,7 +61,7 @@ public class DocumentCargoFactory {
 
                 vehicle.setVehicleDetails(details);
             }else{
-                vehicle.setVehicleDetails(getRandomString("vehicle_details"));
+                vehicle.setVehicleDetails(getRandomString(prefix, "vehicle_details"));
             }
 
             dc.getVehicles().add(vehicle);
@@ -67,7 +69,7 @@ public class DocumentCargoFactory {
 
         dc.setCargoMode(getRandomCargoMode());
 
-        int cargoCount = random.nextInt(20) + 1;
+        int cargoCount = random.nextInt(MAX_CARGO-1) + 1;
         for (int i=0; i < cargoCount; ++i){
             Cargo cargo = new Cargo();
 
@@ -79,7 +81,7 @@ public class DocumentCargoFactory {
             cargo.setCount(((double)random.nextInt(100000))/100);
             cargo.setVehicle(getRandomElement(dc.getVehicles()));
             cargo.setCargoProducer(getRandomCargoProducer());
-            cargo.setCertificateDetails(getRandomString("certificate_details"));
+            cargo.setCertificateDetails(getRandomString(prefix, "certificate_details"));
             cargo.setCertificateDate(new Date((long) (new Date().getTime()-random.nextDouble()*31536000000L)));
 
             dc.getCargos().add(cargo);
@@ -104,8 +106,8 @@ public class DocumentCargoFactory {
         return list.get(random.nextInt(list.size()));
     }
 
-    public static String getRandomString(String prefix){
-        return prefix + ": "+ UUID.randomUUID().toString();
+    public static String getRandomString(String prefix0, String prefix1){
+        return prefix0 + ": " + prefix1 + ": "+ UUID.randomUUID().toString();
     }
 
     public static CargoMode getRandomCargoMode(){

@@ -8,6 +8,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -45,7 +46,7 @@ public abstract class AjaxRemovableListView<T extends Serializable> extends List
     }
 
     protected AjaxSubmitLink addRemoveSubmitLink(String linkId, Form<?> form, ListItem<T> item, Component toFocus, Component... toUpdate) {
-        AjaxSubmitLink removeSubmitLink = getRemoveSubmitLink(linkId, form, toFocus, toUpdate);
+        AjaxSubmitLink removeSubmitLink = getRemoveSubmitLink(linkId, form, item, toFocus, toUpdate);
         item.add(removeSubmitLink);
         return removeSubmitLink;
     }
@@ -56,7 +57,7 @@ public abstract class AjaxRemovableListView<T extends Serializable> extends List
         return removeLink;
     }
 
-    protected AjaxSubmitLink getRemoveSubmitLink(String linkId, Form<?> form, final Component toFocus, final Component... toUpdate) {
+    protected AjaxSubmitLink getRemoveSubmitLink(String linkId, Form<?> form, final ListItem<T> item, final Component toFocus, final Component... toUpdate) {
         AjaxSubmitLink link = new AjaxSubmitLink(linkId, form) {
 
             @SuppressWarnings({"unchecked"})
@@ -70,8 +71,15 @@ public abstract class AjaxRemovableListView<T extends Serializable> extends List
                     }
                 }
             }
+
+            @Override
+            protected void onComponentTag(ComponentTag tag) {
+                super.onComponentTag(tag);
+                tag.put("name", "delete:" + item.getId());
+            }
         };
         link.setDefaultFormProcessing(false);
+
         return link;
     }
 
