@@ -28,20 +28,20 @@ import org.vetcontrol.book.ShowBooksMode;
 import org.vetcontrol.document.service.AvailableMovementTypes;
 import org.vetcontrol.document.service.CommonDocumentBean;
 import org.vetcontrol.document.service.DocumentCargoBean;
+import org.vetcontrol.document.util.change.DocumentChangeManager;
 import org.vetcontrol.entity.*;
 import org.vetcontrol.service.ClientBean;
 import org.vetcontrol.service.LogBean;
 import org.vetcontrol.service.UserProfileBean;
+import org.vetcontrol.util.CloneUtil;
 import org.vetcontrol.web.component.DatePicker;
 import org.vetcontrol.web.component.MovementTypeChoicePanel;
 import org.vetcontrol.web.component.UKTZEDField;
+import org.vetcontrol.web.component.VehicleTypeChoicePanel;
 import org.vetcontrol.web.component.list.AjaxRemovableListView;
 
 import javax.ejb.EJB;
 import java.util.*;
-import org.vetcontrol.document.util.change.DocumentChangeManager;
-import org.vetcontrol.util.CloneUtil;
-import org.vetcontrol.web.component.VehicleTypeChoicePanel;
 
 import static org.vetcontrol.entity.Log.EVENT.CREATE;
 import static org.vetcontrol.entity.Log.EVENT.EDIT;
@@ -746,6 +746,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
                 arrestLink.setVisible(item.getModelObject().getId() != null);
                 item.add(arrestLink);
 
+                //Удалить груз
                 addRemoveSubmitLink("document.cargo.delete", form, item, addCargoLink, cargoContainer, cargoListInfoContainer);
             }
         };
@@ -867,7 +868,7 @@ public class DocumentCargoEdit extends DocumentEditPage {
 
                     @Override
                     public String getIdValue(Vehicle object, int index) {
-                        return index + ":" + object.getId();
+                        return String.valueOf(index);
                     }
                 });
         ddcVehicle.setRequired(true);
