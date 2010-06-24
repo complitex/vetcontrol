@@ -6,19 +6,20 @@ package org.vetcontrol.web.component.datatable;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
-import org.apache.wicket.extensions.markup.html.repeater.data.sort.OrderByBorder;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.vetcontrol.web.component.datatable.wicket.EnhancedOrderByBorder;
 
 /**
  *
  * @author Artem
  */
-public class ArrowOrderByBorder extends OrderByBorder {
+public class ArrowOrderByBorder extends EnhancedOrderByBorder {
 
     private static final String UP = "&#8593";
+
     private static final String DOWN = "&#8595";
 
     public ArrowOrderByBorder(String id, final String property, final ISortStateLocator stateLocator) {
@@ -36,7 +37,7 @@ public class ArrowOrderByBorder extends OrderByBorder {
                 return null;
             }
         };
-        Link link = (Link)get("orderByLink");
+        Link link = (Link) get("orderByLink");
         Label arrow = new Label("arrow", arrowModel);
         arrow.setEscapeModelStrings(false);
         link.add(arrow);

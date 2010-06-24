@@ -2,89 +2,87 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml"  xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
-<head>
-    <wicket:head><title wicket:id="title"></title></wicket:head>
-</head>
+    <head>
+        <wicket:head><title wicket:id="title"></title></wicket:head>
+    </head>
 
-<body>
-<wicket:extend>
-
-    <div>
-        <h1 wicket:id="header"></h1>
-        <div id="messages" wicket:id="messages"></div>
-
-        <form id="filter_form" action="#" wicket:id="filter_form">
-            <table  border="0" cellspacing="0" cellpadding="0" class="tbColor table_input">
-                <thead>
-                <tr>
-                    <th class="center" wicket:id="order_id"><wicket:message key="arrest.document.id"/></th>
-                    <th class="center" wicket:id="order_cargo_type"><wicket:message key="arrest.document.cargo_type"/></th>
-                    <th class="center" wicket:id="order_cargo_mode"><wicket:message key="arrest.document.cargo_mode"/></th>
-                    <th class="center" wicket:id="order_count"><wicket:message key="arrest.document.count"/></th>
-                    <th class="center" wicket:id="order_unit_type"><wicket:message key="arrest.document.unit_type"/></th>
-                    <th class="center" wicket:id="order_vehicle_type"><wicket:message key="arrest.document.vehicle_type"/></th>
-                    <th class="center" wicket:id="order_sender_country"><wicket:message key="arrest.document.sender_country"/></th>
-                    <th class="center" wicket:id="order_sender_name"><wicket:message key="arrest.document.sender_name"/></th>
-                    <th class="center" wicket:id="order_receiver_address"><wicket:message key="arrest.document.receiver_address"/></th>
-                    <th class="center" wicket:id="order_receiver_name"><wicket:message key="arrest.document.receiver_name"/></th>
-                    <th class="center" wicket:id="order_arrest_reason"><wicket:message key="arrest.document.arrest_reason"/></th>
-                    <th class="center" wicket:id="order_arrest_date"><wicket:message key="arrest.document.arrest_date"/></th>
-                    <th class="center">
-                        <span wicket:id="order_sync_status"><wicket:message key="arrest.document.sync_status"/></span>
-                    </th>
-                    <th class="center">
-                        <input class="btnSmall"  wicket:id="filter_reset" type="button" wicket:message="value:arrest.document.filter.clear"/>
-                    </th>
-                </tr>
-                <tr>
-                    <th class="center"><input type="text" wicket:id="id"/></th>
-                    <th class="center"><input type="text" wicket:id="cargoType"/></th>
-                    <th class="center"><input type="text" wicket:id="cargoMode"/></th>
-                    <th class="center"><input type="text" wicket:id="count"/></th>
-                    <th class="center"><select wicket:id="unitType"></select></th>
-                    <th class="center"><span wicket:id="vehicleType"></span></th>
-                    <th class="center"><select wicket:id="senderCountry"></select></th>
-                    <th class="center"><input type="text" wicket:id="senderName"/></th>
-                    <th class="center"><input type="text" wicket:id="receiverAddress"/></th>
-                    <th class="center"><input type="text" wicket:id="receiverName"/></th>
-                    <th class="center"><select wicket:id="arrestReason"></select></th>
-                    <th class="center">
-                        <div style="width:102px">
-                            <input style="width:80px" type="text" wicket:id="arrestDate"/>
-                        </div>
-                    </th>
-                    <th class="center"><select wicket:id="syncStatus"></select></th>
-                    <th class="center">
-                        <input class="btnSmall default" type="submit" wicket:message="value:arrest.document.filter.go" tabindex="0" />
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr wicket:id="documents">
-                    <td><span wicket:id="id"></span></td>
-                    <td><span wicket:id="cargoType"></span></td>
-                    <td><span wicket:id="cargoMode"></span></td>
-                    <td><span wicket:id="count"></span></td>
-                    <td><span wicket:id="unitType"></span></td>
-                    <td><span wicket:id="vehicleType"></span></td>
-                    <td><span wicket:id="senderCountry"></span></td>
-                    <td><span wicket:id="senderName"></span></td>
-                    <td><span wicket:id="receiverAddress"></span></td>
-                    <td><span wicket:id="receiverName"></span></td>
-                    <td><span wicket:id="arrestReason"></span></td>
-                    <td><span wicket:id="arrestDate"></span></td>
-                    <td><span wicket:id="syncStatus"></span></td>
-                    <td><span wicket:id="action"></span></td>
-                </tr>
-                </tbody>
-            </table>
+    <body>
+        <wicket:extend>
 
             <div>
-                <span wicket:id="navigator">[dataview navigator]</span>
-            </div>
-        </form>
-    </div>
+                <h1 wicket:id="header"></h1>
+                <div id="messages" wicket:id="messages"></div>
 
-</wicket:extend>
-</body>
+                <form id="filter_form" action="#" wicket:id="filter_form">
+                    <table  border="0" cellspacing="0" cellpadding="0" class="tbColor table_input">
+                        <thead>
+                            <tr>
+                                <th class="center" wicket:id="order_id"><wicket:message key="arrest.document.id"/></th>
+                                <th class="center" wicket:id="order_cargo_type"><wicket:message key="arrest.document.cargo_type"/></th>
+                                <th class="center" wicket:id="order_cargo_mode"><wicket:message key="arrest.document.cargo_mode"/></th>
+                                <th class="center" wicket:id="order_count"><wicket:message key="arrest.document.count"/></th>
+                                <th class="center" wicket:id="order_unit_type"><wicket:message key="arrest.document.unit_type"/></th>
+                                <th class="center" wicket:id="order_vehicle_type"><wicket:message key="arrest.document.vehicle_type"/></th>
+                                <th class="center" wicket:id="order_sender_country"><wicket:message key="arrest.document.sender_country"/></th>
+                                <th class="center" wicket:id="order_sender_name"><wicket:message key="arrest.document.sender_name"/></th>
+                                <th class="center" wicket:id="order_receiver_address"><wicket:message key="arrest.document.receiver_address"/></th>
+                                <th class="center" wicket:id="order_receiver_name"><wicket:message key="arrest.document.receiver_name"/></th>
+                                <th class="center" wicket:id="order_arrest_reason"><wicket:message key="arrest.document.arrest_reason"/></th>
+                                <th class="center" wicket:id="order_arrest_date"><wicket:message key="arrest.document.arrest_date"/></th>
+                                <th class="center">
+                                    <span wicket:id="order_sync_status"><wicket:message key="arrest.document.sync_status"/></span>
+                                </th>
+                                <th class="center">
+                                    <input class="btnSmall"  wicket:id="filter_reset" type="button" wicket:message="value:arrest.document.filter.clear"/>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="center"><input type="text" wicket:id="id"/></th>
+                                <th class="center"><input type="text" wicket:id="cargoType"/></th>
+                                <th class="center"><input type="text" wicket:id="cargoMode"/></th>
+                                <th class="center"><input type="text" wicket:id="count"/></th>
+                                <th class="center"><select wicket:id="unitType"></select></th>
+                                <th class="center"><span wicket:id="vehicleType"></span></th>
+                                <th class="center"><select wicket:id="senderCountry"></select></th>
+                                <th class="center"><input type="text" wicket:id="senderName"/></th>
+                                <th class="center"><input type="text" wicket:id="receiverAddress"/></th>
+                                <th class="center"><input type="text" wicket:id="receiverName"/></th>
+                                <th class="center"><select wicket:id="arrestReason"></select></th>
+                                <th class="center" style="white-space: nowrap;">
+                                    <input style="width:80%" type="text" wicket:id="arrestDate"/>
+                                </th>
+                                <th class="center"><select wicket:id="syncStatus"></select></th>
+                                <th class="center">
+                                    <input class="btnSmall default" type="submit" wicket:message="value:arrest.document.filter.go" tabindex="0" />
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr wicket:id="documents">
+                                <td><span wicket:id="id"></span></td>
+                                <td><span wicket:id="cargoType"></span></td>
+                                <td><span wicket:id="cargoMode"></span></td>
+                                <td><span wicket:id="count"></span></td>
+                                <td><span wicket:id="unitType"></span></td>
+                                <td><span wicket:id="vehicleType"></span></td>
+                                <td><span wicket:id="senderCountry"></span></td>
+                                <td><span wicket:id="senderName"></span></td>
+                                <td><span wicket:id="receiverAddress"></span></td>
+                                <td><span wicket:id="receiverName"></span></td>
+                                <td><span wicket:id="arrestReason"></span></td>
+                                <td><span wicket:id="arrestDate"></span></td>
+                                <td><span wicket:id="syncStatus"></span></td>
+                                <td><span wicket:id="action"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div>
+                        <span wicket:id="navigator">[dataview navigator]</span>
+                    </div>
+                </form>
+            </div>
+
+        </wicket:extend>
+    </body>
 </html>
